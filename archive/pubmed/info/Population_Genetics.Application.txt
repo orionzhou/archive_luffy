@@ -1,0 +1,2512 @@
+PMID- 10229384
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990630
+DCOM- 19990630
+LR  - 20041117
+PUBM- Print
+IS  - 0002-9483 (Print)
+VI  - 108
+IP  - 4
+DP  - 1999 Apr
+TI  - Autosomal, mitochondrial, and Y chromosome DNA variation in Finland:
+      evidence for a male-specific bottleneck.
+PG  - 381-99
+AB  - The high prevalence of rare genetic diseases in Finland has been
+      attributed to a founder effect some 2,000 years ago. However, this
+      hypothesis has not been supported from mtDNA sequence and autosomal
+      microsatellite data which indicate high levels of gene diversity. Here we
+      have identified genetic evidence for a population bottleneck by examining
+      variable microsatellite loci on the nonrecombining portion of Y
+      chromosomes from Finland and four populations from Europe and the
+      Americas. Sequence data from segment I of the control region (HVS-1) of
+      mtDNA (360 bases) and 20 autosomal dinucleotide repeat markers were also
+      analyzed. Partitions of genetic variance within and between populations
+      revealed significant levels of Y-chromosome differentiation between
+      populations. Phylogenetic and diversity analyses revealed divergent
+      Finnish Y-haplotype clades and significantly lower Y-haplotype diversity
+      among Finns as compared to other populations. Surprisingly, Finnish
+      Y-haplotype diversity was even lower than the Native American populations.
+      These results provide support for the Finnish bottleneck hypothesis.
+      Evidence for two separate founding Finnish Y-chromosome lineages was also
+      observed from the Y-chromosome phylogeny. A limited number of closely
+      related founding males may have contributed to the low number of paternal
+      lineages in the Finnish population. In contrast, high levels of genetic
+      diversity for mtDNA and autosomal STRs may be the result of sex-biased
+      gene flow and recent immigration to urban areas from established internal
+      isolates within Finland.
+AD  - Section on Population Genetics and Linkage, National Institute on Alcohol
+      Abuse and Alcoholism, National Institutes of Health, Bethesda, Maryland
+      20892, USA. rkittles@howard.edu
+FAU - Kittles, R A
+AU  - Kittles RA
+FAU - Bergen, A W
+AU  - Bergen AW
+FAU - Urbanek, M
+AU  - Urbanek M
+FAU - Virkkunen, M
+AU  - Virkkunen M
+FAU - Linnoila, M
+AU  - Linnoila M
+FAU - Goldman, D
+AU  - Goldman D
+FAU - Long, J C
+AU  - Long JC
+LA  - eng
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Am J Phys Anthropol
+JT  - American journal of physical anthropology
+JID - 0400654
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+MH  - Base Sequence
+MH  - DNA, Mitochondrial/*genetics
+MH  - Finland
+MH  - *Genetics, Population
+MH  - Haplotypes
+MH  - Humans
+MH  - Male
+MH  - Microsatellite Repeats
+MH  - Models, Genetic
+MH  - Molecular Sequence Data
+MH  - Phylogeny
+MH  - *Variation (Genetics)
+MH  - Y Chromosome/*genetics
+EDAT- 1999/05/06 02:04
+MHDA- 2000/06/20 09:00
+AID - 10.1002/(SICI)1096-8644(199904)108:4<381::AID-AJPA1>3.0.CO;2-5 [pii]
+AID - 10.1002/(SICI)1096-8644(199904)108:4<381::AID-AJPA1>3.0.CO;2-5 [doi]
+PST - ppublish
+SO  - Am J Phys Anthropol. 1999 Apr;108(4):381-99.
+
+PMID- 10712212
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000420
+DCOM- 20000420
+LR  - 20071114
+PUBM- Print
+IS  - 0002-9297 (Print)
+VI  - 66
+IP  - 3
+DP  - 2000 Mar
+TI  - The distribution of human genetic diversity: a comparison of
+      mitochondrial, autosomal, and Y-chromosome data.
+PG  - 979-88
+AB  - We report a comparison of worldwide genetic variation among 255
+      individuals by using autosomal, mitochondrial, and Y-chromosome
+      polymorphisms. Variation is assessed by use of 30 autosomal
+      restriction-site polymorphisms (RSPs), 60 autosomal short-tandem-repeat
+      polymorphisms (STRPs), 13 Alu-insertion polymorphisms and one LINE-1
+      element, 611 bp of mitochondrial control-region sequence, and 10
+      Y-chromosome polymorphisms. Analysis of these data reveals substantial
+      congruity among this diverse array of genetic systems. With the exception
+      of the autosomal RSPs, in which an ascertainment bias exists, all systems
+      show greater gene diversity in Africans than in either Europeans or
+      Asians. Africans also have the largest total number of alleles, as well as
+      the largest number of unique alleles, for most systems. GST values are
+      11%-18% for the autosomal systems and are two to three times higher for
+      the mtDNA sequence and Y-chromosome RSPs. This difference is expected
+      because of the lower effective population size of mtDNA and Y chromosomes.
+      A lower value is seen for Y-chromosome STRs, reflecting a relative lack of
+      continental population structure, as a result of rapid mutation and
+      genetic drift. Africa has higher GST values than does either Europe or
+      Asia for all systems except the Y-chromosome STRs and Alus. All systems
+      except the Y-chromosome STRs show less variation between populations
+      within continents than between continents. These results are reassuring in
+      their consistency and offer broad support for an African origin of modern
+      human populations.
+AD  - Department of Human Genetics, University of Utah Health Sciences Center,
+      Salt lake City, UT, 84112, USA. lbj@genetics.utah.edu
+FAU - Jorde, L B
+AU  - Jorde LB
+FAU - Watkins, W S
+AU  - Watkins WS
+FAU - Bamshad, M J
+AU  - Bamshad MJ
+FAU - Dixon, M E
+AU  - Dixon ME
+FAU - Ricker, C E
+AU  - Ricker CE
+FAU - Seielstad, M T
+AU  - Seielstad MT
+FAU - Batzer, M A
+AU  - Batzer MA
+LA  - eng
+GR  - GM-52290/GM/United States NIGMS
+GR  - RR-00064/RR/United States NCRR
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (DNA, Mitochondrial)
+RN  - EC 3.1.21.- (DNA Restriction Enzymes)
+SB  - IM
+MH  - Africa
+MH  - Alleles
+MH  - Alu Elements/genetics
+MH  - Asia
+MH  - Bias (Epidemiology)
+MH  - Chromosomes, Human/*genetics
+MH  - DNA Restriction Enzymes/metabolism
+MH  - DNA, Mitochondrial/*genetics
+MH  - Europe
+MH  - Female
+MH  - Gene Frequency/genetics
+MH  - Humans
+MH  - Long Interspersed Nucleotide Elements/genetics
+MH  - Male
+MH  - Mutation/genetics
+MH  - Phylogeny
+MH  - Polymorphism, Genetic/genetics
+MH  - Tandem Repeat Sequences/genetics
+MH  - Variation (Genetics)/*genetics
+MH  - Y Chromosome/*genetics
+PMC - PMC1288178
+EDAT- 2000/03/11 09:00
+MHDA- 2000/04/25 09:00
+AID - S0002-9297(07)64024-5 [pii]
+AID - 10.1086/302825 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2000 Mar;66(3):979-88.
+
+PMID- 11095712
+OWN - NLM
+STAT- MEDLINE
+DA  - 20001218
+DCOM- 20010118
+LR  - 20061115
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 97
+IP  - 25
+DP  - 2000 Dec 5
+TI  - Population structure and history in East Asia.
+PG  - 14003-6
+AB  - Archaeological, anatomical, linguistic, and genetic data have suggested
+      that there is an old and significant boundary between the populations of
+      north and south China. We use three human genetic marker systems and one
+      human-carried virus to examine the north/south distinction. We find no
+      support for a major north/south division in these markers; rather, the
+      marker patterns suggest simple isolation by distance.
+AD  - Laboratory of Cellular and Molecular Evolution, Kunming Institute of
+      Zoology, Chinese Academy of Sciences, Kunming 650223, People's Republic of
+      China.
+FAU - Ding, Y C
+AU  - Ding YC
+FAU - Wooding, S
+AU  - Wooding S
+FAU - Harpending, H C
+AU  - Harpending HC
+FAU - Chi, H C
+AU  - Chi HC
+FAU - Li, H P
+AU  - Li HP
+FAU - Fu, Y X
+AU  - Fu YX
+FAU - Pang, J F
+AU  - Pang JF
+FAU - Yao, Y G
+AU  - Yao YG
+FAU - Yu, J G
+AU  - Yu JG
+FAU - Moyzis, R
+AU  - Moyzis R
+FAU - Zhang, Y
+AU  - Zhang Y
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (DNA, Mitochondrial)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - China
+MH  - DNA, Mitochondrial/genetics
+MH  - Genetic Markers
+MH  - Genetics, Population
+MH  - Humans
+MH  - JC Virus/genetics
+MH  - Phylogeny
+MH  - *Population Dynamics
+MH  - Tandem Repeat Sequences
+MH  - Y Chromosome
+PMC - PMC17690
+EDAT- 2000/11/30 11:00
+MHDA- 2001/02/28 10:01
+AID - 10.1073/pnas.240441297 [doi]
+AID - 240441297 [pii]
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 2000 Dec 5;97(25):14003-6.
+
+PMID- 11573163
+OWN - NLM
+STAT- MEDLINE
+DA  - 20011008
+DCOM- 20011207
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 69
+IP  - 5
+DP  - 2001 Nov
+TI  - The Y chromosome pool of Jews as part of the genetic landscape of the
+      Middle East.
+PG  - 1095-112
+AB  - A sample of 526 Y chromosomes representing six Middle Eastern populations
+      (Ashkenazi, Sephardic, and Kurdish Jews from Israel; Muslim Kurds; Muslim
+      Arabs from Israel and the Palestinian Authority Area; and Bedouin from the
+      Negev) was analyzed for 13 binary polymorphisms and six microsatellite
+      loci. The investigation of the genetic relationship among three Jewish
+      communities revealed that Kurdish and Sephardic Jews were
+      indistinguishable from one another, whereas both differed slightly, yet
+      significantly, from Ashkenazi Jews. The differences among Ashkenazim may
+      be a result of low-level gene flow from European populations and/or
+      genetic drift during isolation. Admixture between Kurdish Jews and their
+      former Muslim host population in Kurdistan appeared to be negligible. In
+      comparison with data available from other relevant populations in the
+      region, Jews were found to be more closely related to groups in the north
+      of the Fertile Crescent (Kurds, Turks, and Armenians) than to their Arab
+      neighbors. The two haplogroups Eu 9 and Eu 10 constitute a major part of
+      the Y chromosome pool in the analyzed sample. Our data suggest that Eu 9
+      originated in the northern part, and Eu 10 in the southern part of the
+      Fertile Crescent. Genetic dating yielded estimates of the expansion of
+      both haplogroups that cover the Neolithic period in the region.
+      Palestinian Arabs and Bedouin differed from the other Middle Eastern
+      populations studied here, mainly in specific high-frequency Eu 10
+      haplotypes not found in the non-Arab groups. These chromosomes might have
+      been introduced through migrations from the Arabian Peninsula during the
+      last two millennia. The present study contributes to the elucidation of
+      the complex demographic history that shaped the present-day genetic
+      landscape in the region.
+AD  - Department of Hematology, Hebrew University-Hadassah Medical School,
+      Jerusalem 91120, Israel.
+FAU - Nebel, A
+AU  - Nebel A
+FAU - Filon, D
+AU  - Filon D
+FAU - Brinkmann, B
+AU  - Brinkmann B
+FAU - Majumder, P P
+AU  - Majumder PP
+FAU - Faerman, M
+AU  - Faerman M
+FAU - Oppenheim, A
+AU  - Oppenheim A
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20010925
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+SB  - IM
+CIN - Am J Hum Genet. 2002 Jun;70(6):1594-6. PMID: 11992266
+MH  - Alleles
+MH  - Arabs/genetics
+MH  - Emigration and Immigration
+MH  - Europe, Eastern/ethnology
+MH  - European Continental Ancestry Group/genetics
+MH  - Gene Frequency/genetics
+MH  - *Gene Pool
+MH  - Haplotypes/genetics
+MH  - Humans
+MH  - Jews/*genetics
+MH  - Middle East/ethnology
+MH  - *Phylogeny
+MH  - Polymorphism, Genetic/genetics
+MH  - Variation (Genetics)/genetics
+MH  - Y Chromosome/*genetics
+PMC - PMC1274378
+EDAT- 2001/09/27 10:00
+MHDA- 2002/01/05 10:01
+PHST- 2001/06/18 [received]
+PHST- 2001/08/27 [accepted]
+PHST- 2001/09/25 [aheadofprint]
+AID - S0002-9297(07)61325-1 [pii]
+AID - 10.1086/324070 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2001 Nov;69(5):1095-112. Epub 2001 Sep 25.
+
+PMID- 11685208
+OWN - NLM
+STAT- MEDLINE
+DA  - 20011105
+DCOM- 20011207
+LR  - 20061115
+PUBM- Print
+IS  - 1061-4036 (Print)
+VI  - 29
+IP  - 3
+DP  - 2001 Nov
+TI  - Population genetic structure of variable drug response.
+PG  - 265-9
+AB  - Geographic patterns of genetic variation, including variation at drug
+      metabolizing enzyme (DME) loci and drug targets, indicate that geographic
+      structuring of inter-individual variation in drug response may occur
+      frequently. This raises two questions: how to represent human population
+      genetic structure in the evaluation of drug safety and efficacy, and how
+      to relate this structure to drug response. We address these by (i)
+      inferring the genetic structure present in a heterogeneous sample and (ii)
+      comparing the distribution of DME variants across the inferred genetic
+      clusters of individuals. We find that commonly used ethnic labels are both
+      insufficient and inaccurate representations of the inferred genetic
+      clusters, and that drug-metabolizing profiles, defined by the distribution
+      of DME variants, differ significantly among the clusters. We note,
+      however, that the complexity of human demographic history means that there
+      is no obvious natural clustering scheme, nor an obvious appropriate degree
+      of resolution. Our comparison of drug-metabolizing profiles across the
+      inferred clusters establishes a framework for assessing the appropriate
+      level of resolution in relating genetic structure to drug response.
+AD  - Galton Laboratory, Department of Biology, University College London,
+      London, UK.
+FAU - Wilson, J F
+AU  - Wilson JF
+FAU - Weale, M E
+AU  - Weale ME
+FAU - Smith, A C
+AU  - Smith AC
+FAU - Gratrix, F
+AU  - Gratrix F
+FAU - Fletcher, B
+AU  - Fletcher B
+FAU - Thomas, M G
+AU  - Thomas MG
+FAU - Bradman, N
+AU  - Bradman N
+FAU - Goldstein, D B
+AU  - Goldstein DB
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Nat Genet
+JT  - Nature genetics
+JID - 9216904
+RN  - 0 (Enzymes)
+RN  - 0 (Pharmaceutical Preparations)
+RN  - 9035-51-2 (Cytochrome P-450 Enzyme System)
+SB  - IM
+CIN - Nat Genet. 2001 Nov;29(3):239-40. PMID: 11687784
+CIN - Nat Genet. 2001 Nov;29(3):247-8. PMID: 11687789
+MH  - Chi-Square Distribution
+MH  - Chromosomes, Human, Pair 1/genetics
+MH  - Cluster Analysis
+MH  - Continental Population Groups/genetics
+MH  - Cytochrome P-450 Enzyme System/genetics/metabolism
+MH  - Enzymes/*genetics/metabolism
+MH  - Ethnic Groups/genetics
+MH  - Gene Frequency/genetics
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Microsatellite Repeats/genetics
+MH  - Multifactorial Inheritance/genetics
+MH  - Oxidation-Reduction
+MH  - Pharmaceutical Preparations/*metabolism
+MH  - *Pharmacogenetics
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Software
+MH  - Variation (Genetics)/*genetics
+MH  - X Chromosome/genetics
+EDAT- 2001/10/31 10:00
+MHDA- 2002/01/05 10:01
+AID - 10.1038/ng761 [doi]
+AID - ng761 [pii]
+PST - ppublish
+SO  - Nat Genet. 2001 Nov;29(3):265-9.
+
+PMID- 11731937
+OWN - NLM
+STAT- MEDLINE
+DA  - 20011213
+DCOM- 20020125
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 70
+IP  - 1
+DP  - 2002 Jan
+TI  - Nucleotide diversity and haplotype structure of the human angiotensinogen
+      gene in two populations.
+PG  - 108-23
+AB  - Variation in the angiotensinogen gene, AGT, has been associated with
+      variation in plasma angiotensinogen levels. In addition, the T235M
+      polymorphism in the AGT product is associated with an increased risk of
+      essential hypertension in multiple populations, making AGT a good example
+      of a quantitative-trait locus underlying susceptibility to a common
+      disease. To better understand genetic variation in AGT, we sequenced a
+      14.4-kb genomic region spanning the entire AGT and identified 44
+      single-nucleotide polymorphisms (SNPs). Forty-two SNPs were observed both
+      in 88 white and in 77 Japanese unselected subjects. Six major haplotypes
+      accounted for most of the variation in this region, indicating less
+      allelic complexity than in many other genomic regions. Although the two
+      populations were found to share all of the major AGT haplotypes, there
+      were substantial differences in haplotype frequencies. Pairwise linkage
+      disequilibrium (LD), measured by the D', r(2), and d(2) statistics,
+      demonstrated a general pattern of decline with increasing distance, but,
+      as expected in a small genomic region, individual LD values were highly
+      variable. LD between T235M and each of the other 39 SNPs was assessed in
+      order to model the usefulness of LD to detect a disease-associated
+      mutation. Among the Japanese subjects, 13 (33%) of the SNPs had r(2)
+      values >0.1, whereas this statistic was substantially higher for the white
+      subjects (occurring in 35/39 [90%]). LD between a hypertension-associated
+      promoter mutation, A-6G, and 39 SNPs was also measured. Similar results
+      were obtained, with 33% of the SNPs showing r(2)>0.1 in the Japanese
+      subjects and 92% of the SNPs showing r(2)>0.1 in the white subjects. This
+      difference, which occurs despite an overall similarity in LD patterns in
+      the two populations, reflects a much higher frequency of the
+      M235-associated haplotype in the white sample. These results have
+      important implications for the usefulness of LD approaches in the mapping
+      of genes underlying susceptibility to complex diseases.
+AD  - Division of Genetic Diagnosis, The Institute of Medical Science, The
+      University of Tokyo, Tokyo, Japan.
+FAU - Nakajima, Toshiaki
+AU  - Nakajima T
+FAU - Jorde, Lynn B
+AU  - Jorde LB
+FAU - Ishigami, Tomoaki
+AU  - Ishigami T
+FAU - Umemura, Satoshi
+AU  - Umemura S
+FAU - Emi, Mitsuru
+AU  - Emi M
+FAU - Lalouel, Jean-Marc
+AU  - Lalouel JM
+FAU - Inoue, Ituro
+AU  - Inoue I
+LA  - eng
+GR  - GM-59290/GM/United States NIGMS
+GR  - HL-54471/HL/United States NHLBI
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20011130
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 11002-13-4 (Angiotensinogen)
+SB  - IM
+CIN - Am J Hum Genet. 2002 Aug;71(2):443-4. PMID: 12154781
+MH  - Angiotensinogen/*genetics
+MH  - Animals
+MH  - Asian Continental Ancestry Group/*genetics
+MH  - European Continental Ancestry Group/*genetics
+MH  - Evolution, Molecular
+MH  - Exons/genetics
+MH  - Gene Frequency/genetics
+MH  - Genetic Predisposition to Disease/genetics
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Japan
+MH  - Linkage Disequilibrium/genetics
+MH  - Microsatellite Repeats/genetics
+MH  - Pan troglodytes/genetics
+MH  - Phylogeny
+MH  - Point Mutation/genetics
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Promoter Regions (Genetics)/genetics
+MH  - Recombination, Genetic/genetics
+MH  - Variation (Genetics)/genetics
+PMC - PMC384882
+EDAT- 2001/12/04 10:00
+MHDA- 2002/01/26 10:01
+PHST- 2001/09/06 [received]
+PHST- 2001/10/26 [accepted]
+PHST- 2001/11/30 [aheadofprint]
+AID - S0002-9297(07)61287-7 [pii]
+AID - 10.1086/338454 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2002 Jan;70(1):108-23. Epub 2001 Nov 30.
+
+PMID- 12644966
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030421
+DCOM- 20030701
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 72
+IP  - 5
+DP  - 2003 May
+TI  - Native American Y chromosomes in Polynesia: the genetic impact of the
+      Polynesian slave trade.
+PG  - 1282-7
+AB  - Since Thor Heyerdahl asserted that Polynesia was first colonized from the
+      Americas (Heyerdahl 1950), geneticists have sought--but have not
+      found--any evidence to support his theories. Here, Native American Y
+      chromosomes are detected on the Polynesian island of Rapa. However, this,
+      together with other odd features of the island's Y-chromosomal gene pool,
+      is best explained as the genetic impact of a 19th century Peruvian slave
+      trade in Polynesia. These findings underscore the need to account for
+      history before turning to prehistory and the value of archival research to
+      understanding modern genetic diversity. Although the impact of the
+      Atlantic slave trade on the distribution of modern genetic diversity has
+      been well appreciated, this represents the first study investigating the
+      impact of this underappreciated episode on genetic diversity in the
+      Pacific.
+AD  - McDonald Institute for Archaeological Research, University of Cambridge,
+      Cambridge, United Kingdom. meh32@cam.ac.uk
+FAU - Hurles, Matthew E
+AU  - Hurles ME
+FAU - Maund, Emma
+AU  - Maund E
+FAU - Nicholson, Jane
+AU  - Nicholson J
+FAU - Bosch, Elena
+AU  - Bosch E
+FAU - Renfrew, Colin
+AU  - Renfrew C
+FAU - Sykes, Bryan C
+AU  - Sykes BC
+FAU - Jobling, Mark A
+AU  - Jobling MA
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20030318
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+MH  - Chromosomes, Human, Y/*genetics
+MH  - DNA, Mitochondrial/genetics
+MH  - European Continental Ancestry Group/*genetics
+MH  - Haplotypes
+MH  - Humans
+MH  - Indians, North American/*genetics
+MH  - Male
+MH  - New Zealand
+MH  - Polynesia
+MH  - *Population Dynamics
+MH  - *Social Problems
+PMC - PMC1180280
+EDAT- 2003/03/20 04:00
+MHDA- 2003/07/02 05:00
+PHST- 2002/11/25 [received]
+PHST- 2003/02/03 [accepted]
+PHST- 2003/03/18 [aheadofprint]
+AID - AJHG024748 [pii]
+PST - ppublish
+SO  - Am J Hum Genet. 2003 May;72(5):1282-7. Epub 2003 Mar 18.
+
+PMID- 14997363
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040428
+DCOM- 20040603
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 1434-5161 (Print)
+VI  - 49
+IP  - 4
+DP  - 2004
+TI  - Genetic origins of the Ainu inferred from combined DNA analyses of
+      maternal and paternal lineages.
+PG  - 187-93
+AB  - The Ainu, a minority ethnic group from the northernmost island of Japan,
+      was investigated for DNA polymorphisms both from maternal (mitochondrial
+      DNA) and paternal (Y chromosome) lineages extensively. Other Asian
+      populations inhabiting North, East, and Southeast Asia were also examined
+      for detailed phylogeographic analyses at the mtDNA sequence type as well
+      as Y-haplogroup levels. The maternal and paternal gene pools of the Ainu
+      contained 25 mtDNA sequence types and three Y-haplogroups, respectively.
+      Eleven of the 25 mtDNA sequence types were unique to the Ainu and
+      accounted for over 50% of the population, whereas 14 were widely
+      distributed among other Asian populations. Of the 14 shared types, the
+      most frequently shared type was found in common among the Ainu, Nivkhi in
+      northern Sakhalin, and Koryaks in the Kamchatka Peninsula. Moreover,
+      analysis of genetic distances calculated from the mtDNA data revealed that
+      the Ainu seemed to be related to both the Nivkhi and other Japanese
+      populations (such as mainland Japanese and Okinawans) at the population
+      level. On the paternal side, the vast majority (87.5%) of the Ainu
+      exhibited the Asian-specific YAP+ lineages (Y-haplogroups D-M55* and
+      D-M125), which were distributed only in the Japanese Archipelago in this
+      analysis. On the other hand, the Ainu exhibited no other Y-haplogroups
+      (C-M8, O-M175*, and O-M122*) common in mainland Japanese and Okinawans. It
+      is noteworthy that the rest of the Ainu gene pool was occupied by the
+      paternal lineage (Y-haplogroup C-M217*) from North Asia including
+      Sakhalin. Thus, the present findings suggest that the Ainu retain a
+      certain degree of their own genetic uniqueness, while having higher
+      genetic affinities with other regional populations in Japan and the Nivkhi
+      among Asian populations.
+AD  - Department of Biosystems Science, The Graduate University for Advanced
+      Studies (Sokendai), Hayama, Kanagawa 240-0193, Japan.
+FAU - Tajima, Atsushi
+AU  - Tajima A
+FAU - Hayami, Masanori
+AU  - Hayami M
+FAU - Tokunaga, Katsushi
+AU  - Tokunaga K
+FAU - Juji, Takeo
+AU  - Juji T
+FAU - Matsuo, Masafumi
+AU  - Matsuo M
+FAU - Marzuki, Sangkot
+AU  - Marzuki S
+FAU - Omoto, Keiichi
+AU  - Omoto K
+FAU - Horai, Satoshi
+AU  - Horai S
+LA  - eng
+SI  - GENBANK/AB093862
+SI  - GENBANK/AB093863
+SI  - GENBANK/AB093864
+SI  - GENBANK/AB093865
+SI  - GENBANK/AB093866
+SI  - GENBANK/AB093867
+SI  - GENBANK/AB093868
+SI  - GENBANK/AB093869
+SI  - GENBANK/AB093870
+SI  - GENBANK/AB093871
+SI  - GENBANK/AB093872
+SI  - GENBANK/AB093873
+SI  - GENBANK/AB093874
+SI  - GENBANK/AB093875
+SI  - GENBANK/AB093876
+SI  - GENBANK/AB093877
+SI  - GENBANK/AB093878
+SI  - GENBANK/AB093879
+SI  - GENBANK/AB093880
+SI  - GENBANK/AB093881
+SI  - GENBANK/AB093882
+SI  - GENBANK/AB093883
+SI  - GENBANK/AB093884
+SI  - GENBANK/AB093885
+SI  - GENBANK/AB093886
+SI  - GENBANK/AB093887
+SI  - GENBANK/AB093888
+SI  - GENBANK/AB093889
+SI  - GENBANK/AB093890
+SI  - GENBANK/AB093891
+SI  - GENBANK/AB093892
+SI  - GENBANK/AB093893
+SI  - GENBANK/AB093894
+SI  - GENBANK/AB093895
+SI  - GENBANK/AB093896
+SI  - GENBANK/AB093897
+SI  - GENBANK/AB093898
+SI  - GENBANK/AB093899
+SI  - GENBANK/AB093900
+SI  - GENBANK/AB093901
+SI  - GENBANK/AB093902
+SI  - GENBANK/AB093903
+SI  - GENBANK/AB093904
+SI  - GENBANK/AB093905
+SI  - GENBANK/AB093906
+SI  - GENBANK/AB093907
+SI  - GENBANK/AB093908
+SI  - GENBANK/AB093909
+SI  - GENBANK/AB093910
+SI  - GENBANK/AB093911
+SI  - GENBANK/AB093912
+SI  - GENBANK/AB093913
+SI  - GENBANK/AB093914
+SI  - GENBANK/AB093915
+SI  - GENBANK/AB093916
+SI  - GENBANK/AB093917
+SI  - GENBANK/AB093918
+SI  - GENBANK/AB093919
+SI  - GENBANK/AB093920
+SI  - GENBANK/AB093921
+SI  - GENBANK/AB093922
+SI  - GENBANK/AB093923
+SI  - GENBANK/AB093924
+SI  - GENBANK/AB093925
+SI  - GENBANK/AB093926
+SI  - GENBANK/AB093927
+SI  - GENBANK/AB093928
+SI  - GENBANK/AB093929
+SI  - GENBANK/AB093930
+SI  - GENBANK/AB093931
+SI  - GENBANK/AB093932
+SI  - GENBANK/AB093933
+SI  - GENBANK/AB093934
+SI  - GENBANK/AB093935
+SI  - GENBANK/AB093936
+SI  - GENBANK/AB093937
+SI  - GENBANK/AB093938
+SI  - GENBANK/AB093939
+SI  - GENBANK/AB093940
+SI  - GENBANK/AB093941
+SI  - GENBANK/AB093942
+SI  - GENBANK/AB093943
+SI  - GENBANK/AB093944
+SI  - GENBANK/AB093945
+SI  - GENBANK/AB093946
+SI  - GENBANK/AB093947
+SI  - GENBANK/AB093948
+SI  - GENBANK/AB093949
+SI  - GENBANK/AB093950
+SI  - GENBANK/AB093951
+SI  - GENBANK/AB093952
+SI  - GENBANK/AB093953
+SI  - GENBANK/AB093954
+SI  - GENBANK/AB093955
+SI  - GENBANK/AB093956
+SI  - GENBANK/AB093957
+SI  - GENBANK/AB093958
+SI  - GENBANK/AB093959
+SI  - GENBANK/AB093960
+SI  - GENBANK/AB093961
+SI  - GENBANK/AB093962
+SI  - GENBANK/AB093963
+SI  - GENBANK/AB093964
+SI  - GENBANK/AB093965
+SI  - GENBANK/AB093966
+SI  - GENBANK/AB093967
+SI  - GENBANK/AB093968
+SI  - GENBANK/AB093969
+SI  - GENBANK/AB093970
+SI  - GENBANK/AB093971
+SI  - GENBANK/AB093972
+SI  - GENBANK/AB093973
+SI  - GENBANK/AB093974
+SI  - GENBANK/AB093975
+SI  - GENBANK/AB093976
+SI  - GENBANK/AB093977
+SI  - GENBANK/AB093978
+SI  - GENBANK/AB093979
+SI  - GENBANK/AB093980
+SI  - GENBANK/AB093981
+SI  - GENBANK/AB093982
+SI  - GENBANK/AB093983
+SI  - GENBANK/AB093984
+SI  - GENBANK/AB093985
+SI  - GENBANK/AB093986
+SI  - GENBANK/AB093987
+SI  - GENBANK/AB093988
+SI  - GENBANK/AB093989
+SI  - GENBANK/AB093990
+SI  - GENBANK/AB093991
+SI  - GENBANK/AB093992
+SI  - GENBANK/AB093993
+SI  - GENBANK/AB093994
+SI  - GENBANK/AB093995
+SI  - GENBANK/AB093996
+SI  - GENBANK/AB093997
+SI  - GENBANK/AB093998
+SI  - GENBANK/AB093999
+SI  - GENBANK/AB094000
+SI  - GENBANK/AB094001
+SI  - GENBANK/AB094002
+SI  - GENBANK/AB094003
+SI  - GENBANK/AB094004
+SI  - GENBANK/AB094005
+SI  - GENBANK/AB094006
+SI  - GENBANK/AB094007
+SI  - GENBANK/AB094008
+SI  - GENBANK/AB094009
+SI  - GENBANK/AB094010
+SI  - GENBANK/AB094011
+SI  - GENBANK/AB094012
+SI  - GENBANK/AB094013
+SI  - GENBANK/AB094014
+SI  - GENBANK/AB094015
+SI  - GENBANK/AB094016
+SI  - GENBANK/AB094017
+SI  - GENBANK/AB094018
+SI  - GENBANK/AB094019
+SI  - GENBANK/AB094020
+SI  - GENBANK/AB094021
+SI  - GENBANK/AB094022
+SI  - GENBANK/AB094023
+SI  - GENBANK/AB094024
+SI  - GENBANK/AB094025
+SI  - GENBANK/AB094026
+SI  - GENBANK/AB122153
+SI  - GENBANK/AB122154
+SI  - GENBANK/AB122155
+SI  - GENBANK/AB122156
+SI  - GENBANK/AB122157
+SI  - GENBANK/AB122158
+SI  - GENBANK/AB122159
+SI  - GENBANK/AB122160
+SI  - GENBANK/AB122161
+SI  - GENBANK/AB122162
+SI  - GENBANK/AB122163
+SI  - GENBANK/AB122164
+SI  - GENBANK/AB122165
+SI  - GENBANK/AB122166
+SI  - GENBANK/AB122167
+SI  - GENBANK/AB122168
+SI  - GENBANK/AB122169
+SI  - GENBANK/AB122170
+SI  - GENBANK/AB122171
+SI  - GENBANK/AB122172
+SI  - GENBANK/AB122173
+SI  - GENBANK/AB122174
+SI  - GENBANK/AB122175
+SI  - GENBANK/AB122176
+SI  - GENBANK/AB122177
+SI  - GENBANK/AB122178
+SI  - GENBANK/AB122179
+SI  - GENBANK/AB122180
+SI  - GENBANK/AB122181
+SI  - GENBANK/AB122182
+SI  - GENBANK/AB122183
+SI  - GENBANK/AB122184
+SI  - GENBANK/AB122185
+SI  - GENBANK/AB122186
+SI  - GENBANK/AB122187
+SI  - GENBANK/AB122188
+SI  - GENBANK/AB122189
+SI  - GENBANK/AB122190
+SI  - GENBANK/AB122191
+SI  - GENBANK/AB122192
+SI  - GENBANK/AB122193
+SI  - GENBANK/AB122194
+SI  - GENBANK/AB122195
+SI  - GENBANK/AB122196
+SI  - GENBANK/AB122197
+SI  - GENBANK/AB122198
+SI  - GENBANK/AB122199
+SI  - GENBANK/AB122200
+SI  - GENBANK/AB122201
+SI  - GENBANK/AB122202
+SI  - GENBANK/AB122203
+SI  - GENBANK/AB122204
+SI  - GENBANK/AB122205
+SI  - GENBANK/AB122206
+SI  - GENBANK/AB122207
+SI  - GENBANK/AB122208
+SI  - GENBANK/AB122209
+SI  - GENBANK/AB122210
+SI  - GENBANK/AB122211
+SI  - GENBANK/AB122212
+SI  - GENBANK/AB122213
+SI  - GENBANK/AB122214
+SI  - GENBANK/AB122215
+SI  - GENBANK/AB122216
+SI  - GENBANK/AB122217
+SI  - GENBANK/AB122218
+SI  - GENBANK/AB122219
+SI  - GENBANK/AB122220
+SI  - GENBANK/AB122221
+SI  - GENBANK/AB122222
+SI  - GENBANK/AB122223
+SI  - GENBANK/AB122224
+SI  - GENBANK/AB122225
+SI  - GENBANK/AB122226
+SI  - GENBANK/AB122227
+SI  - GENBANK/AB122228
+SI  - GENBANK/AB122229
+SI  - GENBANK/AB122230
+SI  - GENBANK/AB122231
+SI  - GENBANK/AB122232
+SI  - GENBANK/AB122233
+SI  - GENBANK/AB122234
+SI  - GENBANK/AB122235
+SI  - GENBANK/AB122236
+SI  - GENBANK/AB122237
+SI  - GENBANK/AB122238
+SI  - GENBANK/AB122239
+SI  - GENBANK/AB122240
+SI  - GENBANK/AB122241
+SI  - GENBANK/AB122242
+SI  - GENBANK/AB122243
+SI  - GENBANK/AB122244
+SI  - GENBANK/AB122245
+SI  - GENBANK/AB122246
+SI  - GENBANK/AB122247
+SI  - GENBANK/AB122248
+SI  - GENBANK/AB122249
+SI  - GENBANK/AB122250
+SI  - GENBANK/AB122251
+SI  - GENBANK/AB122252
+SI  - GENBANK/AB122253
+SI  - GENBANK/AB122254
+SI  - GENBANK/AB122255
+SI  - GENBANK/AB122256
+SI  - GENBANK/AB122257
+SI  - GENBANK/AB122258
+SI  - GENBANK/AB122259
+SI  - GENBANK/AB122260
+SI  - GENBANK/AB122261
+SI  - GENBANK/AB122262
+SI  - GENBANK/AB122263
+SI  - GENBANK/AB122264
+SI  - GENBANK/AB122265
+SI  - GENBANK/AB122266
+SI  - GENBANK/AB122267
+SI  - GENBANK/AB122268
+SI  - GENBANK/AB122269
+SI  - GENBANK/AB122270
+SI  - GENBANK/AB122271
+SI  - GENBANK/AB122272
+SI  - GENBANK/AB122273
+SI  - GENBANK/AB122274
+SI  - GENBANK/AB122275
+SI  - GENBANK/AB122276
+SI  - GENBANK/AB122277
+SI  - GENBANK/AB122278
+SI  - GENBANK/AB122279
+SI  - GENBANK/AB122280
+SI  - GENBANK/AB122281
+SI  - GENBANK/AB122282
+SI  - GENBANK/AB122283
+SI  - GENBANK/AB122284
+SI  - GENBANK/AB122285
+SI  - GENBANK/AB122286
+SI  - GENBANK/AB122287
+SI  - GENBANK/AB122288
+SI  - GENBANK/AB122289
+SI  - GENBANK/AB122290
+SI  - GENBANK/AB122291
+SI  - GENBANK/AB122292
+SI  - GENBANK/AB122293
+SI  - GENBANK/AB122294
+SI  - GENBANK/AB122295
+SI  - GENBANK/AB122296
+SI  - GENBANK/AB122297
+SI  - GENBANK/AB122298
+SI  - GENBANK/AB122299
+SI  - GENBANK/AB122300
+SI  - GENBANK/AB122301
+SI  - GENBANK/AB122302
+SI  - GENBANK/AB122303
+SI  - GENBANK/AB122304
+SI  - GENBANK/AB122305
+SI  - GENBANK/AB122306
+SI  - GENBANK/AB122307
+SI  - GENBANK/AB122308
+SI  - GENBANK/AB122309
+SI  - GENBANK/AB122310
+SI  - GENBANK/AB122311
+SI  - GENBANK/AB122312
+SI  - GENBANK/AB122313
+SI  - GENBANK/AB122314
+SI  - GENBANK/AB122315
+SI  - GENBANK/AB122316
+SI  - GENBANK/AB122317
+SI  - GENBANK/AB122318
+SI  - GENBANK/AB122319
+SI  - GENBANK/AB122320
+SI  - GENBANK/AB122321
+SI  - GENBANK/AB122322
+SI  - GENBANK/AB122323
+SI  - GENBANK/AB122324
+SI  - GENBANK/AB122325
+SI  - GENBANK/AB122326
+SI  - GENBANK/AB122327
+SI  - GENBANK/AB122328
+SI  - GENBANK/AB122329
+SI  - GENBANK/AB122330
+SI  - GENBANK/AB122331
+SI  - GENBANK/AB122332
+SI  - GENBANK/AB122333
+SI  - GENBANK/AB122334
+SI  - GENBANK/AB122335
+SI  - GENBANK/AB122336
+SI  - GENBANK/AB122337
+SI  - GENBANK/AB122338
+SI  - GENBANK/AB122339
+SI  - GENBANK/AB122340
+SI  - GENBANK/AB122341
+SI  - GENBANK/AB122342
+SI  - GENBANK/AB122343
+SI  - GENBANK/AB122344
+SI  - GENBANK/AB122345
+SI  - GENBANK/AB122346
+SI  - GENBANK/AB122347
+SI  - GENBANK/AB122348
+SI  - GENBANK/AB122349
+SI  - GENBANK/AB122350
+SI  - GENBANK/AB122351
+SI  - GENBANK/AB122352
+SI  - GENBANK/AB122353
+SI  - GENBANK/AB122354
+SI  - GENBANK/AB122355
+SI  - GENBANK/AB122356
+SI  - GENBANK/AB122357
+SI  - GENBANK/AB122358
+SI  - GENBANK/AB122359
+SI  - GENBANK/AB122360
+SI  - GENBANK/AB122361
+SI  - GENBANK/AB122362
+SI  - GENBANK/AB122363
+SI  - GENBANK/AB122364
+SI  - GENBANK/AB122365
+SI  - GENBANK/AB122366
+SI  - GENBANK/AB122367
+SI  - GENBANK/AB122368
+SI  - GENBANK/AB122369
+SI  - GENBANK/AB122370
+SI  - GENBANK/AB122371
+SI  - GENBANK/AB122372
+SI  - GENBANK/AB122373
+SI  - GENBANK/AB122374
+SI  - GENBANK/AB122375
+SI  - GENBANK/AB122376
+SI  - GENBANK/AB122377
+SI  - GENBANK/AB122378
+SI  - GENBANK/AB122379
+SI  - GENBANK/AB122380
+SI  - GENBANK/AB122381
+SI  - GENBANK/AB122382
+SI  - GENBANK/AB122383
+SI  - GENBANK/AB122384
+SI  - GENBANK/AB122385
+SI  - GENBANK/AB122386
+SI  - GENBANK/AB122387
+SI  - GENBANK/AB122388
+SI  - GENBANK/AB122389
+SI  - GENBANK/AB122390
+SI  - GENBANK/AB122391
+SI  - GENBANK/AB122392
+SI  - GENBANK/AB122393
+SI  - GENBANK/AB122394
+SI  - GENBANK/AB122395
+SI  - GENBANK/AB122396
+SI  - GENBANK/AB122397
+SI  - GENBANK/AB122398
+SI  - GENBANK/AB122399
+SI  - GENBANK/AB122400
+SI  - GENBANK/AB122401
+SI  - GENBANK/AB122402
+SI  - GENBANK/AB122403
+SI  - GENBANK/AB122404
+SI  - GENBANK/AB122405
+SI  - GENBANK/AB122406
+SI  - GENBANK/AB122407
+SI  - GENBANK/AB122408
+SI  - GENBANK/AB122409
+SI  - GENBANK/AB122410
+SI  - GENBANK/AB122411
+SI  - GENBANK/AB122412
+SI  - GENBANK/AB122413
+SI  - GENBANK/AB122414
+SI  - GENBANK/AB122415
+SI  - GENBANK/AB122416
+SI  - GENBANK/AB122417
+SI  - GENBANK/AB122418
+SI  - GENBANK/AB122419
+SI  - GENBANK/AB122420
+SI  - GENBANK/AB122421
+SI  - GENBANK/AB122422
+SI  - GENBANK/AB122423
+SI  - GENBANK/AB122424
+SI  - GENBANK/AB122425
+SI  - GENBANK/AB122426
+SI  - GENBANK/AB122427
+SI  - GENBANK/AB122428
+SI  - GENBANK/AB122429
+SI  - GENBANK/AB122430
+SI  - GENBANK/AB122431
+SI  - GENBANK/AB122432
+SI  - GENBANK/AB122433
+SI  - GENBANK/AB122434
+SI  - GENBANK/AB122435
+SI  - GENBANK/AB122436
+SI  - GENBANK/AB122437
+SI  - GENBANK/AB122438
+SI  - GENBANK/AB122439
+SI  - GENBANK/AB122440
+SI  - GENBANK/AB122441
+SI  - GENBANK/AB122442
+SI  - GENBANK/AB122443
+SI  - GENBANK/AB122444
+SI  - GENBANK/AB122445
+SI  - GENBANK/AB122446
+SI  - GENBANK/AB122447
+SI  - GENBANK/AB122448
+SI  - GENBANK/AB122449
+SI  - GENBANK/AB122450
+SI  - GENBANK/AB122451
+SI  - GENBANK/AB122452
+SI  - GENBANK/AB122453
+SI  - GENBANK/AB122454
+SI  - GENBANK/AB122455
+SI  - GENBANK/AB122456
+SI  - GENBANK/AB122457
+SI  - GENBANK/AB122458
+SI  - GENBANK/AB122459
+SI  - GENBANK/AB122460
+SI  - GENBANK/AB122461
+SI  - GENBANK/AB122462
+SI  - GENBANK/AB122463
+SI  - GENBANK/AB122464
+SI  - GENBANK/AB122465
+SI  - GENBANK/AB122466
+SI  - GENBANK/AB122467
+SI  - GENBANK/AB122468
+SI  - GENBANK/AB122469
+SI  - GENBANK/AB122470
+SI  - GENBANK/AB122471
+SI  - GENBANK/AB122472
+SI  - GENBANK/AB122473
+SI  - GENBANK/AB122474
+SI  - GENBANK/AB122475
+SI  - GENBANK/AB122476
+SI  - GENBANK/AB122477
+SI  - GENBANK/AB122478
+SI  - GENBANK/AB122479
+SI  - GENBANK/AB122480
+SI  - GENBANK/AB122481
+SI  - GENBANK/AB122482
+SI  - GENBANK/AB122483
+SI  - GENBANK/AB122484
+SI  - GENBANK/AB122485
+SI  - GENBANK/AB122486
+SI  - GENBANK/AB122487
+SI  - GENBANK/AB122488
+SI  - GENBANK/AB122489
+SI  - GENBANK/AB122490
+SI  - GENBANK/AB122491
+SI  - GENBANK/AB122492
+SI  - GENBANK/AB122493
+SI  - GENBANK/AB122494
+SI  - GENBANK/AB122495
+SI  - GENBANK/AB122496
+SI  - GENBANK/AB122497
+SI  - GENBANK/AB122498
+SI  - GENBANK/AB122499
+SI  - GENBANK/AB122500
+SI  - GENBANK/AB122501
+SI  - GENBANK/AB122502
+SI  - GENBANK/AB122503
+SI  - GENBANK/AB122504
+SI  - GENBANK/AB122505
+SI  - GENBANK/AB122506
+SI  - GENBANK/AB122507
+SI  - GENBANK/AB122508
+SI  - GENBANK/AB122509
+SI  - GENBANK/AB122510
+SI  - GENBANK/AB122511
+SI  - GENBANK/AB122512
+SI  - GENBANK/AB122513
+SI  - GENBANK/AB122514
+SI  - GENBANK/AB122515
+SI  - GENBANK/AB122516
+SI  - GENBANK/AB122517
+SI  - GENBANK/AB122518
+SI  - GENBANK/AB122519
+SI  - GENBANK/AB122520
+SI  - GENBANK/AB122521
+SI  - GENBANK/AB122522
+SI  - GENBANK/AB122523
+SI  - GENBANK/AB122524
+SI  - GENBANK/AB122525
+SI  - GENBANK/AB122526
+SI  - GENBANK/AB122527
+SI  - GENBANK/AB122528
+SI  - GENBANK/AB122529
+SI  - GENBANK/AB122530
+SI  - GENBANK/AB122531
+SI  - GENBANK/AB122532
+SI  - GENBANK/AB122533
+SI  - GENBANK/AB122534
+SI  - GENBANK/AB122535
+SI  - GENBANK/AB122536
+SI  - GENBANK/AB122537
+SI  - GENBANK/AB122538
+SI  - GENBANK/AB122539
+SI  - GENBANK/AB122540
+SI  - GENBANK/AB122541
+SI  - GENBANK/AB122542
+SI  - GENBANK/AB122543
+SI  - GENBANK/AB122544
+SI  - GENBANK/AB122545
+SI  - GENBANK/AB122546
+SI  - GENBANK/AB122547
+SI  - GENBANK/AB122548
+SI  - GENBANK/AB122549
+SI  - GENBANK/AB122550
+SI  - GENBANK/AB122551
+SI  - GENBANK/AB122552
+SI  - GENBANK/AB122553
+SI  - GENBANK/AB122554
+SI  - GENBANK/AB122555
+SI  - GENBANK/AB122556
+SI  - GENBANK/AB122557
+SI  - GENBANK/AB122558
+SI  - GENBANK/AB122559
+SI  - GENBANK/AB122560
+SI  - GENBANK/AB122561
+SI  - GENBANK/AB122562
+SI  - GENBANK/AB122563
+SI  - GENBANK/AB122564
+SI  - GENBANK/AB122565
+SI  - GENBANK/AB122566
+SI  - GENBANK/AB122567
+SI  - GENBANK/AB122568
+SI  - GENBANK/AB122569
+SI  - GENBANK/AB122570
+SI  - GENBANK/AB122571
+SI  - GENBANK/AB122572
+SI  - GENBANK/AB122573
+SI  - GENBANK/AB122574
+SI  - GENBANK/AB122575
+SI  - GENBANK/AB122576
+SI  - GENBANK/AB122577
+SI  - GENBANK/AB122578
+SI  - GENBANK/AB122579
+SI  - GENBANK/AB122580
+SI  - GENBANK/AB122581
+SI  - GENBANK/AB122582
+SI  - GENBANK/AB122583
+SI  - GENBANK/AB122584
+SI  - GENBANK/AB122585
+SI  - GENBANK/AB122586
+SI  - GENBANK/AB122587
+SI  - GENBANK/AB122588
+SI  - GENBANK/AB122589
+SI  - GENBANK/AB122590
+SI  - GENBANK/AB122591
+SI  - GENBANK/AB122592
+SI  - GENBANK/AB122593
+SI  - GENBANK/AB122594
+SI  - GENBANK/AB122595
+SI  - GENBANK/AB122596
+SI  - GENBANK/AB122597
+SI  - GENBANK/AB122598
+SI  - GENBANK/AB122599
+SI  - GENBANK/AB122600
+SI  - GENBANK/AB122601
+SI  - GENBANK/AB122602
+SI  - GENBANK/AB122603
+SI  - GENBANK/AB122604
+SI  - GENBANK/AB122605
+SI  - GENBANK/AB122606
+SI  - GENBANK/AB122607
+SI  - GENBANK/AB122608
+SI  - GENBANK/AB122609
+SI  - GENBANK/AB122610
+SI  - GENBANK/AB122611
+SI  - GENBANK/AB122612
+SI  - GENBANK/AB122613
+SI  - GENBANK/AB122614
+SI  - GENBANK/AB122615
+SI  - GENBANK/AB122616
+SI  - GENBANK/AB122617
+SI  - GENBANK/AB122618
+SI  - GENBANK/AB122619
+SI  - GENBANK/AB122620
+SI  - GENBANK/AB122621
+SI  - GENBANK/AB122622
+SI  - GENBANK/AB122623
+SI  - GENBANK/AB122624
+SI  - GENBANK/AB122625
+SI  - GENBANK/AB122626
+SI  - GENBANK/AB122627
+SI  - GENBANK/AB122628
+SI  - GENBANK/AB122629
+SI  - GENBANK/AB122630
+SI  - GENBANK/AB122631
+SI  - GENBANK/AB122632
+SI  - GENBANK/AB122633
+SI  - GENBANK/AB122634
+SI  - GENBANK/AB122635
+SI  - GENBANK/AB122636
+SI  - GENBANK/AB122637
+SI  - GENBANK/AB122638
+SI  - GENBANK/AB122639
+SI  - GENBANK/AB122640
+SI  - GENBANK/AB122641
+SI  - GENBANK/AB122642
+SI  - GENBANK/AB122643
+SI  - GENBANK/AB122644
+SI  - GENBANK/AB122645
+SI  - GENBANK/AB122646
+SI  - GENBANK/AB122647
+SI  - GENBANK/AB122648
+SI  - GENBANK/AB122649
+SI  - GENBANK/AB122650
+SI  - GENBANK/AB122651
+SI  - GENBANK/AB122652
+SI  - GENBANK/AB122653
+SI  - GENBANK/AB122654
+SI  - GENBANK/AB122655
+SI  - GENBANK/AB122656
+SI  - GENBANK/AB122657
+SI  - GENBANK/AB122658
+SI  - GENBANK/AB122659
+SI  - GENBANK/AB122660
+SI  - GENBANK/AB122661
+SI  - GENBANK/AB122662
+SI  - GENBANK/AB122663
+SI  - GENBANK/AB122664
+SI  - GENBANK/AB122665
+SI  - GENBANK/AB122666
+SI  - GENBANK/AB122667
+SI  - GENBANK/AB122668
+SI  - GENBANK/AB122669
+SI  - GENBANK/AB122670
+SI  - GENBANK/AB122671
+SI  - GENBANK/AB122672
+SI  - GENBANK/AB122673
+SI  - GENBANK/AB122674
+SI  - GENBANK/AB122675
+SI  - GENBANK/AB122676
+SI  - GENBANK/AB122677
+SI  - GENBANK/AB122678
+SI  - GENBANK/AB122679
+SI  - GENBANK/AB122680
+SI  - GENBANK/AB122681
+SI  - GENBANK/AB122682
+SI  - GENBANK/AB122683
+SI  - GENBANK/AB122684
+SI  - GENBANK/AB122685
+SI  - GENBANK/AB122686
+SI  - GENBANK/AB122687
+SI  - GENBANK/AB122688
+SI  - GENBANK/AB122689
+SI  - GENBANK/AB122690
+SI  - GENBANK/AB122691
+SI  - GENBANK/AB122692
+SI  - GENBANK/AB122693
+SI  - GENBANK/AB122694
+SI  - GENBANK/AB122695
+SI  - GENBANK/AB122696
+SI  - GENBANK/AB122697
+SI  - GENBANK/AB122698
+SI  - GENBANK/AB122699
+SI  - GENBANK/AB122700
+SI  - GENBANK/AB122701
+SI  - GENBANK/AB122702
+SI  - GENBANK/AB122703
+SI  - GENBANK/AB122704
+SI  - GENBANK/AB122705
+SI  - GENBANK/AB122706
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20040302
+PL  - Japan
+TA  - J Hum Genet
+JT  - Journal of human genetics
+JID - 9808008
+RN  - 0 (DNA, Mitochondrial)
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Asian Continental Ancestry Group/genetics
+MH  - Cell Lineage/genetics
+MH  - Chromosomes, Human, Y/*genetics
+MH  - DNA/analysis
+MH  - DNA, Mitochondrial/*genetics
+MH  - Ethnic Groups/*genetics
+MH  - Geography
+MH  - Haplotypes/genetics
+MH  - Humans
+MH  - Japan/epidemiology
+MH  - Male
+MH  - Molecular Sequence Data
+MH  - Phylogeny
+MH  - Polymorphism, Genetic/*genetics
+EDAT- 2004/03/05 05:00
+MHDA- 2004/06/04 05:00
+PHST- 2003/11/10 [received]
+PHST- 2004/01/13 [accepted]
+PHST- 2004/03/02 [aheadofprint]
+AID - 10.1007/s10038-004-0131-x [doi]
+PST - ppublish
+SO  - J Hum Genet. 2004;49(4):187-93. Epub 2004 Mar 2.
+
+PMID- 16080116
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050804
+DCOM- 20060206
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 77
+IP  - 3
+DP  - 2005 Sep
+TI  - Y-chromosome evidence of southern origin of the East Asian-specific
+      haplogroup O3-M122.
+PG  - 408-19
+AB  - The prehistoric peopling of East Asia by modern humans remains
+      controversial with respect to early population migrations. Here, we
+      present a systematic sampling and genetic screening of an East
+      Asian-specific Y-chromosome haplogroup (O3-M122) in 2,332 individuals from
+      diverse East Asian populations. Our results indicate that the O3-M122
+      lineage is dominant in East Asian populations, with an average frequency
+      of 44.3%. The microsatellite data show that the O3-M122 haplotypes in
+      southern East Asia are more diverse than those in northern East Asia,
+      suggesting a southern origin of the O3-M122 mutation. It was estimated
+      that the early northward migration of the O3-M122 lineages in East Asia
+      occurred approximately 25,000-30,000 years ago, consistent with the fossil
+      records of modern humans in East Asia.
+AD  - Key Laboratory of Cellular and Molecular Evolution, Kunming Institute of
+      Zoology, Kunming, China. sub@mail.kiz.ac.cn.
+FAU - Shi, Hong
+AU  - Shi H
+FAU - Dong, Yong-Li
+AU  - Dong YL
+FAU - Wen, Bo
+AU  - Wen B
+FAU - Xiao, Chun-Jie
+AU  - Xiao CJ
+FAU - Underhill, Peter A
+AU  - Underhill PA
+FAU - Shen, Pei-Dong
+AU  - Shen PD
+FAU - Chakraborty, Ranajit
+AU  - Chakraborty R
+FAU - Jin, Li
+AU  - Jin L
+FAU - Su, Bing
+AU  - Su B
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20050714
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Chromosomes, Human, Y/*genetics
+MH  - *Evolution, Molecular
+MH  - Far East
+MH  - Genetic Markers/genetics
+MH  - *Genetics, Population
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Male
+MH  - Pedigree
+MH  - Polymorphism, Single Nucleotide
+MH  - *Population Dynamics
+MH  - *Variation (Genetics)
+PMC - PMC1226206
+EDAT- 2005/08/05 09:00
+MHDA- 2006/02/07 09:00
+PHST- 2005/03/14 [received]
+PHST- 2005/06/29 [accepted]
+PHST- 2005/07/14 [aheadofprint]
+AID - S0002-9297(07)63021-3 [pii]
+AID - 10.1086/444436 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2005 Sep;77(3):408-19. Epub 2005 Jul 14.
+
+PMID- 16923821
+OWN - NLM
+STAT- MEDLINE
+DA  - 20061002
+DCOM- 20070112
+PUBM- Print-Electronic
+IS  - 0737-4038 (Print)
+VI  - 23
+IP  - 11
+DP  - 2006 Nov
+TI  - Melanesian and Asian origins of Polynesians: mtDNA and Y chromosome
+      gradients across the Pacific.
+PG  - 2234-44
+AB  - The human settlement of the Pacific Islands represents one of the most
+      recent major migration events of mankind. Polynesians originated in Asia
+      according to linguistic evidence or in Melanesia according to
+      archaeological evidence. To shed light on the genetic origins of
+      Polynesians, we investigated over 400 Polynesians from 8 island groups, in
+      comparison with over 900 individuals from potential parental populations
+      of Melanesia, Southeast and East Asia, and Australia, by means of Y
+      chromosome (NRY) and mitochondrial DNA (mtDNA) markers. Overall, we
+      classified 94.1% of Polynesian Y chromosomes and 99.8% of Polynesian
+      mtDNAs as of either Melanesian (NRY-DNA: 65.8%, mtDNA: 6%) or Asian
+      (NRY-DNA: 28.3%, mtDNA: 93.8%) origin, suggesting a dual genetic origin of
+      Polynesians in agreement with the "Slow Boat" hypothesis. Our data suggest
+      a pronounced admixture bias in Polynesians toward more Melanesian men than
+      women, perhaps as a result of matrilocal residence in the ancestral
+      Polynesian society. Although dating methods are consistent with somewhat
+      similar entries of NRY/mtDNA haplogroups into Polynesia, haplotype sharing
+      suggests an earlier appearance of Melanesian haplogroups than those from
+      Asia. Surprisingly, we identified gradients in the frequency distribution
+      of some NRY/mtDNA haplogroups across Polynesia and a gradual west-to-east
+      decrease of overall NRY/mtDNA diversity, not only providing evidence for a
+      west-to-east direction of Polynesian settlements but also suggesting that
+      Pacific voyaging was regular rather than haphazard. We also demonstrate
+      that Fiji played a pivotal role in the history of Polynesia: humans
+      probably first migrated to Fiji, and subsequent settlement of Polynesia
+      probably came from Fiji.
+AD  - Department of Evolutionary Genetics, Max Planck Institute for Evolutionary
+      Anthropology, Leipzig, Germany. m.kayser@erasmusmc.nl
+FAU - Kayser, Manfred
+AU  - Kayser M
+FAU - Brauer, Silke
+AU  - Brauer S
+FAU - Cordaux, Richard
+AU  - Cordaux R
+FAU - Casto, Amanda
+AU  - Casto A
+FAU - Lao, Oscar
+AU  - Lao O
+FAU - Zhivotovsky, Lev A
+AU  - Zhivotovsky LA
+FAU - Moyse-Faurie, Claire
+AU  - Moyse-Faurie C
+FAU - Rutledge, Robb B
+AU  - Rutledge RB
+FAU - Schiefenhoevel, Wulf
+AU  - Schiefenhoevel W
+FAU - Gil, David
+AU  - Gil D
+FAU - Lin, Alice A
+AU  - Lin AA
+FAU - Underhill, Peter A
+AU  - Underhill PA
+FAU - Oefner, Peter J
+AU  - Oefner PJ
+FAU - Trent, Ronald J
+AU  - Trent RJ
+FAU - Stoneking, Mark
+AU  - Stoneking M
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20060821
+PL  - United States
+TA  - Mol Biol Evol
+JT  - Molecular biology and evolution
+JID - 8501455
+RN  - 0 (DNA, Mitochondrial)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - *Chromosomes, Human, Y
+MH  - Cluster Analysis
+MH  - DNA, Mitochondrial/*genetics
+MH  - Emigration and Immigration
+MH  - Female
+MH  - *Genetic Heterogeneity
+MH  - *Genetic Markers
+MH  - Haplotypes
+MH  - Humans
+MH  - Male
+MH  - Melanesia/ethnology
+MH  - Pacific Islands
+MH  - Phylogeny
+MH  - Polynesia/ethnology
+MH  - *Time
+EDAT- 2006/08/23 09:00
+MHDA- 2007/01/16 09:00
+PHST- 2006/08/21 [aheadofprint]
+AID - msl093 [pii]
+AID - 10.1093/molbev/msl093 [doi]
+PST - ppublish
+SO  - Mol Biol Evol. 2006 Nov;23(11):2234-44. Epub 2006 Aug 21.
+
+PMID- 17237948
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070601
+DCOM- 20070731
+PUBM- Print-Electronic
+IS  - 0937-9827 (Print)
+VI  - 121
+IP  - 3
+DP  - 2007 May
+TI  - Genetic analysis of three US population groups using an X-chromosomal STR
+      decaplex.
+PG  - 198-203
+AB  - An X-chromosomal multiplex amplifying ten short tandem repeats (STRs) in
+      one single PCR reaction was developed and optimized in this work. The
+      X-STRs included were DXS8378, DXS9898, DXS8377, HPRTB, GATA172D05,
+      DXS7423, DXS6809, DXS7132, DXS101, and DXS6789. Decaplex performance was
+      tested on 377 male samples from three United States population groups,
+      namely, 130 African Americans, 104 Asians, and 143 Hispanics. DXS8377 was
+      the most polymorphic locus across all three populations, whereas DXS7423
+      was the least informative marker. Genetic distance analysis (R (ST) and F
+      (ST)) performed for the three populations residing in New York showed
+      significant genetic distances between population groups for most pairwise
+      comparisons, except for HPRTB, DXS6809, and DXS7132. When testing linkage
+      disequilibrium for all pairs of loci in the three groups, no significant
+      association was found between any pair of the loci studied, after applying
+      Bonferroni correction. The high values for the average probability of
+      excluding a random man obtained in all three populations when both mother
+      and daughter are tested or when father/daughter relationships are
+      evaluated support the potential of this decaplex system in kinship
+      analysis. Also, the overall high power of discrimination values for
+      samples of female and male origin, confirms the usefulness of this
+      decaplex system in identification analysis. As expected, results also
+      support the use of independent databases comprising these ten X-linked
+      loci for the three US populations evaluated.
+AD  - IPATIMUP, Institute of Molecular Pathology and Immunology, University of
+      Porto, Porto, Portugal. igomes@ipatimup.pt
+FAU - Gomes, Iva
+AU  - Gomes I
+FAU - Prinz, Mechthild
+AU  - Prinz M
+FAU - Pereira, Rui
+AU  - Pereira R
+FAU - Meyers, Carole
+AU  - Meyers C
+FAU - Mikulasovich, Rebecca S
+AU  - Mikulasovich RS
+FAU - Amorim, Antonio
+AU  - Amorim A
+FAU - Carracedo, Angel
+AU  - Carracedo A
+FAU - Gusmao, Leonor
+AU  - Gusmao L
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070120
+PL  - Germany
+TA  - Int J Legal Med
+JT  - International journal of legal medicine
+JID - 9101456
+SB  - IM
+MH  - *Chromosomes, Human, X
+MH  - Continental Population Groups/*genetics
+MH  - DNA Fingerprinting
+MH  - Gene Frequency
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Male
+MH  - Polymerase Chain Reaction
+MH  - Sequence Analysis, DNA
+MH  - *Tandem Repeat Sequences
+MH  - United States
+EDAT- 2007/01/24 09:00
+MHDA- 2007/08/01 09:00
+PHST- 2006/06/26 [received]
+PHST- 2006/11/27 [accepted]
+PHST- 2007/01/20 [aheadofprint]
+AID - 10.1007/s00414-006-0146-2 [doi]
+PST - ppublish
+SO  - Int J Legal Med. 2007 May;121(3):198-203. Epub 2007 Jan 20.
+
+PMID- 17364156
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070426
+DCOM- 20070809
+PUBM- Print-Electronic
+IS  - 1434-5161 (Print)
+VI  - 52
+IP  - 5
+DP  - 2007
+TI  - Y-STR variation among Slavs: evidence for the Slavic homeland in the
+      middle Dnieper basin.
+PG  - 406-14
+AB  - A set of 18 Y-chromosomal microsatellite loci was analysed in 568 males
+      from Poland, Slovakia and three regions of Belarus. The results were
+      compared to data available for 2,937 Y chromosome samples from 20 other
+      Slavic populations. Lack of relationship between linguistic, geographic
+      and historical relations between Slavic populations and Y-short tandem
+      repeat (STR) haplotype distribution was observed. Two genetically distant
+      groups of Slavic populations were revealed: one encompassing all
+      Western-Slavic, Eastern-Slavic, and two Southern-Slavic populations, and
+      one encompassing all remaining Southern Slavs. An analysis of molecular
+      variance (AMOVA) based on Y-chromosomal STRs showed that the variation
+      observed between the two population groups was 4.3%, and was higher than
+      the level of genetic variance among populations within the groups (1.2%).
+      Homogeneity of northern Slavic paternal lineages in Europe was shown to
+      stretch from the Alps to the upper Volga and involve ethnicities speaking
+      completely different branches of Slavic languages. The central position of
+      the population of Ukraine in the network of insignificant AMOVA
+      comparisons, and the lack of traces of significant contribution of ancient
+      tribes inhabiting present-day Poland to the gene pool of Eastern and
+      Southern Slavs, support hypothesis placing the earliest known homeland of
+      Slavs in the middle Dnieper basin.
+AD  - Department of Forensic Medicine, Medical University of Gdansk, ul. Marii
+      Sklodowskiej-Curie 3A, 80-210, Gdansk, Poland. k.rebala@amg.gda.pl
+FAU - Rebala, Krzysztof
+AU  - Rebala K
+FAU - Mikulich, Alexei I
+AU  - Mikulich AI
+FAU - Tsybovsky, Iosif S
+AU  - Tsybovsky IS
+FAU - Sivakova, Daniela
+AU  - Sivakova D
+FAU - Dzupinkova, Zuzana
+AU  - Dzupinkova Z
+FAU - Szczerkowska-Dobosz, Aneta
+AU  - Szczerkowska-Dobosz A
+FAU - Szczerkowska, Zofia
+AU  - Szczerkowska Z
+LA  - eng
+PT  - Journal Article
+DEP - 20070316
+PL  - Japan
+TA  - J Hum Genet
+JT  - Journal of human genetics
+JID - 9808008
+SB  - IM
+MH  - Byelarus
+MH  - *Chromosomes, Human, Y
+MH  - Emigration and Immigration
+MH  - European Continental Ancestry Group/*genetics
+MH  - Haplotypes
+MH  - Humans
+MH  - Male
+MH  - *Microsatellite Repeats
+MH  - Poland
+MH  - Slovakia
+EDAT- 2007/03/17 09:00
+MHDA- 2007/08/10 09:00
+PHST- 2006/09/15 [received]
+PHST- 2007/02/07 [accepted]
+PHST- 2007/03/16 [aheadofprint]
+AID - 10.1007/s10038-007-0125-6 [doi]
+PST - ppublish
+SO  - J Hum Genet. 2007;52(5):406-14. Epub 2007 Mar 16.
+
+PMID- 17389048
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070412
+DCOM- 20070424
+PUBM- Electronic
+IS  - 1471-2148 (Electronic)
+VI  - 7
+DP  - 2007
+TI  - Y-chromosome evidence suggests a common paternal heritage of
+      Austro-Asiatic populations.
+PG  - 47
+AB  - BACKGROUND: The Austro-Asiatic linguistic family, which is considered to
+      be the oldest of all the families in India, has a substantial presence in
+      Southeast Asia. However, the possibility of any genetic link among the
+      linguistic sub-families of the Indian Austro-Asiatics on the one hand and
+      between the Indian and the Southeast Asian Austro-Asiatics on the other
+      has not been explored till now. Therefore, to trace the origin and
+      historic expansion of Austro-Asiatic groups of India, we analysed
+      Y-chromosome SNP and STR data of the 1222 individuals from 25 Indian
+      populations, covering all the three branches of Austro-Asiatic tribes,
+      viz. Mundari, Khasi-Khmuic and Mon-Khmer, along with the previously
+      published data on 214 relevant populations from Asia and Oceania. RESULTS:
+      Our results suggest a strong paternal genetic link, not only among the
+      subgroups of Indian Austro-Asiatic populations but also with those of
+      Southeast Asia. However, maternal link based on mtDNA is not evident. The
+      results also indicate that the haplogroup O-M95 had originated in the
+      Indian Austro-Asiatic populations ~65,000 yrs BP (95% C.I. 25,442-132,230)
+      and their ancestors carried it further to Southeast Asia via the Northeast
+      Indian corridor. Subsequently, in the process of expansion, the Mon-Khmer
+      populations from Southeast Asia seem to have migrated and colonized
+      Andaman and Nicobar Islands at a much later point of time. CONCLUSION: Our
+      findings are consistent with the linguistic evidence, which suggests that
+      the linguistic ancestors of the Austro-Asiatic populations have originated
+      in India and then migrated to Southeast Asia.
+AD  - Molecular Anthropology Group, Biological Anthropology Unit, Indian
+      Statistical Institute, Hubsiguda, Hyderabad, India.
+      vikranttibriwal@yahoo.com <vikranttibriwal@yahoo.com>
+FAU - Kumar, Vikrant
+AU  - Kumar V
+FAU - Reddy, Arimanda N S
+AU  - Reddy AN
+FAU - Babu, Jagedeesh P
+AU  - Babu JP
+FAU - Rao, Tipirisetti N
+AU  - Rao TN
+FAU - Langstieh, Banrida T
+AU  - Langstieh BT
+FAU - Thangaraj, Kumarasamy
+AU  - Thangaraj K
+FAU - Reddy, Alla G
+AU  - Reddy AG
+FAU - Singh, Lalji
+AU  - Singh L
+FAU - Reddy, Battini M
+AU  - Reddy BM
+LA  - eng
+PT  - Journal Article
+DEP - 20070328
+PL  - England
+TA  - BMC Evol Biol
+JT  - BMC evolutionary biology
+JID - 100966975
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Asian Continental Ancestry Group/*genetics
+MH  - *Chromosomes, Human, Y
+MH  - Emigration and Immigration
+MH  - Ethnic Groups
+MH  - Female
+MH  - Genetic Markers
+MH  - Haplotypes
+MH  - Humans
+MH  - India
+MH  - *Language
+MH  - Male
+MH  - Microsatellite Repeats
+MH  - Phylogeny
+MH  - Polymorphism, Single Nucleotide
+PMC - PMC1851701
+EDAT- 2007/03/29 09:00
+MHDA- 2007/04/25 09:00
+PHST- 2006/11/22 [received]
+PHST- 2007/03/28 [accepted]
+PHST- 2007/03/28 [aheadofprint]
+AID - 1471-2148-7-47 [pii]
+AID - 10.1186/1471-2148-7-47 [doi]
+PST - epublish
+SO  - BMC Evol Biol. 2007 Mar 28;7:47.
+
+PMID- 17554476
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070626
+DCOM- 20070831
+PUBM- Print-Electronic
+IS  - 1434-5161 (Print)
+VI  - 52
+IP  - 7
+DP  - 2007
+TI  - Allelic variation in the NPY gene in 14 Indian populations.
+PG  - 592-8
+AB  - NPY is a 36-aminoacid peptide expressed in several areas of the nervous
+      system. Neuropeptide Y (NPY) receptors represent a widely diffused system
+      that is involved in the regulation of multiple biological functions. The
+      human NPY gene is located in chromosome 7. The functional significance of
+      coding Leu7Pro polymorphism in the signal peptide of preproNPY is known.
+      Six hundred and fifty four individuals of 14 ethnic Indian populations
+      were screened for three mutations in the NPY gene, including Leu7Pro. We
+      found that the Pro7 frequencies among the studied populations were much
+      higher than in previous studies from other parts of the world. The highest
+      allele frequency of Pro7 was detected in the Kota population in the
+      Nilgiri Hill region of south India, and this may reflect a founder event
+      in the past or genetic drift. All populations followed the Hardy-Weinberg
+      equilibrium for the assayed markers. A total of five haplotypes were
+      observed, only two of which were found to occur with a high frequency in
+      all populations. No linkage disequilibrium (LD) was observed across the
+      tested alleles in any population with the exception of Leu7Pro and
+      Ser50Ser in the Badaga population (chi(2) = 13.969; p = 0.0001).
+AD  - Centre for Cellular and Molecular Biology, Hyderabad, India.
+FAU - Bhaskar, L V K S
+AU  - Bhaskar LV
+FAU - Thangaraj, K
+AU  - Thangaraj K
+FAU - Shah, Anish M
+AU  - Shah AM
+FAU - Pardhasaradhi, G
+AU  - Pardhasaradhi G
+FAU - Praveen Kumar, K
+AU  - Praveen Kumar K
+FAU - Reddy, A G
+AU  - Reddy AG
+FAU - Papa Rao, A
+AU  - Papa Rao A
+FAU - Mulligan, C J
+AU  - Mulligan CJ
+FAU - Singh, Lalji
+AU  - Singh L
+FAU - Rao, V R
+AU  - Rao VR
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070607
+PL  - Japan
+TA  - J Hum Genet
+JT  - Journal of human genetics
+JID - 9808008
+RN  - 0 (Neuropeptide Y)
+RN  - 147-85-3 (Proline)
+SB  - IM
+MH  - *Alleles
+MH  - Amino Acid Substitution/genetics
+MH  - *Genetics, Population
+MH  - Humans
+MH  - India/ethnology
+MH  - Male
+MH  - Neuropeptide Y/chemistry/*genetics
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Proline/genetics
+MH  - *Variation (Genetics)
+EDAT- 2007/06/08 09:00
+MHDA- 2007/09/01 09:00
+PHST- 2007/03/27 [received]
+PHST- 2007/05/06 [accepted]
+PHST- 2007/06/07 [aheadofprint]
+AID - 10.1007/s10038-007-0158-x [doi]
+PST - ppublish
+SO  - J Hum Genet. 2007;52(7):592-8. Epub 2007 Jun 7.
+
+PMID- 17628738
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070911
+DCOM- 20071109
+PUBM- Print-Electronic
+IS  - 1434-5161 (Print)
+VI  - 52
+IP  - 9
+DP  - 2007
+TI  - A comprehensive analysis of microsatellite diversity in Aboriginal
+      Australians.
+PG  - 712-28
+AB  - Indigenous Australians have a unique evolutionary history that has
+      resulted in a complex system of inter and intra-tribal relationships.
+      While a number of studies have examined the population genetics of
+      indigenous Australians, most have used a single sample to illuminate
+      details of the global dispersal of modern humans and few studies have
+      focussed on the population genetic features of the widely dispersed
+      communities of the indigenous population. In this study we examine the
+      largest Aboriginal Australian sample yet analysed (N = 8,868) at fifteen
+      hypervariable autosomal microsatellite loci. A comprehensive analysis of
+      differentiation indicates different levels of heterogeneity among
+      indigenous peoples from traditional regions of Aboriginal Australia. The
+      most genetically differentiated populations inhabit the North of the
+      country, in particular the Tiwi of Melville and Bathurst islands, Arnhem
+      Land (itself divided into West and East Arnhem), and Fitzmaurice regions.
+      These tribal groups are most differentiated from other Aboriginal
+      Australian tribes, especially those of the Central Desert regions, and
+      also show marked heterogeneity from one another. These genetic findings
+      are supportive of observations of body measurements, skin colour, and
+      dermatoglyphic features which also vary substantially between tribes of
+      the North (e.g. Arnhem Land) and Central Australian regions and, more
+      specifically, between the Tiwi and West and East Arnhem tribes. This study
+      provides the most comprehensive survey of the population genetics of
+      Aboriginal Australia.
+AD  - Forensic and Technical Services, Australian Federal Police, , Canberra,
+      ACT 2601, Australia. simonjoseph.walsh@afp.gov.au
+FAU - Walsh, Simon J
+AU  - Walsh SJ
+FAU - Mitchell, R John
+AU  - Mitchell RJ
+FAU - Watson, Natalie
+AU  - Watson N
+FAU - Buckleton, John S
+AU  - Buckleton JS
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070713
+PL  - Japan
+TA  - J Hum Genet
+JT  - Journal of human genetics
+JID - 9808008
+SB  - IM
+MH  - Analysis of Variance
+MH  - Ethnic Groups/genetics
+MH  - *Genetics, Population
+MH  - Geography
+MH  - Heterozygote
+MH  - Humans
+MH  - Microsatellite Repeats/*genetics
+MH  - Oceanic Ancestry Group/*genetics
+MH  - Phylogeny
+MH  - Variation (Genetics)
+EDAT- 2007/07/14 09:00
+MHDA- 2007/11/10 09:00
+PHST- 2007/03/19 [received]
+PHST- 2007/06/18 [accepted]
+PHST- 2007/07/13 [aheadofprint]
+AID - 10.1007/s10038-007-0172-z [doi]
+PST - ppublish
+SO  - J Hum Genet. 2007;52(9):712-28. Epub 2007 Jul 13.
+
+PMID- 1992475
+OWN - NLM
+STAT- MEDLINE
+DA  - 19910308
+DCOM- 19910308
+LR  - 20071114
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 88
+IP  - 3
+DP  - 1991 Feb 1
+TI  - Drift, admixture, and selection in human evolution: a study with DNA
+      polymorphisms.
+PG  - 839-43
+AB  - Accuracy of evolutionary analysis of populations within a species requires
+      the testing of a large number of genetic polymorphisms belonging to many
+      loci. We report here a reconstruction of human differentiation based on
+      100 DNA polymorphisms tested in five populations from four continents. The
+      results agree with earlier conclusions based on other classes of genetic
+      markers but reveal that Europeans do not fit a simple model of
+      independently evolving populations with equal evolutionary rates.
+      Evolutionary models involving early admixture are compatible with the
+      data. Taking one such model into account, we examined through simulation
+      whether random genetic drift alone might explain the variation among gene
+      frequencies across populations and genes. A measure of variation among
+      populations was calculated for each polymorphism, and its distribution for
+      the 100 polymorphisms was compared with that expected for a drift-only
+      hypothesis. At least two-thirds of the polymorphisms appear to be
+      selectively neutral, but there are significant deviations at the two ends
+      of the observed distribution of the measure of variation: a slight excess
+      of polymorphisms with low variation and a greater excess with high
+      variation. This indicates that a few DNA polymorphisms are affected by
+      natural selection, rarely heterotic, and more often disruptive, while most
+      are selectively neutral.
+AD  - Department of Genetics, Stanford University, CA 94305.
+FAU - Bowcock, A M
+AU  - Bowcock AM
+FAU - Kidd, J R
+AU  - Kidd JR
+FAU - Mountain, J L
+AU  - Mountain JL
+FAU - Hebert, J M
+AU  - Hebert JM
+FAU - Carotenuto, L
+AU  - Carotenuto L
+FAU - Kidd, K K
+AU  - Kidd KK
+FAU - Cavalli-Sforza, L L
+AU  - Cavalli-Sforza LL
+LA  - eng
+GR  - GM20467/GM/United States NIGMS
+GR  - GM40883/GM/United States NIGMS
+GR  - MH39239/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Animals
+MH  - DNA/*genetics
+MH  - *Evolution
+MH  - *Gene Frequency
+MH  - Genes
+MH  - Hominidae/*genetics
+MH  - Humans
+MH  - *Polymorphism, Genetic
+MH  - Probability
+MH  - *Selection (Genetics)
+PMC - PMC50909
+EDAT- 1991/02/01
+MHDA- 1991/02/01 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1991 Feb 1;88(3):839-43.
+
+PMID- 7476132
+OWN - NLM
+STAT- MEDLINE
+DA  - 19951205
+DCOM- 19951205
+LR  - 20061115
+PUBM- Print
+IS  - 0737-4038 (Print)
+VI  - 12
+IP  - 5
+DP  - 1995 Sep
+TI  - Improved analyses of human mtDNA sequences support a recent African origin
+      for Homo sapiens.
+PG  - 863-82
+AB  - New quantitative methods are applied to the 135 human mitochondrial
+      sequences from the Vigilant et al. data set. General problems in analyzing
+      large numbers of short sequences are discussed, and an improved strategy
+      is suggested. A key feature is to focus not on individual trees but on the
+      general "landscape" of trees. Over 1,000 searches were made from random
+      starting trees with only one tree (a local optimum) being retained each
+      time, thereby ensuring optima were found independently. A new tree
+      comparison metric was developed that is unaffected by rearrangements of
+      trees around many very short internal edges. Use of this metric showed
+      that downweighting hypervariable sites revealed more evolutionary
+      structure than studies that weighted all sites equally. Our results are
+      consistent with convergence toward a global optimum. Crucial features are
+      that the best optima show very strong regional differentiation, a common
+      group of 49 African sequences is found in all the best optima, and the
+      best optima contain the 16 !Kung sequences in a separate group of San
+      people. The other 86 sequences form a heterogeneous mixture of Africans,
+      Europeans, Australopapuans, and Asians. Thus all major human lineages
+      occur in Africa, but only a subset occurs in the rest of the world. The
+      existence of these African-only groups strongly contradicts multiregional
+      theories for the origin of Homo sapiens that require widespread migration
+      and interbreeding over the entire range of H. erectus. Only when the
+      multiregional model is rejected is it appropriate to consider the root,
+      based on a single locus, to be the center of origin of a population
+      (otherwise different loci could give alternative geographic positions for
+      the root). For this data, several methods locate the root within the group
+      of 49 African sequences and are thus consistent with the recent African
+      origin of H. sapiens. We demonstrate that the time of the last common
+      ancestor cannot be the time of major expansion in human numbers, and our
+      results are thus also consistent with recent models that differentiate
+      between the last common ancestor, expansion out of Africa, and the major
+      expansion in human populations. Such a two-phase model is consistent with
+      a wide range of molecular and archeological evidence.
+AD  - School of Biological Sciences, Massey University, Palmerston North, New
+      Zealand.
+FAU - Penny, D
+AU  - Penny D
+FAU - Steel, M
+AU  - Steel M
+FAU - Waddell, P J
+AU  - Waddell PJ
+FAU - Hendy, M D
+AU  - Hendy MD
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Mol Biol Evol
+JT  - Molecular biology and evolution
+JID - 8501455
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+MH  - Africa
+MH  - Animals
+MH  - Continental Population Groups/*genetics
+MH  - DNA, Mitochondrial/*genetics
+MH  - Decision Trees
+MH  - Ethnic Groups/*genetics
+MH  - *Evolution
+MH  - Hominidae/classification/*genetics
+MH  - Humans
+MH  - *Models, Genetic
+MH  - Models, Statistical
+MH  - Phylogeny
+EDAT- 1995/09/01
+MHDA- 1995/09/01 00:01
+PST - ppublish
+SO  - Mol Biol Evol. 1995 Sep;12(5):863-82.
+
+PMID- 7668280
+OWN - NLM
+STAT- MEDLINE
+DA  - 19951012
+DCOM- 19951012
+LR  - 20071114
+PUBM- Print
+IS  - 0002-9297 (Print)
+VI  - 57
+IP  - 3
+DP  - 1995 Sep
+TI  - Origins and affinities of modern humans: a comparison of mitochondrial and
+      nuclear genetic data.
+PG  - 523-38
+AB  - To test hypotheses about the origin of modern humans, we analyzed mtDNA
+      sequences, 30 nuclear restriction-site polymorphisms (RSPs), and 30
+      tetranucleotide short tandem repeat (STR) polymorphisms in 243 Africans,
+      Asians, and Europeans. An evolutionary tree based on mtDNA displays deep
+      African branches, indicating greater genetic diversity for African
+      populations. This finding, which is consistent with previous mtDNA
+      analyses, has been interpreted as evidence for an African origin of modern
+      humans. Both sets of nuclear polymorphisms, as well as a third set of
+      trinucleotide polymorphisms, are highly consistent with one another but
+      fail to show deep branches for African populations. These results, which
+      represent the first direct comparison of mtDNA and nuclear genetic data in
+      major continental populations, undermine the genetic evidence for an
+      African origin of modern humans.
+AD  - Department of Human Genetics, Eccles Institute of Human Genetics,
+      University of Utah Health Sciences Center, Salt Lake City 84112, USA.
+FAU - Jorde, L B
+AU  - Jorde LB
+FAU - Bamshad, M J
+AU  - Bamshad MJ
+FAU - Watkins, W S
+AU  - Watkins WS
+FAU - Zenger, R
+AU  - Zenger R
+FAU - Fraley, A E
+AU  - Fraley AE
+FAU - Krakowiak, P A
+AU  - Krakowiak PA
+FAU - Carpenter, K D
+AU  - Carpenter KD
+FAU - Soodyall, H
+AU  - Soodyall H
+FAU - Jenkins, T
+AU  - Jenkins T
+FAU - Rogers, A R
+AU  - Rogers AR
+LA  - eng
+GR  - RR-00064/RR/United States NCRR
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+MH  - Africa
+MH  - Asia
+MH  - Base Sequence
+MH  - DNA, Mitochondrial/*genetics
+MH  - Europe
+MH  - *Evolution
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Molecular Sequence Data
+MH  - *Polymorphism, Genetic
+MH  - Variation (Genetics)
+PMC - PMC1801280
+EDAT- 1995/09/01
+MHDA- 1995/09/01 00:01
+PST - ppublish
+SO  - Am J Hum Genet. 1995 Sep;57(3):523-38.
+
+PMID- 8876258
+OWN - NLM
+STAT- MEDLINE
+DA  - 19961204
+DCOM- 19961204
+LR  - 20061115
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 93
+IP  - 21
+DP  - 1996 Oct 15
+TI  - Paternal and maternal DNA lineages reveal a bottleneck in the founding of
+      the Finnish population.
+PG  - 12035-9
+AB  - An analysis of Y-chromosomal haplotypes in several European populations
+      reveals an almost monomorphic pattern in the Finns, whereas Y-chromosomal
+      diversity is significantly higher in other populations. Furthermore,
+      analyses of nucleotide positions in the mitochondrial control region that
+      evolve slowly show a decrease in genetic diversity in Finns. Thus,
+      relatively few men and women have contributed the genetic lineages that
+      today survive in the Finnish population. This is likely to have caused the
+      so-called "Finnish disease heritage"-i.e., the occurrence of several
+      genetic diseases in the Finnish population that are rare elsewhere. A
+      preliminary analysis of the mitochondrial mutations that have accumulated
+      subsequent to the bottleneck suggests that it occurred about 4000 years
+      ago, presumably when populations using agriculture and animal husbandry
+      arrived in Finland.
+AD  - Zoological Institute, University of Munich, Germany.
+FAU - Sajantila, A
+AU  - Sajantila A
+FAU - Salem, A H
+AU  - Salem AH
+FAU - Savolainen, P
+AU  - Savolainen P
+FAU - Bauer, K
+AU  - Bauer K
+FAU - Gierig, C
+AU  - Gierig C
+FAU - Paabo, S
+AU  - Paabo S
+LA  - eng
+SI  - GENBANK/U67617
+SI  - GENBANK/U67618
+SI  - GENBANK/U67619
+SI  - GENBANK/U67620
+SI  - GENBANK/U67621
+SI  - GENBANK/U67622
+SI  - GENBANK/U67623
+SI  - GENBANK/U67624
+SI  - GENBANK/U67625
+SI  - GENBANK/U67626
+SI  - GENBANK/U67627
+SI  - GENBANK/U67628
+SI  - GENBANK/U67629
+SI  - GENBANK/U67630
+SI  - GENBANK/U67631
+SI  - GENBANK/U67632
+SI  - GENBANK/U67633
+SI  - GENBANK/U67634
+SI  - GENBANK/U67635
+SI  - GENBANK/U67636
+SI  - GENBANK/U67637
+SI  - GENBANK/U67638
+SI  - GENBANK/U67639
+SI  - GENBANK/U67640
+SI  - GENBANK/U67641
+SI  - GENBANK/U67642
+SI  - GENBANK/U67643
+SI  - GENBANK/U67644
+SI  - GENBANK/U67645
+SI  - GENBANK/U67646
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (DNA, Mitochondrial)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Agriculture
+MH  - Animal Husbandry
+MH  - Chromosome Mapping
+MH  - DNA, Mitochondrial/*genetics
+MH  - Ethnic Groups/*genetics
+MH  - Europe
+MH  - *Evolution
+MH  - Female
+MH  - Finland
+MH  - Genetic Markers
+MH  - *Genomic Imprinting
+MH  - Humans
+MH  - Male
+MH  - *Polymorphism, Genetic
+MH  - Sex Characteristics
+MH  - Time
+MH  - *Variation (Genetics)
+MH  - *Y Chromosome
+PMC - PMC38178
+EDAT- 1996/10/15
+MHDA- 1996/10/15 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1996 Oct 15;93(21):12035-9.
+
+PMID- 9694663
+OWN - NLM
+STAT- MEDLINE
+DA  - 19980909
+DCOM- 19980909
+LR  - 20061115
+PUBM- Print
+IS  - 0022-2844 (Print)
+VI  - 47
+IP  - 2
+DP  - 1998 Aug
+TI  - Genetic structure of the ancestral population of modern humans.
+PG  - 146-55
+AB  - Neutral DNA polymorphisms from an 8-kb segment of the dystrophin gene,
+      previously ascertained in a worldwide sample (n = 250 chromosomes), were
+      used to characterize the population ancestral to the present-day human
+      groups. The ancestral state of each polymorphic site was determined by
+      comparing human variants with their orthologous sites in the great apes.
+      The "age before fixation" of the underlying mutations was estimated from
+      the frequencies of the new alleles and analyzed in the context of these
+      polymorphisms' distribution among 13 populations from Africa, Europe,
+      Asia, New Guinea, and the Americas (n = 860 chromosomes in total).
+      Seventeen polymorphisms older tan 100,000-200,000 years, which contributed
+      approximately 90% to the overall nucleotide diversity, were common to all
+      human groups. Polymorphisms endemic to human groups or continentally
+      restricted were younger than 100,000-200,000 years. Africans (six
+      populations) with 13 such sites stood out from the rest of the world
+      (seven populations), where only 2 population-specific variants were
+      observed. The similarity of the frequencies of the old polymorphisms in
+      Africans and non-Africans suggested a similar profile of genetic
+      variability in the population before the modern human's divergence. This
+      ancestral population was characterized by an effective size of about
+      10,000 as estimated from the nucleotide diversity; this size may describe
+      the number of breeding individuals over a long time during the Middle
+      Pleistocene or reflect a speciation bottleneck from an initially larger
+      population at the end of this period.
+AD  - Centre de Recherche de l'Hopital Sainte-Justine, Centre de Cancerologie
+      Charles Bruneau, Departement de Pediatrie, Universite de Montreal,
+      Montreal, Quebec, H3T-1C5 Canada.
+FAU - Zietkiewicz, E
+AU  - Zietkiewicz E
+FAU - Yotova, V
+AU  - Yotova V
+FAU - Jarnik, M
+AU  - Jarnik M
+FAU - Korab-Laskowska, M
+AU  - Korab-Laskowska M
+FAU - Kidd, K K
+AU  - Kidd KK
+FAU - Modiano, D
+AU  - Modiano D
+FAU - Scozzari, R
+AU  - Scozzari R
+FAU - Stoneking, M
+AU  - Stoneking M
+FAU - Tishkoff, S
+AU  - Tishkoff S
+FAU - Batzer, M
+AU  - Batzer M
+FAU - Labuda, D
+AU  - Labuda D
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - J Mol Evol
+JT  - Journal of molecular evolution
+JID - 0360051
+RN  - 0 (Dystrophin)
+SB  - IM
+MH  - Alleles
+MH  - Animals
+MH  - Continental Population Groups/*genetics
+MH  - Dystrophin/*genetics
+MH  - *Evolution, Molecular
+MH  - Gene Frequency
+MH  - Hominidae/*genetics
+MH  - Humans
+MH  - Models, Genetic
+MH  - Mutagenesis
+MH  - Mutation
+MH  - Polymorphism, Genetic
+MH  - Time
+EDAT- 1998/08/07
+MHDA- 1998/08/07 00:01
+PST - ppublish
+SO  - J Mol Evol. 1998 Aug;47(2):146-55.
+
+PMID- 9806547
+OWN - NLM
+STAT- MEDLINE
+DA  - 19981116
+DCOM- 19981116
+LR  - 20071114
+PUBM- Print
+IS  - 1061-4036 (Print)
+VI  - 20
+IP  - 3
+DP  - 1998 Nov
+TI  - Genetic evidence for a higher female migration rate in humans.
+PG  - 278-80
+AB  - Mitochondrial DNA and the Y chromosome have been used extensively in the
+      study of modern human origins and other phylogenetic questions, but not in
+      the context of their sex-specific modes of transmission. mtDNA is
+      transmitted exclusively by females, whereas the Y chromosome is passed
+      only among males. As a result, differences in the reproductive output or
+      migration rate of males and females will influence the geographic patterns
+      and relative level of genetic diversity on the Y chromosome, autosomes and
+      mtDNA (ref. 1). We have found that Y chromosome variants tend to be more
+      localized geographically than those of mtDNA and the autosomes. The
+      fraction of variation within human populations for Y chromosome single
+      nucleotide polymorphisms (SNPs) is 35.5%, versus 80-85% for the autosomes
+      and mtDNA (refs 6-8). A higher female than male migration rate (via
+      patrilocality, the tendency for a wife to move into her husband's natal
+      household) explains most of this discrepancy, because diverse Y
+      chromosomes would enter a population at a lower rate than mtDNA or the
+      autosomes. Polygyny may also contribute, but the reduction of variation
+      within populations that we measure for the Y chromosome, relative to the
+      autosomes and mitochondrial DNA, is of such magnitude that differences in
+      the effective population sizes of the sexes alone are insufficient to
+      produce the observation.
+AD  - Program for Population Genetics, Harvard School of Public Health, Boston,
+      Massachusetts 02115, USA. mark@ppg.harvard.edu
+FAU - Seielstad, M T
+AU  - Seielstad MT
+FAU - Minch, E
+AU  - Minch E
+FAU - Cavalli-Sforza, L L
+AU  - Cavalli-Sforza LL
+LA  - eng
+GR  - GM28428/GM/United States NIGMS
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Nat Genet
+JT  - Nature genetics
+JID - 9216904
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+CIN - Nat Genet. 1998 Nov;20(3):219-20. PMID: 9806532
+MH  - DNA, Mitochondrial/genetics
+MH  - *Emigration and Immigration
+MH  - Female
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Male
+MH  - Microsatellite Repeats
+MH  - Polymorphism, Genetic
+MH  - Sex Characteristics
+MH  - Variation (Genetics)
+MH  - Y Chromosome/genetics
+EDAT- 1998/11/07 03:03
+MHDA- 2001/03/23 10:01
+AID - 10.1038/3088 [doi]
+PST - ppublish
+SO  - Nat Genet. 1998 Nov;20(3):278-80.
+

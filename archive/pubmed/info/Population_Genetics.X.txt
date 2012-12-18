@@ -1,0 +1,69 @@
+PMID- 17593958
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+DA  - 20070627
+DCOM- 20070801
+LR  - 20070912
+PUBM- Electronic
+IS  - 1932-6203 (Electronic)
+VI  - 2
+IP  - 6
+DP  - 2007
+TI  - A worldwide phylogeography for the human X chromosome.
+PG  - e557
+AB  - BACKGROUND: We reasoned that by identifying genetic markers on human X
+      chromosome regions where recombination is rare or absent, we should be
+      able to construct X chromosome genealogies analogous to those based on Y
+      chromosome and mitochondrial DNA polymorphisms, with the advantage of
+      providing information about both male and female components of the
+      population. METHODOLOGY/PRINCIPAL FINDINGS: We identified a 47 Kb interval
+      containing an Alu insertion polymorphism (DXS225) and four microsatellites
+      in complete linkage disequilibrium in a low recombination rate region of
+      the long arm of the human X chromosome. This haplotype block was studied
+      in 667 males from the HGDP-CEPH Human Genome Diversity Panel. The
+      haplotypic diversity was highest in Africa (0.992+/-0.0025) and lowest in
+      the Americas (0.839+/-0.0378), where no insertion alleles of DXS225 were
+      observed. Africa shared few haplotypes with other geographical areas,
+      while those exhibited significant sharing among themselves. Median joining
+      networks revealed that the African haplotypes were numerous, occupied the
+      periphery of the graph and had low frequency, whereas those from the other
+      continents were few, central and had high frequency. Altogether, our data
+      support a single origin of modern man in Africa and migration to occupy
+      the other continents by serial founder effects. Coalescent analysis
+      permitted estimation of the time of the most recent common ancestor as
+      182,000 years (56,700-479,000) and the estimated time of the DXS225 Alu
+      insertion of 94,400 years (24,300-310,000). These dates are fully
+      compatible with the current widely accepted scenario of the origin of
+      modern mankind in Africa within the last 195,000 years and migration
+      out-of-Africa circa 55,000-65,000 years ago. CONCLUSIONS/SIGNIFICANCE: A
+      haplotypic block combining an Alu insertion polymorphism and four
+      microsatellite markers on the human X chromosome is a useful marker to
+      evaluate genetic diversity of human populations and provides a highly
+      informative tool for evolutionary studies.
+AD  - Departamento de Bioquimica e Imunologia, Universidade Federal de Minas
+      Gerais, Belo Horizonte, Minas Gerais, Brazil.
+FAU - Santos-Lopes, Simone S
+AU  - Santos-Lopes SS
+FAU - Pereira, Rinaldo W
+AU  - Pereira RW
+FAU - Wilson, Ian J
+AU  - Wilson IJ
+FAU - Pena, Sergio D J
+AU  - Pena SD
+LA  - eng
+PT  - Journal Article
+DEP - 20070627
+PL  - United States
+TA  - PLoS ONE
+JT  - PLoS ONE
+JID - 101285081
+PMC - PMC1891433
+EDAT- 2007/06/28 09:00
+MHDA- 2007/06/28 09:01
+PHST- 2007/03/22 [received]
+PHST- 2007/05/28 [accepted]
+PHST- 2007/06/27 [aheadofprint]
+AID - 10.1371/journal.pone.0000557 [doi]
+PST - epublish
+SO  - PLoS ONE. 2007 Jun 27;2(6):e557.
+

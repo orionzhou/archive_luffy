@@ -1,0 +1,12 @@
+#PBS -l nodes=1:ppn=4,mem=12GB,walltime=96:00:00
+#PBS -m ae
+#PBS -q mirror
+
+cd /project/youngn/zhoup/Data/misc2/mt_rnaseq
+tophat -p 4 -o mt -G genes.gff /project/youngn/zhoup/Data/db/bowtie/mt_35 \
+MEDICAGODIR-PE-ILI3-1_TTAGGC_L006_R1_filtered.fastq.gz \
+MEDICAGODIR-PE-ILI3-1_TTAGGC_L006_R2_filtered.fastq.gz \
+MEDICAGODIR-PE-ILI3-1_TTAGGC_L007_R1_filtered.fastq.gz \
+MEDICAGODIR-PE-ILI3-1_TTAGGC_L007_R2_filtered.fastq.gz
+
+

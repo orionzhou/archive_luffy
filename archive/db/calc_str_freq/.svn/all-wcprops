@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq
+END
+in
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq/in
+END
+out1
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq/out1
+END
+out2
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq/out2
+END
+allele_freq
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq/allele_freq
+END
+calc.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/98/trunk/misc/db/calc_str_freq/calc.pl
+END

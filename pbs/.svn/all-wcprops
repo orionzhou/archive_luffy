@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 27
+/svn/!svn/ver/344/trunk/pbs
+END
+novo
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/205/trunk/pbs/novo
+END
+r
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/206/trunk/pbs/r
+END
+seqRec
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/229/trunk/pbs/seqRec
+END
+gfServer
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/235/trunk/pbs/gfServer
+END
+migraten
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/162/trunk/pbs/migraten
+END
+mpi_matrix
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/164/trunk/pbs/mpi_matrix
+END
+_svnignore
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/179/trunk/pbs/_svnignore
+END
+perl.tmpl
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/258/trunk/pbs/perl.tmpl
+END
+host
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/344/trunk/pbs/host
+END
+mpi_bwa
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/180/trunk/pbs/mpi_bwa
+END

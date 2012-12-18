@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/98/trunk/misc/SNP
+END
+freq_from_hapmap.pl
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/98/trunk/misc/SNP/freq_from_hapmap.pl
+END
+SNP_Count.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/SNP/SNP_Count.pl
+END
+gene_info.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/SNP/gene_info.pl
+END
+gene_info_failed.pl
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/98/trunk/misc/SNP/gene_info_failed.pl
+END
+SNP.pl
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/98/trunk/misc/SNP/SNP.pl
+END
+SCZD_gene.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/SNP/SCZD_gene.pl
+END
+create_snp_file.pl
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/98/trunk/misc/SNP/create_snp_file.pl
+END
+SCZD_snp.pl
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/98/trunk/misc/SNP/SCZD_snp.pl
+END

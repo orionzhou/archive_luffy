@@ -1,0 +1,251 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/352/trunk/mt3/src
+END
+bamStat.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/194/trunk/mt3/src/bamStat.cc
+END
+gge.cc
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/169/trunk/mt3/src/gge.cc
+END
+init.cc
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/194/trunk/mt3/src/init.cc
+END
+ssp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/235/trunk/mt3/src/ssp.cc
+END
+alnStat.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/192/trunk/mt3/src/alnStat.cc
+END
+ssp.h
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/232/trunk/mt3/src/ssp.h
+END
+sspSetOG.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/227/trunk/mt3/src/sspSetOG.cc
+END
+read.cc
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/229/trunk/mt3/src/read.cc
+END
+sspFilter.cc
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/222/trunk/mt3/src/sspFilter.cc
+END
+bamPickStretched.cc
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/204/trunk/mt3/src/bamPickStretched.cc
+END
+readGz.cc
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/196/trunk/mt3/src/readGz.cc
+END
+read.h
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/229/trunk/mt3/src/read.h
+END
+cov_window.cc
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/202/trunk/mt3/src/cov_window.cc
+END
+bamPickOrphan.cc
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/204/trunk/mt3/src/bamPickOrphan.cc
+END
+bam_utils.cc
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/204/trunk/mt3/src/bam_utils.cc
+END
+bam2Fastq.cc
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/258/trunk/mt3/src/bam2Fastq.cc
+END
+bam_utils.h
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/204/trunk/mt3/src/bam_utils.h
+END
+sspSelectInds.cc
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/223/trunk/mt3/src/sspSelectInds.cc
+END
+bamDepth.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/212/trunk/mt3/src/bamDepth.cc
+END
+seqRec.h
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/191/trunk/mt3/src/seqRec.h
+END
+sspSlide.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/222/trunk/mt3/src/sspSlide.cc
+END
+ssp2Vcf.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/225/trunk/mt3/src/ssp2Vcf.cc
+END
+common.cc
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/155/trunk/mt3/src/common.cc
+END
+geco_sequences.h
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/170/trunk/mt3/src/geco_sequences.h
+END
+bamCheck.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/159/trunk/mt3/src/bamCheck.cc
+END
+sspDiff.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/223/trunk/mt3/src/sspDiff.cc
+END
+bamISD.cc
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/266/trunk/mt3/src/bamISD.cc
+END
+sspStat.cc
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/245/trunk/mt3/src/sspStat.cc
+END
+seqSplit.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/204/trunk/mt3/src/seqSplit.cc
+END
+bamPreprocess.cc
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/170/trunk/mt3/src/bamPreprocess.cc
+END
+sspConvert.cc
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/231/trunk/mt3/src/sspConvert.cc
+END
+viewRead.cc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/170/trunk/mt3/src/viewRead.cc
+END
+bamPickBpReads.cc
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/204/trunk/mt3/src/bamPickBpReads.cc
+END
+sspSample.cc
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/222/trunk/mt3/src/sspSample.cc
+END
+test.cc
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/204/trunk/mt3/src/test.cc
+END
+msConvert.cc
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/352/trunk/mt3/src/msConvert.cc
+END
+seqRec.cc
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/229/trunk/mt3/src/seqRec.cc
+END
+bamPickReads.cc
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/204/trunk/mt3/src/bamPickReads.cc
+END
+cov.cc
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/169/trunk/mt3/src/cov.cc
+END
+geco_sequences.cc
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/170/trunk/mt3/src/geco_sequences.cc
+END
+common.h
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/155/trunk/mt3/src/common.h
+END

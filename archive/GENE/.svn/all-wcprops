@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/98/trunk/misc/GENE
+END
+find_CNV.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/GENE/find_CNV.pl
+END
+find_ssr.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/GENE/find_ssr.pl
+END
+get_seq.pl
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/98/trunk/misc/GENE/get_seq.pl
+END
+shit.pl
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/98/trunk/misc/GENE/shit.pl
+END
+url1.txt
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/98/trunk/misc/GENE/url1.txt
+END
+find_str.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/GENE/find_str.pl
+END
+marker_sup.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/98/trunk/misc/GENE/marker_sup.pl
+END
+url2.txt
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/98/trunk/misc/GENE/url2.txt
+END
+marker_location.pl
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/98/trunk/misc/GENE/marker_location.pl
+END
+find_Indel.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/98/trunk/misc/GENE/find_Indel.pl
+END
+cgi-ajax.doc
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/GENE/cgi-ajax.doc
+END
+mpd_handler.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/98/trunk/misc/GENE/mpd_handler.pl
+END
+find_snp.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/98/trunk/misc/GENE/find_snp.pl
+END
+find_snp_1.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/98/trunk/misc/GENE/find_snp_1.pl
+END

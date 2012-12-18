@@ -1,0 +1,44 @@
+#include <fstream>
+#include <iostream>
+#include <stdio.h>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <vector>
+
+#include <api/BamReader.h>
+#include <api/BamWriter.h>
+#include "init.h"
+
+using namespace std;
+using namespace BamTools;
+namespace fs = boost::filesystem;
+
+int main(int argc, char *argv[]) {
+  init();
+  fs::path dirW = dirRepo / "bam_ncgr";
+  fs::path f01 = dirW / "HM001.bam";
+  fs::path f02 = dirW / "HM001.bam.bai";
+  cout << "reading " << f01.string().c_str() << " ...\n";
+  if ( !exists( f01 ) ) {
+    cout << "  Not found!\n";
+    return 1;
+  }
+  BamReader reader;
+  reader.Open( f01.string(), f02.string() );
+  int id = reader.GetReferenceID("Mt3.5.1Chr5");
+  BamRegion region(id, 11069145, id, 11069160);
+  reader.SetRegion(region);
+  BamAlignment al;
+  while( reader.GetNextAlignment(al) ) {
+    string name = al.Name;
+    uint32_t pos = al.Position;
+    uint32_t rep;
+    uint32_t cnt1;
+    uint32_t cnt2;
+    al.GetTag("YR", rep);
+    al.GetTag("IH", cnt1);
+    al.GetTag("NH", cnt2);
+    printf ("%s\t%d\t%d\t%d\t%d\n", name.c_str(), pos, rep, cnt1, cnt2);
+  }
+}
+

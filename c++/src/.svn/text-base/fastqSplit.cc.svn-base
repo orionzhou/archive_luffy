@@ -1,0 +1,30 @@
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
+using namespace std;
+using boost::format;
+namespace fs = boost::filesystem;
+namespace io = boost::iostreams;
+
+int main(int argc, char *argv[]) {
+  fs::path fi( "/project/youngn/zhoup/Data/repo/gsnap_out/HM001.gsnap.gz" );
+  ifstream fh( fi.string().c_str(), ios_base::in | ios_base::binary );
+  io::filtering_stream<io::input> in;
+  in.push(io::gzip_decompressor());
+  in.push(fh);
+  
+  streamsize ss;
+  string line;
+  uint32_t cnt = 0;
+  while ( getline(in, line) ) {
+    cnt ++;
+    if(cnt > 10) break;
+    cout << format("%4d: %s\n") % cnt % line;
+  }
+}
+

@@ -1,0 +1,667 @@
+PMID- 12611827
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030303
+DCOM- 20030425
+LR  - 20071114
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 160
+IP  - 3
+DP  - 2003 Mar
+TI  - Association between a functional catechol O-methyltransferase gene
+      polymorphism and schizophrenia: meta-analysis of case-control and
+      family-based studies.
+PG  - 469-76
+AB  - OBJECTIVE: There is strong evidence for a genetic contribution to
+      schizophrenia, but efforts to identify susceptibility genes have been
+      largely unsuccessful because of the low power of individual studies. The
+      authors' goal was to evaluate the collective evidence for an association
+      between the Val158/108Met polymorphism of the catechol O-methyltransferase
+      (COMT) gene and schizophrenia. METHOD: They performed separate
+      meta-analyses of existing case-control and family-based association
+      studies. RESULTS: Overall, case-control studies showed no indication of an
+      association between either allele and schizophrenia, and family-based
+      studies found modest evidence implicating the Val allele in schizophrenia
+      risk. The pooled analyses of studies from diverse geographical regions may
+      have obscured ethnic differences in patterns of genetic risk for
+      schizophrenia. Stratification of the studies by ethnicity of the subjects
+      yielded evidence for an association with the Val allele in case-control
+      studies of European samples and, especially, in family-based studies of
+      European samples. Case-control and family-based studies of Asian samples
+      produced mixed results and, overall, little evidence for association.
+      CONCLUSIONS: The results of the two types of association studies diverged
+      somewhat, but the evidence from the family-based studies, although based
+      on fewer reports, may be more accurate. The Val allele may be a small but
+      reliable risk factor for schizophrenia for people of European ancestry,
+      but the influence of this polymorphism on risk in Asian populations
+      remains unclear. These results call for more family-based studies to
+      confirm the association between COMT and schizophrenia in European samples
+      and to clarify its contribution to risk in Asian samples. They also
+      suggest that case-control studies should use methods of genomic control to
+      avoid being confounded by population stratification.
+AD  - Department of Psychiatry, Harvard Medical School at Massachusetts Mental
+      Health Center and Massachusetts General Hospital, Boston 02115, USA.
+FAU - Glatt, Stephen J
+AU  - Glatt SJ
+FAU - Faraone, Stephen V
+AU  - Faraone SV
+FAU - Tsuang, Ming T
+AU  - Tsuang MT
+LA  - eng
+GR  - MH-59624/MH/United States NIMH
+GR  - MH-60485/MH/United States NIMH
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, U.S. Gov't, P.H.S.
+PT  - Review
+PL  - United States
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - EC 2.1.1.6 (Catechol O-Methyltransferase)
+SB  - AIM
+SB  - IM
+CIN - Am J Psychiatry. 2004 Jun;161(6):1134-5; author reply 1135-6. PMID:
+      15169719
+CIN - Am J Psychiatry. 2004 Jun;161(6):1134; author reply 1135-6. PMID: 15169720
+MH  - Adult
+MH  - Alleles
+MH  - Asia
+MH  - Case-Control Studies
+MH  - Catechol O-Methyltransferase/*genetics
+MH  - Cross-Cultural Comparison
+MH  - Europe
+MH  - Family
+MH  - Female
+MH  - Genetic Predisposition to Disease
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Genetic/genetics
+MH  - Risk Factors
+MH  - Schizophrenia/*genetics
+RF  - 48
+EDAT- 2003/03/04 04:00
+MHDA- 2003/04/26 05:00
+PST - ppublish
+SO  - Am J Psychiatry. 2003 Mar;160(3):469-76.
+
+PMID- 15824744
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050726
+DCOM- 20051027
+LR  - 20070813
+PUBM- Print
+IS  - 1359-4184 (Print)
+VI  - 10
+IP  - 8
+DP  - 2005 Aug
+TI  - Lack of association of the COMT (Val158/108 Met) gene and schizophrenia: a
+      meta-analysis of case-control studies.
+PG  - 765-70
+AB  - There is strong evidence for a genetic contribution to schizophrenia, but
+      the contribution of individual candidate genes remains uncertain. We
+      attempted to replicate a recent meta-analysis that reported an association
+      of the catechol O-methyltransferase (COMT) Val allele with schizophrenia,
+      and suggested that this effect may be moderated by ancestry. We included
+      reports published subsequent to the original meta-analysis, and included a
+      formal test of the moderating effect of ancestry in order to test whether
+      the association operates differently in populations of European ancestry
+      compared to populations of Asian ancestry. A corrected P-value for the 5%
+      significance threshold was employed where appropriate, using Bonferroni's
+      method, and studies that demonstrated departure from Hardy-Weinberg
+      equilibrium among controls were excluded. When all studies were included
+      in a meta-regression, there was evidence for a significant association of
+      COMT Val allele frequency with schizophrenia case status and a significant
+      main effect of ancestry. The interaction of COMT Val allele frequency and
+      ancestry was also significant. However, when only studies that reported
+      allele frequencies that did not depart significantly from Hardy-Weinberg
+      equilibrium among controls were included, these effects were no longer
+      significant. The results of our meta-analysis do not support an
+      association between the COMT Val allele and schizophrenia case status, and
+      do not support recent claims that this association may be moderated by
+      ancestry.
+AD  - Cancer Research UK GPRG, Department of Clinical Pharmacology, University
+      of Oxford, Oxford, UK. marcus.munafo@clinpharm.ox.ac.uk
+FAU - Munafo, M R
+AU  - Munafo MR
+FAU - Bowes, L
+AU  - Bowes L
+FAU - Clark, T G
+AU  - Clark TG
+FAU - Flint, J
+AU  - Flint J
+LA  - eng
+GR  - United Kingdom Wellcome Trust
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Mol Psychiatry
+JT  - Molecular psychiatry
+JID - 9607835
+RN  - 63-68-3 (Methionine)
+RN  - 7004-03-7 (Valine)
+RN  - EC 2.1.1.6 (Catechol O-Methyltransferase)
+SB  - IM
+MH  - Amino Acid Substitution
+MH  - Case-Control Studies
+MH  - Catechol O-Methyltransferase/*genetics
+MH  - Databases, Factual
+MH  - European Continental Ancestry Group/genetics
+MH  - Humans
+MH  - *Methionine
+MH  - Schizophrenia/enzymology/*genetics
+MH  - Software
+MH  - *Valine
+EDAT- 2005/04/13 09:00
+MHDA- 2005/10/28 09:00
+AID - 4001664 [pii]
+AID - 10.1038/sj.mp.4001664 [doi]
+PST - ppublish
+SO  - Mol Psychiatry. 2005 Aug;10(8):765-70.
+
+PMID- 16520822
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060525
+DCOM- 20061010
+LR  - 20070813
+PUBM- Print
+IS  - 1359-4184 (Print)
+VI  - 11
+IP  - 6
+DP  - 2006 Jun
+TI  - Association of the NRG1 gene and schizophrenia: a meta-analysis.
+PG  - 539-46
+AB  - We investigated the association of the NRG1 gene and schizophrenia using
+      meta-analytic techniques, combining all published data while restricting
+      our analysis to studies investigating the most commonly reported single
+      marker (SNP8NRG221533). We also investigated whether ancestry (European vs
+      East Asian) and study design (family-based vs case-control) moderated any
+      association. We found no evidence for an association of SNP8NRG221533 with
+      schizophrenia, and significant between-study heterogeneity, which
+      persisted when family-based studies were combined separately. However,
+      when haplotype-based P-values were combined, there was evidence in support
+      of an association of NRG1 with schizophrenia, and no evidence of
+      between-study heterogeneity. Our meta-analysis provides support for the
+      association of NRG1 with schizophrenia, but indicates that firmly
+      establishing the role of NRG1 gene in schizophrenia by genetic association
+      requires much larger sample sizes than have hitherto been reported.
+      Association analyses and replications should take place at the level of
+      the gene, rather than at the level of SNP, haplotype, or functional
+      variant. Meta-analysis would then be carried out on the basis of the
+      combination of P-values.
+AD  - Department of Experimental Psychology, University of Bristol, Bristol, UK.
+      marcus.munafo@bris.ac.uk
+FAU - Munafo, M R
+AU  - Munafo MR
+FAU - Thiselton, D L
+AU  - Thiselton DL
+FAU - Clark, T G
+AU  - Clark TG
+FAU - Flint, J
+AU  - Flint J
+LA  - eng
+GR  - United Kingdom Wellcome Trust
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+PL  - England
+TA  - Mol Psychiatry
+JT  - Molecular psychiatry
+JID - 9607835
+RN  - 0 (Genetic Markers)
+RN  - 0 (Neuregulin-1)
+SB  - IM
+EIN - Mol Psychiatry. 2006 Jun;11(6):613
+MH  - Asian Continental Ancestry Group/genetics
+MH  - European Continental Ancestry Group/genetics
+MH  - Far East
+MH  - Genetic Markers/genetics
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Neuregulin-1/*genetics
+MH  - Pedigree
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Sample Size
+MH  - Schizophrenia/*genetics
+RF  - 41
+EDAT- 2006/03/08 09:00
+MHDA- 2006/10/13 09:00
+AID - 4001817 [pii]
+AID - 10.1038/sj.mp.4001817 [doi]
+PST - ppublish
+SO  - Mol Psychiatry. 2006 Jun;11(6):539-46.
+
+PMID- 17434869
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070514
+DCOM- 20070530
+LR  - 20080407
+PUBM- Print-Electronic
+IS  - 1095-9203 (Electronic)
+VI  - 316
+IP  - 5826
+DP  - 2007 May 11
+TI  - A common variant in the FTO gene is associated with body mass index and
+      predisposes to childhood and adult obesity.
+PG  - 889-94
+AB  - Obesity is a serious international health problem that increases the risk
+      of several common diseases. The genetic factors predisposing to obesity
+      are poorly understood. A genome-wide search for type 2
+      diabetes-susceptibility genes identified a common variant in the FTO (fat
+      mass and obesity associated) gene that predisposes to diabetes through an
+      effect on body mass index (BMI). An additive association of the variant
+      with BMI was replicated in 13 cohorts with 38,759 participants. The 16% of
+      adults who are homozygous for the risk allele weighed about 3 kilograms
+      more and had 1.67-fold increased odds of obesity when compared with those
+      not inheriting a risk allele. This association was observed from age 7
+      years upward and reflects a specific increase in fat mass.
+AD  - Genetics of Complex Traits, Institute of Biomedical and Clinical Science,
+      Peninsula Medical School, Magdalen Road, Exeter, UK.
+FAU - Frayling, Timothy M
+AU  - Frayling TM
+FAU - Timpson, Nicholas J
+AU  - Timpson NJ
+FAU - Weedon, Michael N
+AU  - Weedon MN
+FAU - Zeggini, Eleftheria
+AU  - Zeggini E
+FAU - Freathy, Rachel M
+AU  - Freathy RM
+FAU - Lindgren, Cecilia M
+AU  - Lindgren CM
+FAU - Perry, John R B
+AU  - Perry JR
+FAU - Elliott, Katherine S
+AU  - Elliott KS
+FAU - Lango, Hana
+AU  - Lango H
+FAU - Rayner, Nigel W
+AU  - Rayner NW
+FAU - Shields, Beverley
+AU  - Shields B
+FAU - Harries, Lorna W
+AU  - Harries LW
+FAU - Barrett, Jeffrey C
+AU  - Barrett JC
+FAU - Ellard, Sian
+AU  - Ellard S
+FAU - Groves, Christopher J
+AU  - Groves CJ
+FAU - Knight, Bridget
+AU  - Knight B
+FAU - Patch, Ann-Marie
+AU  - Patch AM
+FAU - Ness, Andrew R
+AU  - Ness AR
+FAU - Ebrahim, Shah
+AU  - Ebrahim S
+FAU - Lawlor, Debbie A
+AU  - Lawlor DA
+FAU - Ring, Susan M
+AU  - Ring SM
+FAU - Ben-Shlomo, Yoav
+AU  - Ben-Shlomo Y
+FAU - Jarvelin, Marjo-Riitta
+AU  - Jarvelin MR
+FAU - Sovio, Ulla
+AU  - Sovio U
+FAU - Bennett, Amanda J
+AU  - Bennett AJ
+FAU - Melzer, David
+AU  - Melzer D
+FAU - Ferrucci, Luigi
+AU  - Ferrucci L
+FAU - Loos, Ruth J F
+AU  - Loos RJ
+FAU - Barroso, Ines
+AU  - Barroso I
+FAU - Wareham, Nicholas J
+AU  - Wareham NJ
+FAU - Karpe, Fredrik
+AU  - Karpe F
+FAU - Owen, Katharine R
+AU  - Owen KR
+FAU - Cardon, Lon R
+AU  - Cardon LR
+FAU - Walker, Mark
+AU  - Walker M
+FAU - Hitman, Graham A
+AU  - Hitman GA
+FAU - Palmer, Colin N A
+AU  - Palmer CN
+FAU - Doney, Alex S F
+AU  - Doney AS
+FAU - Morris, Andrew D
+AU  - Morris AD
+FAU - Smith, George Davey
+AU  - Smith GD
+FAU - Hattersley, Andrew T
+AU  - Hattersley AT
+FAU - McCarthy, Mark I
+AU  - McCarthy MI
+LA  - eng
+GR  - NIH0011391454/United States PHS
+GR  - United Kingdom Wellcome Trust
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070412
+PL  - United States
+TA  - Science
+JT  - Science (New York, N.Y.)
+JID - 0404511
+SB  - IM
+MH  - Adipose Tissue
+MH  - Adolescent
+MH  - Adult
+MH  - Aged
+MH  - Alleles
+MH  - Birth Weight
+MH  - *Body Mass Index
+MH  - Case-Control Studies
+MH  - Child
+MH  - Cohort Studies
+MH  - Diabetes Mellitus, Type 2/*genetics
+MH  - Female
+MH  - *Genetic Predisposition to Disease
+MH  - Great Britain
+MH  - Homozygote
+MH  - Humans
+MH  - Infant, Newborn
+MH  - Male
+MH  - Middle Aged
+MH  - Obesity/*genetics
+MH  - Overweight/genetics
+MH  - *Polymorphism, Single Nucleotide
+EDAT- 2007/04/17 09:00
+MHDA- 2007/05/31 09:00
+PHST- 2007/04/12 [aheadofprint]
+AID - 1141634 [pii]
+AID - 10.1126/science.1141634 [doi]
+PST - ppublish
+SO  - Science. 2007 May 11;316(5826):889-94. Epub 2007 Apr 12.
+
+PMID- 17463248
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070601
+DCOM- 20070614
+LR  - 20071115
+PUBM- Print-Electronic
+IS  - 1095-9203 (Electronic)
+VI  - 316
+IP  - 5829
+DP  - 2007 Jun 1
+TI  - A genome-wide association study of type 2 diabetes in Finns detects
+      multiple susceptibility variants.
+PG  - 1341-5
+AB  - Identifying the genetic variants that increase the risk of type 2 diabetes
+      (T2D) in humans has been a formidable challenge. Adopting a genome-wide
+      association strategy, we genotyped 1161 Finnish T2D cases and 1174 Finnish
+      normal glucose-tolerant (NGT) controls with >315,000 single-nucleotide
+      polymorphisms (SNPs) and imputed genotypes for an additional >2 million
+      autosomal SNPs. We carried out association analysis with these SNPs to
+      identify genetic variants that predispose to T2D, compared our T2D
+      association results with the results of two similar studies, and genotyped
+      80 SNPs in an additional 1215 Finnish T2D cases and 1258 Finnish NGT
+      controls. We identify T2D-associated variants in an intergenic region of
+      chromosome 11p12, contribute to the identification of T2D-associated
+      variants near the genes IGF2BP2 and CDKAL1 and the region of CDKN2A and
+      CDKN2B, and confirm that variants near TCF7L2, SLC30A8, HHEX, FTO, PPARG,
+      and KCNJ11 are associated with T2D risk. This brings the number of T2D
+      loci now confidently identified to at least 10.
+AD  - Department of Biostatistics and Center for Statistical Genetics,
+      University of Michigan, Ann Arbor, MI 48109, USA.
+FAU - Scott, Laura J
+AU  - Scott LJ
+FAU - Mohlke, Karen L
+AU  - Mohlke KL
+FAU - Bonnycastle, Lori L
+AU  - Bonnycastle LL
+FAU - Willer, Cristen J
+AU  - Willer CJ
+FAU - Li, Yun
+AU  - Li Y
+FAU - Duren, William L
+AU  - Duren WL
+FAU - Erdos, Michael R
+AU  - Erdos MR
+FAU - Stringham, Heather M
+AU  - Stringham HM
+FAU - Chines, Peter S
+AU  - Chines PS
+FAU - Jackson, Anne U
+AU  - Jackson AU
+FAU - Prokunina-Olsson, Ludmila
+AU  - Prokunina-Olsson L
+FAU - Ding, Chia-Jen
+AU  - Ding CJ
+FAU - Swift, Amy J
+AU  - Swift AJ
+FAU - Narisu, Narisu
+AU  - Narisu N
+FAU - Hu, Tianle
+AU  - Hu T
+FAU - Pruim, Randall
+AU  - Pruim R
+FAU - Xiao, Rui
+AU  - Xiao R
+FAU - Li, Xiao-Yi
+AU  - Li XY
+FAU - Conneely, Karen N
+AU  - Conneely KN
+FAU - Riebow, Nancy L
+AU  - Riebow NL
+FAU - Sprau, Andrew G
+AU  - Sprau AG
+FAU - Tong, Maurine
+AU  - Tong M
+FAU - White, Peggy P
+AU  - White PP
+FAU - Hetrick, Kurt N
+AU  - Hetrick KN
+FAU - Barnhart, Michael W
+AU  - Barnhart MW
+FAU - Bark, Craig W
+AU  - Bark CW
+FAU - Goldstein, Janet L
+AU  - Goldstein JL
+FAU - Watkins, Lee
+AU  - Watkins L
+FAU - Xiang, Fang
+AU  - Xiang F
+FAU - Saramies, Jouko
+AU  - Saramies J
+FAU - Buchanan, Thomas A
+AU  - Buchanan TA
+FAU - Watanabe, Richard M
+AU  - Watanabe RM
+FAU - Valle, Timo T
+AU  - Valle TT
+FAU - Kinnunen, Leena
+AU  - Kinnunen L
+FAU - Abecasis, Goncalo R
+AU  - Abecasis GR
+FAU - Pugh, Elizabeth W
+AU  - Pugh EW
+FAU - Doheny, Kimberly F
+AU  - Doheny KF
+FAU - Bergman, Richard N
+AU  - Bergman RN
+FAU - Tuomilehto, Jaakko
+AU  - Tuomilehto J
+FAU - Collins, Francis S
+AU  - Collins FS
+FAU - Boehnke, Michael
+AU  - Boehnke M
+LA  - eng
+GR  - 1 Z01 HG000024/HG/United States NHGRI
+GR  - DK062370/DK/United States NIDDK
+GR  - DK072193/DK/United States NIDDK
+GR  - HG002651/HG/United States NHGRI
+GR  - HL084729/HL/United States NHLBI
+GR  - N01-HG-65403/HG/United States NHGRI
+GR  - U54 DA021519/DA/United States NIDA
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070426
+PL  - United States
+TA  - Science
+JT  - Science (New York, N.Y.)
+JID - 0404511
+RN  - 0 (DNA, Intergenic)
+RN  - 0 (Insulin-Like Growth Factor Binding Proteins)
+SB  - IM
+MH  - Case-Control Studies
+MH  - Chromosome Mapping
+MH  - Chromosomes, Human, Pair 11/genetics
+MH  - DNA, Intergenic
+MH  - Diabetes Mellitus, Type 2/*genetics
+MH  - Female
+MH  - Finland
+MH  - Genes, p16
+MH  - *Genetic Predisposition to Disease
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Humans
+MH  - Insulin-Like Growth Factor Binding Proteins/genetics
+MH  - Introns
+MH  - Logistic Models
+MH  - Male
+MH  - Meta-Analysis as Topic
+MH  - Middle Aged
+MH  - *Polymorphism, Single Nucleotide
+EDAT- 2007/04/28 09:00
+MHDA- 2007/06/15 09:00
+PHST- 2007/04/26 [aheadofprint]
+AID - 1142382 [pii]
+AID - 10.1126/science.1142382 [doi]
+PST - ppublish
+SO  - Science. 2007 Jun 1;316(5829):1341-5. Epub 2007 Apr 26.
+
+PMID- 17604607
+OWN - NLM
+STAT- MEDLINE
+DA  - 20071008
+DCOM- 20080123
+PUBM- Print-Electronic
+IS  - 0920-9964 (Print)
+VI  - 96
+IP  - 1-3
+DP  - 2007 Nov
+TI  - Association study between the dystrobrevin binding protein 1 gene (DTNBP1)
+      and schizophrenia: a meta-analysis.
+PG  - 112-8
+AB  - Positional, functional and association studies have strongly implicated
+      the dystrobrevin binding protein 1 gene (DTNBP1) as a promising novel
+      candidate gene for schizophrenia. Since the first association study was
+      reported, there have been many attempts to replicate it. However the
+      results have been mixed and these subsequent studies have produced
+      negative as well as positive results. To reconcile these conflicting
+      findings and to give a comprehensive picture of the relationship of DTNBP1
+      and schizophrenia, the current meta-analysis combined all published
+      association studies involving nine polymorphisms up to May 2006. The
+      results (12 studies including 3429 cases, 3376 controls and 721 trios)
+      showed that there were five single nucleotide polymorphisms (SNPs) with p
+      values < 0.05, however, sensitivity analyses showed that only one SNP was
+      consistent across all nine studies (four of the five SNPs became
+      non-significant after removal of one study), indicating that one study may
+      cause the association findings for each of these four SNPs. In conclusion,
+      there is only a weak association of one SNP in DTNBP1 with schizophrenia,
+      which is not significant after multiple testing.
+AD  - Bio-X Center, Shanghai Jiao Tong University, Shanghai 200030, China.
+      dli@mail.rockefeller.edu
+FAU - Li, Dawei
+AU  - Li D
+FAU - He, Lin
+AU  - He L
+LA  - eng
+GR  - MH44292/MH/United States NIMH
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070628
+PL  - Netherlands
+TA  - Schizophr Res
+JT  - Schizophrenia research
+JID - 8804207
+RN  - 0 (Carrier Proteins)
+RN  - 0 (DTNBP1 protein, human)
+SB  - IM
+MH  - Carrier Proteins/*genetics
+MH  - Humans
+MH  - Polymorphism, Genetic
+MH  - Polymorphism, Single Nucleotide
+MH  - Schizophrenia/*genetics
+EDAT- 2007/07/03 09:00
+MHDA- 2008/01/24 09:00
+PHST- 2007/04/24 [received]
+PHST- 2007/05/07 [revised]
+PHST- 2007/05/08 [accepted]
+PHST- 2007/06/28 [aheadofprint]
+AID - S0920-9964(07)00216-2 [pii]
+AID - 10.1016/j.schres.2007.05.017 [doi]
+PST - ppublish
+SO  - Schizophr Res. 2007 Nov;96(1-3):112-8. Epub 2007 Jun 28.
+
+PMID- 17767146
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070903
+DCOM- 20071206
+PUBM- Print
+IS  - 1359-4184 (Print)
+VI  - 12
+IP  - 9
+DP  - 2007 Sep
+TI  - Meta-analysis of two dopamine D2 receptor gene polymorphisms with tardive
+      dyskinesia in schizophrenia patients.
+PG  - 794-5
+FAU - Zai, C C
+AU  - Zai CC
+FAU - De Luca, V
+AU  - De Luca V
+FAU - Hwang, R W
+AU  - Hwang RW
+FAU - Voineskos, A
+AU  - Voineskos A
+FAU - Muller, D J
+AU  - Muller DJ
+FAU - Remington, G
+AU  - Remington G
+FAU - Kennedy, J L
+AU  - Kennedy JL
+LA  - eng
+PT  - Letter
+PL  - England
+TA  - Mol Psychiatry
+JT  - Molecular psychiatry
+JID - 9607835
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Receptors, Dopamine D2)
+SB  - IM
+MH  - Antipsychotic Agents/adverse effects
+MH  - Dyskinesia, Drug-Induced/etiology/*genetics
+MH  - Humans
+MH  - *Meta-Analysis as Topic
+MH  - Odds Ratio
+MH  - Polymorphism, Genetic/*genetics
+MH  - Receptors, Dopamine D2/*genetics
+MH  - Schizophrenia/drug therapy
+EDAT- 2007/09/04 09:00
+MHDA- 2007/12/07 09:00
+AID - 4002023 [pii]
+AID - 10.1038/sj.mp.4002023 [doi]
+PST - ppublish
+SO  - Mol Psychiatry. 2007 Sep;12(9):794-5.
+

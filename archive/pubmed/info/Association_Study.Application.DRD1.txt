@@ -1,0 +1,591 @@
+PMID- 10948075
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000914
+DCOM- 20000914
+LR  - 20061115
+PUBM- Print
+IS  - 0194-911X (Print)
+VI  - 36
+IP  - 2
+DP  - 2000 Aug
+TI  - Dopamine D1 receptor gene polymorphism is associated with essential
+      hypertension.
+PG  - 183-6
+AB  - Dopamine has been shown to influence renal sodium excretion through a
+      direct interaction with the dopamine receptor (DR). The dopamine D1
+      receptor (DRD1) has been localized to the proximal tubules and is known to
+      increase sodium excretion by inhibiting Na-H exchanger and Na,K-ATPase
+      activity. Defective renal dopamine production and/or DR function have been
+      reported in essential hypertension (EH) as well as in genetic models of
+      animal hypertension. With a restriction fragment length polymorphism of
+      the DRD1 gene, we performed an association study in patients with EH. One
+      hundred thirty-one subjects with EH and 136 age-matched normotensive (NT)
+      controls were studied. Polymerase chain reaction was used to amplify the
+      A-48G polymorphic site in the DRD1 gene, and restriction analysis of the
+      polymerase chain reaction product was used to score the A and G alleles.
+      The allele frequencies in the EH group and NT group were then compared.
+      The G allele was observed more frequently in the EH group than in the NT
+      group, and the allele frequencies in the 2 groups differed significantly
+      (chi(2)=6.5, P=0.01). Multiple logistic linear regression analysis
+      revealed that the genotype frequencies of A/A, A/G, and G/G differed
+      significantly (odds ratio=2.1; 95% CI=1.19 to 3.66) between the EH and NT
+      groups. EH patients who possess the G allele had a higher diastolic blood
+      pressure than those lacking the G allele (P<0.01). Thus, the alleles
+      detected by this restriction fragment length polymorphism in the DRD1 gene
+      are associated with EH, and they appear to influence the diastolic blood
+      pressure of Japanese EH patients.
+AD  - Second Department of Internal Medicine, Nihon University School of
+      Medicine, Tokyo, Japan.
+FAU - Sato, M
+AU  - Sato M
+FAU - Soma, M
+AU  - Soma M
+FAU - Nakayama, T
+AU  - Nakayama T
+FAU - Kanmatsuse, K
+AU  - Kanmatsuse K
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Hypertension
+JT  - Hypertension
+JID - 7906255
+RN  - 0 (Receptors, Dopamine D1)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Blood Pressure/physiology
+MH  - Body Mass Index
+MH  - Diastole
+MH  - Female
+MH  - Genotype
+MH  - Humans
+MH  - Hypertension/genetics/*physiopathology
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Restriction Fragment Length
+MH  - Receptors, Dopamine D1/*genetics
+MH  - Systole
+EDAT- 2000/08/19 11:00
+MHDA- 2000/09/19 11:01
+PST - ppublish
+SO  - Hypertension. 2000 Aug;36(2):183-6.
+
+PMID- 12488059
+OWN - NLM
+STAT- MEDLINE
+DA  - 20021218
+DCOM- 20030410
+LR  - 20041117
+PUBM- Print
+IS  - 0006-3223 (Print)
+VI  - 52
+IP  - 12
+DP  - 2002 Dec 15
+TI  - Linkage disequilibrium between dopamine D1 receptor gene (DRD1) and
+      bipolar disorder.
+PG  - 1144-50
+AB  - BACKGROUND: Based on the dopamine hypothesis, the dopamine D1 receptor
+      gene (DRD1) is considered to be a good candidate gene for bipolar disorder
+      (BP). METHODS: In our study, three polymorphisms of the DRD1 gene,
+      -800T/C, -48A/G, and 1403T/C, were analyzed in 286 BP trios. Both the
+      transmission disequilibrium test (TDT) and haplotype TDT were performed on
+      the genotype data to test for the presence of linkage disequilibrium
+      between DRD1 and bipolar disorder. With the extended transmission
+      disequilibrium test (ETDT), we also calculated the maternal transmission
+      and paternal transmission for each allele. RESULTS: Although no
+      association was found for each individual polymorphism, there is a
+      significant association between DRD1 and BP for haplotype TDT analysis
+      (chi(2) = 16.068, df = 3, p =.0011). CONCLUSIONS: These results indicate
+      that DRD1 may play a role in the etiology of bipolar disorder.
+AD  - Neurogenetics Section, Centre for Addiction and Mental Health, Toronto,
+      Canada.
+FAU - Ni, Xingqun
+AU  - Ni X
+FAU - Trakalo, Joseph M
+AU  - Trakalo JM
+FAU - Mundo, Emanuela
+AU  - Mundo E
+FAU - Macciardi, Fabio M
+AU  - Macciardi FM
+FAU - Parikh, Sagar
+AU  - Parikh S
+FAU - Lee, Lisa
+AU  - Lee L
+FAU - Kennedy, James L
+AU  - Kennedy JL
+LA  - eng
+PT  - Journal Article
+PL  - United States
+TA  - Biol Psychiatry
+JT  - Biological psychiatry
+JID - 0213264
+RN  - 0 (DNA Primers)
+RN  - 0 (Receptors, Dopamine D1)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Analysis of Variance
+MH  - Bipolar Disorder/*genetics
+MH  - DNA Primers
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - *Linkage Disequilibrium
+MH  - Male
+MH  - Polymorphism, Genetic
+MH  - Receptors, Dopamine D1/*genetics
+EDAT- 2002/12/19 04:00
+MHDA- 2003/04/11 05:00
+AID - S0006322302014336 [pii]
+PST - ppublish
+SO  - Biol Psychiatry. 2002 Dec 15;52(12):1144-50.
+
+PMID- 17466946
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070514
+DCOM- 20070709
+PUBM- Print-Electronic
+IS  - 0006-291X (Print)
+VI  - 357
+IP  - 4
+DP  - 2007 Jun 15
+TI  - 5' UTR polymorphism of dopamine receptor D1 (DRD1) associated with
+      severity and temperament of alcoholism.
+PG  - 1135-41
+AB  - Multiple dopamine receptors in the dopaminergic system may be prime
+      candidates for genetic influence on alcohol abuse and dependence due to
+      their involvement in reward and reinforcing mechanisms. Genetic
+      polymorphisms in dopamine receptor genes are believed to influence the
+      development and/or severity of alcoholism. To examine the genetic effects
+      of the Dopamine Receptor D1 (DRD) gene family (DRD1-DRD5) in the Korean
+      population, 11 polymorphisms in the DRD gene family were genotyped and
+      analyzed in 535 alcohol-dependent subjects and 273 population controls.
+      Although none of the polymorphisms of DRD1-5 genes were found to be
+      associated with the risk of alcoholism, one 5' UTR polymorphism in the
+      DRD1 (DRD1-48A>G) gene was significantly associated with severity of
+      alcohol-related problem, as measured by the Alcohol Use Disorders
+      Identification Test (AUDIT) in a gene dose-dependent manner, i.e., 24.37
+      (+/-8.19) among patients with -48A/A genotype, 22.37 (+/-9.49) among those
+      with -48A/G genotype, and 17.38 (+/-8.28) among those with -48G/G genotype
+      (P=0.002). The genetic effects of DRD1-48A>G were further analyzed with
+      other phenotypes among alcohol-dependent subjects. Interestingly, the
+      DRD1-48A>A genotype was also found to be associated with novelty seeking
+      (NC), harm avoidance (HA), and persistence (P) (P =0.01, 0.02, and 0.003,
+      respectively). The information derived from this study could be valuable
+      for understanding the genetic factors involved in alcoholic phenotypes and
+      genetic distribution of the DRD gene family, and could facilitate further
+      investigation in other ethnic groups.
+AD  - Department of Psychiatry, Holy Family Hospital, College of Medicine,
+      Catholic University of Korea, Sosa-dong, Wonmi-Gu, Pucheon, Kyounggi-do
+      420-717, Republic of Korea.
+FAU - Kim, Dai-Jin
+AU  - Kim DJ
+FAU - Park, Byung Lae
+AU  - Park BL
+FAU - Yoon, Sujung
+AU  - Yoon S
+FAU - Lee, Hae-Kook
+AU  - Lee HK
+FAU - Joe, Keun-Ho
+AU  - Joe KH
+FAU - Cheon, Young-Hoon
+AU  - Cheon YH
+FAU - Gwon, Do-Hoon
+AU  - Gwon DH
+FAU - Cho, Sung-Nam
+AU  - Cho SN
+FAU - Lee, Hye Won
+AU  - Lee HW
+FAU - NamGung, Suk
+AU  - NamGung S
+FAU - Shin, Hyoung Doo
+AU  - Shin HD
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070419
+PL  - United States
+TA  - Biochem Biophys Res Commun
+JT  - Biochemical and biophysical research communications
+JID - 0372516
+RN  - 0 (5' Untranslated Regions)
+RN  - 0 (Receptors, Dopamine D1)
+SB  - IM
+MH  - 5' Untranslated Regions/*genetics
+MH  - Adult
+MH  - Aged
+MH  - Alcoholism/classification/*epidemiology/*genetics/psychology
+MH  - DNA Mutational Analysis
+MH  - Genetic Predisposition to Disease/epidemiology/genetics
+MH  - Humans
+MH  - Korea/epidemiology
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Prevalence
+MH  - Receptors, Dopamine D1/*genetics
+MH  - Risk Assessment/*methods
+MH  - Risk Factors
+MH  - Severity of Illness Index
+EDAT- 2007/05/01 09:00
+MHDA- 2007/07/10 09:00
+PHST- 2007/04/06 [received]
+PHST- 2007/04/12 [accepted]
+PHST- 2007/04/19 [aheadofprint]
+AID - S0006-291X(07)00806-6 [pii]
+AID - 10.1016/j.bbrc.2007.04.074 [doi]
+PST - ppublish
+SO  - Biochem Biophys Res Commun. 2007 Jun 15;357(4):1135-41. Epub 2007 Apr 19.
+
+PMID- 18092181
+OWN - NLM
+STAT- MEDLINE
+DA  - 20080215
+DCOM- 20080422
+PUBM- Print-Electronic
+IS  - 0340-6717 (Print)
+VI  - 123
+IP  - 2
+DP  - 2008 Mar
+TI  - Significant association of DRD1 with nicotine dependence.
+PG  - 133-40
+AB  - Epidemiologic studies have strongly implicated genetics in smoking
+      behavior. Genes in the dopaminergic system, which mediates the reinforcing
+      and dependence-producing properties of nicotine, are plausible candidates
+      for roles in nicotine dependence (ND). In this study, we examined five
+      single-nucleotide polymorphisms (SNPs) within or near the dopamine D(1)
+      receptor gene (DRD1) for their association with ND, which was assessed by
+      smoking quantity (SQ), the Heaviness of Smoking Index (HSI), and the
+      Fagerstrom Test for ND (FTND). The samples were obtained from 2,037
+      participants representing 200 European American (EA) and 402 African
+      American (AA) families. Although we found significant associations of SNPs
+      rs265973, rs686, and rs4532 in the AA sample; of rs4532 in the EA sample;
+      and of rs265975, rs686, and rs4532 in the pooled sample with various ND
+      measures, only the association of rs686 in the AA sample and of rs686 and
+      rs4532 in the pooled sample remained significant after correction for
+      multiple testing. Haplotype-based association analysis revealed that
+      haplotype C-T-A, formed by rs265973, rs265975, and rs686, was
+      significantly associated with all three ND measures in both the AA and the
+      pooled sample. Another haplotype, T-A-T, formed by rs265975, rs686, and
+      rs4532, showed a significant association with FTND in the pooled sample.
+      Furthermore, in a luciferase reporter assay, rs686, located in the 3'
+      untranslated region, caused differential luciferase activities, indicating
+      that rs686 is a functional polymorphism affecting expression of DRD1.
+AD  - Department of Psychiatry and Neurobehavioral Sciences, Section of
+      Neurobiology, University of Virginia, 1670 Discovery Drive, Suite 125,
+      Charlottesville, VA 22911, USA.
+FAU - Huang, Weihua
+AU  - Huang W
+FAU - Ma, Jennie Z
+AU  - Ma JZ
+FAU - Payne, Thomas J
+AU  - Payne TJ
+FAU - Beuten, Joke
+AU  - Beuten J
+FAU - Dupont, Randolph T
+AU  - Dupont RT
+FAU - Li, Ming D
+AU  - Li MD
+LA  - eng
+GR  - DA-12844/DA/United States NIDA
+GR  - DA-13783/DA/United States NIDA
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+DEP - 20071219
+PL  - Germany
+TA  - Hum Genet
+JT  - Human genetics
+JID - 7613873
+RN  - 0 (3' Untranslated Regions)
+RN  - 0 (DNA Primers)
+RN  - 0 (Receptors, Dopamine D1)
+RN  - EC 1.13.12.- (Luciferases)
+SB  - IM
+MH  - 3' Untranslated Regions/genetics
+MH  - African Americans
+MH  - Cohort Studies
+MH  - DNA Primers/genetics
+MH  - European Continental Ancestry Group
+MH  - Family
+MH  - Female
+MH  - Genotype
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Luciferases/metabolism
+MH  - Male
+MH  - Neuroblastoma/metabolism/pathology
+MH  - Polymerase Chain Reaction
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Receptors, Dopamine D1/*genetics
+MH  - Smoking
+MH  - Tobacco Use Disorder/*genetics
+MH  - Tumor Cells, Cultured
+EDAT- 2007/12/20 09:00
+MHDA- 2008/04/23 09:00
+PHST- 2007/11/02 [received]
+PHST- 2007/12/11 [accepted]
+PHST- 2007/12/19 [aheadofprint]
+AID - 10.1007/s00439-007-0453-9 [doi]
+PST - ppublish
+SO  - Hum Genet. 2008 Mar;123(2):133-40. Epub 2007 Dec 19.
+
+PMID- 18341651
+OWN - NLM
+STAT- MEDLINE
+DA  - 20080327
+DCOM- 20080602
+PUBM- Print-Electronic
+IS  - 1530-0277 (Electronic)
+VI  - 32
+IP  - 4
+DP  - 2008 Apr
+TI  - A haplotype of the DRD1 gene is associated with alcohol dependence.
+PG  - 567-72
+AB  - BACKGROUND: The D1 dopamine receptor has been involved in a number of
+      brain functions, including motor control, inattentive symptoms and reward
+      and reinforcement mechanisms. Indeed, DRD1 antagonists may reduce
+      cocaine-seeking behavior and the acquisition of cocaine-cue associations.
+      The D1.1/r4532 marker of the DRD1 gene has been associated with a large
+      set of phenotypes including addictive behaviors, but none with alcohol
+      dependence per se. METHODS: We analyzed a population of 134 patients with
+      alcohol dependence, also assessing more homogeneous (severe) phenotypes,
+      comparing this sample with a healthy control population, assessing two
+      SNPs within the DRD1 gene in order to depict the role of DRD1
+      polymorphisms and haplotypes. RESULTS: The T allele of the rs686
+      polymorphism within DRD1 gene was significantly more frequent in patients
+      with alcohol dependence (p = 0.0008), with a larger excess for patients
+      with severe dependence (p = 6 x 10(-6)), and even more for patients with
+      severe complications such as withdrawal seizures (p = 7 x 10(-7)). A
+      specific haplotype rs686*T-rs4532*G within the DRD1 gene was significantly
+      more precisely associated with alcohol dependence in our sample (p = 5 x
+      10(-6)). CONCLUSIONS: Even though chance finding cannot be ruled out,
+      convergent evidence is given that the DRD1 gene is a susceptibility gene
+      in alcohol dependence, regarding the fact that relying on more homogeneous
+      phenotypes (i.e., more severe patients) and more informative genetic
+      markers (i.e., haplotypes) reinforce the initial association.
+AD  - INSERM U675, Faculty of Medicine Bichat (IFR02) (Paris 7), Paris, France.
+      philippe.batel@bjn.aphp.fr
+FAU - Batel, P
+AU  - Batel P
+FAU - Houchi, H
+AU  - Houchi H
+FAU - Daoust, M
+AU  - Daoust M
+FAU - Ramoz, N
+AU  - Ramoz N
+FAU - Naassila, M
+AU  - Naassila M
+FAU - Gorwood, P
+AU  - Gorwood P
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+DEP - 20080313
+PL  - England
+TA  - Alcohol Clin Exp Res
+JT  - Alcoholism, clinical and experimental research
+JID - 7707242
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptors, Dopamine D1)
+SB  - IM
+MH  - Adult
+MH  - Aged
+MH  - Alcoholism/*genetics
+MH  - Female
+MH  - Genetic Markers/genetics
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Linkage (Genetics)/*genetics
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Genetic/genetics
+MH  - Receptors, Dopamine D1/*genetics
+EDAT- 2008/03/18 09:00
+MHDA- 2008/06/03 09:00
+PHST- 2008/03/13 [aheadofprint]
+AID - ACER618 [pii]
+AID - 10.1111/j.1530-0277.2008.00618.x [doi]
+PST - ppublish
+SO  - Alcohol Clin Exp Res. 2008 Apr;32(4):567-72. Epub 2008 Mar 13.
+
+PMID- 8810292
+OWN - NLM
+STAT- MEDLINE
+DA  - 19961119
+DCOM- 19961119
+LR  - 20041117
+PUBM- Print
+IS  - 0021-9258 (Print)
+VI  - 271
+IP  - 41
+DP  - 1996 Oct 11
+TI  - Two distinct promoters drive transcription of the human D1A dopamine
+      receptor gene.
+PG  - 25292-9
+AB  - The human D1A dopamine receptor gene has a GC-rich, TATA-less promoter
+      located upstream of a small, noncoding exon 1, which is separated from the
+      coding exon 2 by a 116-base pair (bp)-long intron. Serial 3'-deletions of
+      the 5'-noncoding region of this gene, including the intron and 5'-end of
+      exon 2, resulted in 80 and 40% decrease in transcriptional activity of the
+      upstream promoter in two D1A-expressing neuroblastoma cell lines, SK-N-MC
+      and NS20Y, respectively. To investigate the function of this region, the
+      intron and 245 bp at the 5'-end of exon 2 were investigated. Transient
+      expression analyses using various chloramphenicol acetyltransferase
+      constructs showed that the transcriptional activity of the intron is
+      higher than that of the upstream promoter by 12-fold in SK-N-MC cells and
+      by 5.5-fold in NS20Y cells in an orientation-dependent manner, indicating
+      that the D1A intron is a strong promoter. Primer extension and
+      ribonuclease protection assays revealed that transcription driven by the
+      intron promoter is initiated at the junction of intron and exon 2 and at a
+      cluster of nucleotides located 50 bp downstream from this junction. The
+      same transcription start sites are utilized by the chloramphenicol
+      acetyltransferase constructs employed in transfections as well as by the
+      D1A gene expressed within the human caudate. The relative abundance of D1A
+      transcripts originating from the upstream promoter compared with those
+      transcribed from the intron promoter is 1.5-2.9 times in SK-N-MC cells and
+      2 times in the human caudate. Transcript stability studies in SK-N-MC
+      cells revealed that longer D1A mRNA molecules containing exon 1 are
+      degraded 1.8 times faster than shorter transcripts lacking exon 1.
+      Although gel mobility shift assay could not detect DNA-protein interaction
+      at the D1A intron, competitive co-transfection using the intron as
+      competitor confirmed the presence of trans-acting factors at the intron.
+      These data taken together indicate that the human D1A gene has two
+      functional TATA-less promoters, both in D1A expressing cultured
+      neuroblastoma cells and in the human striatum.
+AD  - Genetic Pharmacology Unit, Experimental Therapeutics Branch, NINDS,
+      National Institutes of Health, Bethesda, Maryland 20892, USA.
+FAU - Lee, S H
+AU  - Lee SH
+FAU - Minowa, M T
+AU  - Minowa MT
+FAU - Mouradian, M M
+AU  - Mouradian MM
+LA  - eng
+SI  - GENBANK/M85247
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - J Biol Chem
+JT  - The Journal of biological chemistry
+JID - 2985121R
+RN  - 0 (Receptors, Dopamine D1)
+RN  - 0 (Recombinant Fusion Proteins)
+RN  - 0 (dopamine D1A receptor)
+RN  - EC 2.3.1.28 (Chloramphenicol O-Acetyltransferase)
+SB  - IM
+MH  - Base Sequence
+MH  - Cell Line
+MH  - Chloramphenicol O-Acetyltransferase/biosynthesis
+MH  - Exons
+MH  - Humans
+MH  - Introns
+MH  - Kinetics
+MH  - Molecular Sequence Data
+MH  - Neuroblastoma
+MH  - *Promoter Regions (Genetics)
+MH  - Receptors, Dopamine D1/*biosynthesis/*genetics
+MH  - Recombinant Fusion Proteins/biosynthesis
+MH  - *Transcription, Genetic
+MH  - Transfection
+MH  - Tumor Cells, Cultured
+EDAT- 1996/10/11
+MHDA- 1996/10/11 00:01
+PST - ppublish
+SO  - J Biol Chem. 1996 Oct 11;271(41):25292-9.
+
+PMID- 9700190
+OWN - NLM
+STAT- MEDLINE
+DA  - 19981016
+DCOM- 19981016
+LR  - 20071114
+PUBM- Print
+IS  - 0964-6906 (Print)
+VI  - 7
+IP  - 9
+DP  - 1998 Sep
+TI  - Linkage and association of adrenergic and dopamine receptor genes in the
+      distal portion of the long arm of chromosome 5 with systolic blood
+      pressure variation.
+PG  - 1379-83
+AB  - Elevated blood pressure is an important risk factor for renal-, cerebro-
+      and cardiovascular diseases. We used an efficient discordant sib-pair
+      ascertainment scheme to investigate the impact of the distal end of the
+      long arm of human chromosome 5 (chromosomal region 5q31.1-qter) containing
+      genes for the alpha1B and beta2 adrenergic receptors and the dopamine
+      receptor type 1A on variation of systolic blood pressure in young
+      Caucasians. We measured eight highly polymorphic markers spanning this
+      positional candidate gene-rich region in 427 individuals from 55
+      three-generation pedigrees containing 69 discordant sibling pairs, and
+      calculated multipoint identity by descent (MIBD) probabilities. The
+      results of genetic linkage and association tests indicate that the region
+      between markers D5S2093 and D5S462 is significantly linked to one or more
+      polymorphic genes influencing interindividual variation in systolic blood
+      pressure levels. Since the alpha1B adrenergic receptor and dopamine
+      receptor type 1A genes are located close to these markers, these data
+      suggest that genetic variation in one or both of these G protein-coupled
+      receptors, which participate in the control of vascular tone, plays an
+      important role in influencing interindividual variation in systolic blood
+      pressure levels.
+AD  - Institute of Molecular Medicine and Human Genetics Center, The University
+      of Texas-Houston Health Science Center, Houston, TX 77225, USA.
+FAU - Krushkal, J
+AU  - Krushkal J
+FAU - Xiong, M
+AU  - Xiong M
+FAU - Ferrell, R
+AU  - Ferrell R
+FAU - Sing, C F
+AU  - Sing CF
+FAU - Turner, S T
+AU  - Turner ST
+FAU - Boerwinkle, E
+AU  - Boerwinkle E
+LA  - eng
+GR  - R01 HL51021-04/HL/United States NHLBI
+GR  - U10 HL54481-03/HL/United States NHLBI
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - ENGLAND
+TA  - Hum Mol Genet
+JT  - Human molecular genetics
+JID - 9208958
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptors, Adrenergic)
+RN  - 0 (Receptors, Adrenergic, alpha-1)
+RN  - 0 (Receptors, Adrenergic, beta-2)
+RN  - 0 (Receptors, Dopamine D1)
+RN  - 0 (adrenergic receptor alpha(1b))
+RN  - 0 (dopamine D1A receptor)
+SB  - IM
+MH  - Adolescent
+MH  - Adult
+MH  - Blood Pressure/*genetics
+MH  - Child
+MH  - Chromosomes, Human, Pair 5/*genetics
+MH  - Female
+MH  - Genetic Markers
+MH  - Humans
+MH  - *Linkage (Genetics)
+MH  - Male
+MH  - Pedigree
+MH  - Polymorphism, Genetic
+MH  - Receptors, Adrenergic/*genetics
+MH  - Receptors, Adrenergic, alpha-1/genetics
+MH  - Receptors, Adrenergic, beta-2/genetics
+MH  - Receptors, Dopamine D1/*genetics
+MH  - Risk Factors
+MH  - Systole
+MH  - Variation (Genetics)
+EDAT- 1998/08/13
+MHDA- 1998/08/13 00:01
+AID - ddb190 [pii]
+PST - ppublish
+SO  - Hum Mol Genet. 1998 Sep;7(9):1379-83.
+

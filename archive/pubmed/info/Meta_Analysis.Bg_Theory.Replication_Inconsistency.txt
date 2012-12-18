@@ -1,0 +1,607 @@
+PMID- 11600885
+OWN - NLM
+STAT- MEDLINE
+DA  - 20011105
+DCOM- 20011207
+LR  - 20071115
+PUBM- Print
+IS  - 1061-4036 (Print)
+VI  - 29
+IP  - 3
+DP  - 2001 Nov
+TI  - Replication validity of genetic association studies.
+PG  - 306-9
+AB  - The rapid growth of human genetics creates countless opportunities for
+      studies of disease association. Given the number of potentially
+      identifiable genetic markers and the multitude of clinical outcomes to
+      which these may be linked, the testing and validation of statistical
+      hypotheses in genetic epidemiology is a task of unprecedented scale.
+      Meta-analysis provides a quantitative approach for combining the results
+      of various studies on the same topic, and for estimating and explaining
+      their diversity. Here, we have evaluated by meta-analysis 370 studies
+      addressing 36 genetic associations for various outcomes of disease. We
+      show that significant between-study heterogeneity (diversity) is frequent,
+      and that the results of the first study correlate only modestly with
+      subsequent research on the same association. The first study often
+      suggests a stronger genetic effect than is found by subsequent studies.
+      Both bias and genuine population diversity might explain why early
+      association studies tend to overestimate the disease protection or
+      predisposition conferred by a genetic polymorphism. We conclude that a
+      systematic meta-analytic approach may assist in estimating population-wide
+      effects of genetic risk factors in human disease.
+AD  - Clinical and Molecular Epidemiology Unit, Department of Hygiene and
+      Epidemiology, University of Ioannina School of Medicine, Ioannina 45110,
+      Greece. jioannid@cc.uoi.gr
+FAU - Ioannidis, J P
+AU  - Ioannidis JP
+FAU - Ntzani, E E
+AU  - Ntzani EE
+FAU - Trikalinos, T A
+AU  - Trikalinos TA
+FAU - Contopoulos-Ioannidis, D G
+AU  - Contopoulos-Ioannidis DG
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Nat Genet
+JT  - Nature genetics
+JID - 9216904
+RN  - 0 (Genetic Markers)
+SB  - IM
+CIN - Nat Genet. 2001 Nov;29(3):244-5. PMID: 11687787
+MH  - Bias (Epidemiology)
+MH  - Chromosome Mapping/*methods/statistics & numerical data
+MH  - *Disease
+MH  - Genetic Markers/genetics
+MH  - Genetic Predisposition to Disease/*genetics
+MH  - Humans
+MH  - Linkage (Genetics)/genetics
+MH  - Meta-Analysis as Topic
+MH  - Odds Ratio
+MH  - Polymorphism, Genetic/genetics
+MH  - Regression Analysis
+MH  - Reproducibility of Results
+MH  - Variation (Genetics)/genetics
+EDAT- 2001/10/16 10:00
+MHDA- 2002/01/05 10:01
+AID - 10.1038/ng749 [doi]
+AID - ng749 [pii]
+PST - ppublish
+SO  - Nat Genet. 2001 Nov;29(3):306-9.
+
+PMID- 11882781
+OWN - NLM
+STAT- MEDLINE
+DA  - 20020307
+DCOM- 20020627
+LR  - 20071115
+PUBM- Print
+IS  - 1098-3600 (Print)
+VI  - 4
+IP  - 2
+DP  - 2002 Mar-Apr
+TI  - A comprehensive review of genetic association studies.
+PG  - 45-61
+AB  - Most common diseases are complex genetic traits, with multiple genetic and
+      environmental components contributing to susceptibility. It has been
+      proposed that common genetic variants, including single nucleotide
+      polymorphisms (SNPs), influence susceptibility to common disease. This
+      proposal has begun to be tested in numerous studies of association between
+      genetic variation at these common DNA polymorphisms and variation in
+      disease susceptibility. We have performed an extensive review of such
+      association studies. We find that over 600 positive associations between
+      common gene variants and disease have been reported; these associations,
+      if correct, would have tremendous importance for the prevention,
+      prediction, and treatment of most common diseases. However, most reported
+      associations are not robust: of the 166 putative associations which have
+      been studied three or more times, only 6 have been consistently
+      replicated. Interestingly, of the remaining 160 associations, well over
+      half were observed again one or more times. We discuss the possible
+      reasons for this irreproducibility and suggest guidelines for performing
+      and interpreting genetic association studies. In particular, we emphasize
+      the need for caution in drawing conclusions from a single report of an
+      association between a genetic variant and disease susceptibility.
+AD  - Whitehead Institute/MIT Center for Genome Research, Cambridge, MA 02139,
+      USA.
+FAU - Hirschhorn, Joel N
+AU  - Hirschhorn JN
+FAU - Lohmueller, Kirk
+AU  - Lohmueller K
+FAU - Byrne, Edward
+AU  - Byrne E
+FAU - Hirschhorn, Kurt
+AU  - Hirschhorn K
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+PL  - United States
+TA  - Genet Med
+JT  - Genetics in medicine : official journal of the American College of Medical
+      Genetics
+JID - 9815831
+SB  - IM
+MH  - Alleles
+MH  - Disease Susceptibility
+MH  - Environment
+MH  - Genetic Diseases, Inborn/*genetics
+MH  - *Genetic Predisposition to Disease
+MH  - Genetics, Population
+MH  - Genome, Human
+MH  - Guidelines as Topic
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - *Polymorphism, Single Nucleotide
+MH  - Variation (Genetics)
+RF  - 44
+EDAT- 2002/03/08 10:00
+MHDA- 2002/06/28 10:01
+PST - ppublish
+SO  - Genet Med. 2002 Mar-Apr;4(2):45-61.
+
+PMID- 12524541
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030131
+DCOM- 20030304
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 1061-4036 (Print)
+VI  - 33
+IP  - 2
+DP  - 2003 Feb
+TI  - Meta-analysis of genetic association studies supports a contribution of
+      common variants to susceptibility to common disease.
+PG  - 177-82
+AB  - Association studies offer a potentially powerful approach to identify
+      genetic variants that influence susceptibility to common disease, but are
+      plagued by the impression that they are not consistently reproducible. In
+      principle, the inconsistency may be due to false positive studies, false
+      negative studies or true variability in association among different
+      populations. The critical question is whether false positives
+      overwhelmingly explain the inconsistency. We analyzed 301 published
+      studies covering 25 different reported associations. There was a large
+      excess of studies replicating the first positive reports, inconsistent
+      with the hypothesis of no true positive associations (P < 10(-14)). This
+      excess of replications could not be reasonably explained by publication
+      bias and was concentrated among 11 of the 25 associations. For 8 of these
+      11 associations, pooled analysis of follow-up studies yielded
+      statistically significant replication of the first report, with modest
+      estimated genetic effects. Thus, a sizable fraction (but under half) of
+      reported associations have strong evidence of replication; for these,
+      false negative, underpowered studies probably contribute to inconsistent
+      replication. We conclude that there are probably many common variants in
+      the human genome with modest but real effects on common disease risk, and
+      that studies using large samples will convincingly identify such variants.
+AD  - Whitehead/Massachuetts Institute of Technology Center for Genome Research,
+      Cambridge, Massachusetts 02139, USA.
+FAU - Lohmueller, Kirk E
+AU  - Lohmueller KE
+FAU - Pearce, Celeste L
+AU  - Pearce CL
+FAU - Pike, Malcolm
+AU  - Pike M
+FAU - Lander, Eric S
+AU  - Lander ES
+FAU - Hirschhorn, Joel N
+AU  - Hirschhorn JN
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20030113
+PL  - United States
+TA  - Nat Genet
+JT  - Nature genetics
+JID - 9216904
+SB  - IM
+MH  - Alleles
+MH  - Data Interpretation, Statistical
+MH  - False Positive Reactions
+MH  - Follow-Up Studies
+MH  - *Genetic Predisposition to Disease
+MH  - Genetics, Population
+MH  - Genome, Human
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Polymorphism, Single Nucleotide
+MH  - Publication Bias
+MH  - Reproducibility of Results
+MH  - *Variation (Genetics)
+EDAT- 2003/01/14 04:00
+MHDA- 2003/03/05 04:00
+PHST- 2003/01/13 [aheadofprint]
+PHST- 2002/07/02 [received]
+PHST- 2002/11/15 [accepted]
+AID - 10.1038/ng1071 [doi]
+AID - ng1071 [pii]
+PST - ppublish
+SO  - Nat Genet. 2003 Feb;33(2):177-82. Epub 2003 Jan 13.
+
+PMID- 15803198
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050401
+DCOM- 20050412
+PUBM- Print
+IS  - 1471-0056 (Print)
+VI  - 6
+IP  - 4
+DP  - 2005 Apr
+TI  - Gene-environment interactions in human diseases.
+PG  - 287-98
+AB  - Studies of gene-environment interactions aim to describe how genetic and
+      environmental factors jointly influence the risk of developing a human
+      disease. Gene-environment interactions can be described by using several
+      models, which take into account the various ways in which genetic effects
+      can be modified by environmental exposures, the number of levels of these
+      exposures and the model on which the genetic effects are based. Choice of
+      study design, sample size and genotyping technology influence the analysis
+      and interpretation of observed gene-environment interactions. Current
+      systems for reporting epidemiological studies make it difficult to assess
+      whether the observed interactions are reproducible, so suggestions are
+      made for improvements in this area.
+AD  - Department of Epidemiology, Harvard School of Public Health, 677
+      Huntington Avenue, Boston, Massachusetts 02115, USA.
+      dhunter@hsph.harvard.edu
+FAU - Hunter, David J
+AU  - Hunter DJ
+LA  - eng
+PT  - Journal Article
+PT  - Review
+PL  - England
+TA  - Nat Rev Genet
+JT  - Nature reviews. Genetics
+JID - 100962779
+SB  - IM
+MH  - *Environment
+MH  - Epidemiologic Studies
+MH  - *Genetic Predisposition to Disease
+MH  - Genotype
+MH  - Humans
+MH  - Models, Genetic
+MH  - Prospective Studies
+MH  - Reproducibility of Results
+MH  - Risk Factors
+MH  - Sample Size
+RF  - 70
+EDAT- 2005/04/02 09:00
+MHDA- 2005/04/13 09:00
+AID - nrg1578 [pii]
+AID - 10.1038/nrg1578 [doi]
+PST - ppublish
+SO  - Nat Rev Genet. 2005 Apr;6(4):287-98.
+
+PMID- 15878467
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050509
+DCOM- 20050720
+LR  - 20071115
+PUBM- Print-Electronic
+IS  - 0895-4356 (Print)
+VI  - 58
+IP  - 6
+DP  - 2005 Jun
+TI  - Early extreme contradictory estimates may appear in published research:
+      the Proteus phenomenon in molecular genetics research and randomized
+      trials.
+PG  - 543-9
+AB  - BACKGROUND AND OBJECTIVE: Divergent results on the same scientific
+      question generate controversy. We hypothesized that controversial data are
+      attractive to investigators and editors, and thus the most extreme,
+      opposite results would appear very early rather than late, as data
+      accumulate, provided data can be generated rapidly. METHODS: We used data
+      from MEDLINE-indexed meta-analyses of case-control studies on genetic
+      associations (retrospective, hypothesis-generating research with usually
+      rapid turnaround) and meta-analyses of randomized trials of health care
+      interventions (prospective, targeted research that usually takes longer)
+      sampled from the Cochrane Library. Using cumulative meta-analysis, we
+      evaluated how the between-study variance for studies on the same question
+      changed over time and at what point the studies with the most extreme
+      results ever observed had been published. RESULTS: The maximal
+      between-study variance was more likely to be recorded early in the 44
+      eligible meta-analyses of genetic associations than in the 37
+      meta-analyses of health care interventions (P = .013). At the time of the
+      first heterogeneity assessment, the most favorable-ever result in support
+      of a specific association was more likely to appear than the least
+      favorable-ever result (22 vs. 10, P = .017); the opposite was seen at the
+      second heterogeneity assessment (15 vs. 5, P = .031). Such a sequence of
+      extreme opposite results was not seen in the clinical trials
+      meta-analyses. The estimated between-study variance decreased over time in
+      genetic association studies (P = .010), but not in clinical trials (P =
+      .30). CONCLUSION: In contrast to prospective trials, a rapid early
+      sequence of extreme, opposite results is frequent in retrospective
+      hypothesis-generating molecular research.
+AD  - Institute for Clinical Research and Health Policy Studies, Department of
+      Medicine, Tufts-New England Medical Center, Tufts University School of
+      Medicine, Boston, MA 02111, USA. jioannid@cc.uoi.gr
+FAU - Ioannidis, John P A
+AU  - Ioannidis JP
+FAU - Trikalinos, Thomas A
+AU  - Trikalinos TA
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+DEP - 20050418
+PL  - England
+TA  - J Clin Epidemiol
+JT  - Journal of clinical epidemiology
+JID - 8801383
+SB  - IM
+MH  - Case-Control Studies
+MH  - *Data Interpretation, Statistical
+MH  - *Genetic Predisposition to Disease
+MH  - Humans
+MH  - Meta-Analysis as Topic
+MH  - *Publication Bias
+MH  - *Randomized Controlled Trials as Topic
+MH  - Review Literature as Topic
+RF  - 31
+EDAT- 2005/05/10 09:00
+MHDA- 2005/07/21 09:00
+PHST- 2004/01/23 [received]
+PHST- 2004/09/01 [revised]
+PHST- 2004/10/08 [accepted]
+PHST- 2005/04/18 [aheadofprint]
+AID - S0895-4356(05)00023-5 [pii]
+AID - 10.1016/j.jclinepi.2004.10.019 [doi]
+PST - ppublish
+SO  - J Clin Epidemiol. 2005 Jun;58(6):543-9. Epub 2005 Apr 18.
+
+PMID- 16540537
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060605
+DCOM- 20070212
+PUBM- Print-Electronic
+IS  - 0300-5771 (Print)
+VI  - 35
+IP  - 3
+DP  - 2006 Jun
+TI  - Commentary: grading the credibility of molecular evidence for complex
+      diseases.
+PG  - 572-8; discussion 593-6
+AD  - Department of Hygiene and Epidemiology, University of Ioannina School of
+      Medicine, Ioannina 45110, Greece. jioannid@cc.uoi.gr
+FAU - Ioannidis, John P A
+AU  - Ioannidis JP
+LA  - eng
+PT  - Comment
+PT  - Journal Article
+PT  - Review
+DEP - 20060315
+PL  - England
+TA  - Int J Epidemiol
+JT  - International journal of epidemiology
+JID - 7802871
+SB  - IM
+CON - Int J Epidemiol. 2006 Jun;35(3):562-71. PMID: 16540539
+MH  - Chronic Disease/epidemiology
+MH  - Disease/*etiology
+MH  - Epidemiologic Methods
+MH  - Epidemiology, Molecular
+MH  - Genetic Diseases, Inborn/genetics
+MH  - Humans
+MH  - Molecular Biology
+MH  - Risk Factors
+RF  - 54
+EDAT- 2006/03/17 09:00
+MHDA- 2007/02/13 09:00
+PHST- 2006/03/15 [aheadofprint]
+AID - dyl003 [pii]
+AID - 10.1093/ije/dyl003 [doi]
+PST - ppublish
+SO  - Int J Epidemiol. 2006 Jun;35(3):572-8; discussion 593-6. Epub 2006 Mar 15.
+
+PMID- 17551261
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070713
+DCOM- 20070905
+LR  - 20071115
+PUBM- Print-Electronic
+IS  - 1423-0062 (Electronic)
+VI  - 64
+IP  - 4
+DP  - 2007
+TI  - Non-replication and inconsistency in the genome-wide association setting.
+PG  - 203-13
+AB  - Non-replication and inconsistency had been common features in the search
+      for common variants of candidate genes affecting the risk of complex
+      diseases. They may continue to require attention in the current era, when
+      massive hypothesis-free testing of genetic variants is feasible. An
+      empirical evaluation of the early experience with genome-wide association
+      (GWA) studies suggests several examples where proposed associations have
+      failed to be replicated by subsequent investigations. Non-replication and
+      inconsistency is defined here in the framework of cumulative
+      meta-analysis. Ideally, associations exist, GWA finds them, and subsequent
+      investigations should replicate them. However, a number of other
+      possibilities need to be considered. No common genetic variants may
+      associate with the phenotype of interest and GWA may find nothing; or
+      associations may exist, but GWA may miss them. Associations that do not
+      exist may be falsely selected by the GWA and subsequent studies may
+      appropriately refute them or falsely replicate them. Finally, GWA may find
+      true associations that are nevertheless falsely non-replicated in the
+      subsequent studies; or associations may be genuinely inconsistent across
+      study populations. A list of options is presented for consideration in
+      each of these scenarios.
+CI  - Copyright  2007 S. Karger AG, Basel.
+AD  - Clinical and Molecular Epidemiology Unit, Department of Hygiene and
+      Epidemiology, University of Ioannina School of Medicine, Biomedical
+      Research Institute-Foundation for Research and Technology-Hellas,
+      Ioannina, Greece. jioannid@cc.uoi.gr
+FAU - Ioannidis, John P A
+AU  - Ioannidis JP
+LA  - eng
+PT  - Journal Article
+PT  - Review
+DEP - 20070606
+PL  - Switzerland
+TA  - Hum Hered
+JT  - Human heredity
+JID - 0200525
+SB  - IM
+MH  - *Genetic Predisposition to Disease
+MH  - Genome, Human/*genetics
+MH  - Humans
+MH  - Meta-Analysis as Topic
+MH  - Phenotype
+MH  - *Polymorphism, Genetic
+RF  - 87
+EDAT- 2007/06/07 09:00
+MHDA- 2007/09/06 09:00
+PHST- 2007/02/05 [received]
+PHST- 2007/04/04 [accepted]
+PHST- 2007/06/06 [aheadofprint]
+AID - 000103512 [pii]
+AID - 10.1159/000103512 [doi]
+PST - ppublish
+SO  - Hum Hered. 2007;64(4):203-13. Epub 2007 Jun 6.
+
+PMID- 17701899
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070816
+DCOM- 20071004
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 81
+IP  - 3
+DP  - 2007 Sep
+TI  - Flexible design for following up positive findings.
+PG  - 540-51
+AB  - As more population-based studies suggest associations between genetic
+      variants and disease risk, there is a need to improve the design of
+      follow-up studies (stage II) in independent samples to confirm evidence of
+      association observed at the initial stage (stage I). We propose to use
+      flexible designs developed for randomized clinical trials in the
+      calculation of sample size for follow-up studies. We apply a bootstrap
+      procedure to correct the effect of regression to the mean, also called
+      "winner's curse," resulting from choosing to follow up the markers with
+      the strongest associations. We show how the results from stage I can
+      improve sample size calculations for stage II adaptively. Despite the
+      adaptive use of stage I data, the proposed method maintains the nominal
+      global type I error for final analyses on the basis of either pure
+      replication with the stage II data only or a joint analysis using
+      information from both stages. Simulation studies show that sample-size
+      calculations accounting for the impact of regression to the mean with the
+      bootstrap procedure are more appropriate than is the conventional method.
+      We also find that, in the context of flexible design, the joint analysis
+      is generally more powerful than the replication analysis.
+AD  - Division of Cancer Epidemiology and Genetics, National Cancer Institute,
+      Rockville, MD, USA. yuka@mail.nih.gov
+FAU - Yu, Kai
+AU  - Yu K
+FAU - Chatterjee, Nilanjan
+AU  - Chatterjee N
+FAU - Wheeler, William
+AU  - Wheeler W
+FAU - Li, Qizhai
+AU  - Li Q
+FAU - Wang, Sophia
+AU  - Wang S
+FAU - Rothman, Nathaniel
+AU  - Rothman N
+FAU - Wacholder, Sholom
+AU  - Wacholder S
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, N.I.H., Intramural
+DEP - 20070803
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+SB  - IM
+MH  - *Follow-Up Studies
+MH  - *Genetic Predisposition to Disease
+MH  - Humans
+MH  - *Linkage (Genetics)
+MH  - Lymphoma, Non-Hodgkin/genetics
+MH  - *Research Design
+MH  - Sample Size
+PMC - PMC1950823
+EDAT- 2007/08/19 09:00
+MHDA- 2007/10/05 09:00
+PHST- 2007/04/05 [received]
+PHST- 2007/06/06 [accepted]
+PHST- 2007/08/03 [aheadofprint]
+AID - S0002-9297(07)61350-0 [pii]
+AID - 10.1086/520678 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2007 Sep;81(3):540-51. Epub 2007 Aug 3.
+
+PMID- 17786212
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+DA  - 20070905
+DCOM- 20070907
+PUBM- Electronic
+IS  - 1932-6203 (Electronic)
+VI  - 2
+IP  - 9
+DP  - 2007
+TI  - Heterogeneity in meta-analyses of genome-wide association investigations.
+PG  - e841
+AB  - BACKGROUND: Meta-analysis is the systematic and quantitative synthesis of
+      effect sizes and the exploration of their diversity across different
+      studies. Meta-analyses are increasingly applied to synthesize data from
+      genome-wide association (GWA) studies and from other teams that try to
+      replicate the genetic variants that emerge from such investigations.
+      Between-study heterogeneity is important to document and may point to
+      interesting leads. METHODOLOGY/PRINCIPAL FINDINGS: To exemplify these
+      issues, we used data from three GWA studies on type 2 diabetes and their
+      replication efforts where meta-analyses of all data using fixed effects
+      methods (not incorporating between-study heterogeneity) have already been
+      published. We considered 11 polymorphisms that at least one of the three
+      teams has suggested as susceptibility loci for type 2 diabetes. The I2
+      inconsistency metric (measuring the amount of heterogeneity not due to
+      chance) was different from 0 (no detectable heterogeneity) for 6 of the 11
+      genetic variants; inconsistency was moderate to very large (I2 = 32-77%)
+      for 5 of them. For these 5 polymorphisms, random effects calculations
+      incorporating between-study heterogeneity revealed more conservative
+      p-values for the summary effects compared with the fixed effects
+      calculations. These 5 associations were perused in detail to highlight
+      potential explanations for between-study heterogeneity. These include
+      identification of a marker for a correlated phenotype (e.g. FTO rs8050136
+      being associated with type 2 diabetes through its effect on obesity);
+      differential linkage disequilibrium across studies of the identified
+      genetic markers with the respective culprit polymorphisms (e.g., possibly
+      the case for CDKAL1 polymorphisms or for rs9300039 and markers in linkage
+      disequilibrium, as shown by additional studies); and potential bias.
+      Results were largely similar, when we treated the discovery and
+      replication data from each GWA investigation as separate studies.
+      SIGNIFICANCE: Between-study heterogeneity is useful to document in the
+      synthesis of data from GWA investigations and can offer valuable insights
+      for further clarification of gene-disease associations.
+AD  - Clinical and Molecular Epidemiology Unit, Department of Hygiene and
+      Epidemiology, University of Ioannina School of Medicine, Ioannina, Greece.
+      jioannid@cc.uoi.gr
+FAU - Ioannidis, John P A
+AU  - Ioannidis JP
+FAU - Patsopoulos, Nikolaos A
+AU  - Patsopoulos NA
+FAU - Evangelou, Evangelos
+AU  - Evangelou E
+LA  - eng
+PT  - Journal Article
+DEP - 20070905
+PL  - United States
+TA  - PLoS ONE
+JT  - PLoS ONE
+JID - 101285081
+PMC - PMC1950790
+EDAT- 2007/09/06 09:00
+MHDA- 2007/09/06 09:01
+PHST- 2007/07/09 [received]
+PHST- 2007/08/08 [accepted]
+AID - 10.1371/journal.pone.0000841 [doi]
+PST - epublish
+SO  - PLoS ONE. 2007 Sep 5;2(9):e841.
+

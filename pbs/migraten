@@ -1,0 +1,8 @@
+#/!bin/bash -l
+#PBS -l walltime=48:00:00,pmem=100mb,nodes=4:ppn=5
+#PBS -m abe
+module load intel
+module load ompi/intel
+cd /home/it1/zhoup/Data/test/02
+mpirun -np 20 migrate-n parmfile -nomenu 
+

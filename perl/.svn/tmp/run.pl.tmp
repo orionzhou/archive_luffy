@@ -1,0 +1,52 @@
+#!/usr/bin/perl -w
+BEGIN { push (@INC, $ENV{'mt'}."/mt2") };
+use strict; use Init; use Common; use Localdb; use Run; use Annotate; use Readfile;
+use Path::Class; use Convert; use Data::Dumper;
+use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
+use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
+sub getRounds {
+  my ($fIn1, $fIn2) = rearrange(['in1', 'in2'], @_);
+  my $locH = readLocStr($fIn1, "mt_30");
+  my $t = readTable(-in=>$fIn2, -header=>1);
+  my $t2 = $t->match_pattern("\$_->[4] > 1");
+  my @rst;
+  for my $chr (keys %$locH) {
+    my $ref1 = $locH->{$chr};
+    for my $ref2 (@$ref1) {
+      my ($start, $end) = @$ref2;
+      my $t3 = $t2->match_pattern("\$_->[1] eq '$chr' && \$_->[5] >= $start && \$_->[6] <= $end");
+      $t3->sort("round", 1, 0);
+      printf "%s-%s\n", $t3->elm(0, "round"), $t3->elm($t3->nofRow-1, "round");
+    }
+  }
+}
+my $DIR_Work = dir($DIR_Misc1, "run02");
+my $d01 = dir( $DIR_Work, "01_in");
+my $f02 = file($DIR_Work, "02_window.txt");
+my $f03 = file($DIR_Work, "03_convert.txt");
+#run_convert(-indir=>$d01, -fwin=>$f02, -out=>$f03);
+my $f04 = file($DIR_Conf, "lk_26_t0.006.txt");
+my $d05 = dir( $DIR_Work, "05_interval");
+#run_interval(-indir=>$d01, -outdir=>$d05, -flk=>$f04, -fwin=>$f02);
+my $d06 = dir( $DIR_Work, "06_stat");
+#run_stat(-indir=>$d05, -fwin=>$f02, -outdir=>$d06);
+my $f07 = file($DIR_Work, "07_recom.txt");
+#extract_stat(-indir1=>$d06, -indir2=>$d01, -out=>$f07, -fwin=>$f02);
+my $d08 = dir( $DIR_Work, "08_pairwise");
+#run_pairwise(-indir=>$d01, -outdir=>$d08, -flk=>$f04, -fwin=>$f02);
+
+my $d10 = dir( $DIR_Work, '10_ldhot_varrec');
+#prepare_ldhot(-indir1=>$d01, -indir2=>$d06, -outdir=>$d10, -fwin=>$f02);
+my $fCfg = file($DIR_In, "conf", "in_ldhot.txt");
+my $f11 = file($DIR_Work, '11_ldhot_loc.txt');
+my $d12 = dir( $DIR_Work, '12_ldhot');
+getRounds(-in1=>$f11, -in2=>$f02);
+run_ldhot(-indir1=>$d01, -indir2=>$d10, -outdir=>$d12, -fconfig=>$fCfg, -fwin=>$f02, -rounds=>'2_001_1-2_327');
+my $d20 = dir( $DIR_Work, "20_fastphase" );
+#run_fastphase(-indir=>$d01, -fwin=>$f02, -outdir=>$d20, -flog=>$f21);
+my $d21 = dir( $DIR_Work, "21_haploview_in" );
+#fastphase2haploview(-indir1=>$d20, -indir2=>$d01, -outdir=>$d21, -fwin=>$f02);
+my $d22 = dir( $DIR_Work, "22_haploview_out");
+#run_haploview(-indir=>$d01, -outdir=>$d22, -fwin=>$f02);
+my $f23 = file($DIR_Work, '23_tSNP.txt');
+#extract_tagSNP(-indir1=>$d01, -indir2=>$d22, -fout=>$f23, -fwin=>$f02);

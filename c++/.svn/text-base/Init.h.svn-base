@@ -1,0 +1,22 @@
+#ifndef INIT_H
+#define INIT_H
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/regex.hpp>
+
+using namespace boost::filesystem;
+
+void init(void);
+path dirHome( getenv("WORK") );
+path dirPre( getenv("PREFIX") );
+path dirBin = dirPre / "bin";
+path dirData = dirHome / "Data";
+path dirGenome = dirData / "Genomes";
+path dirRepo = dirData / "repo";
+path dirVnt = dirData / "variant";
+path dirIn = dirData / "in";
+path dirConf = dirIn / "conf";
+path dirStat = dirData / "stat";
+path dirMisc1 = dirData / "misc1";
+path dirMisc2 = dirData / "misc2";
+#endif

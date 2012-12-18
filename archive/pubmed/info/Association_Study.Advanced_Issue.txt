@@ -1,0 +1,357 @@
+PMID- 16000323
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050802
+DCOM- 20051020
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0964-6906 (Print)
+VI  - 14
+IP  - 16
+DP  - 2005 Aug 15
+TI  - Whole genome association study of rheumatoid arthritis using 27 039
+      microsatellites.
+PG  - 2305-21
+AB  - A major goal of current human genome-wide studies is to identify the
+      genetic basis of complex disorders. However, the availability of an
+      unbiased, reliable, cost efficient and comprehensive methodology to
+      analyze the entire genome for complex disease association is still largely
+      lacking or problematic. Therefore, we have developed a practical and
+      efficient strategy for whole genome association studies of complex
+      diseases by charting the human genome at 100 kb intervals using a
+      collection of 27,039 microsatellites and the DNA pooling method in three
+      successive genomic screens of independent case-control populations. The
+      final step in our methodology consists of fine mapping of the candidate
+      susceptible DNA regions by single nucleotide polymorphisms (SNPs)
+      analysis. This approach was validated upon application to rheumatoid
+      arthritis, a destructive joint disease affecting up to 1% of the
+      population. A total of 47 candidate regions were identified. The top seven
+      loci, withstanding the most stringent statistical tests, were dissected
+      down to individual genes and/or SNPs on four chromosomes, including the
+      previously known 6p21.3-encoded Major Histocompatibility Complex gene,
+      HLA-DRB1. Hence, microsatellite-based genome-wide association analysis
+      complemented by end stage SNP typing provides a new tool for genetic
+      dissection of multifactorial pathologies including common diseases.
+AD  - Department of Molecular Life Science, Course of Basic Medical Science and
+      Molecular Medicine, Tokai University School of Medicine, Bohseidai,
+      Kanagawa, Japan.
+FAU - Tamiya, Gen
+AU  - Tamiya G
+FAU - Shinya, Minori
+AU  - Shinya M
+FAU - Imanishi, Tadashi
+AU  - Imanishi T
+FAU - Ikuta, Tomoki
+AU  - Ikuta T
+FAU - Makino, Satoshi
+AU  - Makino S
+FAU - Okamoto, Koichi
+AU  - Okamoto K
+FAU - Furugaki, Koh
+AU  - Furugaki K
+FAU - Matsumoto, Toshiko
+AU  - Matsumoto T
+FAU - Mano, Shuhei
+AU  - Mano S
+FAU - Ando, Satoshi
+AU  - Ando S
+FAU - Nozaki, Yasuyuki
+AU  - Nozaki Y
+FAU - Yukawa, Wataru
+AU  - Yukawa W
+FAU - Nakashige, Ryo
+AU  - Nakashige R
+FAU - Yamaguchi, Daisuke
+AU  - Yamaguchi D
+FAU - Ishibashi, Hideo
+AU  - Ishibashi H
+FAU - Yonekura, Manabu
+AU  - Yonekura M
+FAU - Nakami, Yuu
+AU  - Nakami Y
+FAU - Takayama, Seiken
+AU  - Takayama S
+FAU - Endo, Takaho
+AU  - Endo T
+FAU - Saruwatari, Takuya
+AU  - Saruwatari T
+FAU - Yagura, Masaru
+AU  - Yagura M
+FAU - Yoshikawa, Yoko
+AU  - Yoshikawa Y
+FAU - Fujimoto, Kei
+AU  - Fujimoto K
+FAU - Oka, Akira
+AU  - Oka A
+FAU - Chiku, Suenori
+AU  - Chiku S
+FAU - Linsen, Samuel E V
+AU  - Linsen SE
+FAU - Giphart, Marius J
+AU  - Giphart MJ
+FAU - Kulski, Jerzy K
+AU  - Kulski JK
+FAU - Fukazawa, Toru
+AU  - Fukazawa T
+FAU - Hashimoto, Hiroshi
+AU  - Hashimoto H
+FAU - Kimura, Minoru
+AU  - Kimura M
+FAU - Hoshina, Yuuichi
+AU  - Hoshina Y
+FAU - Suzuki, Yasuo
+AU  - Suzuki Y
+FAU - Hotta, Tomomitsu
+AU  - Hotta T
+FAU - Mochida, Joji
+AU  - Mochida J
+FAU - Minezaki, Takatoshi
+AU  - Minezaki T
+FAU - Komai, Koichiro
+AU  - Komai K
+FAU - Shiozawa, Shunichi
+AU  - Shiozawa S
+FAU - Taniguchi, Atsuo
+AU  - Taniguchi A
+FAU - Yamanaka, Hisashi
+AU  - Yamanaka H
+FAU - Kamatani, Naoyuki
+AU  - Kamatani N
+FAU - Gojobori, Takashi
+AU  - Gojobori T
+FAU - Bahram, Seiamak
+AU  - Bahram S
+FAU - Inoko, Hidetoshi
+AU  - Inoko H
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20050706
+PL  - England
+TA  - Hum Mol Genet
+JT  - Human molecular genetics
+JID - 9208958
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Arthritis, Rheumatoid/*genetics
+MH  - Case-Control Studies
+MH  - Chromosome Mapping
+MH  - DNA/genetics
+MH  - Female
+MH  - Genetic Predisposition to Disease/*genetics
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Major Histocompatibility Complex/genetics
+MH  - Male
+MH  - Microsatellite Repeats/*genetics
+MH  - Middle Aged
+MH  - Polymorphism, Single Nucleotide/*genetics
+EDAT- 2005/07/08 09:00
+MHDA- 2005/10/21 09:00
+PHST- 2005/07/06 [aheadofprint]
+AID - ddi234 [pii]
+AID - 10.1093/hmg/ddi234 [doi]
+PST - ppublish
+SO  - Hum Mol Genet. 2005 Aug 15;14(16):2305-21. Epub 2005 Jul 6.
+
+PMID- 16672066
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060728
+DCOM- 20060810
+LR  - 20071114
+PUBM- Electronic
+IS  - 1471-2407 (Electronic)
+VI  - 6
+DP  - 2006
+TI  - SNP-SNP interactions in breast cancer susceptibility.
+PG  - 114
+AB  - BACKGROUND: Breast cancer predisposition genes identified to date (e.g.,
+      BRCA1 and BRCA2) are responsible for less than 5% of all breast cancer
+      cases. Many studies have shown that the cancer risks associated with
+      individual commonly occurring single nucleotide polymorphisms (SNPs) are
+      incremental. However, polygenic models suggest that multiple commonly
+      occurring low to modestly penetrant SNPs of cancer related genes might
+      have a greater effect on a disease when considered in combination.
+      METHODS: In an attempt to identify the breast cancer risk conferred by SNP
+      interactions, we have studied 19 SNPs from genes involved in major cancer
+      related pathways. All SNPs were genotyped by TaqMan 5'nuclease assay. The
+      association between the case-control status and each individual SNP,
+      measured by the odds ratio and its corresponding 95% confidence interval,
+      was estimated using unconditional logistic regression models. At the
+      second stage, two-way interactions were investigated using multivariate
+      logistic models. The robustness of the interactions, which were observed
+      among SNPs with stronger functional evidence, was assessed using a
+      bootstrap approach, and correction for multiple testing based on the false
+      discovery rate (FDR) principle. RESULTS: None of these SNPs contributed to
+      breast cancer risk individually. However, we have demonstrated evidence
+      for gene-gene (SNP-SNP) interaction among these SNPs, which were
+      associated with increased breast cancer risk. Our study suggests cross
+      talk between the SNPs of the DNA repair and immune system (XPD-[Lys751Gln]
+      and IL10-[G(-1082)A]), cell cycle and estrogen metabolism
+      (CCND1-[Pro241Pro] and COMT-[Met108/158Val]), cell cycle and DNA repair
+      (BARD1-[Pro24Ser] and XPD-[Lys751Gln]), and within carcinogen metabolism
+      (GSTP1-[Ile105Val] and COMT-[Met108/158Val]) pathways. CONCLUSION: The
+      importance of these pathways and their communication in breast cancer
+      predisposition has been emphasized previously, but their biological
+      interactions through SNPs have not been described. The strategy used here
+      has the potential to identify complex biological links among breast cancer
+      genes and processes. This will provide novel biological information, which
+      will ultimately improve breast cancer risk management.
+AD  - Fred A. Litwin Centre for Cancer Genetics, Samuel Lunenfeld Research
+      Institute, Mount Sinai Hospital, Toronto, Ontario, Canada.
+      onay@mshri.on.ca
+FAU - Onay, Venus Ummiye
+AU  - Onay VU
+FAU - Briollais, Laurent
+AU  - Briollais L
+FAU - Knight, Julia A
+AU  - Knight JA
+FAU - Shi, Ellen
+AU  - Shi E
+FAU - Wang, Yuanyuan
+AU  - Wang Y
+FAU - Wells, Sean
+AU  - Wells S
+FAU - Li, Hong
+AU  - Li H
+FAU - Rajendram, Isaac
+AU  - Rajendram I
+FAU - Andrulis, Irene L
+AU  - Andrulis IL
+FAU - Ozcelik, Hilmi
+AU  - Ozcelik H
+LA  - eng
+GR  - CA-95-003/CA/United States NCI
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+DEP - 20060503
+PL  - England
+TA  - BMC Cancer
+JT  - BMC cancer
+JID - 100967800
+SB  - IM
+MH  - Adult
+MH  - Aged
+MH  - Breast Neoplasms/*genetics
+MH  - Breast Neoplasms, Male/genetics
+MH  - Case-Control Studies
+MH  - Female
+MH  - Genes, Dominant/physiology
+MH  - Genes, Recessive/physiology
+MH  - Genetic Predisposition to Disease/*genetics
+MH  - Genotype
+MH  - Humans
+MH  - Logistic Models
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Single Nucleotide/*physiology
+MH  - Risk Factors
+PMC - PMC1522021
+EDAT- 2006/05/05 09:00
+MHDA- 2006/08/11 09:00
+PHST- 2005/10/19 [received]
+PHST- 2006/05/03 [accepted]
+PHST- 2006/05/03 [aheadofprint]
+AID - 1471-2407-6-114 [pii]
+AID - 10.1186/1471-2407-6-114 [doi]
+PST - epublish
+SO  - BMC Cancer. 2006 May 3;6:114.
+
+PMID- 17044099
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070301
+DCOM- 20070411
+LR  - 20080521
+PUBM- Print
+IS  - 1552-4841 (Print)
+VI  - 144B
+IP  - 2
+DP  - 2007 Mar 5
+TI  - Evaluation of potential gene-gene interactions for attention deficit
+      hyperactivity disorder in the Han Chinese population.
+PG  - 200-6
+AB  - Several lines of evidence suggest that attention-deficit/hyperactivity
+      disorder (ADHD) is a polygenic disorder produced by the interaction of
+      several genes with minor effects. To explore potential gene-gene
+      interactions among candidate genes for ADHD, we studied the dopamine D2
+      receptor (DRD2), dopamine D4 receptor (DRD4), dopamine transporter (DAT1),
+      and catechol-O-methyltransferase (COMT) genes in the Han Chinese
+      population. A sample of 340 children with ADHD was diagnosed according to
+      the DSM-IV criteria. We also recruited 226 unrelated controls. Identified
+      polymorphisms included a 48-base-pair-repeat in Exon 3 of DRD4, a
+      40-base-pair-repeat in the 3' untranslated region of DAT1, a
+      restriction-fragment-length polymorphism at codon 158 of COMT, and a -241A
+      > G transition in the promoter of DRD2. Associations of polymorphisms with
+      ADHD and its subtypes were examined by comparing allele frequencies
+      between probands and controls. Binary logistic regression analysis was
+      used to examine the potential gene-gene interactions. Binary logistic
+      regression analysis with the sample of refined phenotypes showed that male
+      gender and long-repeat genotypes of DRD4 and DAT1 were independent risk
+      factors for ADHD. We found no evidence for gene-gene interactions among
+      the candidate genes studied. The present study suggests that dopamine
+      candidate genes are associated with increased vulnerability to ADHD in the
+      Han Chinese population.
+CI  - (c) 2007 Wiley-Liss, Inc.
+AD  - Institute of Mental Health, Peking University, Beijing, China.
+FAU - Qian, Qiujin
+AU  - Qian Q
+FAU - Wang, Yufeng
+AU  - Wang Y
+FAU - Li, Jun
+AU  - Li J
+FAU - Yang, Li
+AU  - Yang L
+FAU - Wang, Bing
+AU  - Wang B
+FAU - Zhou, Rulun
+AU  - Zhou R
+FAU - Glatt, Stephen J
+AU  - Glatt SJ
+FAU - Faraone, Stephen V
+AU  - Faraone SV
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Am J Med Genet B Neuropsychiatr Genet
+JT  - American journal of medical genetics. Part B, Neuropsychiatric genetics :
+      the official publication of the International Society of Psychiatric
+      Genetics
+JID - 101235742
+RN  - 0 (DRD4 protein, human)
+RN  - 0 (Dopamine Plasma Membrane Transport Proteins)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 137750-34-6 (Receptors, Dopamine D4)
+RN  - EC 2.1.1.6 (Catechol O-Methyltransferase)
+SB  - IM
+MH  - Adolescent
+MH  - Alleles
+MH  - Asian Continental Ancestry Group/*genetics
+MH  - Attention Deficit Disorder with Hyperactivity/epidemiology/*genetics
+MH  - Case-Control Studies
+MH  - Catechol O-Methyltransferase/*genetics
+MH  - Child
+MH  - China/epidemiology
+MH  - Dopamine Plasma Membrane Transport Proteins/*genetics
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - Logistic Models
+MH  - Male
+MH  - Odds Ratio
+MH  - Receptors, Dopamine D2/*genetics
+MH  - Receptors, Dopamine D4/*genetics
+MH  - Repetitive Sequences, Nucleic Acid/genetics
+EDAT- 2006/10/18 09:00
+MHDA- 2007/04/12 09:00
+AID - 10.1002/ajmg.b.30422 [doi]
+PST - ppublish
+SO  - Am J Med Genet B Neuropsychiatr Genet. 2007 Mar 5;144B(2):200-6.
+

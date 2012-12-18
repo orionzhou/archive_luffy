@@ -1,0 +1,434 @@
+PMID- 15078859
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040504
+DCOM- 20040816
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 1088-9051 (Print)
+VI  - 14
+IP  - 5
+DP  - 2004 May
+TI  - Haplotype block partitioning and tag SNP selection using genotype data and
+      their applications to association studies.
+PG  - 908-16
+AB  - Recent studies have revealed that linkage disequilibrium (LD) patterns
+      vary across the human genome with some regions of high LD interspersed by
+      regions of low LD. A small fraction of SNPs (tag SNPs) is sufficient to
+      capture most of the haplotype structure of the human genome. In this
+      paper, we develop a method to partition haplotypes into blocks and to
+      identify tag SNPs based on genotype data by combining a dynamic
+      programming algorithm for haplotype block partitioning and tag SNP
+      selection based on haplotype data with a variation of the expectation
+      maximization (EM) algorithm for haplotype inference. We assess the effects
+      of using either haplotype or genotype data in haplotype block
+      identification and tag SNP selection as a function of several factors,
+      including sample size, density or number of SNPs studied, allele
+      frequencies, fraction of missing data, and genotyping error rate, using
+      extensive simulations. We find that a modest number of haplotype or
+      genotype samples will result in consistent block partitions and tag SNP
+      selection. The power of association studies based on tag SNPs using
+      genotype data is similar to that using haplotype data.
+AD  - Molecular and Computational Biology Program, Department of Biological
+      Sciences, University of Southern California, Los Angeles, California
+      90089-1113, USA.
+FAU - Zhang, Kui
+AU  - Zhang K
+FAU - Qin, Zhaohui S
+AU  - Qin ZS
+FAU - Liu, Jun S
+AU  - Liu JS
+FAU - Chen, Ting
+AU  - Chen T
+FAU - Waterman, Michael S
+AU  - Waterman MS
+FAU - Sun, Fengzhu
+AU  - Sun F
+LA  - eng
+GR  - DK53392/DK/United States NIDDK
+GR  - HG02518/HG/United States NHGRI
+GR  - P50 HG002790/HG/United States NHGRI
+GR  - RR16522/RR/United States NCRR
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20040412
+PL  - United States
+TA  - Genome Res
+JT  - Genome research
+JID - 9518021
+RN  - 0 (DNA Probes)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Algorithms
+MH  - Alleles
+MH  - Chromosome Mapping/methods/statistics & numerical data
+MH  - Chromosomes, Human, Pair 5/genetics
+MH  - Computer Simulation
+MH  - DNA Probes/genetics
+MH  - Gene Frequency/genetics
+MH  - Genetic Markers/genetics
+MH  - Genetic Predisposition to Disease/genetics
+MH  - Genotype
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Linkage Disequilibrium/*genetics
+MH  - Oligonucleotide Array Sequence Analysis/methods
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Recombination, Genetic/genetics
+MH  - Research Design/statistics & numerical data
+MH  - Sample Size
+PMC - PMC479119
+EDAT- 2004/04/14 05:00
+MHDA- 2004/08/18 05:00
+PHST- 2004/04/12 [aheadofprint]
+AID - 10.1101/gr.1837404 [doi]
+AID - 1837404 [pii]
+PST - ppublish
+SO  - Genome Res. 2004 May;14(5):908-16. Epub 2004 Apr 12.
+
+PMID- 15289481
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040803
+DCOM- 20040923
+LR  - 20041117
+PUBM- Print
+IS  - 1088-9051 (Print)
+VI  - 14
+IP  - 8
+DP  - 2004 Aug
+TI  - Optimal haplotype block-free selection of tagging SNPs for genome-wide
+      association studies.
+PG  - 1633-40
+AB  - It is widely hoped that the study of sequence variation in the human
+      genome will provide a means of elucidating the genetic component of
+      complex diseases and variable drug responses. A major stumbling block to
+      the successful design and execution of genome-wide disease association
+      studies using single-nucleotide polymorphisms (SNPs) and linkage
+      disequilibrium is the enormous number of SNPs in the human genome. This
+      results in unacceptably high costs for exhaustive genotyping and presents
+      a challenging problem of statistical inference. Here, we present a new
+      method for optimally selecting minimum informative subsets of SNPs, also
+      known as "tagging" SNPs, that is efficient for genome-wide selection. We
+      contrast this method to published methods including haplotype block
+      tagging, that is, grouping SNPs into segments of low haplotype diversity
+      and typing a subset of the SNPs that can discriminate all common
+      haplotypes within the blocks. Because our method does not rely on a
+      predefined haplotype block structure and makes use of the weaker
+      correlations that occur across neighboring blocks, it can be effectively
+      applied across chromosomal regions with both high and low local linkage
+      disequilibrium. We show that the number of tagging SNPs selected is
+      substantially smaller than previously reported using block-based
+      approaches and that selecting tagging SNPs optimally can result in a two-
+      to threefold savings over selecting random SNPs.
+CI  - Copyright 2004 Cold Spring Harbor Laboratory Press ISSN
+AD  - Celera/Applied Biosystems, Rockville, Maryland 20850, USA.
+FAU - Halldorsson, Bjarni V
+AU  - Halldorsson BV
+FAU - Bafna, Vineet
+AU  - Bafna V
+FAU - Lippert, Ross
+AU  - Lippert R
+FAU - Schwartz, Russell
+AU  - Schwartz R
+FAU - De La Vega, Francisco M
+AU  - De La Vega FM
+FAU - Clark, Andrew G
+AU  - Clark AG
+FAU - Istrail, Sorin
+AU  - Istrail S
+LA  - eng
+PT  - Journal Article
+PL  - United States
+TA  - Genome Res
+JT  - Genome research
+JID - 9518021
+SB  - IM
+MH  - Algorithms
+MH  - Chromosomes, Human, Pair 22
+MH  - *Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Models, Genetic
+MH  - *Polymorphism, Single Nucleotide
+MH  - Research Design
+MH  - Variation (Genetics)
+PMC - PMC509273
+EDAT- 2004/08/04 05:00
+MHDA- 2004/09/24 05:00
+AID - 10.1101/gr.2570004 [doi]
+AID - 14/8/1633 [pii]
+PST - ppublish
+SO  - Genome Res. 2004 Aug;14(8):1633-40.
+
+PMID- 15812176
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050406
+DCOM- 20050628
+PUBM- Print
+IS  - 0001-5652 (Print)
+VI  - 58
+IP  - 3-4
+DP  - 2004
+TI  - Optimal selection of SNP markers for disease association studies.
+PG  - 190-202
+AB  - Genetic association studies with population samples hold the promise of
+      uncovering the susceptibility genes underlying the heritability of complex
+      or common disease. Most association studies rely on the use of surrogate
+      markers, single-nucleotide polymorphism (SNP) being the most suitable due
+      to their abundance and ease of scoring. SNP marker selection is aimed to
+      increase the chances that at least one typed SNP would be in linkage
+      disequilibrium (LD) with the disease causative variant, while at the same
+      time controlling the cost of the study in terms of the number of markers
+      genotyped and samples. Empirical studies reporting block-like segments in
+      the genome with high LD and low haplotype diversity have motivated a
+      marker selection strategy whereby subsets of SNPs that 'tag' the common
+      haplotypes of a region are picked for genotyping, avoiding typing
+      redundant SNPs. Based on these initial observations, a plethora of
+      'tagging' algorithms for selecting minimum informative subsets of SNPs has
+      recently appeared in the literature. These differ mostly in two major
+      aspects: the quality or correlation measure used to define tagging and the
+      algorithm used for the minimization of the final number of tagging SNPs.
+      In this review we describe the available tagging algorithms utilizing a
+      3-step unifying framework, point out their methodological and conceptual
+      differences, and make an assessment of their assumptions, performance, and
+      scalability.
+CI  - Copyright 2004 S. Karger AG, Basel.
+AD  - Applied Biosystems, Rockville, MD, USA.
+FAU - Halldorsson, Bjarni V
+AU  - Halldorsson BV
+FAU - Istrail, Sorin
+AU  - Istrail S
+FAU - De La Vega, Francisco M
+AU  - De La Vega FM
+LA  - eng
+PT  - Journal Article
+PL  - Switzerland
+TA  - Hum Hered
+JT  - Human heredity
+JID - 0200525
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Algorithms
+MH  - Alleles
+MH  - Genetic Diseases, Inborn/*genetics
+MH  - Genetic Markers
+MH  - *Genetic Predisposition to Disease
+MH  - Genetic Techniques
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Models, Genetic
+MH  - Models, Statistical
+MH  - Multivariate Analysis
+MH  - *Polymorphism, Single Nucleotide
+MH  - Principal Component Analysis
+MH  - Software
+MH  - Time Factors
+EDAT- 2005/04/07 09:00
+MHDA- 2005/06/29 09:00
+AID - HHE20040583_4190 [pii]
+AID - 10.1159/000083546 [doi]
+PST - ppublish
+SO  - Hum Hered. 2004;58(3-4):190-202.
+
+PMID- 17666406
+OWN - NLM
+STAT- MEDLINE
+DA  - 20071001
+DCOM- 20080326
+PUBM- Print-Electronic
+IS  - 0964-6906 (Print)
+VI  - 16
+IP  - 20
+DP  - 2007 Oct 15
+TI  - Evaluation of genome-wide power of genetic association studies based on
+      empirical data from the HapMap project.
+PG  - 2494-505
+AB  - With recent advances in high-throughput single nucleotide polymorphism
+      (SNP) typing technologies, genome-wide association studies have become a
+      realistic approach to identify the causative genes that are responsible
+      for common diseases of complex genetic traits. In this strategy, a
+      trade-off between the increased genome coverage and a chance of finding
+      SNPs incidentally showing a large statistics becomes serious due to
+      extreme multiple-hypothesis testing. We investigated the extent to which
+      this trade-off limits the genome-wide power with this approach by
+      simulating a large number of case-control panels based on the empirical
+      data from the HapMap Project. In our simulations, statistical costs of
+      multiple hypothesis testing were evaluated by empirically calculating
+      distributions of the maximum value of the chi(2) statistics for a series
+      of marker sets having increasing numbers of SNPs, which were used to
+      determine a genome-wide threshold in the following power simulations. With
+      a practical study size, the cost of multiple testing largely offsets the
+      potential benefits from increased genome coverage given modest genetic
+      effects and/or low frequencies of causal alleles. In most realistic
+      scenarios, increasing genome coverage becomes less influential on the
+      power, while sample size is the predominant determinant of the feasibility
+      of genome-wide association tests. Increasing genome coverage without
+      corresponding increase in sample size will only consume resources without
+      little gain in power. For common causal alleles with relatively large
+      effect sizes [genotype relative risk > or =1.7], we can expect
+      satisfactory power with currently available large-scale genotyping
+      platforms using realistic sample size ( approximately 1000 per arm).
+AD  - Department of Hematology/Oncology, Graduate School of Medicine, University
+      of Tokyo, Tokyo 113-8655, Japan.
+FAU - Nannya, Yasuhito
+AU  - Nannya Y
+FAU - Taura, Kenjiro
+AU  - Taura K
+FAU - Kurokawa, Mineo
+AU  - Kurokawa M
+FAU - Chiba, Shigeru
+AU  - Chiba S
+FAU - Ogawa, Seishi
+AU  - Ogawa S
+LA  - eng
+PT  - Evaluation Studies
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070731
+PL  - England
+TA  - Hum Mol Genet
+JT  - Human molecular genetics
+JID - 9208958
+SB  - IM
+MH  - *Chromosome Mapping
+MH  - Computer Simulation
+MH  - *Databases, Genetic
+MH  - Empirical Research
+MH  - Gene Frequency
+MH  - Humans
+MH  - Likelihood Functions
+MH  - Models, Theoretical
+MH  - Polymorphism, Single Nucleotide
+EDAT- 2007/08/02 09:00
+MHDA- 2008/03/28 09:00
+PHST- 2007/07/31 [aheadofprint]
+AID - ddm205 [pii]
+AID - 10.1093/hmg/ddm205 [doi]
+PST - ppublish
+SO  - Hum Mol Genet. 2007 Oct 15;16(20):2494-505. Epub 2007 Jul 31.
+
+PMID- 17726055
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070928
+DCOM- 20071105
+PUBM- Print-Electronic
+IS  - 1362-4962 (Electronic)
+VI  - 35
+IP  - 17
+DP  - 2007
+TI  - Efficacy assessment of SNP sets for genome-wide disease association
+      studies.
+PG  - e113
+AB  - The power of a genome-wide disease association study depends critically
+      upon the properties of the marker set used, particularly the number and
+      physical spacing of markers, and the level of inter-marker association due
+      to linkage disequilibrium. Extending our previously devised theoretical
+      framework for the entropy-based selection of genetic markers, we have
+      developed a local measure of the efficacy of a marker set, relative to
+      including a maximally polymorphic single nucleotide polymorphism (SNP) at
+      the map position of interest. Using this quantitative criterion, we
+      evaluated five currently available SNP sets, namely Affymetrix 100K and
+      500K, and Illumina 100K, 300K and 550K in the CEU, YRI and JPT + CHB
+      HapMap populations. At 50% relative efficacy, the commercial marker sets
+      cover between 19 and 68% of the human genome, depending upon the
+      population under study. An optimal technology-independent 500K marker set
+      constructed from HapMap for Caucasians, in contrast, would achieve 73%
+      coverage at the same relative efficacy.
+AD  - Cologne Center for Genomics, Cologne, Germany.
+FAU - Wollstein, Andreas
+AU  - Wollstein A
+FAU - Herrmann, Alexander
+AU  - Herrmann A
+FAU - Wittig, Michael
+AU  - Wittig M
+FAU - Nothnagel, Michael
+AU  - Nothnagel M
+FAU - Franke, Andre
+AU  - Franke A
+FAU - Nurnberg, Peter
+AU  - Nurnberg P
+FAU - Schreiber, Stefan
+AU  - Schreiber S
+FAU - Krawczak, Michael
+AU  - Krawczak M
+FAU - Hampe, Jochen
+AU  - Hampe J
+LA  - eng
+PT  - Evaluation Studies
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070828
+PL  - England
+TA  - Nucleic Acids Res
+JT  - Nucleic acids research
+JID - 0411011
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Chromosome Mapping/*methods
+MH  - Entropy
+MH  - Genetic Diseases, Inborn/*genetics
+MH  - Genetic Markers
+MH  - *Genome, Human
+MH  - Genomics/*methods
+MH  - Genotype
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Models, Genetic
+MH  - Oligonucleotide Array Sequence Analysis
+MH  - *Polymorphism, Single Nucleotide
+PMC - PMC2034459
+EDAT- 2007/08/30 09:00
+MHDA- 2007/11/06 09:00
+PHST- 2007/08/28 [aheadofprint]
+AID - gkm621 [pii]
+AID - 10.1093/nar/gkm621 [doi]
+PST - ppublish
+SO  - Nucleic Acids Res. 2007;35(17):e113. Epub 2007 Aug 28.
+
+PMID- 18003629
+OWN - NLM
+STAT- Publisher
+DA  - 20071115
+PUBM- Print-Electronic
+IS  - 1465-4644 (Print)
+DP  - 2007 Nov 13
+TI  - Genetic model selection in two-phase analysis for case control association
+      studies.
+AB  - The Cochran-Armitage trend test (CATT) is well suited for testing
+      association between a marker and a disease in case-control studies. When
+      the underlying genetic model for the disease is known, the CATT optimal
+      for the genetic model is used. For complex diseases, however, the genetic
+      models of the true disease loci are unknown. In this situation, robust
+      tests are preferable. We propose a two-phase analysis with model selection
+      for the case-control design. In the first phase, we use the difference of
+      Hardy-Weinberg disequilibrium coefficients between the cases and the
+      controls for model selection. Then, an optimal CATT corresponding to the
+      selected model is used for testing association. The correlation of the
+      statistics used for selection and the test for association is derived to
+      adjust the two-phase analysis with control of the Type-I error rate. The
+      simulation studies show that this new approach has greater efficiency
+      robustness than the existing methods.
+AD  - Office of Biostatistics Research, National Heart, Lung and Blood
+      Institute, 6701 Rockledge Drive, Bethesda, MD 20892-7931, USA.
+AU  - Zheng G
+AU  - Ng HK
+LA  - ENG
+PT  - JOURNAL ARTICLE
+DEP - 20071113
+TA  - Biostatistics
+JT  - Biostatistics (Oxford, England)
+JID - 100897327
+EDAT- 2007/11/16 09:00
+MHDA- 2007/11/16 09:00
+AID - kxm039 [pii]
+AID - 10.1093/biostatistics/kxm039 [doi]
+PST - aheadofprint
+SO  - Biostatistics. 2007 Nov 13;.
+

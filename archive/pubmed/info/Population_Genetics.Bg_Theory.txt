@@ -1,0 +1,868 @@
+PMID- 10077682
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990520
+DCOM- 19990520
+LR  - 20071114
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 96
+IP  - 6
+DP  - 1999 Mar 16
+TI  - X chromosome evidence for ancient human histories.
+PG  - 3320-4
+AB  - Diverse African and non-African samples of the X-linked PDHA1 (pyruvate
+      dehydrogenase E1 alpha subunit) locus revealed a fixed DNA sequence
+      difference between the two sample groups. The age of onset of population
+      subdivision appears to be about 200 thousand years ago. This predates the
+      earliest modern human fossils, suggesting the transformation to modern
+      humans occurred in a subdivided population. The base of the PDHA1 gene
+      tree is relatively ancient, with an estimated age of 1.86 million years, a
+      late Pliocene time associated with early species of Homo. PDHA1 revealed
+      very low variation among non-Africans, but in other respects the data are
+      consistent with reports from other X-linked and autosomal haplotype data
+      sets. Like these other genes, but in conflict with microsatellite and
+      mitochondrial data, PDHA1 does not show evidence of human population
+      expansion.
+AD  - Department of Genetics, Rutgers University, Nelson Biological Labs, 604
+      Allison Road, Piscataway, NJ 08854-8082, USA.
+FAU - Harris, E E
+AU  - Harris EE
+FAU - Hey, J
+AU  - Hey J
+LA  - eng
+SI  - GENBANK/AF125053
+SI  - GENBANK/AF125054
+SI  - GENBANK/AF125055
+SI  - GENBANK/AF125056
+SI  - GENBANK/AF125057
+SI  - GENBANK/AF125058
+SI  - GENBANK/AF125059
+SI  - GENBANK/AF125060
+SI  - GENBANK/AF125061
+SI  - GENBANK/AF125062
+SI  - GENBANK/AF125063
+SI  - GENBANK/AF125064
+SI  - GENBANK/AF125065
+SI  - GENBANK/AF125066
+SI  - GENBANK/AF125067
+SI  - GENBANK/AF125068
+SI  - GENBANK/AF125069
+SI  - GENBANK/AF125070
+SI  - GENBANK/AF125071
+SI  - GENBANK/AF125072
+SI  - GENBANK/AF125073
+SI  - GENBANK/AF125074
+SI  - GENBANK/AF125075
+SI  - GENBANK/AF125076
+SI  - GENBANK/AF125077
+SI  - GENBANK/AF125078
+SI  - GENBANK/AF125079
+SI  - GENBANK/AF125080
+SI  - GENBANK/AF125081
+SI  - GENBANK/AF125082
+SI  - etc.
+GR  - R55GM54684/GM/United States NIGMS
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (Pyruvate Dehydrogenase Complex)
+RN  - EC 1.2.4.1 (Pyruvate Dehydrogenase (Lipoamide))
+RN  - EC 1.2.4.1 (pyruvate dehydrogenase E1alpha subunit)
+SB  - IM
+MH  - Africa
+MH  - *Evolution
+MH  - Fossils
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Molecular Sequence Data
+MH  - *Pyruvate Dehydrogenase (Lipoamide)
+MH  - Pyruvate Dehydrogenase Complex/*genetics
+MH  - Sequence Analysis, DNA
+MH  - X Chromosome/*genetics
+PMC - PMC15940
+EDAT- 1999/03/17
+MHDA- 1999/03/17 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1999 Mar 16;96(6):3320-4.
+
+PMID- 10666702
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000222
+DCOM- 20000222
+LR  - 20061115
+PUBM- Print
+IS  - 0737-4038 (Print)
+VI  - 17
+IP  - 1
+DP  - 2000 Jan
+TI  - Population bottlenecks and Pleistocene human evolution.
+PG  - 2-22
+AB  - We review the anatomical and archaeological evidence for an early
+      population bottleneck in humans and bracket the time when it could have
+      occurred. We outline the subsequent demographic changes that the
+      archaeological evidence of range expansions and contractions address, and
+      we examine how inbreeding effective population size provides an
+      alternative view of past population size change. This addresses the
+      question of other, more recent, population size bottlenecks, and we review
+      nonrecombining and recombining genetic systems that may reflect them. We
+      examine how these genetic data constrain the possibility of significant
+      population size bottlenecks (i.e., of sufficiently small size and/or long
+      duration to minimize genetic variation in autosomal and haploid systems)
+      at several different critical times in human history. Different
+      constraints appear in nonrecombining and recombining systems, and among
+      the autosomal loci most are incompatible with any Pleistocene population
+      size expansions. Microsatellite data seem to show Pleistocene population
+      size expansions, but in aggregate they are difficult to interpret because
+      different microsatellite studies do not show the same expansion. The
+      archaeological data are only compatible with a few of these analyses, most
+      prominently with data from Alu elements, and we use these facts to
+      question whether the view of the past from analysis of inbreeding
+      effective population size is valid. Finally, we examine the issue of
+      whether inbreeding effective population size provides any reasonable
+      measure of the actual past size of the human species. We contend that if
+      the evidence of a population size bottleneck early in the evolution of our
+      lineage is accepted, most genetic data either lack the resolution to
+      address subsequent changes in the human population or do not meet the
+      assumptions required to do so validly. It is our conclusion that, at the
+      moment, genetic data cannot disprove a simple model of exponential
+      population growth following a bottleneck 2 MYA at the origin of our
+      lineage and extending through the Pleistocene. Archaeological and
+      paleontological data indicate that this model is too oversimplified to be
+      an accurate reflection of detailed population history, and therefore we
+      find that genetic data lack the resolution to validly reflect many details
+      of Pleistocene human population change. However, there is one detail that
+      these data are sufficient to address. Both genetic and anthropological
+      data are incompatible with the hypothesis of a recent population size
+      bottleneck. Such an event would be expected to leave a significant mark
+      across numerous genetic loci and observable anatomical traits, but while
+      some subsets of data are compatible with a recent population size
+      bottleneck, there is no consistently expressed effect that can be found
+      across the range where it should appear, and this absence disproves the
+      hypothesis.
+AD  - Department of Anthropology, University of Utah, USA.
+FAU - Hawks, J
+AU  - Hawks J
+FAU - Hunley, K
+AU  - Hunley K
+FAU - Lee, S H
+AU  - Lee SH
+FAU - Wolpoff, M
+AU  - Wolpoff M
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Review
+PL  - UNITED STATES
+TA  - Mol Biol Evol
+JT  - Molecular biology and evolution
+JID - 8501455
+SB  - IM
+MH  - Animals
+MH  - *Evolution
+MH  - *Genetics, Population
+MH  - *Hominidae
+MH  - Humans
+RF  - 202
+EDAT- 2000/02/10 09:00
+MHDA- 2000/02/26 09:00
+PST - ppublish
+SO  - Mol Biol Evol. 2000 Jan;17(1):2-22.
+
+PMID- 12653310
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030325
+DCOM- 20030416
+LR  - 20061115
+PUBM- Print
+IS  - 0002-9483 (Print)
+VI  - Suppl 35
+DP  - 2002
+TI  - Ancient DNA in anthropology: methods, applications, and ethics.
+PG  - 92-130
+AB  - Anthropologists were quick to recognize the potential of new techniques in
+      molecular biology to provide additional lines of evidence on questions
+      long investigated in anthropology, as well as those questions that, while
+      always of interest, could not have been addressed by more traditional
+      techniques. The earliest ancient DNA studies, both within anthropology and
+      in other fields, lacked rigorous hypothesis testing. However, more
+      recently the true value of ancient DNA studies is being realized, and
+      methods are being applied to a wide variety of anthropological questions.
+      We review the most common methods and applications to date, and describe
+      promising avenues of future research. We find that ancient DNA analyses
+      have a valuable place in the array of anthropological techniques, but
+      argue that such studies must not be undertaken merely to demonstrate that
+      surviving DNA is present in organic remains, and that no such work should
+      be performed before a careful consideration of the possible ethical
+      ramifications of the research is undertaken.
+AD  - Department of Anthropology, Indiana University, Bloomington, Indiana
+      47405-7100, USA. kaestle@indiana.edu
+FAU - Kaestle, Frederika A
+AU  - Kaestle FA
+FAU - Horsburgh, K Ann
+AU  - Horsburgh KA
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Review
+PL  - United States
+TA  - Am J Phys Anthropol
+JT  - American journal of physical anthropology
+JID - 0400654
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Animals
+MH  - Anthropology, Cultural/methods
+MH  - Anthropology, Physical/ethics/*methods
+MH  - DNA/*analysis
+MH  - *Evolution, Molecular
+MH  - Female
+MH  - Genetics, Population/ethics/*methods
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Pedigree
+MH  - Phylogeny
+MH  - Species Specificity
+RF  - 510
+EDAT- 2003/03/26 05:00
+MHDA- 2003/04/17 05:00
+PST - ppublish
+SO  - Am J Phys Anthropol. 2002;Suppl 35:92-130.
+
+PMID- 1316531
+OWN - NLM
+STAT- MEDLINE
+DA  - 19920618
+DCOM- 19920618
+LR  - 20061115
+PUBM- Print
+IS  - 0737-4038 (Print)
+VI  - 9
+IP  - 3
+DP  - 1992 May
+TI  - Population growth makes waves in the distribution of pairwise genetic
+      differences.
+PG  - 552-69
+AB  - Episodes of population growth and decline leave characteristic signatures
+      in the distribution of nucleotide (or restriction) site differences
+      between pairs of individuals. These signatures appear in histograms
+      showing the relative frequencies of pairs of individuals who differ by i
+      sites, where i = 0, 1, .... In this distribution an episode of growth
+      generates a wave that travels to the right, traversing 1 unit of the
+      horizontal axis in each 1/2u generations, where u is the mutation rate.
+      The smaller the initial population, the steeper will be the leading face
+      of the wave. The larger the increase in population size, the smaller will
+      be the distribution's vertical intercept. The implications of continued
+      exponential growth are indistinguishable from those of a sudden burst of
+      population growth Bottlenecks in population size also generate waves
+      similar to those produced by a sudden expansion, but with elevated
+      uppertail probabilities. Reductions in population size initially generate
+      L-shaped distributions with high probability of identity, but these
+      converge rapidly to a new equilibrium. In equilibrium populations the
+      theoretical curves are free of waves. However, computer simulations of
+      such populations generate empirical distributions with many peaks and
+      little resemblance to the theory. On the other hand, agreement is better
+      in the transient (nonequilibrium) case, where simulated empirical
+      distributions typically exhibit waves very similar to those predicted by
+      theory. Thus, waves in empirical distributions may be rich in information
+      about the history of population dynamics.
+AD  - Department of Anthropology, University of Utah, Salt Lake City 84112.
+FAU - Rogers, A R
+AU  - Rogers AR
+FAU - Harpending, H
+AU  - Harpending H
+LA  - eng
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Mol Biol Evol
+JT  - Molecular biology and evolution
+JID - 8501455
+RN  - 9007-49-2 (DNA)
+RN  - EC 3.1.21.- (DNA Restriction Enzymes)
+SB  - IM
+MH  - DNA
+MH  - DNA Restriction Enzymes
+MH  - Evolution
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Models, Genetic
+MH  - Models, Statistical
+MH  - *Population Density
+EDAT- 1992/05/01
+MHDA- 1992/05/01 00:01
+PST - ppublish
+SO  - Mol Biol Evol. 1992 May;9(3):552-69.
+
+PMID- 14691732
+OWN - NLM
+STAT- MEDLINE
+DA  - 20031223
+DCOM- 20040301
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 74
+IP  - 1
+DP  - 2004 Jan
+TI  - The effective mutation rate at Y chromosome short tandem repeats, with
+      application to human population-divergence time.
+PG  - 50-61
+AB  - We estimate an effective mutation rate at an average Y chromosome
+      short-tandem repeat locus as 6.9x10-4 per 25 years, with a standard
+      deviation across loci of 5.7x10-4, using data on microsatellite variation
+      within Y chromosome haplogroups defined by unique-event polymorphisms in
+      populations with documented short-term histories, as well as comparative
+      data on worldwide populations at both the Y chromosome and various
+      autosomal loci. This value is used to estimate the times of the African
+      Bantu expansion, the divergence of Polynesian populations (the Maoris,
+      Cook Islanders, and Samoans), and the origin of Gypsy populations from
+      Bulgaria.
+AD  - N. I. Vavilov Institute of General Genetics, Russian Academy of Sciences,
+      Moscow, Russia. lev@zhivotovsky.net
+FAU - Zhivotovsky, Lev A
+AU  - Zhivotovsky LA
+FAU - Underhill, Peter A
+AU  - Underhill PA
+FAU - Cinnioglu, Cengiz
+AU  - Cinnioglu C
+FAU - Kayser, Manfred
+AU  - Kayser M
+FAU - Morar, Bharti
+AU  - Morar B
+FAU - Kivisild, Toomas
+AU  - Kivisild T
+FAU - Scozzari, Rosaria
+AU  - Scozzari R
+FAU - Cruciani, Fulvio
+AU  - Cruciani F
+FAU - Destro-Bisol, Giovanni
+AU  - Destro-Bisol G
+FAU - Spedini, Gabriella
+AU  - Spedini G
+FAU - Chambers, Geoffrey K
+AU  - Chambers GK
+FAU - Herrera, Rene J
+AU  - Herrera RJ
+FAU - Yong, Kiau Kiun
+AU  - Yong KK
+FAU - Gresham, David
+AU  - Gresham D
+FAU - Tournev, Ivailo
+AU  - Tournev I
+FAU - Feldman, Marcus W
+AU  - Feldman MW
+FAU - Kalaydjieva, Luba
+AU  - Kalaydjieva L
+LA  - eng
+GR  - GM28016/GM/United States NIGMS
+GR  - GM28428/GM/United States NIGMS
+GR  - R03 TW005540/TW/United States FIC
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20031219
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+SB  - IM
+MH  - Chromosome Mapping
+MH  - Chromosomes, Human, Y/*genetics
+MH  - European Continental Ancestry Group/genetics
+MH  - Female
+MH  - Humans
+MH  - Male
+MH  - Models, Genetic
+MH  - *Mutation
+MH  - New Zealand
+MH  - Polynesia
+MH  - Tandem Repeat Sequences/*genetics
+MH  - Variation (Genetics)/*genetics
+PMC - PMC1181912
+EDAT- 2003/12/24 05:00
+MHDA- 2004/03/03 05:00
+PHST- 2003/08/01 [received]
+PHST- 2003/10/15 [accepted]
+PHST- 2003/12/19 [aheadofprint]
+AID - AJHG40421 [pii]
+PST - ppublish
+SO  - Am J Hum Genet. 2004 Jan;74(1):50-61. Epub 2003 Dec 19.
+
+PMID- 15039702
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040426
+DCOM- 20041215
+LR  - 20061115
+PUBM- Print
+IS  - 0018-067X (Print)
+VI  - 92
+IP  - 5
+DP  - 2004 May
+TI  - Recent developments in genetic data analysis: what can they tell us about
+      human demographic history?
+PG  - 365-79
+AB  - Over the last decade, a number of new methods of population genetic
+      analysis based on likelihood have been introduced. This review describes
+      and explains the general statistical techniques that have recently been
+      used, and discusses the underlying population genetic models. Experimental
+      papers that use these methods to infer human demographic and
+      phylogeographic history are reviewed. It appears that the use of
+      likelihood has hitherto had little impact in the field of human population
+      genetics, which is still primarily driven by more traditional approaches.
+      However, with the current uncertainty about the effects of natural
+      selection, population structure and ascertainment of single-nucleotide
+      polymorphism markers, it is suggested that likelihood-based methods may
+      have a greater impact in the future.
+CI  - March 2004
+AD  - School of Animal and Microbial Sciences, University of Reading,
+      Whiteknights, PO Box 228, Reading RG6 6AJ, UK. m.a.Beaumont@reading.ac.uk
+FAU - Beaumont, M A
+AU  - Beaumont MA
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+PL  - England
+TA  - Heredity
+JT  - Heredity
+JID - 0373007
+RN  - 0 (DNA, Satellite)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - DNA, Satellite
+MH  - Demography
+MH  - *Genetic Markers
+MH  - *Genetics, Population
+MH  - Genotype
+MH  - Geography
+MH  - History
+MH  - Humans
+MH  - Markov Chains
+MH  - *Models, Genetic
+MH  - Models, Statistical
+MH  - *Variation (Genetics)
+RF  - 127
+EDAT- 2004/03/25 05:00
+MHDA- 2004/12/16 09:00
+AID - 10.1038/sj.hdy.6800447 [doi]
+AID - 6800447 [pii]
+PST - ppublish
+SO  - Heredity. 2004 May;92(5):365-79.
+
+PMID- 7624310
+OWN - NLM
+STAT- MEDLINE
+DA  - 19950831
+DCOM- 19950831
+LR  - 20071114
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 92
+IP  - 15
+DP  - 1995 Jul 18
+TI  - Genetic absolute dating based on microsatellites and the origin of modern
+      humans.
+PG  - 6723-7
+AB  - We introduce a new genetic distance for microsatellite loci, incorporating
+      features of the stepwise mutation model, and test its performance on
+      microsatellite polymorphisms in humans, chimpanzees, and gorillas. We find
+      that it performs well in determining the relations among the primates, but
+      less well than other distance measures (not based on the stepwise mutation
+      model) in determining the relations among closely related human
+      populations. However, the deepest split in the human phylogeny seems to be
+      accurately reconstructed by the new distance and separates African and
+      non-African populations. The new distance is independent of population
+      size and therefore allows direct estimation of divergence times if the
+      mutation rate is known. Based on 30 microsatellite polymorphisms and a
+      recently reported average mutation rate of 5.6 x 10(-4) at 15 dinucleotide
+      microsatellites, we estimate that the deepest split in the human phylogeny
+      occurred about 156,000 years ago. Unlike most previous estimates, ours
+      requires no external calibration of the rate of molecular evolution. We
+      can use such calibrations, however, to test our estimate.
+AD  - Department of Biological Sciences, Stanford University, CA 94305, USA.
+FAU - Goldstein, D B
+AU  - Goldstein DB
+FAU - Ruiz Linares, A
+AU  - Ruiz Linares A
+FAU - Cavalli-Sforza, L L
+AU  - Cavalli-Sforza LL
+FAU - Feldman, M W
+AU  - Feldman MW
+LA  - eng
+GR  - GM20467/GM/United States NIGMS
+GR  - GM28016/GM/United States NIGMS
+GR  - GM28428/GM/United States NIGMS
+GR  - etc.
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (DNA, Satellite)
+SB  - IM
+CIN - Proc Natl Acad Sci U S A. 1995 Jul 18;92(15):6720-2. PMID: 7624309
+MH  - Animals
+MH  - Archaeology
+MH  - DNA, Satellite/*genetics
+MH  - Gorilla gorilla/genetics
+MH  - Hominidae/*genetics
+MH  - Humans
+MH  - *Models, Genetic
+MH  - Mutation
+MH  - Pan troglodytes/genetics
+MH  - *Polymorphism, Genetic
+MH  - Sequence Homology, Nucleic Acid
+MH  - Time
+MH  - Y Chromosome
+PMC - PMC41401
+EDAT- 1995/07/18
+MHDA- 1995/07/18 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1995 Jul 18;92(15):6723-7.
+
+PMID- 8159720
+OWN - NLM
+STAT- MEDLINE
+DA  - 19940516
+DCOM- 19940516
+LR  - 20061115
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 91
+IP  - 8
+DP  - 1994 Apr 12
+TI  - Mutational processes of simple-sequence repeat loci in human populations.
+PG  - 3166-70
+AB  - Mutational processes of simple sequence repeats (SSRs) in complex genomes
+      are poorly understood. We examined these processes by introducing a
+      two-phase mutation model. In this model, most mutations are single-step
+      changes, but infrequent large jumps in repeat number also occur. We used
+      computer simulations to determine expected values of statistics that
+      reflect frequency distributions of allele size for the two-phase model and
+      two alternatives, the one-step and geometric models. The theoretical
+      expectations for each model were tested by comparison with observed values
+      for 10 SSR loci genotyped in the Sardinian population, whose genetic and
+      demographic histories have been previously reconstructed. The two-phase
+      model provided the best fit to the data for most of these loci in this
+      population. In the analysis we assumed that the loci were neutral and that
+      this population had undergone rapid population growth. Recent observations
+      made for unstable trinucleotide repeats support our suggestion that
+      frequent small changes and rare large changes in repeat number represent
+      two distinct classes of mutation at SSR loci. We genotyped the same 10
+      loci in Egyptian and sub-Saharan African samples to assess the utility of
+      SSRs for studying the divergence of populations and found that estimates
+      of interpopulation distances from SSRs were similar to those derived from
+      analysis of mitochondrial DNA.
+AD  - Neurogenetics Laboratory, University of California, San Francisco 94143.
+FAU - Di Rienzo, A
+AU  - Di Rienzo A
+FAU - Peterson, A C
+AU  - Peterson AC
+FAU - Garza, J C
+AU  - Garza JC
+FAU - Valdes, A M
+AU  - Valdes AM
+FAU - Slatkin, M
+AU  - Slatkin M
+FAU - Freimer, N B
+AU  - Freimer NB
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Gene Frequency
+MH  - Genetic Markers
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Italy
+MH  - *Mutation
+MH  - *Polymorphism, Genetic
+MH  - *Repetitive Sequences, Nucleic Acid
+PMC - PMC43536
+EDAT- 1994/04/12
+MHDA- 1994/04/12 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1994 Apr 12;91(8):3166-70.
+
+PMID- 8454213
+OWN - NLM
+STAT- MEDLINE
+DA  - 19930422
+DCOM- 19930422
+LR  - 20061115
+PUBM- Print
+IS  - 0016-6731 (Print)
+VI  - 133
+IP  - 3
+DP  - 1993 Mar
+TI  - Allele frequencies at microsatellite loci: the stepwise mutation model
+      revisited.
+PG  - 737-49
+AB  - We summarize available data on the frequencies of alleles at
+      microsatellite loci in human populations and compare observed
+      distributions of allele frequencies to those generated by a simulation of
+      the stepwise mutation model. We show that observed frequency distributions
+      at 108 loci are consistent with the results of the model under the
+      assumption that mutations cause an increase or decrease in repeat number
+      by one and under the condition that the product Nu, where N is the
+      effective population size and u is the mutation rate, is larger than one.
+      We show that the variance of the distribution of allele sizes is a useful
+      estimator of Nu and performs much better than previously suggested
+      estimators for the stepwise mutation model. In the data, there is no
+      correlation between the mean and variance in allele size at a locus or
+      between the number of alleles and mean allele size, which suggests that
+      the mutation rate at these loci is independent of allele size.
+AD  - Department of Integrative Biology, University of California, Berkeley
+      94720.
+FAU - Valdes, A M
+AU  - Valdes AM
+FAU - Slatkin, M
+AU  - Slatkin M
+FAU - Freimer, N B
+AU  - Freimer NB
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Genetics
+JT  - Genetics
+JID - 0374636
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Alleles
+MH  - DNA/genetics
+MH  - Gene Frequency
+MH  - Humans
+MH  - *Models, Genetic
+MH  - Mutation
+MH  - *Repetitive Sequences, Nucleic Acid
+PMC - PMC1205356
+EDAT- 1993/03/01
+MHDA- 1993/03/01 00:01
+PST - ppublish
+SO  - Genetics. 1993 Mar;133(3):737-49.
+
+PMID- 8583889
+OWN - NLM
+STAT- MEDLINE
+DA  - 19960320
+DCOM- 19960320
+LR  - 20061115
+PUBM- Print
+IS  - 0737-4038 (Print)
+VI  - 13
+IP  - 1
+DP  - 1996 Jan
+TI  - The root of the phylogenetic tree of human populations.
+PG  - 170-7
+AB  - Although African populations have been shown to be most divergent from any
+      other human populations, it has been difficult to establish the root of
+      the phylogenetic tree of human populations since the rate of evolutionary
+      change may vary from population to population owing to the fluctuation of
+      population size and other factors. However, the root can be determined by
+      using the chimpanzee as an outgroup and by employing proper statistical
+      methods. Using this strategy, we constructed phylogenetic trees of human
+      populations for five different sets of gene frequency data. The data sets
+      used were two sets of microsatellite loci data (25 and 8 loci,
+      respectively), restriction fragment length polymorphism (RFLP) data (79
+      loci), protein polymorphism data (15 loci), and Alu insertion frequency
+      data (4 loci). All these data sets showed that the root is located in the
+      branch connecting African and non-African populations, and in the four
+      data sets the root was established at a significant level. These results
+      indicate that Africans are the first group of people that split from the
+      rest of the human populations.
+AD  - Institute of Molecular Evolutionary Genetics, Pennsylvania State
+      University, University Park 16802, USA.
+FAU - Nei, M
+AU  - Nei M
+FAU - Takezaki, N
+AU  - Takezaki N
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Mol Biol Evol
+JT  - Molecular biology and evolution
+JID - 8501455
+RN  - 0 (DNA, Satellite)
+SB  - IM
+MH  - DNA, Satellite/genetics
+MH  - Gene Frequency
+MH  - *Genetics, Population
+MH  - Humans
+MH  - *Phylogeny
+EDAT- 1996/01/01
+MHDA- 1996/01/01 00:01
+PST - ppublish
+SO  - Mol Biol Evol. 1996 Jan;13(1):170-7.
+
+PMID- 8722803
+OWN - NLM
+STAT- MEDLINE
+DA  - 19961011
+DCOM- 19961011
+LR  - 20071114
+PUBM- Print
+IS  - 0016-6731 (Print)
+VI  - 143
+IP  - 1
+DP  - 1996 May
+TI  - Dynamics of repeat polymorphisms under a forward-backward mutation model:
+      within- and between-population variability at microsatellite loci.
+PG  - 549-55
+AB  - Suggested molecular mechanisms for the generation of new tandem repeats of
+      simple sequences indicate that the microsatellite loci evolve via some of
+      forward-backward mutation. We provide a mathematical basis for suggesting
+      a measure of genetic distance between populations based on microsatellite
+      variation. Our results indicate that such a genetic distance measure can
+      remain proportional to the divergence time of populations even when the
+      forward-backward mutations produce variable and/or directionally biased
+      alleles size changes. If the population size and the rate of mutation
+      remain constant, then the measure will be proportional to the time of
+      divergence of populations. This genetic distance is expressed in terms of
+      a ratio of components of variance of allele sizes, based on expressions
+      developed for studying population dynamics of quantitative traits.
+      Application of this measure to data on 18 microsatellite loci in the nine
+      human populations leads to evolutionary trees consistent with the known
+      ethnohistory of the populations.
+AD  - Department of Statistics, Rice University, Houston, Texas 77251, USA.
+FAU - Kimmel, M
+AU  - Kimmel M
+FAU - Chakraborty, R
+AU  - Chakraborty R
+FAU - Stivers, D N
+AU  - Stivers DN
+FAU - Deka, R
+AU  - Deka R
+LA  - eng
+GR  - GM-41399/GM/United States NIGMS
+GR  - GM-45861/GM/United States NIGMS
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Genetics
+JT  - Genetics
+JID - 0374636
+RN  - 0 (DNA, Satellite)
+SB  - IM
+MH  - Alleles
+MH  - DNA, Satellite/*genetics
+MH  - Dinucleotide Repeats
+MH  - *Evolution
+MH  - Humans
+MH  - Mathematics
+MH  - *Models, Genetic
+MH  - *Mutation
+MH  - Poisson Distribution
+MH  - *Polymorphism, Genetic
+MH  - *Repetitive Sequences, Nucleic Acid
+MH  - Trinucleotide Repeats
+MH  - *Variation (Genetics)
+PMC - PMC1207286
+EDAT- 1996/05/01
+MHDA- 1996/05/01 00:01
+PST - ppublish
+SO  - Genetics. 1996 May;143(1):549-55.
+
+PMID- 9096352
+OWN - NLM
+STAT- MEDLINE
+DA  - 19970508
+DCOM- 19970508
+LR  - 20071114
+PUBM- Print
+IS  - 0027-8424 (Print)
+VI  - 94
+IP  - 7
+DP  - 1997 Apr 1
+TI  - Microsatellite diversity and the demographic history of modern humans.
+PG  - 3100-3
+AB  - We have examined differences in diversity at 60 microsatellite loci among
+      human population samples from three major continental groups to evaluate
+      the hypothesis of greater African diversity in this rapidly evolving class
+      of loci. Application of a statistical test that assumes equal mutation
+      rates at all loci fails to demonstrate differences in microsatellite
+      diversity, while a randomization test that does not make this assumption
+      finds that Africans have significantly greater microsatellite diversity (P
+      < 10(-8)) than do Asians and Europeans. Greater African diversity is most
+      apparent at loci with smaller overall variance in allele size, suggesting
+      that the record of population history has been erased at repeat loci with
+      higher mutation rates. A power analysis shows that only 35-40
+      microsatellites are needed to establish this difference statistically,
+      demonstrating the considerable evolutionary information contained in these
+      systems. On average, African populations have approximately 20% greater
+      microsatellite diversity than do Asian and European populations. A
+      comparison of continental diversity differences in microsatellites and
+      mtDNA sequences suggests earlier demographic expansion of the ancestors of
+      Africans.
+AD  - Eccles Institute of Human Genetics, University of Utah Health Sciences
+      Center, Salt Lake City 84112, USA. lbj@odin.genetics.utah.edu
+FAU - Jorde, L B
+AU  - Jorde LB
+FAU - Rogers, A R
+AU  - Rogers AR
+FAU - Bamshad, M
+AU  - Bamshad M
+FAU - Watkins, W S
+AU  - Watkins WS
+FAU - Krakowiak, P
+AU  - Krakowiak P
+FAU - Sung, S
+AU  - Sung S
+FAU - Kere, J
+AU  - Kere J
+FAU - Harpending, H C
+AU  - Harpending HC
+LA  - eng
+GR  - HG-00199/HG/United States NHGRI
+GR  - M01-00064/United States PHS
+GR  - RR-00064/RR/United States NCRR
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+RN  - 0 (DNA, Satellite)
+SB  - IM
+MH  - Africa
+MH  - DNA, Satellite/*genetics
+MH  - Demography
+MH  - Evolution, Molecular
+MH  - Humans
+MH  - *Variation (Genetics)
+PMC - PMC20328
+EDAT- 1997/04/01
+MHDA- 1997/04/01 00:01
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 1997 Apr 1;94(7):3100-3.
+

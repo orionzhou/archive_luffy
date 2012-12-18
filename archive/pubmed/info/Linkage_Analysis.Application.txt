@@ -1,0 +1,728 @@
+PMID- 11410839
+OWN - NLM
+STAT- MEDLINE
+DA  - 20010618
+DCOM- 20010802
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 69
+IP  - 1
+DP  - 2001 Jul
+TI  - Genomewide linkage analysis of stature in multiple populations reveals
+      several regions with evidence of linkage to adult height.
+PG  - 106-16
+AB  - Genomewide linkage analysis has been extremely successful at
+      identification of the genetic variation underlying single-gene disorders.
+      However, linkage analysis has been less successful for common human
+      diseases and other complex traits in which multiple genetic and
+      environmental factors interact to influence disease risk. We hypothesized
+      that a highly heritable complex trait, in which the contribution of
+      environmental factors was relatively limited, might be more amenable to
+      linkage analysis. We therefore chose to study stature (adult height), for
+      which heritability is approximately 75%-90% (Phillips and Matheny 1990;
+      Carmichael and McGue 1995; Preece 1996; Silventoinen et al. 2000). We
+      reanalyzed genomewide scans from four populations for which genotype and
+      height data were available, using a variance-components method implemented
+      in GENEHUNTER 2.0 (Pratt et al. 2000). The populations consisted of 408
+      individuals in 58 families from the Botnia region of Finland, 753
+      individuals in 183 families from other parts of Finland, 746 individuals
+      in 179 families from Southern Sweden, and 420 individuals in 63 families
+      from the Saguenay-Lac-St.-Jean region of Quebec. Four regions showed
+      evidence of linkage to stature: 6q24-25, multipoint LOD score 3.85 at
+      marker D6S1007 in Botnia (genomewide P<.06), 7q31.3-36 (LOD 3.40 at marker
+      D7S2195 in Sweden, P<.02), 12p11.2-q14 (LOD 3.35 at markers
+      D12S10990-D12S398 in Finland, P<.05) and 13q32-33 (LOD 3.56 at markers
+      D13S779-D13S797 in Finland, P<.05). In a companion article (Perola et al.
+      2001 [in this issue]), strong supporting evidence is obtained for linkage
+      to the region on chromosome 7. These studies suggest that highly heritable
+      complex traits such as stature may be genetically tractable and provide
+      insight into the genetic architecture of complex traits.
+AD  - Whitehead/MIT Center for Genome Research, One Kendall Square, Cambridge,
+      MA 02139, USA. hirschhorn@wi.mit.edu
+FAU - Hirschhorn, J N
+AU  - Hirschhorn JN
+FAU - Lindgren, C M
+AU  - Lindgren CM
+FAU - Daly, M J
+AU  - Daly MJ
+FAU - Kirby, A
+AU  - Kirby A
+FAU - Schaffner, S F
+AU  - Schaffner SF
+FAU - Burtt, N P
+AU  - Burtt NP
+FAU - Altshuler, D
+AU  - Altshuler D
+FAU - Parker, A
+AU  - Parker A
+FAU - Rioux, J D
+AU  - Rioux JD
+FAU - Platko, J
+AU  - Platko J
+FAU - Gaudet, D
+AU  - Gaudet D
+FAU - Hudson, T J
+AU  - Hudson TJ
+FAU - Groop, L C
+AU  - Groop LC
+FAU - Lander, E S
+AU  - Lander ES
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20010615
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+SB  - IM
+MH  - Body Height/*genetics
+MH  - *Chromosome Mapping/methods/statistics & numerical data
+MH  - Chromosomes, Human, Pair 12/genetics
+MH  - Chromosomes, Human, Pair 13/genetics
+MH  - Chromosomes, Human, Pair 6/genetics
+MH  - Chromosomes, Human, Pair 7/genetics
+MH  - Environment
+MH  - Female
+MH  - Finland
+MH  - Genotype
+MH  - Humans
+MH  - Linkage (Genetics)/*genetics
+MH  - Lod Score
+MH  - Male
+MH  - Microsatellite Repeats/genetics
+MH  - Middle Aged
+MH  - *Quantitative Trait, Heritable
+MH  - Quebec
+MH  - Software
+MH  - Sweden
+PMC - PMC1226025
+EDAT- 2001/06/19 10:00
+MHDA- 2001/08/03 10:01
+PHST- 2001/03/02 [received]
+PHST- 2001/05/14 [accepted]
+PHST- 2001/06/15 [aheadofprint]
+AID - S0002-9297(07)61450-5 [pii]
+AID - 10.1086/321287 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2001 Jul;69(1):106-16. Epub 2001 Jun 15.
+
+PMID- 11737870
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+DA  - 20030708
+DCOM- 20030930
+LR  - 20050805
+PUBM- Print-Electronic
+IS  - 1471-2350 (Electronic)
+VI  - 2
+DP  - 2001
+TI  - Linkage analysis of HLA and candidate genes for celiac disease in a North
+      American family-based study.
+PG  - 12
+AB  - BACKGROUND: Celiac disease has a strong genetic association with HLA.
+      However, this association only explains approximately half of the sibling
+      risk for celiac disease. Therefore, other genes must be involved in
+      susceptibility to celiac disease. We tested for linkage to genes or loci
+      that could play a role in pathogenesis of celiac disease. METHODS: DNA
+      samples, from members of 62 families with a minimum of two cases of celiac
+      disease, were genotyped at HLA and at 13 candidate gene regions, including
+      CD4, CTLA4, four T-cell receptor regions, and 7 insulin-dependent diabetes
+      regions. Two-point and multipoint heterogeneity LOD (HLOD) scores were
+      examined. RESULTS: The highest two-point and multipoint HLOD scores were
+      obtained in the HLA region, with a two-point HLOD of 3.1 and a multipoint
+      HLOD of 5.0. For the candidate genes, we found no evidence for linkage.
+      CONCLUSIONS: Our significant evidence of linkage to HLA replicates the
+      known linkage and association of HLA with CD. In our families, likely
+      candidate genes did not explain the susceptibility to celiac disease.
+AD  - Medical Informatics, University of Utah, Salt Lake City, UT, USA.
+      susan@genepi.med.utah.edu
+FAU - Neuhausen, S L
+AU  - Neuhausen SL
+FAU - Feolo, M
+AU  - Feolo M
+FAU - Farnham, J
+AU  - Farnham J
+FAU - Book, L
+AU  - Book L
+FAU - Zone, J J
+AU  - Zone JJ
+LA  - eng
+PT  - Journal Article
+DEP - 20011130
+PL  - England
+TA  - BMC Med Genet
+JT  - BMC medical genetics
+JID - 100968552
+PMC - PMC60993
+EDAT- 2001/12/12 10:00
+MHDA- 2001/12/12 10:01
+PHST- 2001/10/04 [received]
+PHST- 2001/11/30 [accepted]
+PHST- 2001/11/30 [aheadofprint]
+PST - ppublish
+SO  - BMC Med Genet. 2001;2:12. Epub 2001 Nov 30.
+
+PMID- 14564669
+OWN - NLM
+STAT- MEDLINE
+DA  - 20031023
+DCOM- 20040819
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 73
+IP  - 5
+DP  - 2003 Nov
+TI  - Ordered-subsets linkage analysis detects novel Alzheimer disease loci on
+      chromosomes 2q34 and 15q22.
+PG  - 1041-51
+AB  - Alzheimer disease (AD) is a complex disorder characterized by a wide
+      range, within and between families, of ages at onset of symptoms.
+      Consideration of age at onset as a covariate in genetic-linkage studies
+      may reduce genetic heterogeneity and increase statistical power.
+      Ordered-subsets analysis includes continuous covariates in linkage
+      analysis by rank ordering families by a covariate and summing LOD scores
+      to find a subset giving a significantly increased LOD score relative to
+      the overall sample. We have analyzed data from 336 markers in 437
+      multiplex (>/=2 sampled individuals with AD) families included in a recent
+      genomic screen for AD loci. To identify genetic heterogeneity by age at
+      onset, families were ordered by increasing and decreasing mean and minimum
+      ages at onset. Chromosomewide significance of increases in the LOD score
+      in subsets relative to the overall sample was assessed by permutation. A
+      statistically significant increase in the nonparametric multipoint LOD
+      score was observed on chromosome 2q34, with a peak LOD score of 3.2 at
+      D2S2944 (P=.008) in 31 families with a minimum age at onset between 50 and
+      60 years. The LOD score in the chromosome 9p region previously linked to
+      AD increased to 4.6 at D9S741 (P=.01) in 334 families with minimum age at
+      onset between 60 and 75 years. LOD scores were also significantly
+      increased on chromosome 15q22: a peak LOD score of 2.8 (P=.0004) was
+      detected at D15S1507 (60 cM) in 38 families with minimum age at onset
+      >/=79 years, and a peak LOD score of 3.1 (P=.0006) was obtained at D15S153
+      (62 cM) in 43 families with mean age at onset >80 years. Thirty-one
+      families were contained in both 15q22 subsets, indicating that these
+      results are likely detecting the same locus. There is little overlap in
+      these subsets, underscoring the utility of age at onset as a marker of
+      genetic heterogeneity. These results indicate that linkage to chromosome
+      9p is strongest in late-onset AD and that regions on chromosome 2q34 and
+      15q22 are linked to early-onset AD and very-late-onset AD, respectively.
+AD  - Department of Medicine, Duke University Medical Center, and Center for
+      Human Genetics, Institute for Genome Sciences and Policy, Duke University,
+      Durham, NC 27710, USA. bill.scott@duke.edu
+FAU - Scott, William K
+AU  - Scott WK
+FAU - Hauser, Elizabeth R
+AU  - Hauser ER
+FAU - Schmechel, Donald E
+AU  - Schmechel DE
+FAU - Welsh-Bohmer, Kathleen A
+AU  - Welsh-Bohmer KA
+FAU - Small, Gary W
+AU  - Small GW
+FAU - Roses, Allen D
+AU  - Roses AD
+FAU - Saunders, Ann M
+AU  - Saunders AM
+FAU - Gilbert, John R
+AU  - Gilbert JR
+FAU - Vance, Jeffery M
+AU  - Vance JM
+FAU - Haines, Jonathan L
+AU  - Haines JL
+FAU - Pericak-Vance, Margaret A
+AU  - Pericak-Vance MA
+LA  - eng
+GR  - AG019726/AG/United States NIA
+GR  - AG05128/AG/United States NIA
+GR  - AG09029/AG/United States NIA
+GR  - AG10123/AG/United States NIA
+GR  - AG11268/AG/United States NIA
+GR  - MH52453/MH/United States NIMH
+GR  - MH59528/MH/United States NIMH
+GR  - NS31153/NS/United States NINDS
+GR  - RR00856/RR/United States NCRR
+GR  - U01 MH46281/MH/United States NIMH
+GR  - U01 MH46290/MH/United States NIMH
+GR  - U01 MH46373/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20031016
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (Apolipoprotein E4)
+RN  - 0 (Apolipoproteins E)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Age of Onset
+MH  - Aged
+MH  - Aged, 80 and over
+MH  - Alzheimer Disease/*genetics
+MH  - Apolipoprotein E4
+MH  - Apolipoproteins E/genetics
+MH  - *Chromosome Mapping
+MH  - Chromosomes, Human, Pair 15/*genetics
+MH  - Chromosomes, Human, Pair 2/*genetics
+MH  - Chromosomes, Human, Pair 9/genetics
+MH  - Genetic Heterogeneity
+MH  - Genetic Markers/genetics
+MH  - Humans
+MH  - Lod Score
+MH  - Middle Aged
+MH  - Software
+PMC - PMC1180484
+EDAT- 2003/10/18 05:00
+MHDA- 2004/08/20 05:00
+PHST- 2003/05/09 [received]
+PHST- 2003/08/11 [accepted]
+PHST- 2003/10/16 [aheadofprint]
+AID - AJHG40100 [pii]
+PST - ppublish
+SO  - Am J Hum Genet. 2003 Nov;73(5):1041-51. Epub 2003 Oct 16.
+
+PMID- 16426440
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060316
+DCOM- 20060525
+LR  - 20071114
+PUBM- Electronic
+IS  - 1471-2156 (Electronic)
+VI  - 7
+DP  - 2006
+TI  - A quantitative linkage score for an association study following a linkage
+      analysis.
+PG  - 5
+AB  - BACKGROUND: Currently, a commonly used strategy for mapping complex
+      quantitative traits is to use a genome-wide linkage analysis to narrow
+      suspected genes to regions on a scale of centiMorgans (cM), followed by an
+      association analysis to fine map the genetic variation in regions showing
+      linkage. Two important questions arise in the design and the resulting
+      inference at the association stage of this sequential procedure: (1) how
+      should we design an efficient association study given the information
+      provided by the previous linkage study? and (2) can an association in a
+      linkage region explain, in part, the detected linkage signal? RESULTS: We
+      derive a quantitative linkage score (QLS) based on Haseman-Elston
+      regression (Haseman and Elston 1972) and make use of this score to address
+      both questions. In designing an association study, the selection of a
+      subsample from the linkage study sample can be guided by the linkage
+      information summarized in the QLS. When heterogeneity exists, we show that
+      selection based on the QLS can increase the proportion of sample
+      individuals from the subpopulation affected by a disease allele and
+      therefore greatly improves the power of the association study. For the
+      resulting inference, we frame as a hypothesis test the question of whether
+      a linkage signal in a region can be in part explained by a marker allele.
+      A simple one sided paired t-statistic is defined by comparing the two sets
+      of QLSs obtained with/without modeling a marker association: a significant
+      difference indicates that the marker can at least partly account for the
+      detected linkage. We also show that this statistic can be used to detect a
+      spurious association. CONCLUSION: All our results suggest that a careful
+      examination of QLSs should be helpful for understanding the results of
+      both association and linkage studies.
+AD  - Department of Epidemiology and Biostatistics, Case Western Reserve
+      University, Cleveland, USA. txw54@case.edu
+FAU - Wang, Tao
+AU  - Wang T
+FAU - Elston, Robert C
+AU  - Elston RC
+LA  - eng
+GR  - GM28356/GM/United States NIGMS
+GR  - RR03655/RR/United States NCRR
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20060120
+PL  - England
+TA  - BMC Genet
+JT  - BMC genetics
+JID - 100966978
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Alleles
+MH  - Chromosome Mapping
+MH  - Genetic Markers
+MH  - *Genetics
+MH  - Genome
+MH  - Genotype
+MH  - Humans
+MH  - Likelihood Functions
+MH  - *Linkage (Genetics)
+MH  - Linkage Disequilibrium
+MH  - Lod Score
+MH  - Models, Genetic
+MH  - Models, Statistical
+MH  - Quantitative Trait Loci
+PMC - PMC1402322
+EDAT- 2006/01/24 09:00
+MHDA- 2006/05/26 09:00
+PHST- 2005/08/04 [received]
+PHST- 2006/01/20 [accepted]
+PHST- 2006/01/20 [aheadofprint]
+AID - 1471-2156-7-5 [pii]
+AID - 10.1186/1471-2156-7-5 [doi]
+PST - epublish
+SO  - BMC Genet. 2006 Jan 20;7:5.
+
+PMID- 16537441
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060315
+DCOM- 20060417
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0027-8424 (Print)
+VI  - 103
+IP  - 10
+DP  - 2006 Mar 7
+TI  - Linkage analysis of quantitative traits for obesity, diabetes,
+      hypertension, and dyslipidemia on the island of Kosrae, Federated States
+      of Micronesia.
+PG  - 3502-9
+AB  - Obesity, diabetes, hypertension, and heart disease are highly heritable
+      conditions that in aggregate are the major causes of morbidity and
+      mortality in the developed world and are growing problems in developing
+      countries. To map the causal genes, we conducted a population screen for
+      these conditions on the Pacific Island of Kosrae. Family history and
+      genetic data were used to construct a pedigree for the island. Analysis of
+      the pedigree showed highly significant heritability for the metabolic
+      traits under study. DNA samples from 2,188 participants were genotyped
+      with 405 microsatellite markers with an average intermarker distance of 11
+      cM. A protocol using loki, a Markov chain Monte Carlo sampling method, was
+      developed to analyze the Kosraen pedigree for height, a model quantitative
+      trait. Robust quantitative trait loci for height were found on 10q21 and
+      1p31. This protocol was used to map a set of metabolic traits, including
+      plasma leptin to chromosome region 5q35; systolic blood pressure to 20p12;
+      total cholesterol to 19p13, 12q24, and 16qter; hip circumference to 10q25
+      and 4q23; body mass index to 18p11 and 20q13; apolipoprotein B to 2p24-25;
+      weight to 18q21; and fasting blood sugar to 1q31-1q43. Several of these
+      same chromosomal regions have been identified in previous studies
+      validating the use of loki. These studies add information about the
+      genetics of the metabolic syndrome and establish an analytical approach
+      for linkage analysis of complex pedigrees. These results also lay the
+      foundation for whole genome scans with dense sets of SNPs aimed to
+      identifying causal genes.
+AD  - Department of Biostatistics, Columbia University, New York, NY 10032, USA.
+FAU - Shmulewitz, Dvora
+AU  - Shmulewitz D
+FAU - Heath, Simon C
+AU  - Heath SC
+FAU - Blundell, Maude L
+AU  - Blundell ML
+FAU - Han, Zhihua
+AU  - Han Z
+FAU - Sharma, Ratnendra
+AU  - Sharma R
+FAU - Salit, Jacqueline
+AU  - Salit J
+FAU - Auerbach, Steven B
+AU  - Auerbach SB
+FAU - Signorini, Stefano
+AU  - Signorini S
+FAU - Breslow, Jan L
+AU  - Breslow JL
+FAU - Stoffel, Markus
+AU  - Stoffel M
+FAU - Friedman, Jeffrey M
+AU  - Friedman JM
+LA  - eng
+GR  - GM07982/GM/United States NIGMS
+GR  - T32MH65213/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+DEP - 20060228
+PL  - United States
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+SB  - IM
+MH  - Body Height/genetics
+MH  - Chromosome Mapping
+MH  - Diabetes Mellitus/*genetics
+MH  - Dyslipidemias/*genetics
+MH  - Female
+MH  - Genotype
+MH  - Humans
+MH  - Hypertension/*genetics
+MH  - *Linkage (Genetics)
+MH  - Male
+MH  - Markov Chains
+MH  - Metabolic Syndrome X/genetics
+MH  - Micronesia
+MH  - Microsatellite Repeats
+MH  - Models, Genetic
+MH  - Monte Carlo Method
+MH  - Obesity/*genetics
+MH  - Pedigree
+MH  - *Quantitative Trait Loci
+PMC - PMC1533774
+EDAT- 2006/03/16 09:00
+MHDA- 2006/04/18 09:00
+PHST- 2006/02/28 [aheadofprint]
+AID - 0510156103 [pii]
+AID - 10.1073/pnas.0510156103 [doi]
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 2006 Mar 7;103(10):3502-9. Epub 2006 Feb 28.
+
+PMID- 16723002
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060525
+DCOM- 20060630
+LR  - 20060707
+PUBM- Electronic
+IS  - 1471-2105 (Electronic)
+VI  - 7 Suppl 1
+DP  - 2006
+TI  - The cluster variation method for efficient linkage analysis on extended
+      pedigrees.
+PG  - S1
+AB  - BACKGROUND: Computing exact multipoint LOD scores for extended pedigrees
+      rapidly becomes infeasible as the number of markers and untyped
+      individuals increase. When markers are excluded from the computation,
+      significant power may be lost. Therefore accurate approximate methods
+      which take into account all markers are desirable. METHODS: We present a
+      novel method for efficient estimation of LOD scores on extended pedigrees.
+      Our approach is based on the Cluster Variation Method, which
+      deterministically estimates likelihoods by performing exact computations
+      on tractable subsets of variables (clusters) of a Bayesian network. First
+      a distribution over inheritances on the marker loci is approximated with
+      the Cluster Variation Method. Then this distribution is used to estimate
+      the LOD score for each location of the trait locus. RESULTS: First we
+      demonstrate that significant power may be lost if markers are ignored in
+      the multi-point analysis. On a set of pedigrees where exact computation is
+      possible we compare the estimates of the LOD scores obtained with our
+      method to the exact LOD scores. Secondly, we compare our method to a state
+      of the art MCMC sampler. When both methods are given equal computation
+      time, our method is more efficient. Finally, we show that CVM scales to
+      large problem instances. CONCLUSION: We conclude that the Cluster
+      Variation Method is as accurate as MCMC and generally is more efficient.
+      Our method is a promising alternative to approaches based on MCMC
+      sampling.
+AD  - Department of Medical Physics and Biophysics, Radboud University,
+      Nijmegen, The Netherlands. k.albers@science.ru.nl
+FAU - Albers, Cornelis A
+AU  - Albers CA
+FAU - Leisink, Martijn A R
+AU  - Leisink MA
+FAU - Kappen, Hilbert J
+AU  - Kappen HJ
+LA  - eng
+PT  - Journal Article
+DEP - 20060320
+PL  - England
+TA  - BMC Bioinformatics
+JT  - BMC bioinformatics
+JID - 100965194
+SB  - IM
+MH  - Alleles
+MH  - Bayes Theorem
+MH  - Cluster Analysis
+MH  - Computational Biology/*methods
+MH  - Humans
+MH  - *Linkage (Genetics)
+MH  - Lod Score
+MH  - Models, Genetic
+MH  - Pedigree
+MH  - Reproducibility of Results
+PMC - PMC1810310
+EDAT- 2006/05/26 09:00
+MHDA- 2006/07/01 09:00
+PHST- 2006/03/20 [epublish]
+AID - 1471-2105-7-S1-S1 [pii]
+AID - 10.1186/1471-2105-7-S1-S1 [doi]
+PST - epublish
+SO  - BMC Bioinformatics. 2006 Mar 20;7 Suppl 1:S1.
+
+PMID- 17381244
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070521
+DCOM- 20070618
+PUBM- Print
+IS  - 1553-7404 (Electronic)
+VI  - 3
+IP  - 3
+DP  - 2007 Mar 23
+TI  - Genome-wide linkage analysis of malaria infection intensity and mild
+      disease.
+PG  - e48
+AB  - Although balancing selection with the sickle-cell trait and other red
+      blood cell disorders has emphasized the interaction between malaria and
+      human genetics, no systematic approach has so far been undertaken towards
+      a comprehensive search for human genome variants influencing malaria. By
+      screening 2,551 families in rural Ghana, West Africa, 108 nuclear families
+      were identified who were exposed to hyperendemic malaria transmission and
+      were homozygous wild-type for the established malaria resistance factors
+      of hemoglobin (Hb)S, HbC, alpha(+) thalassemia, and
+      glucose-6-phosphate-dehydrogenase deficiency. Of these families, 392
+      siblings aged 0.5-11 y were characterized for malaria susceptibility by
+      closely monitoring parasite counts, malaria fever episodes, and anemia
+      over 8 mo. An autosome-wide linkage analysis based on 10,000
+      single-nucleotide polymorphisms was conducted in 68 selected families
+      including 241 siblings forming 330 sib pairs. Several regions were
+      identified which showed evidence for linkage to the parasitological and
+      clinical phenotypes studied, among them a prominent signal on Chromosome
+      10p15 obtained with malaria fever episodes (asymptotic z score = 4.37,
+      empirical p-value = 4.0 x 10(-5), locus-specific heritability of 37.7%;
+      95% confidence interval, 15.7%-59.7%). The identification of genetic
+      variants underlying the linkage signals may reveal as yet unrecognized
+      pathways influencing human resistance to malaria.
+AD  - Department of Molecular Medicine, Bernhard Nocht Institute for Tropical
+      Medicine, Hamburg, Germany. timmann@bni-hamburg.de
+FAU - Timmann, Christian
+AU  - Timmann C
+FAU - Evans, Jennifer A
+AU  - Evans JA
+FAU - Konig, Inke R
+AU  - Konig IR
+FAU - Kleensang, Andre
+AU  - Kleensang A
+FAU - Ruschendorf, Franz
+AU  - Ruschendorf F
+FAU - Lenzen, Julia
+AU  - Lenzen J
+FAU - Sievertsen, Jurgen
+AU  - Sievertsen J
+FAU - Becker, Christian
+AU  - Becker C
+FAU - Enuameh, Yeetey
+AU  - Enuameh Y
+FAU - Kwakye, Kingsley Osei
+AU  - Kwakye KO
+FAU - Opoku, Ernest
+AU  - Opoku E
+FAU - Browne, Edmund N L
+AU  - Browne EN
+FAU - Ziegler, Andreas
+AU  - Ziegler A
+FAU - Nurnberg, Peter
+AU  - Nurnberg P
+FAU - Horstmann, Rolf D
+AU  - Horstmann RD
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - PLoS Genet
+JT  - PLoS genetics
+JID - 101239074
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - African Continental Ancestry Group
+MH  - Child
+MH  - Chromosomes, Human, Pair 10
+MH  - Cohort Studies
+MH  - Endemic Diseases
+MH  - Genetic Markers
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Ghana/epidemiology
+MH  - Humans
+MH  - *Linkage (Genetics)
+MH  - Lod Score
+MH  - Malaria/blood/epidemiology/*genetics/*pathology
+MH  - Malaria, Falciparum/epidemiology/parasitology
+MH  - Oligonucleotide Array Sequence Analysis
+MH  - Parasitemia
+MH  - Polymorphism, Single Nucleotide
+MH  - Prevalence
+MH  - Rural Population
+MH  - *Severity of Illness Index
+MH  - Siblings
+MH  - Variation (Genetics)
+PMC - PMC1829404
+EDAT- 2007/03/27 09:00
+MHDA- 2007/06/19 09:00
+PHST- 2006/12/20 [received]
+PHST- 2007/02/16 [accepted]
+AID - 06-PLGE-RA-0560R2 [pii]
+AID - 10.1371/journal.pgen.0030048 [doi]
+PST - ppublish
+SO  - PLoS Genet. 2007 Mar 23;3(3):e48.
+
+PMID- 8094267
+OWN - NLM
+STAT- MEDLINE
+DA  - 19930310
+DCOM- 19930310
+LR  - 20071114
+PUBM- Print
+IS  - 0002-9297 (Print)
+VI  - 52
+IP  - 2
+DP  - 1993 Feb
+TI  - Linkage analysis of schizophrenia with five dopamine receptor genes in
+      nine pedigrees.
+PG  - 327-34
+AB  - Alterations in dopamine neurotransmission have been strongly implicated in
+      the pathogenesis of schizophrenia for nearly 2 decades. Recently, the
+      genes for five dopamine receptors have been cloned and characterized, and
+      genetic and physical map information has become available. Using these
+      five loci as candidate genes, we have tested for genetic linkage to
+      schizophrenia in nine multigenerational families which include multiple
+      affected individuals. In addition to testing conservative disease models,
+      we have used a neurophysiological indicator variable, the P50 auditory
+      evoked response. Deficits in gating of the P50 response have been shown to
+      segregate with schizophrenia in this sample and may identify carriers of
+      gene(s) predisposing for schizophrenia. Linkage results were consistently
+      negative, indicating that a defect at any of the actual receptor sites is
+      unlikely to be a major contributor to schizophrenia in the nine families
+      studied.
+AD  - Department of Psychiatry, University of Utah Medical School, Salt Lake
+      City 84132.
+FAU - Coon, H
+AU  - Coon H
+FAU - Byerley, W
+AU  - Byerley W
+FAU - Holik, J
+AU  - Holik J
+FAU - Hoff, M
+AU  - Hoff M
+FAU - Myles-Worsley, M
+AU  - Myles-Worsley M
+FAU - Lannfelt, L
+AU  - Lannfelt L
+FAU - Sokoloff, P
+AU  - Sokoloff P
+FAU - Schwartz, J C
+AU  - Schwartz JC
+FAU - Waldo, M
+AU  - Waldo M
+FAU - Freedman, R
+AU  - Freedman R
+AU  - et al.
+LA  - eng
+GR  - MH-42643/MH/United States NIMH
+GR  - MH-44212/MH/United States NIMH
+GR  - MH10168-F32/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - UNITED STATES
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptors, Dopamine)
+SB  - IM
+MH  - Adolescent
+MH  - Adult
+MH  - Chi-Square Distribution
+MH  - Evoked Potentials, Auditory
+MH  - Female
+MH  - Genetic Markers
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Male
+MH  - Polymorphism, Restriction Fragment Length
+MH  - Receptors, Dopamine/*genetics
+MH  - Schizophrenia/*genetics
+PMC - PMC1682188
+EDAT- 1993/02/01
+MHDA- 1993/02/01 00:01
+PST - ppublish
+SO  - Am J Hum Genet. 1993 Feb;52(2):327-34.
+

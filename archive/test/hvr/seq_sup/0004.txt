@@ -1,0 +1,43 @@
+LOCUS       EU257460                 401 bp    DNA     linear   PRI 03-DEC-2007
+DEFINITION  Homo sapiens isolate kekz4 D-loop, partial sequence; mitochondrial.
+ACCESSION   EU257460
+VERSION     EU257460.1  GI:161138406
+KEYWORDS    .
+SOURCE      mitochondrion Homo sapiens (human)
+  ORGANISM  Homo sapiens
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
+            Catarrhini; Hominidae; Homo.
+REFERENCE   1  (bases 1 to 401)
+  AUTHORS   Yu,E.-Y., Zhang,Y. and Halik,M.
+  TITLE     Study on sequence polymorphisms of mitochondrial DNA D-loop region
+            of the Khalkhas population in Xinjiang
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 401)
+  AUTHORS   Yu,E.-Y., Zhang,Y. and Halik,M.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (31-OCT-2007) College of Life Science and Technology,
+            Xinjiang University, No.14, ShengLi Rd., Urumqi, Xinjiang 830046,
+            China
+FEATURES             Location/Qualifiers
+     source          1..401
+                     /organism="Homo sapiens"
+                     /organelle="mitochondrion"
+                     /mol_type="genomic DNA"
+                     /isolate="kekz4"
+                     /db_xref="taxon:9606"
+                     /country="China"
+                     /collected_by="Mahmut Halik"
+                     /identified_by="En-yan Yu"
+                     /PCR_primers="fwd_seq: acagtttcatgcccatcgtc, rev_seq:
+                     atgctaagttagctttacag"
+     D-loop          <1..>401
+ORIGIN      
+        1 tctgttcttt ctggggaagc agatttgggt accacccaag tattgactta cccatcaaca
+       61 accgctatgt atttcgtaca ttactgccag ccaccatgaa tattgcacgg taccataaat
+      121 acttgaccac ctgtagtaca taaaaaccca atccacatca aaaccccctc cccatgctta
+      181 caagcaagta cagcaatcaa ccctcaacta tcacacatca actgcaactc caaagccacc
+      241 cctcacccac taggatacca acaaacctac ccacccttaa cagtacatag tacataaagc
+      301 catttaccgt acatagcaca ttacagtcaa atcccttctc gtccccatgg atgacccccc
+      361 tcagataggg gtcccttgac caccatcctc cgtgaaatca a
+//

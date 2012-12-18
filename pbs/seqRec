@@ -1,0 +1,7 @@
+#PBS -l nodes=1:ppn=2,mem=5GB,walltime=150:00:00
+#PBS -m ae
+#PBS -q elmob 
+
+cd /project/youngn/zhoup/Data/misc1/seq07
+seqRec -i 01_id.tbl -o 13_seq -t acc84 -c 1
+

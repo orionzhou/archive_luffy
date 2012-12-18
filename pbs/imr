@@ -1,0 +1,8 @@
+#PBS -l nodes=1:ppn=8,mem=14GB,walltime=96:00:00
+#PBS -m ae
+#PBS -q mirror 
+
+export PATH=/project/youngn/zhoup/Source/stampy-1.0.15:$PATH
+cd /project/youngn/zhoup/Source/imrdenom-0.3.2
+./imr easyrun HM004.conf
+

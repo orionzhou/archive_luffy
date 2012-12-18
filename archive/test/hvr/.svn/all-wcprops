@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/98/trunk/misc/test/hvr
+END
+hvr_seq_fetch_by_id.pl
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/98/trunk/misc/test/hvr/hvr_seq_fetch_by_id.pl
+END
+hvr_id.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/98/trunk/misc/test/hvr/hvr_id.pl
+END
+seq_recover_old.pl
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/98/trunk/misc/test/hvr/seq_recover_old.pl
+END
+hvr_classify.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/98/trunk/misc/test/hvr/hvr_classify.pl
+END
+idlist.txt
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/98/trunk/misc/test/hvr/idlist.txt
+END
+sup1.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup1.txt
+END
+sup2.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup2.txt
+END
+sup3.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup3.txt
+END
+hvr_by_acc.pl
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/98/trunk/misc/test/hvr/hvr_by_acc.pl
+END
+sup4.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup4.txt
+END
+sup5.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup5.txt
+END
+sup6.txt
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/98/trunk/misc/test/hvr/sup6.txt
+END
+idlist_sup.txt
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/98/trunk/misc/test/hvr/idlist_sup.txt
+END
+id-ACC.txt
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/98/trunk/misc/test/hvr/id-ACC.txt
+END

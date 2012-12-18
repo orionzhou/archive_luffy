@@ -1,0 +1,340 @@
+PMID- 15052271
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040430
+DCOM- 20040525
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 1061-4036 (Print)
+VI  - 36
+IP  - 5
+DP  - 2004 May
+TI  - The effects of human population structure on large genetic association
+      studies.
+PG  - 512-7
+AB  - Large-scale association studies hold substantial promise for unraveling
+      the genetic basis of common human diseases. A well-known problem with such
+      studies is the presence of undetected population structure, which can lead
+      to both false positive results and failures to detect genuine
+      associations. Here we examine approximately 15,000 genome-wide
+      single-nucleotide polymorphisms typed in three population groups to assess
+      the consequences of population structure on the coming generation of
+      association studies. The consequences of population structure on
+      association outcomes increase markedly with sample size. For the size of
+      study needed to detect typical genetic effects in common diseases, even
+      the modest levels of population structure within population groups cannot
+      safely be ignored. We also examine one method for correcting for
+      population structure (Genomic Control). Although it often performs well,
+      it may not correct for structure if too few loci are used and may
+      overcorrect in other settings, leading to substantial loss of power. The
+      results of our analysis can guide the design of large-scale association
+      studies.
+AD  - Department of Statistics, University of Oxford, 1 South Parks Road, Oxford
+      OX1 3TG, UK.
+FAU - Marchini, Jonathan
+AU  - Marchini J
+FAU - Cardon, Lon R
+AU  - Cardon LR
+FAU - Phillips, Michael S
+AU  - Phillips MS
+FAU - Donnelly, Peter
+AU  - Donnelly P
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+DEP - 20040328
+PL  - United States
+TA  - Nat Genet
+JT  - Nature genetics
+JID - 9216904
+RN  - 0 (Genetic Markers)
+SB  - IM
+CIN - Nat Genet. 2004 Nov;36(11):1129-30; author reply 1131. PMID: 15514657
+MH  - *Genetic Markers
+MH  - *Genetic Predisposition to Disease
+MH  - *Genetics, Population
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Models, Genetic
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Quantitative Trait, Heritable
+MH  - Variation (Genetics)
+EDAT- 2004/03/31 05:00
+MHDA- 2004/05/27 05:00
+PHST- 2003/12/01 [received]
+PHST- 2004/03/12 [accepted]
+PHST- 2004/03/28 [aheadofprint]
+AID - 10.1038/ng1337 [doi]
+AID - ng1337 [pii]
+PST - ppublish
+SO  - Nat Genet. 2004 May;36(5):512-7. Epub 2004 Mar 28.
+
+PMID- 16354752
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060202
+DCOM- 20060602
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 1088-9051 (Print)
+VI  - 16
+IP  - 2
+DP  - 2006 Feb
+TI  - Logistic regression protects against population structure in genetic
+      association studies.
+PG  - 290-6
+AB  - We conduct an extensive simulation study to compare the merits of several
+      methods for using null (unlinked) markers to protect against false
+      positives due to cryptic substructure in population-based genetic
+      association studies. The more sophisticated "structured association"
+      methods perform well but are computationally demanding and rely on
+      estimating the correct number of subpopulations. The simple and fast
+      "genomic control" approach can lose power in certain scenarios. We find
+      that procedures based on logistic regression that are flexible,
+      computationally fast, and easy to implement also provide good protection
+      against the effects of cryptic substructure, even though they do not
+      explicitly model the population structure.
+AD  - Department of Epidemiology and Public Health, Imperial College, St. Mary's
+      Campus, London W2 1PG, United Kingdom. e.setakis@imperial.ac.uk
+FAU - Setakis, Efrosini
+AU  - Setakis E
+FAU - Stirnadel, Heide
+AU  - Stirnadel H
+FAU - Balding, David J
+AU  - Balding DJ
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20051214
+PL  - United States
+TA  - Genome Res
+JT  - Genome research
+JID - 9518021
+SB  - IM
+MH  - Animals
+MH  - *Computational Biology/methods
+MH  - *Genetics, Population/methods
+MH  - Humans
+MH  - Logistic Models
+MH  - *Models, Genetic
+PMC - PMC1361725
+EDAT- 2005/12/16 09:00
+MHDA- 2006/06/03 09:00
+PHST- 2005/12/14 [aheadofprint]
+AID - gr.4346306 [pii]
+AID - 10.1101/gr.4346306 [doi]
+PST - ppublish
+SO  - Genome Res. 2006 Feb;16(2):290-6. Epub 2005 Dec 14.
+
+PMID- 16441260
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060130
+DCOM- 20060915
+LR  - 20061115
+PUBM- Print
+IS  - 0003-4800 (Print)
+VI  - 70
+IP  - Pt 1
+DP  - 2006 Jan
+TI  - Case-control association tests correcting for population stratification.
+PG  - 98-115
+AB  - In case-control association studies unobserved population stratification
+      may act as a confounder, leading to an increased number of false positive
+      results. Methods accounting for population structure by using additional
+      genetic markers broadly follow one of two concepts: Genomic Control (GC)
+      and Structured Association (SA). While extending existing methods of
+      Structured Association we show that it is necessary to incorporate
+      phenotypic information when inferring population structure, otherwise a
+      systematic bias is introduced. Moreover, for moderate population
+      stratification a Wald test statistic should be preferred as a Structured
+      Association test statistic in comparison to a likelihood ratio test. The
+      introduced extensions are compared to existing methods of Structured
+      Association, as well as to Genomic Control, in a simulation study which is
+      based on realistic situations of large case-control studies with moderate
+      population stratification. A disadvantage of Genomic Control turns out to
+      be the large variation in estimating the variance inflation factor, as
+      well as the power loss if population structure increases. We come to the
+      overall conclusion that Structured Association, if applied correctly, is
+      superior to Genomic Control, at least in the case of simple population
+      structure as simulated here.
+AD  - Department of Genetic Epidemiology, University of Gottingen, Gottingen,
+      Germany. karola.koehler@medizin.uni-goettingen.de
+FAU - Kohler, K
+AU  - Kohler K
+FAU - Bickeboller, H
+AU  - Bickeboller H
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Ann Hum Genet
+JT  - Annals of human genetics
+JID - 0416661
+SB  - IM
+MH  - *Case-Control Studies
+MH  - Computer Simulation
+MH  - *Genetics, Population
+MH  - *Models, Genetic
+MH  - *Phenotype
+MH  - *Research Design
+EDAT- 2006/01/31 09:00
+MHDA- 2006/09/16 09:00
+AID - AHG214 [pii]
+AID - 10.1111/j.1529-8817.2005.00214.x [doi]
+PST - ppublish
+SO  - Ann Hum Genet. 2006 Jan;70(Pt 1):98-115.
+
+PMID- 16983374
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060919
+DCOM- 20061106
+LR  - 20071115
+PUBM- Print
+IS  - 1471-0056 (Print)
+VI  - 7
+IP  - 10
+DP  - 2006 Oct
+TI  - A tutorial on statistical methods for population association studies.
+PG  - 781-91
+AB  - Although genetic association studies have been with us for many years,
+      even for the simplest analyses there is little consensus on the most
+      appropriate statistical procedures. Here I give an overview of statistical
+      approaches to population association studies, including preliminary
+      analyses (Hardy-Weinberg equilibrium testing, inference of phase and
+      missing data, and SNP tagging), and single-SNP and multipoint tests for
+      association. My goal is to outline the key methods with a brief discussion
+      of problems (population structure and multiple testing), avenues for
+      solutions and some ongoing developments.
+AD  - Department of Epidemiology and Public Health, Imperial College, St Marys
+      Campus, Norfolk Place, London W2 1PG, UK. d.balding@imperial.ac.uk
+FAU - Balding, David J
+AU  - Balding DJ
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+PL  - England
+TA  - Nat Rev Genet
+JT  - Nature reviews. Genetics
+JID - 100962779
+SB  - IM
+MH  - Genetics, Medical/*methods
+MH  - Genetics, Population/*methods
+MH  - Genome, Human/genetics
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Statistics as Topic/*methods
+RF  - 109
+EDAT- 2006/09/20 09:00
+MHDA- 2006/11/07 09:00
+AID - nrg1916 [pii]
+AID - 10.1038/nrg1916 [doi]
+PST - ppublish
+SO  - Nat Rev Genet. 2006 Oct;7(10):781-91.
+
+PMID- 17044864
+OWN - NLM
+STAT- MEDLINE
+DA  - 20061018
+DCOM- 20061211
+LR  - 20071114
+PUBM- Print
+IS  - 0003-4800 (Print)
+VI  - 70
+IP  - Pt 6
+DP  - 2006 Nov
+TI  - Investigation of the ability of haplotype association and logistic
+      regression to identify associated susceptibility loci.
+PG  - 893-906
+AB  - While finely spaced markers are increasingly being used in case-control
+      association studies in attempts to identify susceptibility loci, not
+      enough is yet known as to the optimal spacing of such markers, their
+      likely power to detect association, the relative merits of single marker
+      versus multimarker analysis, or which methods of analysis may be optimal.
+      Some investigations of these issues have used markers simulated under
+      different theoretical models of population evolution. However the HapMap
+      project and other sources provide real datasets which can be used to
+      obtain a more realistic view of the performance of these approaches. SNPs
+      around APOE and from two HapMap regions were used to obtain information
+      regarding linkage disequilibrium (LD) relationships between polymorphisms,
+      and these real patterns of LD were used to simulate datasets such as would
+      be obtained in case-control studies were these SNPs to influence
+      susceptibility to disease. The datasets obtained were analysed using tests
+      for heterogeneity of estimated haplotype frequencies and using logistic
+      regression analyses in which only main effects from each marker were
+      considered. All markers surrounding the putative susceptibility locus were
+      analysed, using sets of either 1, 2, 3 or 4 markers at a time. Some
+      markers within 150 kb of the susceptibility locus were able to detect
+      association. At distances less than 100 kb there was no correlation
+      between the distance from the susceptibility locus and the strength of
+      evidence for association. When the average inter-locus spacing is 25 kb
+      many loci would not be detected, while when the spacing is as low as 2 kb
+      one can be fairly confident that at least one marker will be in strong
+      enough LD with the susceptibility locus to enable association to be
+      detected, if the susceptibility locus has a strong enough effect relative
+      to the sample size. With an inter-locus spacing of 4 kb some
+      susceptibility loci did not have a marker locus in strong LD, potentially
+      undermining the ability to detect association. There was little difference
+      in the performance of haplotype-based analysis compared with logistic
+      regression considering effects of each marker as separate. Multimarker
+      analysis on occasion produced results which were much more highly
+      significant than single marker analysis, but only very rarely. Our results
+      support the view that if markers are randomly selected then a spacing as
+      low as 2 kb is desirable. Multimarker analysis can sometimes be more
+      powerful than single marker analysis so both should be performed. However,
+      because it is rare for multimarker analysis to be much more highly
+      significant than single marker analysis one should strongly suspect that
+      when such results occur they may be due to mistakes in genotyping or
+      through some other artefact. Haplotype analysis may be more prone to such
+      problems than logistic regression, suggesting that the latter method might
+      be preferred.
+AD  - Institute of Cancer Research, 15 Cotswold Road, Belmont, Sutton, Surrey
+      SM2 5NG, UK.
+FAU - North, B V
+AU  - North BV
+FAU - Sham, P C
+AU  - Sham PC
+FAU - Knight, J
+AU  - Knight J
+FAU - Martin, E R
+AU  - Martin ER
+FAU - Curtis, D
+AU  - Curtis D
+LA  - eng
+GR  - 055379/United Kingdom Wellcome Trust
+GR  - 2P01 NS 26630-11A1/NS/United States NINDS
+GR  - 5P50 AG 05128-16/AG/United States NIA
+GR  - 5R01 NS 31153-07/NS/United States NINDS
+GR  - EY 012562/EY/United States NEI
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Ann Hum Genet
+JT  - Annals of human genetics
+JID - 0416661
+RN  - 0 (Apolipoproteins E)
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Apolipoproteins E/genetics
+MH  - Genetic Markers
+MH  - *Genetic Predisposition to Disease
+MH  - *Haplotypes
+MH  - Humans
+MH  - Likelihood Functions
+MH  - Linkage Disequilibrium
+MH  - *Logistic Models
+MH  - Polymorphism, Single Nucleotide
+EDAT- 2006/10/19 09:00
+MHDA- 2006/12/12 09:00
+AID - AHG301 [pii]
+AID - 10.1111/j.1469-1809.2006.00301.x [doi]
+PST - ppublish
+SO  - Ann Hum Genet. 2006 Nov;70(Pt 6):893-906.
+

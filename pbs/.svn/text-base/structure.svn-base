@@ -1,0 +1,6 @@
+#PBS -q linux64
+#PBS -l ncpus=2,mem=1gb,walltime=48:00:00
+#PBS -m abe
+cd /project/youngn/zhoup/Scripts/mt2
+perl structure.pl
+

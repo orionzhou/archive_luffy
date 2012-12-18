@@ -1,0 +1,369 @@
+PMID- 16323010
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060203
+DCOM- 20070309
+PUBM- Print-Electronic
+IS  - 0340-6717 (Print)
+VI  - 118
+IP  - 6
+DP  - 2006 Feb
+TI  - Evaluating HapMap SNP data transferability in a large-scale genotyping
+      project involving 175 cancer-associated genes.
+PG  - 669-79
+AB  - One of the many potential uses of the HapMap project is its application to
+      the investigation of complex disease aetiology among a wide range of
+      populations. This study aims to assess the transferability of HapMap SNP
+      data to the Spanish population in the context of cancer research. We have
+      carried out a genotyping study in Spanish subjects involving 175 candidate
+      cancer genes using an indirect gene-based approach and compared results
+      with those for HapMap CEU subjects. Allele frequencies were very
+      consistent between the two samples, with a high positive correlation (R)
+      of 0.91 (P<<1x10(-6)). Linkage disequilibrium patterns and block
+      structures across each gene were also very similar, with disequilibrium
+      coefficient (r (2)) highly correlated (R=0.95, P<<1x10(-6)). We found that
+      of the 21 genes that contained at least one block larger than 60 kb, nine
+      (ATM, ATR, BRCA1, ERCC6, FANCC, RAD17, RAD50, RAD54B and XRCC4) belonged
+      to the GO category "DNA repair". Haplotype frequencies per gene were also
+      highly correlated (mean R=0.93), as was haplotype diversity (R=0.91,
+      P<<1x10(-6)). "Yin yang" haplotypes were observed for 43% of the genes
+      analysed and 18% of those were identical to the ancestral haplotype
+      (identified in Chimpazee). Finally, the portability of tagSNPs identified
+      in the HapMap CEU data using pairwise r (2) thresholds of 0.8 and 0.5 was
+      assessed by applying these to the Spanish and current HapMap data for 66
+      genes. In general, the HapMap tagSNPs performed very well. Our results
+      show generally high concordance with HapMap data in allele frequencies and
+      haplotype distributions and confirm the applicability of HapMap SNP data
+      to the study of complex diseases among the Spanish population.
+AD  - Grupo de Genetica Humana Programa de Patologia Molecular, Centro Nacional
+      de Investigaciones Oncologicas (CNIO), C/Melchor Fdz Almagro 3, E-28029
+      Madrid, Spain. gribas@cnio.es
+FAU - Ribas, Gloria
+AU  - Ribas G
+FAU - Gonzalez-Neira, Anna
+AU  - Gonzalez-Neira A
+FAU - Salas, Antonio
+AU  - Salas A
+FAU - Milne, Roger L
+AU  - Milne RL
+FAU - Vega, Ana
+AU  - Vega A
+FAU - Carracedo, Begona
+AU  - Carracedo B
+FAU - Gonzalez, Emilio
+AU  - Gonzalez E
+FAU - Barroso, Eva
+AU  - Barroso E
+FAU - Fernandez, Lara P
+AU  - Fernandez LP
+FAU - Yankilevich, Patricio
+AU  - Yankilevich P
+FAU - Robledo, Mercedes
+AU  - Robledo M
+FAU - Carracedo, Angel
+AU  - Carracedo A
+FAU - Benitez, Javier
+AU  - Benitez J
+LA  - eng
+PT  - Comparative Study
+PT  - Evaluation Studies
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+DEP - 20051202
+PL  - Germany
+TA  - Hum Genet
+JT  - Human genetics
+JID - 7613873
+RN  - 0 (Tumor Markers, Biological)
+SB  - IM
+MH  - Gene Frequency
+MH  - *Genes, Neoplasm
+MH  - Genome, Human
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - *Polymorphism, Single Nucleotide
+MH  - Tumor Markers, Biological/*analysis
+RF  - 48
+EDAT- 2005/12/03 09:00
+MHDA- 2007/03/10 09:00
+PHST- 2005/08/26 [received]
+PHST- 2005/10/11 [accepted]
+PHST- 2005/12/02 [aheadofprint]
+AID - 10.1007/s00439-005-0094-9 [doi]
+PST - ppublish
+SO  - Hum Genet. 2006 Feb;118(6):669-79. Epub 2005 Dec 2.
+
+PMID- 16522862
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060308
+DCOM- 20060412
+LR  - 20071115
+PUBM- Print
+IS  - 1524-0215 (Print)
+VI  - 16
+IP  - 4
+DP  - 2005 Dec
+TI  - The SNPlex genotyping system: a flexible and scalable platform for SNP
+      genotyping.
+PG  - 398-406
+AB  - We developed the SNPlex Genotyping System to address the need for accurate
+      genotyping data, high sample throughput, study design flexibility, and
+      cost efficiency. The system uses oligonucleotide ligation/polymerase chain
+      reaction and capillary electrophoresis to analyze bi-allelic single
+      nucleotide polymorphism genotypes. It is well suited for single nucleotide
+      polymorphism genotyping efforts in which throughput and cost efficiency
+      are essential. The SNPlex Genotyping System offers a high degree of
+      flexibility and scalability, allowing the selection of custom-defined sets
+      of SNPs for medium- to high-throughput genotyping projects. It is
+      therefore suitable for a broad range of study designs. In this article we
+      describe the principle and applications of the SNPlex Genotyping System,
+      as well as a set of single nucleotide polymorphism selection tools and
+      validated assay resources that accelerate the assay design process. We
+      developed the control pool, an oligonucleotide ligation probe set for
+      training and quality-control purposes, which interrogates 48 SNPs
+      simultaneously. We present performance data from this control pool
+      obtained by testing genomic DNA samples from 44 individuals. in addition,
+      we present data from a study that analyzed 521 SNPs in 92 individuals.
+      Combined, both studies show the SNPlex Genotyping system to have a 99.32%
+      overall call rate, 99.95% precision, and 99.84% concordance with genotypes
+      analyzed by TaqMan probe-based assays. The SNPlex Genotyping System is an
+      efficient and reliable tool for a broad range of genotyping applications,
+      supported by applications for study design, data analysis, and data
+      management.
+AD  - Applied Biosystems, Foster City, CA 94404, USA.
+      toblerar@appliedbiosystems.com
+FAU - Tobler, Andreas R
+AU  - Tobler AR
+FAU - Short, Sabine
+AU  - Short S
+FAU - Andersen, Mark R
+AU  - Andersen MR
+FAU - Paner, Teodoro M
+AU  - Paner TM
+FAU - Briggs, Jason C
+AU  - Briggs JC
+FAU - Lambert, Stephen M
+AU  - Lambert SM
+FAU - Wu, Priscilla P
+AU  - Wu PP
+FAU - Wang, Yiwen
+AU  - Wang Y
+FAU - Spoonde, Alexander Y
+AU  - Spoonde AY
+FAU - Koehler, Ryan T
+AU  - Koehler RT
+FAU - Peyret, Nicolas
+AU  - Peyret N
+FAU - Chen, Caifu
+AU  - Chen C
+FAU - Broomer, Adam J
+AU  - Broomer AJ
+FAU - Ridzon, Dana A
+AU  - Ridzon DA
+FAU - Zhou, Hui
+AU  - Zhou H
+FAU - Hoo, Bradley S
+AU  - Hoo BS
+FAU - Hayashibara, Kathleen C
+AU  - Hayashibara KC
+FAU - Leong, Lilley N
+AU  - Leong LN
+FAU - Ma, Congcong N
+AU  - Ma CN
+FAU - Rosenblum, Barnet B
+AU  - Rosenblum BB
+FAU - Day, Joseph P
+AU  - Day JP
+FAU - Ziegle, Janet S
+AU  - Ziegle JS
+FAU - De La Vega, Francisco M
+AU  - De La Vega FM
+FAU - Rhodes, Michael D
+AU  - Rhodes MD
+FAU - Hennessy, Kevin M
+AU  - Hennessy KM
+FAU - Wenz, H Michael
+AU  - Wenz HM
+LA  - eng
+PT  - Evaluation Studies
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - J Biomol Tech
+JT  - Journal of biomolecular techniques : JBT
+JID - 100888641
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Biotechnology/*methods
+MH  - DNA/genetics
+MH  - Electrophoresis, Capillary
+MH  - European Continental Ancestry Group
+MH  - Evaluation Studies as Topic
+MH  - Gene Frequency
+MH  - Genome, Human
+MH  - *Genotype
+MH  - Humans
+MH  - Nucleic Acid Amplification Techniques
+MH  - Pharmacogenetics
+MH  - Polymerase Chain Reaction
+MH  - *Polymorphism, Single Nucleotide
+MH  - Quality Control
+MH  - Reproducibility of Results
+MH  - Software
+PMC - PMC2291745
+EDAT- 2006/03/09 09:00
+MHDA- 2006/04/13 09:00
+AID - 16/4/398 [pii]
+PST - ppublish
+SO  - J Biomol Tech. 2005 Dec;16(4):398-406.
+
+PMID- 16532062
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060605
+DCOM- 20060731
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 1553-7404 (Electronic)
+VI  - 2
+IP  - 3
+DP  - 2006 Mar
+TI  - An evaluation of the performance of tag SNPs derived from HapMap in a
+      Caucasian population.
+PG  - e27
+AB  - The Haplotype Map (HapMap) project recently generated genotype data for
+      more than 1 million single-nucleotide polymorphisms (SNPs) in four
+      population samples. The main application of the data is in the selection
+      of tag single-nucleotide polymorphisms (tSNPs) to use in association
+      studies. The usefulness of this selection process needs to be verified in
+      populations outside those used for the HapMap project. In addition, it is
+      not known how well the data represent the general population, as only
+      90-120 chromosomes were used for each population and since the genotyped
+      SNPs were selected so as to have high frequencies. In this study, we
+      analyzed more than 1,000 individuals from Estonia. The population of this
+      northern European country has been influenced by many different waves of
+      migrations from Europe and Russia. We genotyped 1,536 randomly selected
+      SNPs from two 500-kbp ENCODE regions on Chromosome 2. We observed that the
+      tSNPs selected from the CEPH (Centre d'Etude du Polymorphisme Humain) from
+      Utah (CEU) HapMap samples (derived from US residents with northern and
+      western European ancestry) captured most of the variation in the Estonia
+      sample. (Between 90% and 95% of the SNPs with a minor allele frequency of
+      more than 5% have an r2 of at least 0.8 with one of the CEU tSNPs.) Using
+      the reverse approach, tags selected from the Estonia sample could almost
+      equally well describe the CEU sample. Finally, we observed that the sample
+      size, the allelic frequency, and the SNP density in the dataset used to
+      select the tags each have important effects on the tagging performance.
+      Overall, our study supports the use of HapMap data in other Caucasian
+      populations, but the SNP density and the bias towards high-frequency SNPs
+      have to be taken into account when designing association studies.
+AD  - McGill University and Genome Quebec Innovation Centre, Montreal, Quebec,
+      Canada.
+FAU - Montpetit, Alexandre
+AU  - Montpetit A
+FAU - Nelis, Mari
+AU  - Nelis M
+FAU - Laflamme, Philippe
+AU  - Laflamme P
+FAU - Magi, Reedik
+AU  - Magi R
+FAU - Ke, Xiayi
+AU  - Ke X
+FAU - Remm, Maido
+AU  - Remm M
+FAU - Cardon, Lon
+AU  - Cardon L
+FAU - Hudson, Thomas J
+AU  - Hudson TJ
+FAU - Metspalu, Andres
+AU  - Metspalu A
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20060310
+PL  - United States
+TA  - PLoS Genet
+JT  - PLoS genetics
+JID - 101239074
+SB  - IM
+MH  - Alleles
+MH  - *Chromosome Mapping
+MH  - Computational Biology
+MH  - Databases, Genetic
+MH  - Estonia
+MH  - European Continental Ancestry Group
+MH  - Gene Frequency
+MH  - Genetic Techniques
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - *Polymorphism, Single Nucleotide
+PMC - PMC1391920
+EDAT- 2006/03/15 09:00
+MHDA- 2006/08/01 09:00
+PHST- 2005/10/06 [received]
+PHST- 2006/01/23 [accepted]
+PHST- 2006/03/10 [aheadofprint]
+AID - 10.1371/journal.pgen.0020027 [doi]
+PST - ppublish
+SO  - PLoS Genet. 2006 Mar;2(3):e27. Epub 2006 Mar 10.
+
+PMID- 17094267
+OWN - NLM
+STAT- MEDLINE
+DA  - 20061110
+DCOM- 20070103
+LR  - 20070912
+PUBM- Print
+IS  - 1793-5091 (Print)
+DP  - 2006
+TI  - The whole genome tagSNP selection and transferability among HapMap
+      populations.
+PG  - 535-43
+AB  - One of the crucial issues of association studies is the selection of
+      markers. One possible approach would be to select tagging SNPs (tSNPs)
+      according the HapMap information. In this study we present the number of
+      tSNPs required for the association analysis of the entire human genome for
+      all available HapMap population samples: CEPH, Nigerian, Chinese and
+      Japanese. For future association studies, it is also important to know how
+      well the tSNP set of one population sample can describe the markers of
+      another population. Therefore, we have calculated the proportion of
+      markers adequately described by tSNPs and how many additional tSNPs we
+      need to describe all markers of another population.
+AD  - Department of Bioinformatics, University of Tartu, Riia str. 23 Tartu,
+      51010, Estonia.
+FAU - Magi, Reedik
+AU  - Magi R
+FAU - Kaplinski, Lauris
+AU  - Kaplinski L
+FAU - Remm, Maido
+AU  - Remm M
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - Singapore
+TA  - Pac Symp Biocomput
+JT  - Pacific Symposium on Biocomputing. Pacific Symposium on Biocomputing
+JID - 9711271
+RN  - 0 (Genetic Markers)
+SB  - IM
+MH  - Algorithms
+MH  - Computational Biology
+MH  - Continental Population Groups/genetics
+MH  - Databases, Nucleic Acid
+MH  - Genetic Markers
+MH  - Genetics, Population
+MH  - *Genome, Human
+MH  - Genomics/*statistics & numerical data
+MH  - Haplotypes
+MH  - Humans
+MH  - *Polymorphism, Single Nucleotide
+EDAT- 2006/11/11 09:00
+MHDA- 2007/01/04 09:00
+PST - ppublish
+SO  - Pac Symp Biocomput. 2006;:535-43.
+

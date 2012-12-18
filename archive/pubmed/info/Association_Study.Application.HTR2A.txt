@@ -1,0 +1,3141 @@
+PMID- 10212557
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990519
+DCOM- 19990519
+LR  - 20080506
+PUBM- Print
+IS  - 1180-4882 (Print)
+VI  - 24
+IP  - 2
+DP  - 1999 Mar
+TI  - T102C polymorphism in the 5HT2A gene and schizophrenia: relation to
+      phenotype and drug response variability.
+PG  - 141-6
+AB  - Although genes play a major role in the etiology of schizophrenia, no
+      major genes involved in this disease have been identified. However,
+      several genes with small effect have been reported, though inconsistently,
+      to increase the risk for schizophrenia. Recently, the 5HT2A 2 allele
+      (T102C polymorphism) was reported to be over-represented in patients with
+      schizophrenia. Other reports have found an excess of allele 2(C) only in
+      schizophrenic patients who are resistant to clozapine, not in those who
+      respond to clozapine. In this study, the 5HT2A receptor allele 2
+      frequencies were compared between 2 groups of patients with schizophrenia
+      (39 responders and 63 nonresponders) based on long-term outcome and
+      response to typical neuroleptics. A control group of 90 healthy volunteers
+      screened for mental disorders was also included. Genotype 2/2 tended to be
+      more frequent in patients with schizophrenia with poor long-term outcome
+      and poor response to typical neuroleptics (Bonferroni corrected p = 0.09).
+      This difference was significant in men (Bonferroni corrected p = 0.054)
+      but not in women. In addition, the age at first contact with psychiatric
+      care was significantly younger in the patients with schizophrenia with
+      genotype 2/2 than in patients with genotype 1/1. These result suggest that
+      the 5HT2A-receptor gene may play a role in a subset of schizophrenia
+      characterized by poor long-term outcome and poor response to neuroleptics.
+AD  - Montreal General Hospital Research Institute, Douglas Hospital Research
+      Centre, Verdun QC. rjoobe@po-box.mcgill.ca
+FAU - Joober, R
+AU  - Joober R
+FAU - Benkelfat, C
+AU  - Benkelfat C
+FAU - Brisebois, K
+AU  - Brisebois K
+FAU - Toulouse, A
+AU  - Toulouse A
+FAU - Turecki, G
+AU  - Turecki G
+FAU - Lal, S
+AU  - Lal S
+FAU - Bloom, D
+AU  - Bloom D
+FAU - Labelle, A
+AU  - Labelle A
+FAU - Lalonde, P
+AU  - Lalonde P
+FAU - Fortin, D
+AU  - Fortin D
+FAU - Alda, M
+AU  - Alda M
+FAU - Palmour, R
+AU  - Palmour R
+FAU - Rouleau, G A
+AU  - Rouleau GA
+LA  - eng
+PT  - Journal Article
+PL  - CANADA
+TA  - J Psychiatry Neurosci
+JT  - Journal of psychiatry & neuroscience : JPN
+JID - 9107859
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+CIN - J Psychiatry Neurosci. 1999 Mar;24(2):139-40. PMID: 10212556
+MH  - Adult
+MH  - Alleles
+MH  - Female
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Phenotype
+MH  - Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/drug effects/*genetics
+MH  - Schizophrenia/*genetics
+PMC - PMC1188995
+EDAT- 1999/04/23
+MHDA- 1999/04/23 00:01
+PST - ppublish
+SO  - J Psychiatry Neurosci. 1999 Mar;24(2):141-6.
+
+PMID- 10220013
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990607
+DCOM- 19990607
+LR  - 20080417
+PUBM- Print
+IS  - 0165-1781 (Print)
+VI  - 85
+IP  - 2
+DP  - 1999 Feb 22
+TI  - Schizophrenia and the serotonin-2A receptor promoter polymorphism.
+PG  - 221-4
+AB  - Serotonin-2A (5-HT2A) receptors have received much investigative attention
+      in schizophrenia because (1) several studies have shown a decrease in the
+      number of 5-HT2A receptors in the prefrontal cortex of postmortem brains
+      of schizophrenic patients; (2) atypical antipsychotic drugs are
+      antagonists for 5-HT2A receptors; and (3) a positive association between a
+      T to C polymorphism at position 102 of the 5-HT2A receptor gene and
+      schizophrenia has been reported. A G to A polymorphism at position -1438
+      of the 5-HT2A receptor gene was studied in 119 schizophrenic patients and
+      106 healthy control subjects, all of whom were Japanese. The genotype and
+      allele frequencies did not differ between the patients and control
+      subjects. Furthermore, the genotype frequency did not differ according to
+      diagnostic subtype, family history, age at onset of illness, or daily
+      dosage of antipsychotic medication. Our results suggest that the
+      polymorphism does not contribute to the etiology or clinical
+      characteristics of schizophrenia. However, the gene is greater than 20 kbp
+      in length, and thus it is possible that other areas that affect expression
+      of the gene may vary. We found that the -1438G/A variant was in linkage
+      disequilibrium with the T102C polymorphism.
+AD  - Department of Psychiatry, Hamamatsu University School of Medicine,
+      Shizuoka, Japan.
+FAU - Ohara, K
+AU  - Ohara K
+FAU - Nagai, M
+AU  - Nagai M
+FAU - Tani, K
+AU  - Tani K
+FAU - Tsukamoto, T
+AU  - Tsukamoto T
+FAU - Ohara, K
+AU  - Ohara K
+LA  - eng
+PT  - Clinical Trial
+PT  - Controlled Clinical Trial
+PT  - Journal Article
+PL  - IRELAND
+TA  - Psychiatry Res
+JT  - Psychiatry research
+JID - 7911385
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+MH  - Adult
+MH  - Age of Onset
+MH  - Alleles
+MH  - Asian Continental Ancestry Group/genetics
+MH  - Chi-Square Distribution
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Male
+MH  - Middle Aged
+MH  - Polymerase Chain Reaction
+MH  - *Polymorphism, Genetic
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/ethnology/*genetics
+EDAT- 1999/04/29
+MHDA- 1999/04/29 00:01
+AID - S0165-1781(99)00002-5 [pii]
+PST - ppublish
+SO  - Psychiatry Res. 1999 Feb 22;85(2):221-4.
+
+PMID- 10686558
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000907
+DCOM- 20000907
+LR  - 20041117
+PUBM- Print
+IS  - 0148-7299 (Print)
+VI  - 96
+IP  - 1
+DP  - 2000 Feb 7
+TI  - Serotonin-2A receptor gene is not associated with symptomatology of
+      schizophrenia.
+PG  - 84-7
+AB  - The serotonin receptor type 2A (5-HT2A) is a primary candidate for
+      involvement in major psychoses. Polymorphisms within the 5-HT2A gene have
+      recently been reported to be associated with a variety of
+      psychopathological conditions. In the present study, we investigated the
+      potential influence of the T102C polymorphism on the psychopathology of
+      schizophrenia. One hundred eighty-eight inpatients affected by
+      schizophrenia (DSM-III-R) were assessed by the Operational Criteria
+      checklist for psychotic illness (OPCRIT) and were typed for their 5-HT2A
+      variants by PCR techniques. Mania, depression, delusion and
+      disorganization were the four symptomatologic factors previously derived
+      from our psychotic population that were used to define phenotype in our
+      sample. Genetic variants of the polymorphism under study were not
+      associated with these symptomatologic factors, and consideration of
+      possible stratification effects such as sex and age of onset did not
+      reveal any association either. Our results do not, therefore, support the
+      hypothesis that the serotonin receptor 2A gene is a liability factor for
+      the symptomatology of schizophrenia as defined by the OPCRIT checklist.
+      Am. J. Med. Genet. (Neuropsychiatr. Genet.) 96:84-87, 2000.
+CI  - Copyright 2000 Wiley-Liss, Inc.
+AD  - Istituto Scientifico Ospedale San Raffaele, Department of Neuropsychiatric
+      Sciences, University of Milan School of Medicine, Italy.
+      serretti.alessandro@hsr.it
+FAU - Serretti, A
+AU  - Serretti A
+FAU - Cusin, C
+AU  - Cusin C
+FAU - Lorenzi, C
+AU  - Lorenzi C
+FAU - Lattuada, E
+AU  - Lattuada E
+FAU - Lilli, R
+AU  - Lilli R
+FAU - Smeraldi, E
+AU  - Smeraldi E
+LA  - eng
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Am J Med Genet
+JT  - American journal of medical genetics
+JID - 7708900
+RN  - 0 (DNA Primers)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Base Sequence
+MH  - DNA Primers
+MH  - Female
+MH  - Gene Frequency
+MH  - Humans
+MH  - Male
+MH  - Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/*genetics
+EDAT- 2000/02/25 09:00
+MHDA- 2000/09/09 11:01
+AID - 10.1002/(SICI)1096-8628(20000207)96:1<84::AID-AJMG17>3.0.CO;2-9 [pii]
+PST - ppublish
+SO  - Am J Med Genet. 2000 Feb 7;96(1):84-7.
+
+PMID- 10802129
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000707
+DCOM- 20000707
+LR  - 20061115
+PUBM- Print
+IS  - 0165-0327 (Print)
+VI  - 58
+IP  - 3
+DP  - 2000 Jun
+TI  - Negative association between T102C polymorphism at the 5-HT2A receptor
+      gene and bipolar affective disorders in Singaporean Chinese.
+PG  - 211-4
+AB  - BACKGROUND: Serotonergic system abnormalities have been implicated in the
+      pathogenesis of bipolar affective disorders. The 5-hydroxytryptamine type
+      2A (5HTR2A) receptor gene located on chromosome 13 (13q14-21) can be
+      considered as a candidate gene for bipolar affective disorder (BPAD).
+      METHODS: Seventy-two patients with BPAD and 74 normal population controls
+      were genotyped with restriction fragment length polymorphism (RFLP) in the
+      5HTR2A receptor gene. RESULTS: We report a negative association between
+      5HTR2A receptor gene and BPAD. The association was examined using a
+      case-control design. Allele and genotype frequencies as well as
+      homozygote-heterozygote distribution at the 5HTR2A receptor gene
+      polymorphism were compared between the two groups. There were no
+      significant differences in the allelic or genotype frequencies and the
+      homozygote-heterozygote distributions. Limitations: Patients were
+      recruited from one hospital in Singapore. The case-control study design
+      needs replication. CONCLUSION: Our finding indicates that the 5HTR2A
+      receptor gene polymorphism is not a major factor in the genetic
+      susceptibility to BPAD in Singaporean Chinese.
+AD  - Department of Psychological Medicine, National University Hospital,
+      National University of Singapore.
+FAU - Tut, T G
+AU  - Tut TG
+FAU - Wang, J L
+AU  - Wang JL
+FAU - Lim, C C
+AU  - Lim CC
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - NETHERLANDS
+TA  - J Affect Disord
+JT  - Journal of affective disorders
+JID - 7906073
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+MH  - Adult
+MH  - Bipolar Disorder/*genetics
+MH  - Case-Control Studies
+MH  - Female
+MH  - Humans
+MH  - Male
+MH  - *Polymorphism, Genetic
+MH  - Polymorphism, Restriction Fragment Length
+MH  - Receptors, Serotonin/*genetics
+MH  - Risk Factors
+MH  - Singapore
+EDAT- 2000/05/10 09:00
+MHDA- 2000/07/15 11:00
+AID - S0165032799001044 [pii]
+PST - ppublish
+SO  - J Affect Disord. 2000 Jun;58(3):211-4.
+
+PMID- 10831488
+OWN - NLM
+STAT- MEDLINE
+DA  - 20000629
+DCOM- 20000629
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 157
+IP  - 6
+DP  - 2000 Jun
+TI  - Decreased serotonin 2A receptor densities in neuroleptic-naive patients
+      with schizophrenia: A PET study using [(18)F]setoperone.
+PG  - 1016-8
+AB  - OBJECTIVE: The authors compared serotonin receptor binding in patients
+      with schizophrenia and healthy comparison subjects. METHOD: They used
+      positron emission tomography with [(18)F]setoperone to examine six
+      patients with schizophrenia who had never been given neuroleptics and
+      seven age-matched subjects who did not have schizophrenia. RESULTS: A
+      nondirected voxel-based analysis of the subjects' entire search volume
+      found that serotonin 2A binding potential in the frontal cortex index was
+      significantly smaller (by 16.3%) in patients with schizophrenia than in
+      healthy subjects. CONCLUSIONS: The authors conclude that the decrease in
+      serotonin receptor densities previously reported in postmortem studies of
+      subjects with schizophrenia are present at the onset of the illness,
+      before exposure to neuroleptics.
+AD  - Department of Psychiatry, University of British Columbia, Vancouver, BC,
+      Canada. ngan@unixg.ubc.ca
+FAU - Ngan, E T
+AU  - Ngan ET
+FAU - Yatham, L N
+AU  - Yatham LN
+FAU - Ruth, T J
+AU  - Ruth TJ
+FAU - Liddle, P F
+AU  - Liddle PF
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Fluorine Radioisotopes)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+RN  - 86487-64-1 (setoperone)
+SB  - AIM
+SB  - IM
+MH  - Adolescent
+MH  - Adult
+MH  - Antipsychotic Agents/therapeutic use
+MH  - Brain/metabolism/*radionuclide imaging
+MH  - Female
+MH  - Fluorine Radioisotopes/*diagnostic use
+MH  - Frontal Lobe/metabolism/radionuclide imaging
+MH  - Humans
+MH  - Male
+MH  - Pyrimidinones/*diagnostic use
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/*metabolism
+MH  - Schizophrenia/drug therapy/*radionuclide imaging
+EDAT- 2000/06/01 09:00
+MHDA- 2000/07/06 11:00
+PST - ppublish
+SO  - Am J Psychiatry. 2000 Jun;157(6):1016-8.
+
+PMID- 11317227
+OWN - NLM
+STAT- MEDLINE
+DA  - 20010424
+DCOM- 20010628
+LR  - 20061115
+PUBM- Print
+IS  - 1359-4184 (Print)
+VI  - 6
+IP  - 2
+DP  - 2001 Mar
+TI  - Association between the serotonin 2A receptor gene and tardive dyskinesia
+      in chronic schizophrenia.
+PG  - 225-9
+AB  - Tardive dyskinesia (TD) is a long-term adverse effect of antipsychotic
+      drugs that are dopamine D2 receptor blockers.(1) Serotonin receptor
+      antagonism has been proposed as a common mechanism contributing to the low
+      extrapyramidal effects profile of atypical antipsychotic drugs.(2) We
+      examined the association of three polymorphisms in the 5-HT2A receptor
+      gene (HTR2A) with TD susceptibility--T102C(3) and his452tyr(4) in the
+      coding region and A-1438G(5) in the promoter--in matched schizophrenia
+      patients with (n = 59, SCZ-TD-Y) and without TD (n = 62, SCZ-TD-N) and
+      normal control subjects (n = 96). The T102C and the A-1438G polymorphisms
+      are in complete linkage disequilibrium but not his452tyr. There was a
+      significant excess of 102C and -1438G alleles (62.7%) in the SCZ-TD-Y
+      patients compared to SCZ-TD-N patients (41.1%) and controls (45.9%; chi(2)
+      = 12.8, df = 2, P = 0.002; SCZ-TD-Y vs SCZ-TD-N, chi(2) = 11.4, df = 1, P
+      = 0.0008, OR 2.41, 95% CI 1.43-3.99) and of 102CC and -1438GG genotypes
+      (SCZ-TD-Y 42.4%, SCZ-TD-N, 16.1%, controls 20.8%, chi(2) = 13.3, df = 4, P
+      = 0.01). The 102CC and the -1438GG genotypes were associated with
+      significantly higher AIMS trunk dyskinesia scores (F = 3.9; df = 2, 116; P
+      = 0.02) and more incapacitation (F = 5.0; df = 2, 115; P = 0.006). The
+      his452tyr polymorphism showed no association with TD. These findings
+      suggest that the 5-HT2A receptor gene is significantly associated with
+      susceptibility to TD in patients with chronic schizophrenia. Previously
+      reported association of the T102C and A-1438G polymorphisms with
+      schizophrenia(6) may reflect association of a sub-group of patients with a
+      susceptibility to abnormal involuntary movements related to antipsychotic
+      drug exposure.
+AD  - Biological Psychiatry Laboratory, Department of Psychiatry,
+      Hadassah-Hebrew University Medical Center, Jerusalem, Israel.
+FAU - Segman, R H
+AU  - Segman RH
+FAU - Heresco-Levy, U
+AU  - Heresco-Levy U
+FAU - Finkel, B
+AU  - Finkel B
+FAU - Goltser, T
+AU  - Goltser T
+FAU - Shalem, R
+AU  - Shalem R
+FAU - Schlafman, M
+AU  - Schlafman M
+FAU - Dorevitch, A
+AU  - Dorevitch A
+FAU - Yakir, A
+AU  - Yakir A
+FAU - Greenberg, D
+AU  - Greenberg D
+FAU - Lerner, A
+AU  - Lerner A
+FAU - Lerer, B
+AU  - Lerer B
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Mol Psychiatry
+JT  - Molecular psychiatry
+JID - 9607835
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+CIN - Mol Psychiatry. 2002;7(2):137-9. PMID: 11840306
+MH  - Adult
+MH  - Antipsychotic Agents/adverse effects
+MH  - Chronic Disease
+MH  - Dyskinesia, Drug-Induced/*genetics
+MH  - Female
+MH  - Genetic Markers
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/drug therapy/*genetics
+EDAT- 2001/04/24 10:00
+MHDA- 2001/06/29 10:01
+PHST- 2000/06/30 [received]
+PHST- 2000/10/16 [revised]
+PHST- 2000/10/16 [accepted]
+AID - 10.1038/sj.mp.4000842 [doi]
+PST - ppublish
+SO  - Mol Psychiatry. 2001 Mar;6(2):225-9.
+
+PMID- 11317228
+OWN - NLM
+STAT- MEDLINE
+DA  - 20010424
+DCOM- 20010628
+LR  - 20061115
+PUBM- Print
+IS  - 1359-4184 (Print)
+VI  - 6
+IP  - 2
+DP  - 2001 Mar
+TI  - Lack of association between serotonin-2A receptor gene (HTR2A)
+      polymorphisms and tardive dyskinesia in schizophrenia.
+PG  - 230-4
+AB  - Tardive dyskinesia (TD) is a disabling neurological side effect associated
+      with long-term treatment with typical antipsychotics. Family studies and
+      animal models lend evidence for hereditary predisposition to TD. The newer
+      atypical antipsychotics pose a minimal risk for TD which is in part
+      attributed to their ability to block the serotonin-2A (5-HT(2A)) receptor.
+      5-HT(2A) receptors were also identified in the basal ganglia; a brain
+      region that plays a critical role in antipsychotic-induced movement
+      disorders. We tested the significance of variation in the 5-HT(2A)
+      receptor gene (HTR2A) in relation to the TD phenotype. Three polymorphisms
+      in HTR2A, one silent (C102T), one that alters the amino acid sequence
+      (his452tyr) and one in the promoter region (A-1437G) were investigated in
+      136 patients refractory or intolerant to treatment with typical
+      antipsychotics and with a DSM-IIIR diagnosis of schizophrenia. We did not
+      find any significant difference in allele, genotype or haplotype
+      frequencies of polymorphisms in HTR2A among patients with or without TD (P
+      > 0.05). Further analysis using the ANCOVA statistic with a continuous
+      measure of the TD phenotype (Abnormal Involuntary Movement Scale (AIMS)
+      score) found that the AIMS scores were not significantly influenced by
+      HTR2A polymorphisms, despite controlling for potential confounders such as
+      age, gender and ethnicity (P > 0.05). Theoretically, central serotonergic
+      function can be subject to genetic control at various other mechanistic
+      levels including the rate of serotonin synthesis (tryptophane hydroxylase
+      gene), release, reuptake (serotonin transporter gene) and degradation
+      (monoamine oxidase gene). Analyses of these other serotonergic genes are
+      indicated. In summary, polymorphisms in HTR2A do not appear to influence
+      the risk for TD. Further studies evaluating in tandem multiple candidate
+      genes relevant for the serotonergic system are warranted to dissect the
+      genetic basis of the complex TD phenotype.
+AD  - Neurogenetics Section, Clarke Institute of Psychiatry, Centre for
+      Addiction and Mental Health, University of Toronto, Toronto, Canada.
+FAU - Basile, V S
+AU  - Basile VS
+FAU - Ozdemir, V
+AU  - Ozdemir V
+FAU - Masellis, M
+AU  - Masellis M
+FAU - Meltzer, H Y
+AU  - Meltzer HY
+FAU - Lieberman, J A
+AU  - Lieberman JA
+FAU - Potkin, S G
+AU  - Potkin SG
+FAU - Macciardi, F M
+AU  - Macciardi FM
+FAU - Petronis, A
+AU  - Petronis A
+FAU - Kennedy, J L
+AU  - Kennedy JL
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Mol Psychiatry
+JT  - Molecular psychiatry
+JID - 9607835
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+CIN - Mol Psychiatry. 2002;7(2):137-9. PMID: 11840306
+MH  - Adult
+MH  - Antipsychotic Agents/adverse effects
+MH  - Dyskinesia, Drug-Induced/*genetics
+MH  - Female
+MH  - Genetic Markers
+MH  - Humans
+MH  - Male
+MH  - *Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/drug therapy/*genetics
+EDAT- 2001/04/24 10:00
+MHDA- 2001/06/29 10:01
+PHST- 2000/07/25 [received]
+PHST- 2000/10/19 [revised]
+PHST- 2000/10/23 [accepted]
+AID - 10.1038/sj.mp.4000847 [doi]
+PST - ppublish
+SO  - Mol Psychiatry. 2001 Mar;6(2):230-4.
+
+PMID- 11343865
+OWN - NLM
+STAT- MEDLINE
+DA  - 20010509
+DCOM- 20010809
+LR  - 20061115
+PUBM- Print
+IS  - 0920-9964 (Print)
+VI  - 49
+IP  - 1-2
+DP  - 2001 Apr 15
+TI  - Association study of schizophrenia with polymorphisms at six candidate
+      genes.
+PG  - 65-71
+AB  - Clinical studies have shown that there is a genetic contribution to the
+      pathogenesis of schizophrenia. The molecular mechanisms of effective
+      antipsychotic drugs and recent advances in neural development suggest that
+      several dopamine receptor, serotonin receptor and neurotrophic factor
+      genes might be involved in the disorder. In this study, we assessed the
+      associations between schizophrenia and polymorphisms in the D2 and D3
+      dopamine receptor (DRD2, DRD3), the serotonin 2A receptor (5HTR2A), the
+      brain-derived neurotrophic factor (BDNF), the ciliary neurotrophic factor
+      (CNTF) and the neurotrophin-3 (NT-3) genes. Our results suggest that the
+      polymorphisms at the DRD3, 5HTR2A, CNTF and BDNF gene loci are unlikely to
+      make our sample more genetically susceptible to schizophrenia. However, we
+      found significant differences in microsatellite allele frequencies between
+      schizophrenic and control groups for DRD2 in the whole sample and for DRD2
+      and NT-3 only in women. Therefore, clinical differences in the
+      presentation of schizophrenia between gender might be related to genetic
+      factors.
+AD  - Hospital Psiquiatric Universitari Institut Pere Mata, Ctra. de l'Institut
+      Pere Mata, s/n. 43206, Reus, Spain.
+FAU - Virgos, C
+AU  - Virgos C
+FAU - Martorell, L
+AU  - Martorell L
+FAU - Valero, J
+AU  - Valero J
+FAU - Figuera, L
+AU  - Figuera L
+FAU - Civeira, F
+AU  - Civeira F
+FAU - Joven, J
+AU  - Joven J
+FAU - Labad, A
+AU  - Labad A
+FAU - Vilella, E
+AU  - Vilella E
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - Netherlands
+TA  - Schizophr Res
+JT  - Schizophrenia research
+JID - 8804207
+RN  - 0 (Brain-Derived Neurotrophic Factor)
+RN  - 0 (DRD3 protein, human)
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Dopamine D3)
+RN  - 0 (Receptors, Serotonin)
+SB  - IM
+MH  - Adult
+MH  - Brain-Derived Neurotrophic Factor/genetics
+MH  - Female
+MH  - Gene Frequency/genetics
+MH  - Genetic Markers
+MH  - Humans
+MH  - Male
+MH  - Polymorphism, Genetic/*genetics
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Dopamine D2/genetics
+MH  - Receptors, Dopamine D3
+MH  - Receptors, Serotonin/genetics
+MH  - Schizophrenia/*genetics
+EDAT- 2001/05/10 10:00
+MHDA- 2001/08/10 10:01
+AID - S0920996400001067 [pii]
+PST - ppublish
+SO  - Schizophr Res. 2001 Apr 15;49(1-2):65-71.
+
+PMID- 11920856
+OWN - NLM
+STAT- MEDLINE
+DA  - 20020328
+DCOM- 20020617
+LR  - 20061115
+PUBM- Print
+IS  - 0148-7299 (Print)
+VI  - 114
+IP  - 3
+DP  - 2002 Apr 8
+TI  - No evidence for association of the T102C polymorphism in the serotonin
+      type 2A receptor with suicidal behavior in schizophrenia.
+PG  - 321-2
+FAU - Tan, E C
+AU  - Tan EC
+FAU - Chong, S A
+AU  - Chong SA
+FAU - Chan, A O M
+AU  - Chan AO
+FAU - Tan, C H
+AU  - Tan CH
+LA  - eng
+PT  - Letter
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Am J Med Genet
+JT  - American journal of medical genetics
+JID - 7708900
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Serotonin)
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Alleles
+MH  - DNA/genetics
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/*genetics
+MH  - Suicide, Attempted/*psychology
+EDAT- 2002/03/29 10:00
+MHDA- 2002/06/18 10:01
+AID - 10.1002/ajmg.10190 [pii]
+PST - ppublish
+SO  - Am J Med Genet. 2002 Apr 8;114(3):321-2.
+
+PMID- 12650852
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030324
+DCOM- 20030502
+LR  - 20041117
+PUBM- Print
+IS  - 0024-3205 (Print)
+VI  - 72
+IP  - 22
+DP  - 2003 Apr 18
+TI  - 5-HT2A and 5-HT2C receptors and their atypical regulation properties.
+PG  - 2429-49
+AB  - The 5-HT(2A) and 5-HT(2C) receptors belong to the G-protein-coupled
+      receptor (GPCR) superfamily. GPCRs transduce extracellular signals to the
+      interior of cells through their interaction with G-proteins. The 5-HT(2A)
+      and 5-HT(2C) receptors mediate effects of a large variety of compounds
+      affecting depression, schizophrenia, anxiety, hallucinations, dysthymia,
+      sleep patterns, feeding behaviour and neuro-endocrine functions. Binding
+      of such compounds to either 5-HT(2) receptor subtype induces processes
+      that regulate receptor sensitivity. In contrast to most other receptors,
+      chronic blockade of 5-HT(2A) and 5-HT(2C) receptors leads not to an up-
+      but to a (paradoxical) down-regulation. This review deals with published
+      data involving such non-classical regulation of 5-HT(2A) and 5-HT(2C)
+      receptors obtained from in vivo and in vitro studies. The underlying
+      regulatory processes of the agonist-induced regulation of 5-HT(2A) and
+      5-HT(2C) receptors, commonly thought to be desensitisation and
+      resensitisation, are discussed. The atypical down-regulation of both
+      5-HT(2) receptor subtypes by antidepressants, antipsychotics and 5-HT(2)
+      antagonists is reviewed. The possible mechanisms of this paradoxical
+      down-regulation are discussed, and a new hypothesis on possible
+      heterologous regulation of 5-HT(2A) receptors is proposed.
+AD  - Johnson and Johnson Pharmaceutical, p/a Janssen Pharmaceutica,
+      Turnhoutseweg 30, B-2340 Beerse, Belgium.
+FAU - Van Oekelen, Dirk
+AU  - Van Oekelen D
+FAU - Luyten, Walter H M L
+AU  - Luyten WH
+FAU - Leysen, Josee E
+AU  - Leysen JE
+LA  - eng
+PT  - Journal Article
+PT  - Review
+PL  - England
+TA  - Life Sci
+JT  - Life sciences
+JID - 0375521
+RN  - 0 (Antidepressive Agents)
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptor, Serotonin, 5-HT2C)
+RN  - 0 (Receptors, Serotonin)
+RN  - 0 (Serotonin Agonists)
+RN  - 0 (Serotonin Antagonists)
+RN  - EC 3.6.1.- (GTP-Binding Proteins)
+SB  - IM
+MH  - Animals
+MH  - Antidepressive Agents/pharmacology
+MH  - Antipsychotic Agents/pharmacology
+MH  - GTP-Binding Proteins/physiology
+MH  - Humans
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptor, Serotonin, 5-HT2C
+MH  - Receptors, Serotonin/drug effects/*physiology
+MH  - Serotonin Agonists/pharmacology
+MH  - Serotonin Antagonists/pharmacology
+RF  - 163
+EDAT- 2003/03/26 04:00
+MHDA- 2003/05/03 05:00
+AID - S0024320503001413 [pii]
+PST - ppublish
+SO  - Life Sci. 2003 Apr 18;72(22):2429-49.
+
+PMID- 14741324
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040126
+DCOM- 20040601
+LR  - 20041117
+PUBM- Print
+IS  - 0920-9964 (Print)
+VI  - 67
+IP  - 1
+DP  - 2004 Mar 1
+TI  - Meta-analysis of association between the T102C polymorphism of the 5HT2a
+      receptor gene and schizophrenia.
+PG  - 53-62
+AB  - A meta-analysis of whole-genome linkage scans confirmed linkage between
+      schizophrenia and markers on the long arm of chromosome 13. The gene
+      HTR2A, which codes for the 5HT2a receptor, is located in this area. The
+      T102C single nucleotide polymorphism of HTR2A has been the subject of much
+      research. The production of the C-allele form of HTR2A is significantly
+      less than that of the T-allele form in normal controls and schizophrenic
+      patients. Although the association of schizophrenia with the C allele of
+      HTR2A was confirmed by a meta-analysis 5 years ago, there was a continuous
+      debate because negative findings were also considerable, which may have
+      been due to ethnic differences in association. We performed another
+      meta-analysis, since the number of available studies of this association
+      has recently doubled. In the meta-analysis of 31 case-control association
+      studies, we found a significant association between the C allele of the
+      T102C polymorphism and schizophrenia, which was more pronounced in
+      European samples than in the entire sample. We found significant
+      heterogeneity in the allele-wise analysis (C vs. T) and homozygous
+      genotype-wise analysis (CC vs. TT), both of which were at least partially
+      explained by differences between samples from Asian and European
+      countries. In East Asian countries, there was not a significant
+      association with the C allele or CC homozygosity, indicating strong
+      genetic differences and noncombinability of data between European and East
+      Asian populations. Interestingly, the frequency of the T allele was much
+      higher in East Asian patients and controls (59.5% and 57.5%, respectively)
+      than in European patients and controls (40% and 43.5%, respectively). In
+      five family-based association studies, we did not find significant
+      evidence for association of the C allele with schizophrenia; yet, the
+      pooled OR was 1.3 (95% CI=0.9-1.8, z=1.47, p=0.14), which is consistent
+      with the results of the case-control studies. The effects of other genes,
+      environmental effects on DNA methylation, or different methods of
+      classification may be the causes for such heterogeneity, but more study in
+      this area is needed.
+AD  - Department of Psychiatry, Harvard Medical School, Massachusetts Mental
+      Health Center, Boston, MA 02115, USA.
+FAU - Abdolmaleky, Hamid Mostafavi
+AU  - Abdolmaleky HM
+FAU - Faraone, Stephen V
+AU  - Faraone SV
+FAU - Glatt, Stephen J
+AU  - Glatt SJ
+FAU - Tsuang, Ming T
+AU  - Tsuang MT
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PL  - Netherlands
+TA  - Schizophr Res
+JT  - Schizophrenia research
+JID - 8804207
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Gene Expression/*genetics
+MH  - Gene Frequency
+MH  - Genetic Markers
+MH  - Genotype
+MH  - Humans
+MH  - Linkage (Genetics)
+MH  - Polymorphism, Genetic/*genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/*genetics
+EDAT- 2004/01/27 05:00
+MHDA- 2004/06/02 05:00
+AID - S092099640300183X [pii]
+PST - ppublish
+SO  - Schizophr Res. 2004 Mar 1;67(1):53-62.
+
+PMID- 14744462
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040127
+DCOM- 20040401
+LR  - 20071114
+PUBM- Print
+IS  - 0006-3223 (Print)
+VI  - 55
+IP  - 3
+DP  - 2004 Feb 1
+TI  - Serotonin 5-HT1A, 5-HT1B, and 5-HT2A receptor mRNA expression in subjects
+      with major depression, bipolar disorder, and schizophrenia.
+PG  - 225-33
+AB  - BACKGROUND: Alterations of serotonin neurotransmission are implicated in
+      both mood disorders and schizophrenia. Specific serotonin-receptor-based
+      abnormalities in these psychiatric illnesses have been intensively
+      studied; however, it has been difficult to draw any conclusions because of
+      a lack of consensus. These inconsistencies have most likely arisen from
+      the unavailability of selective ligands. METHODS: Our study used in situ
+      hybridization to quantify 5-HT(1A), 5-HT(1B), and 5-HT(2A) mRNA levels in
+      the hippocampus (HC) and 5-HT(1A) and 5-HT(2A) mRNA levels in the
+      dorsolateral prefrontal cortex (DLPFC) of subjects with a history of major
+      depression disorder (MDD), bipolar disorder (BPD), schizophrenia, and a
+      normal comparison group (15 subjects per group). RESULTS: In the DLPFC,
+      there is a significant decrease in 5-HT(1A) mRNA of subjects with MDD and
+      in 5-HT(2A) mRNA of subjects with BPD. Subjects with MDD have a
+      significant decrease in 5-HT(1A) mRNA in the HC; subjects with BPD and
+      schizophrenia had increased 5-HT(1B) mRNA levels and a significant
+      decrease in 5-HT(2A) mRNA levels in the hippocampal formation.
+      CONCLUSIONS: Alterations in 5-HT(1A,) 5-HT(1B), and 5-HT(2A) mRNA levels
+      in the brains of subjects with both mood disorders and schizophrenia add
+      further support for hypothesis of dysregulation of the serotonergic system
+      in these psychiatric disorders.
+AD  - Mental Health Research Institute, University of Michigan, 205 Zina Pitcher
+      Place, Ann Arbor, MI 48109-0720, USA.
+FAU - Lopez-Figueroa, Antonio L
+AU  - Lopez-Figueroa AL
+FAU - Norton, Camille S
+AU  - Norton CS
+FAU - Lopez-Figueroa, Manuel O
+AU  - Lopez-Figueroa MO
+FAU - Armellini-Dodel, Denise
+AU  - Armellini-Dodel D
+FAU - Burke, Sharon
+AU  - Burke S
+FAU - Akil, Huda
+AU  - Akil H
+FAU - Lopez, Juan F
+AU  - Lopez JF
+FAU - Watson, Stanley J
+AU  - Watson SJ
+LA  - eng
+GR  - MH42251/MH/United States NIMH
+GR  - MH60398/MH/United States NIMH
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - United States
+TA  - Biol Psychiatry
+JT  - Biological psychiatry
+JID - 0213264
+RN  - 0 (RNA, Messenger)
+RN  - 0 (Receptor, Serotonin, 5-HT1B)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 112692-38-3 (Receptor, Serotonin, 5-HT1A)
+SB  - IM
+EIN - Biol Psychiatry. 2004 Mar 15;55(6):660
+MH  - Adult
+MH  - Bipolar Disorder/*metabolism
+MH  - Case-Control Studies
+MH  - Depressive Disorder, Major/*metabolism
+MH  - Female
+MH  - Hippocampus/metabolism
+MH  - Humans
+MH  - In Situ Hybridization
+MH  - Male
+MH  - Middle Aged
+MH  - Prefrontal Cortex/metabolism
+MH  - RNA, Messenger/metabolism
+MH  - Receptor, Serotonin, 5-HT1A/genetics/*metabolism
+MH  - Receptor, Serotonin, 5-HT1B/genetics/*metabolism
+MH  - Receptor, Serotonin, 5-HT2A/genetics/*metabolism
+MH  - Schizophrenia/*metabolism
+EDAT- 2004/01/28 05:00
+MHDA- 2004/04/02 05:00
+AID - S0006322303010795 [pii]
+PST - ppublish
+SO  - Biol Psychiatry. 2004 Feb 1;55(3):225-33.
+
+PMID- 15048642
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040329
+DCOM- 20041019
+LR  - 20080521
+PUBM- Print
+IS  - 1552-4841 (Print)
+VI  - 126B
+IP  - 1
+DP  - 2004 Apr 1
+TI  - 102T/C SNP in the 5-hydroxytryptamine receptor 2A (HTR2A) gene and
+      schizophrenia in two southern Han Chinese populations: lack of
+      association.
+PG  - 16-8
+AB  - Serotonin (5-hydroxytryptamine; 5-HT) is a neurotransmitter that occupies
+      a uniquely important place in neurobiology because of its role in many
+      physiologic processes such as sleep, appetite, thermoregulation, pain
+      perception, hormone secretion, and sexual behavior. Serotonin dysfunction
+      has been implicated in the pathogenesis of schizophrenia. Previous studies
+      have shown an association between the T102C polymorphism of the
+      5-hydroxytryptamine receptor 2A (HTR2A) gene and schizophrenia. However,
+      many negative findings have also been reported. We analyzed the T102C
+      polymorphism of HTR2A of schizophrenic patients in two southern Chinese
+      populations (n = 291) and matched controls (n = 307). No significant
+      positive association was observed between either of the polymorphisms and
+      all schizophrenics, nor was the polymorphisms and any population of
+      schizophrenia. These data did not provide evidence for a contribution of
+      the 102T/C SNP of HTR2A gene to susceptibility to the southern Han Chinese
+      schizophrenia.
+CI  - Copyright 2003 Wiley-Liss, Inc.
+AD  - Department of Genetics, School of Medicine, Ningbo University, Ningbo,
+      Zhejiang Province, 315211 China. zhangxianning@nbu.edu.cn
+FAU - Zhang, Xian-Ning
+AU  - Zhang XN
+FAU - Jiang, San-Duo
+AU  - Jiang SD
+FAU - He, Xin-Hui
+AU  - He XH
+FAU - Zhang, Li-Na
+AU  - Zhang LN
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Am J Med Genet B Neuropsychiatr Genet
+JT  - American journal of medical genetics. Part B, Neuropsychiatric genetics :
+      the official publication of the International Society of Psychiatric
+      Genetics
+JID - 101235742
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Adult
+MH  - Aged
+MH  - Aged, 80 and over
+MH  - Case-Control Studies
+MH  - China/epidemiology
+MH  - Female
+MH  - Genetics, Population
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/ethnology/*genetics
+EDAT- 2004/03/30 05:00
+MHDA- 2004/10/20 09:00
+AID - 10.1002/ajmg.b.20128 [doi]
+PST - ppublish
+SO  - Am J Med Genet B Neuropsychiatr Genet. 2004 Apr 1;126B(1):16-8.
+
+PMID- 15083167
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040628
+DCOM- 20050216
+LR  - 20051117
+PUBM- Print
+IS  - 1018-4813 (Print)
+VI  - 12
+IP  - 7
+DP  - 2004 Jul
+TI  - Association between schizophrenia and DRD3 or HTR2 receptor gene variants.
+PG  - 535-41
+AB  - Schizophrenia is a severe and common psychiatric disorder afflicting 1% of
+      the world population. A role of many neurotransmitter receptors in
+      schizophrenia was suggested by an association with several polymorphisms
+      located in their coding regions. In this study we examined the
+      contribution of the T-102C and A-206G transitions in the 5-HTR2a and DRD3
+      receptor genes respectively to genetic susceptibility and phenotypic
+      expression of schizophrenia disorder within the Greek population. We
+      determined by PCR and RFLP analysis the genotype for the above
+      polymorphisms in 114 schizophrenic hospitalized individuals and 192
+      control samples. In contrast to previous reports from large European
+      multicentre studies, which indicate significant correlation between
+      schizophrenia and C-102 allele of the T-102C polymorphism, in this study
+      we observed a statistically significant overall association between the
+      disorder and allele T-102 (P<0.0001, odds ratio (OR)=2.11, 95%
+      CI=1.48-3.02). We also found a highly significant excess of the
+      T-102/C-102 and C-102/C-102 genotypes in the normal group (P<0.001).
+      Comparison of the patients with the controls for the DRD3 polymorphism
+      (A-206G transition) showed marginally nonsignificant differences in the
+      genotypic (P=0.054) and no significance in the allelic (P=0.163)
+      frequencies. However, the A-206/A-206 genotype seems to positively
+      contribute to the disorder appearance, when compared to A-206/G-206 as
+      genotype base line risk (P=0.016, OR=1.88, 95% CI=1.09-3.26). In
+      conclusion, from genetic association analysis of this schizophrenic
+      population, a significant association is clearly determined between the
+      HTR2 genetic polymorphism and the presence of schizophrenic disorder,
+      manifested as increased risk of schizophrenia for carriers of the T-102
+      allele.
+AD  - Department of Virology, Medical School, University of Crete, Heraklion,
+      Crete, Greece.
+FAU - Baritaki, S
+AU  - Baritaki S
+FAU - Rizos, E
+AU  - Rizos E
+FAU - Zafiropoulos, A
+AU  - Zafiropoulos A
+FAU - Soufla, G
+AU  - Soufla G
+FAU - Katsafouros, K
+AU  - Katsafouros K
+FAU - Gourvas, V
+AU  - Gourvas V
+FAU - Spandidos, D A
+AU  - Spandidos DA
+LA  - eng
+PT  - Journal Article
+PL  - England
+TA  - Eur J Hum Genet
+JT  - European journal of human genetics : EJHG
+JID - 9302235
+RN  - 0 (DRD3 protein, human)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Dopamine D3)
+SB  - IM
+MH  - Adult
+MH  - Case-Control Studies
+MH  - Female
+MH  - Gene Frequency/genetics
+MH  - Genetic Predisposition to Disease/*genetics
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - *Polymorphism, Restriction Fragment Length
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Receptors, Dopamine D2/*genetics
+MH  - Receptors, Dopamine D3
+MH  - Schizophrenia/*genetics
+EDAT- 2004/04/15 05:00
+MHDA- 2005/02/17 09:00
+AID - 10.1038/sj.ejhg.5201180 [doi]
+AID - 5201180 [pii]
+PST - ppublish
+SO  - Eur J Hum Genet. 2004 Jul;12(7):535-41.
+
+PMID- 15108180
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040426
+DCOM- 20041102
+LR  - 20080521
+PUBM- Print
+IS  - 1552-4841 (Print)
+VI  - 127B
+IP  - 1
+DP  - 2004 May 15
+TI  - Methylomics in psychiatry: Modulation of gene-environment interactions may
+      be through DNA methylation.
+PG  - 51-9
+AB  - Fine-tuning of neuronal connections during development is regulated
+      through environmental interactions. Some fine-tuning occurs through
+      changes in gene expression and/or epigenetic gene-specific DNA methylation
+      states. DNA methylation occurs by transfer of a methyl group from
+      S-adenosyl methionine to cytosine residues in the dinucleotide sequence
+      CpG. Although CpG sequences spread throughout the genome are usually
+      heavily methylated, those occurring in CpG islands in the promoter regions
+      of genes are less methylated. In most cases, the extent of DNA methylation
+      correlates with the extent of gene inactivation. Other known epigenetic
+      mechanisms include histone deacetylation and chromatin remodeling, RNA
+      inhibition, RNA modification, and DNA rearrangement. Exposure memory
+      expressed as epigenetic DNA modifications allows genomic plasticity and
+      short-term adaptation of each generation to their environment.
+      Environmental factors that affect DNA methylation include diet, proteins,
+      drugs, and hormones. Induced methylation changes may produce altered gene
+      response upon subsequent hormonal stimulation. The gene-specific DNA
+      methylation state may be preserved upon transmission through mitosis and
+      meiosis. An increasing amount of data implicates a role for DNA
+      methylation in multi-factorial psychiatric disorders. For example,
+      L-methionine treatment can exacerbate psychosis; while valproate, a drug
+      producing hypomethylated DNA, reduces such symptoms. Hypermethylation of
+      the promoter region of the RELN gene correlates with reduced gene
+      expression. This gene's protein Reelin, which is necessary for neuronal
+      migration and synaptogenesis, is reduced in schizophrenia and bipolar
+      disorder, suggesting hypermethylation of the promoter region in these
+      disorders. Some evidence implicates methylation of the promoter regions of
+      the DRD2 and HTR2A genes in schizophrenia and mood disorders as well. DNA
+      methylation usually increases with age, although hypomethylation of the
+      promoter region of the amyloid A4 precursor gene during aging may play a
+      role in Alzheimer's disease. More studies are needed to define the role of
+      methylomics and other epigenetic phenomena in the nervous system.
+CI  - Copyright 2003 Wiley-Liss, Inc.
+AD  - Department of Psychiatry, Harvard Medical School at Massachusetts Mental
+      Health Center, Boston, Massachusetts 02115, USA.
+FAU - Abdolmaleky, Hamid Mostafavi
+AU  - Abdolmaleky HM
+FAU - Smith, Cassandra L
+AU  - Smith CL
+FAU - Faraone, Stephen V
+AU  - Faraone SV
+FAU - Shafa, Rahim
+AU  - Shafa R
+FAU - Stone, William
+AU  - Stone W
+FAU - Glatt, Stephen J
+AU  - Glatt SJ
+FAU - Tsuang, Ming T
+AU  - Tsuang MT
+LA  - eng
+GR  - R25MH60485/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - United States
+TA  - Am J Med Genet B Neuropsychiatr Genet
+JT  - American journal of medical genetics. Part B, Neuropsychiatric genetics :
+      the official publication of the International Society of Psychiatric
+      Genetics
+JID - 101235742
+SB  - IM
+MH  - CpG Islands/genetics
+MH  - *DNA Methylation
+MH  - Environment
+MH  - Gene Expression Regulation
+MH  - Humans
+MH  - Mental Disorders/*genetics/pathology
+MH  - Mutation
+MH  - Psychiatry/methods/trends
+EDAT- 2004/04/27 05:00
+MHDA- 2004/11/04 09:00
+AID - 10.1002/ajmg.b.20142 [doi]
+PST - ppublish
+SO  - Am J Med Genet B Neuropsychiatr Genet. 2004 May 15;127B(1):51-9.
+
+PMID- 15121646
+OWN - NLM
+STAT- MEDLINE
+DA  - 20040503
+DCOM- 20040603
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 161
+IP  - 5
+DP  - 2004 May
+TI  - A PET study of dopamine D2 and serotonin 5-HT2 receptor occupancy in
+      patients with schizophrenia treated with therapeutic doses of ziprasidone.
+PG  - 818-25
+AB  - OBJECTIVE: Ziprasidone is an atypical antipsychotic drug that shows a
+      higher affinity for serotonin 5-HT(2) receptors compared with dopamine
+      D(2) receptors in vitro. The affinity of ziprasidone for these receptors
+      in vivo in patients was examined in a positron emission tomography (PET)
+      study. METHOD: The authors conducted a PET study to evaluate D(2)
+      occupancy (using [(11)C]raclopride) and 5-HT(2) occupancy (using
+      [(18)F]setoperone) in brain regions of interest in 16 patients with
+      schizophrenia or schizoaffective disorder randomly assigned to receive 40,
+      80, 120, or 160 mg/day of ziprasidone, which reflected the recommended
+      dose range. PET scanning was done after 3 weeks of administration and at
+      trough plasma levels, i.e., 12-16 hours after the last dose. RESULTS: The
+      mean 5-HT(2) receptor occupancy was significantly higher than the mean
+      D(2) receptor occupancy (mean=76%, SD=15%, and mean=56%, SD=18%,
+      respectively). The estimated plasma ziprasidone concentration associated
+      with 50% maximal 5-HT(2) receptor occupancy was almost four times lower
+      than that for D(2) receptor occupancy. CONCLUSIONS: These data affirm that
+      ziprasidone is similar to other novel antipsychotics in having greater
+      5-HT(2) than D(2) receptor occupancy at therapeutic doses and suggest that
+      the optimal effective dose of ziprasidone is closer to 120 mg/day than to
+      the lower doses suggested by previous PET studies. The relatively high
+      D(2) receptor occupancy, even at trough plasma levels, suggests that
+      ziprasidone is more similar to risperidone and olanzapine in receptor
+      occupancy profile than to clozapine and quetiapine. Since ziprasidone
+      plasma levels show significant (more than twofold) variation within a
+      single dose cycle, studies that are aimed at peak plasma levels (6 hours
+      after the last dose) and that examine extrastriatal regions are required
+      to fully characterize the in vivo occupancy profile of ziprasidone.
+AD  - Department of Psychiatry, University of Toronto, Montreal, Canada.
+FAU - Mamo, David
+AU  - Mamo D
+FAU - Kapur, Shitij
+AU  - Kapur S
+FAU - Shammi, C M
+AU  - Shammi CM
+FAU - Papatheodorou, George
+AU  - Papatheodorou G
+FAU - Mann, Steve
+AU  - Mann S
+FAU - Therrien, Francois
+AU  - Therrien F
+FAU - Remington, Gary
+AU  - Remington G
+LA  - eng
+PT  - Clinical Trial
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Randomized Controlled Trial
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Piperazines)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Serotonin, 5-HT2)
+RN  - 0 (Thiazoles)
+RN  - 146939-27-7 (ziprasidone)
+RN  - 84225-95-6 (Raclopride)
+RN  - 86487-64-1 (setoperone)
+SB  - AIM
+SB  - IM
+MH  - Adult
+MH  - Antipsychotic Agents/blood/pharmacokinetics/*therapeutic use
+MH  - Brain/drug effects/*metabolism/*radionuclide imaging
+MH  - Corpus Striatum/drug effects/metabolism/radionuclide imaging
+MH  - Drug Administration Schedule
+MH  - Female
+MH  - Humans
+MH  - Male
+MH  - Piperazines/pharmacokinetics/*therapeutic use
+MH  - Psychotic Disorders/drug therapy/metabolism/radionuclide imaging
+MH  - Pyrimidinones/diagnostic use
+MH  - Raclopride/diagnostic use
+MH  - Receptors, Dopamine D2/drug effects/*metabolism
+MH  - Receptors, Serotonin, 5-HT2/drug effects/*metabolism
+MH  - Schizophrenia/*drug therapy/*metabolism/radionuclide imaging
+MH  - Thiazoles/pharmacokinetics/*therapeutic use
+MH  - *Tomography, Emission-Computed
+EDAT- 2004/05/04 05:00
+MHDA- 2004/06/04 05:00
+PST - ppublish
+SO  - Am J Psychiatry. 2004 May;161(5):818-25.
+
+PMID- 15278017
+OWN - NLM
+STAT- In-Data-Review
+DA  - 20040727
+PUBM- Print
+IS  - 0048-5764 (Print)
+VI  - 38
+IP  - 1
+DP  - 2004 Winter
+TI  - Drug development for anxiety disorders: new roles for atypical
+      antipsychotics.
+PG  - 38-45
+AB  - Anxiety disorders are prevalent and frequently comorbid with depression.
+      Rates of response and remission for anxiety disorders are low despite
+      marked improvements in treatment in the past several decades.
+      Antidepressants and anxiolytics remain the most frequently prescribed
+      agents for anxiety disorders, but the numbers of prescriptions for novel
+      forms of therapy, such as anticonvulsants and atypical antipsychotics are
+      increasing. For the atypical antipsychotics, agonist activity at the
+      5-HT1A receptor has been hypothesized to translate into anxiolytic
+      effects. A small, but growing, literature suggests that atypical
+      antipsychotics are useful as augmentation therapy for treatment of
+      refractory anxiety disorders. The next generation antipsychotic,
+      aripiprazole, has a unique mechanism of action (ie, combined D2 and 5-HT1A
+      partial agonist and 5-HT2A antagonist) and improves depressive and
+      depressive/anxiety symptoms in patients with schizophrenia. Further
+      studies examining the effect of aripiprazole and other atypical
+      antipsychotic drugs on depressive and anxiety symptoms in patients with
+      refractory anxiety disorders are warranted. Psychopharmacology Bulletin.
+      2004;38(Suppl 1): 38-45.
+AD  - Department of Psychiatry and Behavioral Sciences, Emory University School
+      of Medicine, Atlanta, GA, 30322, USA. cnemero@emory.edu.
+FAU - Carson, William H
+AU  - Carson WH
+FAU - Kitagawa, Hisashi
+AU  - Kitagawa H
+LA  - eng
+PT  - Journal Article
+PL  - United States
+TA  - Psychopharmacol Bull
+JT  - Psychopharmacology bulletin
+JID - 0101123
+SB  - IM
+EDAT- 2004/07/28 05:00
+MHDA- 2004/07/28 05:00
+PST - ppublish
+SO  - Psychopharmacol Bull. 2004 Winter;38(1):38-45.
+
+PMID- 15469201
+OWN - NLM
+STAT- MEDLINE
+DA  - 20041007
+DCOM- 20041115
+LR  - 20061115
+PUBM- Print
+IS  - 0920-9964 (Print)
+VI  - 69
+IP  - 2-3
+DP  - 2004 Aug 1
+TI  - No association of the T102C polymorphism of the serotonin 2A receptor gene
+      (HTR2A) with suicidality in schizophrenia.
+PG  - 301-5
+AB  - Additional evidence for a role of serotonin (5-HT) in the pathogenesis of
+      suicidal behavior is provided by a recent report that the 5-HT2A (HTR2A)
+      T102C polymorphism was associated with suicidality in patients with major
+      depression. Three other studies have, however, failed to find an
+      association between this polymorphism and suicidality in major depression.
+      The goal of the present study was to test the association of allele C of
+      T102C HTR2A polymorphism with suicidality in patients with schizophrenia
+      or schizoaffective disorder. Seventy-one patients with DSM-III-R diagnosis
+      of schizophrenia or schizoaffective disorder were included in the study.
+      Patients were genotyped for the T102C HTR2A polymorphism. Information
+      about lifetime suicidality was obtained during the course of SADS
+      interviews. In addition, current suicidality was assessed by the Hamilton
+      Depression Scale in 46 patients. There were no significant differences in
+      allele frequencies and genotype distributions between suicidal and
+      non-suicidal patients using lifetime or current suicidality measures. The
+      results of this study did not demonstrate a robust association of the
+      allele C of the T102C HTR2A polymorphism with lifetime or current
+      suicidality in patients with schizophrenia. However, the mean Hamilton
+      Depression Scale item for current suicidality was significantly higher in
+      patient with genotype T/C compared to those with genotype C/C (p = 0.01)
+      and marginally higher than for the patients with genotype T/T (p=0.06).
+      The relatively small sample size suggests a study with a larger sample and
+      greater power would be of interest.
+AD  - Department of Psychiatry, Vanderbilt University School of Medicine,
+      Psychiatric Hospital at Vanderbilt, 1601 23rd Avenue South Suite 306,
+      Nashville, TN 37212-8645, USA.
+FAU - Ertugrul, Aygun
+AU  - Ertugrul A
+FAU - Kennedy, James L
+AU  - Kennedy JL
+FAU - Masellis, Mario
+AU  - Masellis M
+FAU - Basile, Vincenzo S
+AU  - Basile VS
+FAU - Jayathilake, Karuna
+AU  - Jayathilake K
+FAU - Meltzer, Herbert Y
+AU  - Meltzer HY
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PL  - Netherlands
+TA  - Schizophr Res
+JT  - Schizophrenia research
+JID - 8804207
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 52-90-4 (Cysteine)
+RN  - 72-19-5 (Threonine)
+SB  - IM
+MH  - Adult
+MH  - Analysis of Variance
+MH  - Cysteine/genetics
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Polymorphism, Genetic/*genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/complications/*genetics
+MH  - *Suicide
+MH  - Threonine/genetics
+EDAT- 2004/10/08 09:00
+MHDA- 2004/11/16 09:00
+PST - ppublish
+SO  - Schizophr Res. 2004 Aug 1;69(2-3):301-5.
+
+PMID- 15802092
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050401
+DCOM- 20071018
+LR  - 20071203
+PUBM- Print
+IS  - 1523-3812 (Print)
+VI  - 7
+IP  - 2
+DP  - 2005 Apr
+TI  - Meta-analysis in psychiatric genetics.
+PG  - 143-51
+AB  - The article reviews literature on methods for meta-analysis of genetic
+      linkage and association studies, and summarizes and comments on specific
+      meta-analysis findings for psychiatric disorders. The Genome Scan
+      Meta-Analysis and Multiple Scan Probability methods assess the evidence
+      for linkage across studies. Multiple Scan Probability analysis suggested
+      linkage of two chromosomal regions (13q and 22q) to schizophrenia and
+      bipolar disorder, whereas Genome Scan Meta-Analysis on a larger sample
+      identified at least 10 schizophrenia linkage regions, but none for bipolar
+      disorder. Meta-analyses of pooled ORs support association of schizophrenia
+      to the Ser311Cys polymorphism in DRD2 and the T102C polymorphism in HTR2A,
+      and of attention deficit hyperactivity disorder to the 48-bp repeat in
+      DRD4. The 5-HTTLPR polymorphism in the serotonin transporter gene (SLC6A4)
+      may contribute to the risk of bipolar disorder, suicidal behavior, and
+      neuroticism, but association to the lifetime risk of major depression has
+      not been shown. Meta-analyses support linkage of schizophrenia to regions
+      where replicable associations to candidate genes have been identified
+      through positional cloning methods. There are additional supported regions
+      where susceptibility genes are likely to be identified. Linkage
+      meta-analysis has had less clear success for bipolar disorder based on a
+      smaller dataset. Meta-analysis can guide the prioritization of regions for
+      study, but proof of association requires biological confirmation of
+      hypotheses about gene actions. Elucidation of causal mechanisms will
+      require more comprehensive study of sequence variation in candidate genes,
+      better statistical and meta-analytic methods to take all variation into
+      account, and biological strategies for testing etiologic hypotheses.
+AD  - Department of Psychiatry, University of Pennsylvania School of Medicine,
+      3535 Market Street, Room 4006, Philadelphia, PA 19104, USA.
+      DFL@mail.med.upenn.edu
+FAU - Levinson, Douglas F
+AU  - Levinson DF
+LA  - eng
+GR  - K24 MH 64197/MH/United States NIMH
+GR  - R01 MH 062276/MH/United States NIMH
+GR  - R01 MH 61675/MH/United States NIMH
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, N.I.H., Extramural
+PL  - United States
+TA  - Curr Psychiatry Rep
+JT  - Current psychiatry reports
+JID - 100888960
+RN  - 0 (Genetic Markers)
+RN  - 0 (Receptors, Neurotransmitter)
+SB  - IM
+MH  - Adolescent
+MH  - Adult
+MH  - Bipolar Disorder/genetics
+MH  - Child
+MH  - Chromosome Mapping
+MH  - Chromosomes, Human, Pair 13
+MH  - Chromosomes, Human, Pair 22
+MH  - Depressive Disorder, Major/genetics
+MH  - Genetic Markers/genetics
+MH  - Genetic Predisposition to Disease/genetics
+MH  - Genotype
+MH  - Humans
+MH  - Mental Disorders/*genetics
+MH  - Neurotic Disorders/genetics
+MH  - Polymorphism, Genetic/genetics
+MH  - Receptors, Neurotransmitter/genetics
+MH  - Schizophrenia/genetics
+EDAT- 2005/04/02 09:00
+MHDA- 2007/10/19 09:00
+PST - ppublish
+SO  - Curr Psychiatry Rep. 2005 Apr;7(2):143-51.
+
+PMID- 15843056
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050421
+DCOM- 20050624
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0304-3940 (Print)
+VI  - 379
+IP  - 3
+DP  - 2005 May 13
+TI  - 5-HT2A and muscarinic receptors in schizophrenia: a postmortem study.
+PG  - 164-8
+AB  - Although evidence suggests that 5-HT(2A) and muscarinic M1/M4 receptors
+      are implicated in the pathology of schizophrenia, the results are not
+      conclusive. In the present study we tested the hypothesis that binding of
+      5-HT(2A) and M1/M4 receptors is altered in the postmortem brain of
+      schizophrenia subjects. Quantitative autoradiography was employed to
+      measure [(3)H]ketanserin binding to 5-HT(2A) receptors and
+      [(3)H]pirenzepine binding to both M1 and M4 receptors in Brodmann's area 9
+      (BA9), caudate/putamen, and the hippocampal formation from six
+      schizophrenic and six control subjects. A significant reduction in the
+      density of 5HT(2A) receptors in BA 9 of schizophrenic subjects was
+      observed (p=0.036). No significant difference was observed in the density
+      of 5HT(2A) receptors in the hippocampus or caudate/putamen between the two
+      groups. No significant changes in the density of M1/M4 receptors was
+      observed in these three regions between the two groups. These findings
+      support a possible involvement of the serotonergic system in the pathology
+      of schizophrenia.
+AD  - Department of Pathology, University of Sydney, NSW 2006, Australia.
+      izuru@med.usyd.edu.au
+FAU - Matsumoto, Izuru
+AU  - Matsumoto I
+FAU - Inoue, Yuki
+AU  - Inoue Y
+FAU - Iwazaki, Takeshi
+AU  - Iwazaki T
+FAU - Pavey, Geoff
+AU  - Pavey G
+FAU - Dean, Brian
+AU  - Dean B
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+DEP - 20050125
+PL  - Ireland
+TA  - Neurosci Lett
+JT  - Neuroscience letters
+JID - 7600130
+RN  - 0 (Muscarinic Antagonists)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptors, Muscarinic)
+RN  - 0 (Serotonin Antagonists)
+RN  - 10028-17-8 (Tritium)
+RN  - 28797-61-7 (Pirenzepine)
+RN  - 74050-98-9 (Ketanserin)
+SB  - IM
+MH  - Aged
+MH  - Aged, 80 and over
+MH  - Autoradiography/methods
+MH  - Brain/metabolism/pathology
+MH  - Case-Control Studies
+MH  - Female
+MH  - Humans
+MH  - Ketanserin/pharmacology
+MH  - Male
+MH  - Middle Aged
+MH  - Muscarinic Antagonists/pharmacology
+MH  - Pirenzepine/pharmacology
+MH  - Postmortem Changes
+MH  - Protein Binding/drug effects/physiology
+MH  - Receptor, Serotonin, 5-HT2A/*metabolism
+MH  - Receptors, Muscarinic/*metabolism
+MH  - Schizophrenia/*metabolism
+MH  - Serotonin Antagonists/pharmacology
+MH  - Tritium/pharmacology
+EDAT- 2005/04/22 09:00
+MHDA- 2005/06/25 09:00
+PHST- 2004/12/01 [received]
+PHST- 2004/12/21 [revised]
+PHST- 2004/12/23 [accepted]
+PHST- 2005/01/25 [aheadofprint]
+AID - S0304-3940(05)00007-8 [pii]
+AID - 10.1016/j.neulet.2004.12.059 [doi]
+PST - ppublish
+SO  - Neurosci Lett. 2005 May 13;379(3):164-8. Epub 2005 Jan 25.
+
+PMID- 15953671
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050805
+DCOM- 20051027
+LR  - 20061115
+PUBM- Print
+IS  - 0278-5846 (Print)
+VI  - 29
+IP  - 6
+DP  - 2005 Jul
+TI  - The role of 5-HT2C receptor polymorphisms in the pharmacogenetics of
+      antipsychotic drug treatment.
+PG  - 1021-8
+AB  - The development of novel, atypical antipsychotics has been welcomed due to
+      their lower incidence of extrapyramidal side effects. However, as with all
+      pharmacotherapy, patient response is often varied and these novel
+      compounds are not without their own side effect profile, most notably
+      weight gain. Inter-individual variations in response to drug treatment
+      are, in part, due to polymorphisms of the genes encoding drug targets. The
+      importance of the serotonin system in psychiatric symptomatology and
+      several side effects of antipsychotic drugs is well established. Thus
+      genetic polymorphisms of two central 5-HT receptors (5-HT2A and 2C), at
+      which many of the newer antipsychotic drugs act, are prime candidates for
+      pharmacogenetic analysis of the effects of these drugs in the treatment of
+      schizophrenia. To date, much work has focussed on the 5-HT2A receptor
+      subtype. However, pharmacological evidence and recent molecular genetic
+      studies would suggest a role for the 5-HT2C receptor in the consequences
+      of antipsychotic treatment, particularly in relation to the development of
+      both drug-induced dyskinesias and weight gain. This review briefly
+      examines the pharmacology and physiology of the 5HT2C receptor in the
+      context of its genetics, with discussion of known polymorphisms of this
+      receptor gene and its promoter region. Associations between these
+      polymorphisms and the development of schizophrenia, the symptom responses
+      to antipsychotic treatment and side effects of such treatment, notably
+      tardive dyskinesia and weight gain, are assessed and related to the
+      presumed functionality of these polymorphisms. Such studies clearly
+      demonstrate the potential of pharmacogenetics in optimising treatment for
+      the individual patient.
+AD  - Division of Psychiatry and Neuroscience, Queen's University Belfast,
+      Whitla Medical Building, 97 Lisburn Road, Belfast BT9 7BL, UK.
+      G.Reynolds@qub.ac.uk
+FAU - Reynolds, Gavin P
+AU  - Reynolds GP
+FAU - Templeman, Lucy A
+AU  - Templeman LA
+FAU - Zhang, Zhi Jun
+AU  - Zhang ZJ
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PT  - Review
+PL  - England
+TA  - Prog Neuropsychopharmacol Biol Psychiatry
+JT  - Progress in neuro-psychopharmacology & biological psychiatry
+JID - 8211617
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Receptor, Serotonin, 5-HT2C)
+SB  - IM
+MH  - Animals
+MH  - Antipsychotic Agents/*therapeutic use
+MH  - Body Weight/drug effects/genetics
+MH  - Humans
+MH  - *Pharmacogenetics
+MH  - *Polymorphism, Genetic
+MH  - *Psychotic Disorders/drug therapy/genetics
+MH  - Receptor, Serotonin, 5-HT2C/*genetics
+RF  - 58
+EDAT- 2005/06/15 09:00
+MHDA- 2005/10/28 09:00
+PHST- 2005/03/01 [accepted]
+AID - S0278-5846(05)00146-6 [pii]
+AID - 10.1016/j.pnpbp.2005.03.019 [doi]
+PST - ppublish
+SO  - Prog Neuropsychopharmacol Biol Psychiatry. 2005 Jul;29(6):1021-8.
+
+PMID- 16336943
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060117
+DCOM- 20060329
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0006-2952 (Print)
+VI  - 71
+IP  - 4
+DP  - 2006 Feb 14
+TI  - Distinct functional profiles of aripiprazole and olanzapine at RNA edited
+      human 5-HT2C receptor isoforms.
+PG  - 521-9
+AB  - In this study we have functionally characterized aripiprazole (OPC-14597;
+      7-(4-[4-(2,3-dichlorophenyl)-1-piperazinyl]butyloxy-3,4-dihydro-2-(1H)-qui
+      nolinone), the prototype of a new generation antipsychotic drug termed
+      dopamine-serotonin-system stabilizer, in cells expressing
+      5-hydroxytryptamine2 (5-HT2) receptor subtypes in comparison with
+      olanzapine. In Chinese hamster ovary (CHO) cells stably expressing 5-HT2
+      receptors, aripiprazole displayed a dual agonist/antagonist profile for
+      5-HT2C receptor (VNI isoform) mediated calcium signaling (EC50 1070 nM,
+      IC50 281 nM). It exhibited no appreciable 5-HT2A or 5-HT2B agonism,
+      whereas it antagonized 5-HT-stimulated calcium increase at either 5-HT2A
+      or 5-HT2B receptor expressed in CHO cells (IC50s of 369 and 0.46 nM,
+      respectively). In comparison, olanzapine was devoid of agonism but was an
+      antagonist at all three subtypes, with a potency rank order of 5-HT2A
+      (IC50, 2.5 nM)>5-HT2B (47 nM)>5-HT2C (69 nM). In human embryonic kidney
+      (HEK) cells transiently expressing 5-HT2C receptor isoforms, aripiprazole
+      exhibited full agonism at the unedited INI, but partial agonism at the
+      partially edited VNI and fully edited VSV isoforms (EC50s of 571, 1086 and
+      2099 nM, respectively). A partial antagonism was also observed for
+      aripiprazole at the two edited isoforms (IC50s of 1138 and 1000 nM,
+      respectively). In contrast, while lacking agonist activity at the VNI and
+      VSV, olanzapine showed inverse agonism at the INI isoform (IC50 594 nM),
+      reaching a maximal attenuation of 20%. In addition, olanzapine was a full
+      antagonist at all three isoforms, with a rank order of potency of VNI
+      (IC50, 79 nM)>VSV (101 nM)>INI (3856 nM). The modest 5-HT2A antagonism and
+      5-HT2C partial agonism, along with reported D2 and 5-HT1A partial agonism,
+      may allow aripiprazole to stabilize the disturbed dopamine-serotonin
+      interplay in schizophrenia with a moderate yet adequate pharmacological
+      intervention. 5-HT2C agonism may also underlie the minimal weight gain
+      seen with aripiprazole.
+AD  - Neuroscience Discovery Research, Wyeth Research, CN 8000, Princeton, NJ
+      08543, USA. zhangj@wyeth.com
+FAU - Zhang, Jean Y
+AU  - Zhang JY
+FAU - Kowal, Dianne M
+AU  - Kowal DM
+FAU - Nawoschik, Stanley P
+AU  - Nawoschik SP
+FAU - Lou, Zhuangwei
+AU  - Lou Z
+FAU - Dunlop, John
+AU  - Dunlop J
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+DEP - 20051205
+PL  - England
+TA  - Biochem Pharmacol
+JT  - Biochemical pharmacology
+JID - 0101032
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Benzodiazepines)
+RN  - 0 (Piperazines)
+RN  - 0 (Protein Isoforms)
+RN  - 0 (Quinolones)
+RN  - 0 (Receptor, Serotonin, 5-HT2C)
+RN  - 0 (Serotonin Uptake Inhibitors)
+RN  - 129722-12-9 (aripiprazole)
+RN  - 132539-06-1 (olanzapine)
+RN  - 7440-70-2 (Calcium)
+SB  - IM
+MH  - Animals
+MH  - Antipsychotic Agents/pharmacology
+MH  - Benzodiazepines/pharmacology
+MH  - CHO Cells
+MH  - Calcium/metabolism
+MH  - Cell Line
+MH  - Cricetinae
+MH  - Cricetulus
+MH  - Dose-Response Relationship, Drug
+MH  - Female
+MH  - Humans
+MH  - Intracellular Space/drug effects/metabolism
+MH  - Piperazines/*pharmacology
+MH  - Protein Isoforms/antagonists & inhibitors/genetics
+MH  - Quinolones/*pharmacology
+MH  - RNA Editing/*drug effects/genetics
+MH  - Receptor, Serotonin, 5-HT2C/antagonists & inhibitors/*genetics
+MH  - Serotonin Uptake Inhibitors/pharmacology
+MH  - Transfection
+EDAT- 2005/12/13 09:00
+MHDA- 2006/03/30 09:00
+PHST- 2005/09/12 [received]
+PHST- 2005/11/02 [revised]
+PHST- 2005/11/04 [accepted]
+PHST- 2005/12/05 [aheadofprint]
+AID - S0006-2952(05)00751-3 [pii]
+AID - 10.1016/j.bcp.2005.11.007 [doi]
+PST - ppublish
+SO  - Biochem Pharmacol. 2006 Feb 14;71(4):521-9. Epub 2005 Dec 5.
+
+PMID- 16405867
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060113
+DCOM- 20060406
+LR  - 20061115
+PUBM- Print-Electronic
+IS  - 0006-291X (Print)
+VI  - 340
+IP  - 3
+DP  - 2006 Feb 17
+TI  - Association study of serotonin 2A receptor (5-HT2A) gene with
+      schizophrenia and suicidal behavior using systematic meta-analysis.
+PG  - 1006-15
+AB  - Serotonin 2A receptor (5-HT2A) gene was implicated to be associated with
+      both schizophrenia and suicidal behavior due to its role of key
+      neurotransmitter in many physiologic processes. Association studies were
+      reported in different populations, however, a great number of subsequent
+      studies have produced contrary results, possibly reflecting inadequate
+      statistical power. With the cumulative data in recent years in both
+      European and Asian populations, particularly in Asian populations, it was
+      necessary to carry out a comprehensive analysis of previous findings. The
+      meta-analysis, therefore, combined all English and Chinese studies using
+      multiple research methods published up to July 2005 to give a new picture
+      of the role of the 5-HT2A gene. Compared with significant results reported
+      previously, the current large samples (73 studies in all) failed to find
+      significant association of the T102C polymorphism with either
+      schizophrenia or suicidal behavior. Evidence of significant association
+      was only detected between A-1438G and suicidal behavior. The current study
+      did not support the association of the 5-HT2A gene with either
+      schizophrenia or suicidal behavior.
+AD  - Bio-X Life Science Research Center, Shanghai Jiao Tong University,
+      Shanghai 200030, China.
+FAU - Li, Dawei
+AU  - Li D
+FAU - Duan, Yun
+AU  - Duan Y
+FAU - He, Lin
+AU  - He L
+LA  - eng
+PT  - Journal Article
+PT  - Meta-Analysis
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20060104
+PL  - United States
+TA  - Biochem Biophys Res Commun
+JT  - Biochemical and biophysical research communications
+JID - 0372516
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Alleles
+MH  - Databases, Bibliographic
+MH  - *Gene Expression Regulation
+MH  - *Genetic Predisposition to Disease
+MH  - Genotype
+MH  - Humans
+MH  - Models, Genetic
+MH  - Odds Ratio
+MH  - Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A/*biosynthesis/*physiology
+MH  - Schizophrenia/*metabolism
+MH  - Sensitivity and Specificity
+MH  - *Suicide
+EDAT- 2006/01/13 09:00
+MHDA- 2006/04/07 09:00
+PHST- 2005/11/21 [received]
+PHST- 2005/12/18 [accepted]
+PHST- 2006/01/04 [aheadofprint]
+AID - S0006-291X(05)02858-5 [pii]
+AID - 10.1016/j.bbrc.2005.12.101 [doi]
+PST - ppublish
+SO  - Biochem Biophys Res Commun. 2006 Feb 17;340(3):1006-15. Epub 2006 Jan 4.
+
+PMID- 17069769
+OWN - NLM
+STAT- MEDLINE
+DA  - 20061212
+DCOM- 20070123
+PUBM- Print-Electronic
+IS  - 0006-3223 (Print)
+VI  - 60
+IP  - 12
+DP  - 2006 Dec 15
+TI  - Monoallelic and unequal allelic expression of the HTR2A gene in human
+      brain and peripheral lymphocytes.
+PG  - 1331-5
+AB  - BACKGROUND: The 102T/C polymorphism of the serotonin 2A receptor (HTR2A)
+      gene is reported to be associated with schizophrenia and other diseases
+      and phenotypes. Altered HTR2A expression has been found in relation to
+      several neuropsychiatric conditions, including depression and
+      schizophrenia. Studies of expression of HTR2A messenger RNA (mRNA) and
+      protein in postmortem brains suggest that the 102C allele might be less
+      transcriptionally active than the T allele. However, equal expression of
+      both alleles has also been reported. METHODS: We performed primer
+      extension assays to measure relative expression of allele-specific HTR2A
+      transcripts in mRNAs isolated from the prefrontal cortex of 31 individuals
+      with schizophrenia and from peripheral lymphocytes (PBLs) of 31 healthy
+      individuals heterozygous for 102T/C. We also examined the allele
+      transmission pattern of HTR2A in PBLs of nine families. RESULTS: Analyses
+      of DNA and mRNA revealed that 102C is expressed but at lower levels than
+      102T in brains. In contrast to the biallelic expression observed in
+      brains, monoallelic expression of HTR2A was common in PBLs. However, a
+      family study revealed that imprinting was not responsible for the
+      monoallelic expression in PBLs. CONCLUSIONS: The present study revealed a
+      tissue-specific modification of HTR2A expression, which makes allelic and
+      epiallelic analyses necessary for genetic epidemiologic and
+      pharmacogenomic studies of HTR2A.
+AD  - Department of Medical Genetics, Graduate School of Comprehensive Human
+      Sciences, University of Tsukuba, Tsukuba, Ibaraki, Japan.
+FAU - Fukuda, Yoshiko
+AU  - Fukuda Y
+FAU - Koga, Minori
+AU  - Koga M
+FAU - Arai, Makoto
+AU  - Arai M
+FAU - Noguchi, Emiko
+AU  - Noguchi E
+FAU - Ohtsuki, Tsuyuka
+AU  - Ohtsuki T
+FAU - Horiuchi, Yasue
+AU  - Horiuchi Y
+FAU - Ishiguro, Hiroki
+AU  - Ishiguro H
+FAU - Niizato, Kazuhiro
+AU  - Niizato K
+FAU - Iritani, Shyuji
+AU  - Iritani S
+FAU - Itokawa, Masanari
+AU  - Itokawa M
+FAU - Arinami, Tadao
+AU  - Arinami T
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20061025
+PL  - United States
+TA  - Biol Psychiatry
+JT  - Biological psychiatry
+JID - 0213264
+RN  - 0 (DNA, Complementary)
+RN  - 0 (RNA, Messenger)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Aged
+MH  - Aged, 80 and over
+MH  - Alleles
+MH  - Brain Chemistry/*genetics
+MH  - DNA, Complementary/biosynthesis/genetics
+MH  - Female
+MH  - Genotype
+MH  - Humans
+MH  - Lymphocytes/*metabolism
+MH  - Male
+MH  - Middle Aged
+MH  - Prefrontal Cortex/metabolism
+MH  - Psychiatric Status Rating Scales
+MH  - RNA, Messenger/biosynthesis/genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Reverse Transcriptase Polymerase Chain Reaction
+MH  - Schizophrenia/genetics/metabolism
+EDAT- 2006/10/31 09:00
+MHDA- 2007/01/24 09:00
+PHST- 2005/10/06 [received]
+PHST- 2006/06/14 [revised]
+PHST- 2006/06/14 [accepted]
+PHST- 2006/10/25 [aheadofprint]
+AID - S0006-3223(06)00816-X [pii]
+AID - 10.1016/j.biopsych.2006.06.024 [doi]
+PST - ppublish
+SO  - Biol Psychiatry. 2006 Dec 15;60(12):1331-5. Epub 2006 Oct 25.
+
+PMID- 17084080
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070115
+DCOM- 20070409
+PUBM- Print-Electronic
+IS  - 0960-894X (Print)
+VI  - 17
+IP  - 2
+DP  - 2007 Jan 15
+TI  - Studies towards the identification of a new generation of atypical
+      antipsychotic agents.
+PG  - 400-5
+AB  - A rational structure-activity relationship study around compound (1) is
+      reported. The lead optimisation programme led to the identification of
+      sulfonamide (25), a molecule combining dopamine D2/D3 receptor antagonism
+      with serotonin 5-HT2A, 5-HT2C, 5-HT6 receptor antagonism for an effective
+      treatment of schizophrenia. Compound (25) was shown to possess the
+      required in vivo activity with no EPS liability.
+AD  - Psychiatry Centre of Excellence for Drug Discovery, New Frontiers Science
+      Park, Harlow, Essex CM19 5AW, UK. Vincenzo_2_garzya@gsk.com
+FAU - Garzya, Vincenzo
+AU  - Garzya V
+FAU - Forbes, Ian T
+AU  - Forbes IT
+FAU - Gribble, Andrew D
+AU  - Gribble AD
+FAU - Hadley, Mike S
+AU  - Hadley MS
+FAU - Lightfoot, Andrew P
+AU  - Lightfoot AP
+FAU - Payne, Andrew H
+AU  - Payne AH
+FAU - Smith, Alexander B
+AU  - Smith AB
+FAU - Douglas, Sara E
+AU  - Douglas SE
+FAU - Cooper, David G
+AU  - Cooper DG
+FAU - Stansfield, Ian G
+AU  - Stansfield IG
+FAU - Meeson, Malcom
+AU  - Meeson M
+FAU - Dodds, Emma E
+AU  - Dodds EE
+FAU - Jones, Declan N C
+AU  - Jones DN
+FAU - Wood, Martyn
+AU  - Wood M
+FAU - Reavill, Charlie
+AU  - Reavill C
+FAU - Scorer, Carol A
+AU  - Scorer CA
+FAU - Worby, Angela
+AU  - Worby A
+FAU - Riley, Graham
+AU  - Riley G
+FAU - Eddershaw, Peter
+AU  - Eddershaw P
+FAU - Ioannou, Chris
+AU  - Ioannou C
+FAU - Donati, Daniele
+AU  - Donati D
+FAU - Hagan, Jim J
+AU  - Hagan JJ
+FAU - Ratti, Emiliangelo A
+AU  - Ratti EA
+LA  - eng
+PT  - Journal Article
+DEP - 20061019
+PL  - England
+TA  - Bioorg Med Chem Lett
+JT  - Bioorganic & medicinal chemistry letters
+JID - 9107377
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Dopamine Antagonists)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptor, Serotonin, 5-HT2C)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Dopamine D3)
+RN  - 0 (Receptors, Serotonin)
+RN  - 0 (Recombinant Proteins)
+RN  - 0 (Serotonin Antagonists)
+RN  - 0 (Sulfonamides)
+RN  - 0 (serotonin 6 receptor)
+RN  - 9035-51-2 (Cytochrome P-450 Enzyme System)
+SB  - IM
+MH  - Alkylation
+MH  - Antipsychotic Agents/*chemical synthesis/*pharmacology
+MH  - Cytochrome P-450 Enzyme System/chemistry/metabolism
+MH  - Dopamine Antagonists/chemical synthesis/pharmacology
+MH  - Drug Design
+MH  - Humans
+MH  - Receptor, Serotonin, 5-HT2A/drug effects
+MH  - Receptor, Serotonin, 5-HT2C/drug effects
+MH  - Receptors, Dopamine D2/antagonists & inhibitors
+MH  - Receptors, Dopamine D3/antagonists & inhibitors
+MH  - Receptors, Serotonin/drug effects
+MH  - Recombinant Proteins/drug effects
+MH  - Serotonin Antagonists/chemical synthesis/pharmacology
+MH  - Structure-Activity Relationship
+MH  - Sulfonamides/chemical synthesis/pharmacology
+EDAT- 2006/11/07 09:00
+MHDA- 2007/04/10 09:00
+PHST- 2006/08/02 [received]
+PHST- 2006/10/15 [revised]
+PHST- 2006/10/16 [accepted]
+PHST- 2006/10/19 [aheadofprint]
+AID - S0960-894X(06)01220-0 [pii]
+AID - 10.1016/j.bmcl.2006.10.036 [doi]
+PST - ppublish
+SO  - Bioorg Med Chem Lett. 2007 Jan 15;17(2):400-5. Epub 2006 Oct 19.
+
+PMID- 17221846
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070627
+DCOM- 20070830
+LR  - 20080521
+PUBM- Print
+IS  - 1552-4841 (Print)
+VI  - 144B
+IP  - 5
+DP  - 2007 Jul 5
+TI  - Association of a serotonin receptor 2A gene polymorphism with cognitive
+      functions in patients with schizophrenia.
+PG  - 704-7
+AB  - The aim of this study was to investigate the association between the T102C
+      polymorphism on the 5HT2A gene and cognitive function as well as clinical
+      manifestations in patients with schizophrenia. Eighty-two outpatients with
+      schizophrenia participated in this study. The Brief Psychiatric Rating
+      Scale (BPRS) was used to assess the severity of each patient's symptoms.
+      In order to evaluate their short-term attention capacity, a Digit Span
+      Test was used. The Continuous Performance Test (CPT) was used to test the
+      sustained attention span of each of the subjects. Cognitive flexibility
+      was measured with the Wisconsin Card Sorting Test (WCST). The polymorphism
+      of the 5-HT2A gene at codon 102 (T/C) was genotyped by sequence specific
+      polymerase chain reaction. The T allele at codon 102 correlated with a
+      lower hit rate and more commission errors in the CPT and patients with the
+      heterogeneous genotype (TC) had more commission errors than those who were
+      of homogeneous type (CC or TT). Patients with the TC genotype also had
+      significantly fewer correct responses in the WCST compared to those who
+      were type CC or TT. No relationship was found to exist between the C
+      allele and cognitive variables. There was also no relationship established
+      between the codon 102 polymorphism and clinical parameters. These findings
+      suggest that the TC genotype might be related to certain cognitive
+      impairments in patients with schizophrenia.
+AD  - Department of Psychiatry, Istanbul Faculty of Medicine, Istanbul
+      University, Istanbul, Turkey. alpucok@superonline.com
+FAU - Ucok, Alp
+AU  - Ucok A
+FAU - Alpsan, Hale
+AU  - Alpsan H
+FAU - Cakir, Sibel
+AU  - Cakir S
+FAU - Saruhan-Direskeneli, Guher
+AU  - Saruhan-Direskeneli G
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Am J Med Genet B Neuropsychiatr Genet
+JT  - American journal of medical genetics. Part B, Neuropsychiatric genetics :
+      the official publication of the International Society of Psychiatric
+      Genetics
+JID - 101235742
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Cognition
+MH  - Female
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/*genetics
+EDAT- 2007/01/16 09:00
+MHDA- 2007/08/31 09:00
+AID - 10.1002/ajmg.b.30463 [doi]
+PST - ppublish
+SO  - Am J Med Genet B Neuropsychiatr Genet. 2007 Jul 5;144B(5):704-7.
+
+PMID- 17240119
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070406
+DCOM- 20070801
+LR  - 20070924
+PUBM- Print-Electronic
+IS  - 0924-9338 (Print)
+VI  - 22
+IP  - 3
+DP  - 2007 Apr
+TI  - Supportive evidence for the association between the T102C 5-HTR2A gene
+      polymorphism and schizophrenia: a large-scale case-control and
+      family-based study.
+PG  - 167-70
+AB  - Serotonin type 2A receptors (5-HTR2A) have long been implicated in
+      schizophrenia pathology. A decreased number of these receptors were found
+      in postmortem brain studies of schizophrenic patients as well as in
+      experiments using neuroimaging techniques. Molecular genetic studies
+      revealed that the T102C polymorphism of the 5-HTR2A gene is associated
+      with schizophrenia, with the CC genotype frequency being higher in
+      patients compared to healthy controls. However the association was not
+      confirmed in all studies. We carried out a replication study, which aimed
+      at searching for association between this polymorphism and schizophrenia
+      in a large samples of patients (n=919), their psychiatrically well
+      first-degree relatives (n=330) and screened controls (n=500). The C allele
+      and the CT+CC genotype frequencies were significantly higher in patients
+      than in controls (chi2=5.1; df=1; p=0.02; OR 1.2, 95% CI 1.0-1.4) and
+      chi2=5.4; df=1; p=0.02; OR 1.4, 95% CI 1.1-1.8 respectively). In a
+      family-based study, the transmission disequilibrium test (TDT) and the
+      family-based association test (FBAT) did not show a preferential
+      transmission of any allele. In conclusion, our replication study provides
+      further evidence for association between the 5-HTR2A receptor T102C
+      polymorphism and schizophrenia.
+AD  - Mental Health Research Center, Russian Academy of Medical Sciences,
+      Zagorodnoe sh., 2/2, Moscow, 117152, Russia. golimbet@mail.ru
+FAU - Golimbet, V E
+AU  - Golimbet VE
+FAU - Lavrushina, O M
+AU  - Lavrushina OM
+FAU - Kaleda, V G
+AU  - Kaleda VG
+FAU - Abramova, L I
+AU  - Abramova LI
+FAU - Lezheiko, T V
+AU  - Lezheiko TV
+LA  - eng
+PT  - Journal Article
+DEP - 20070119
+PL  - France
+TA  - Eur Psychiatry
+JT  - European psychiatry : the journal of the Association of European
+      Psychiatrists
+JID - 9111820
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Female
+MH  - Gene Frequency/genetics
+MH  - Genetic Predisposition to Disease/genetics
+MH  - Genetic Screening
+MH  - Genotype
+MH  - Heterozygote Detection
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Personality Inventory
+MH  - Polymorphism, Genetic/*genetics
+MH  - Psychotic Disorders/diagnosis/*genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/diagnosis/*genetics
+EDAT- 2007/01/24 09:00
+MHDA- 2007/08/02 09:00
+PHST- 2006/04/10 [received]
+PHST- 2006/05/22 [revised]
+PHST- 2006/06/14 [accepted]
+PHST- 2007/01/19 [aheadofprint]
+AID - S0924-9338(06)00124-6 [pii]
+AID - 10.1016/j.eurpsy.2006.06.002 [doi]
+PST - ppublish
+SO  - Eur Psychiatry. 2007 Apr;22(3):167-70. Epub 2007 Jan 19.
+
+PMID- 17291660
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070330
+DCOM- 20070626
+PUBM- Print-Electronic
+IS  - 0278-5846 (Print)
+VI  - 31
+IP  - 3
+DP  - 2007 Apr 13
+TI  - Association study of serotonin 2A receptor (5-HT2A) and serotonin
+      transporter (5-HTT) gene polymorphisms with schizophrenia.
+PG  - 741-5
+AB  - OBJECTIVE: To investigate (i) the association between four serotonergic
+      polymorphisms (A-1438G and T102C of the 5-HT2A receptor gene, and 5-HTT
+      VNTR and 5-HTTLPR of the 5-HT transporter gene) and schizophrenia and (ii)
+      the potential interaction of those polymorphisms in the development of
+      schizophrenia. SUBJECTS AND METHODS: 227 outpatients with schizophrenia
+      (DSM-IV criteria) and 420 unrelated healthy controls from Asturias
+      (Northern Spain) were genotyped using standard methods. RESULTS: Both
+      groups showed Hardy-Weinberg equilibrium for the analyzed genetic
+      variability. A-1438G and T102C polymorphisms are in complete linkage
+      disequilibrium in our population. There was an apparent difference in the
+      distribution of genotypes for the A-1438G (or T102C) polymorphisms
+      (p=0.018, not significant after a Bonferroni correction). The 5-HT2A
+      -1438A (or 102T) allele was significantly more frequent in patients than
+      controls (0.53 and 0.45, respectively; corrected p=0.028, OR=1.39 (95%
+      CI=1.11-1.75)). Genotype and allele distributions for 5-HTT polymorphisms
+      were similar in both groups. However, assessment of the combined influence
+      of 5-HT2A A-1438G and 5-HTTLPR polymorphisms demonstrated a significant
+      effect (chi(2) (3)=11.51, p=0.009), whereby the combination of -1438A and
+      5-HTTLPR S alleles was associated with schizophrenia. CONCLUSIONS: Our
+      findings support a possible synergistic effect of genetic factors
+      influencing serotonergic neurotransmission on susceptibility to
+      schizophrenia.
+AD  - Department of Psychiatry, School of Medicine, University of Oviedo, Julian
+      Claveria 6 - 3 degrees, 33006 Oviedo, Spain. frank@uniovi.es
+FAU - Saiz, Pilar A
+AU  - Saiz PA
+FAU - Garcia-Portilla, M Paz
+AU  - Garcia-Portilla MP
+FAU - Arango, Celso
+AU  - Arango C
+FAU - Morales, Blanca
+AU  - Morales B
+FAU - Alvarez, Victoria
+AU  - Alvarez V
+FAU - Coto, Eliecer
+AU  - Coto E
+FAU - Fernandez, Juan M
+AU  - Fernandez JM
+FAU - Bascaran, M Teresa
+AU  - Bascaran MT
+FAU - Bousono, Manuel
+AU  - Bousono M
+FAU - Bobes, Julio
+AU  - Bobes J
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070116
+PL  - England
+TA  - Prog Neuropsychopharmacol Biol Psychiatry
+JT  - Progress in neuro-psychopharmacology & biological psychiatry
+JID - 8211617
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (SLC6A4 protein, human)
+RN  - 0 (Serotonin Plasma Membrane Transport Proteins)
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Chi-Square Distribution
+MH  - Female
+MH  - Gene Frequency
+MH  - *Genetic Predisposition to Disease
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Male
+MH  - Middle Aged
+MH  - *Polymorphism, Genetic
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/*genetics
+MH  - Serotonin Plasma Membrane Transport Proteins/*genetics
+MH  - Spain
+EDAT- 2007/02/13 09:00
+MHDA- 2007/06/27 09:00
+PHST- 2006/10/25 [received]
+PHST- 2007/01/02 [revised]
+PHST- 2007/01/09 [accepted]
+PHST- 2007/01/16 [aheadofprint]
+AID - S0278-5846(07)00022-X [pii]
+AID - 10.1016/j.pnpbp.2007.01.012 [doi]
+PST - ppublish
+SO  - Prog Neuropsychopharmacol Biol Psychiatry. 2007 Apr 13;31(3):741-5. Epub
+      2007 Jan 16.
+
+PMID- 17420819
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070410
+DCOM- 20080103
+PUBM- Print
+IS  - 0004-282X (Print)
+VI  - 65
+IP  - 1
+DP  - 2007 Mar
+TI  - Association analysis between the C516T polymorphism in the 5-HT2A receptor
+      gene and schizophrenia.
+PG  - 11-4
+AB  - Data from epidemiological studies have demonstrated that genetics is an
+      important risk factor for schizophrenia. Disturbances of serotonergic
+      brain pathways have been implicated in the pathophysiology of
+      schizophrenia. Some studies have suggested that the efficacy of atypical
+      antipsychotics on schizophrenia treatment may be related to the serotonin
+      2A receptor (5-HT2A), and that serotonergic drugs may induce psychotic
+      symptoms. Thus, the aim of this study was to investigate the association
+      between the C516T polymorphism and schizophrenia in a Brazilian population
+      composed by 246 patients and 315 healthy matched controls in a
+      case-control approach. No statistically differences were observed in
+      allelic (chi2=1.77, 1d.f., p=0.18) or genotypic (chi2=1.69, 2d.f., p=0.42)
+      distributions between cases and controls. The results suggest that the
+      C516T polymorphism of the 5-HT2A receptor gene is not related to the
+      susceptibility for schizophrenia in our Brazilian sample.
+AD  - Department and Institute of Psychiatry, Medical School, University of Sao
+      Paulo, Sao Paulo, SP, Brazil.
+FAU - Bertola, Vivian
+AU  - Bertola V
+FAU - Cordeiro, Quirino
+AU  - Cordeiro Q
+FAU - Zung, Stevin
+AU  - Zung S
+FAU - Miracca, Elisabete Cristina
+AU  - Miracca EC
+FAU - Vallada, Homero
+AU  - Vallada H
+LA  - eng
+PT  - Journal Article
+PL  - Brazil
+TA  - Arq Neuropsiquiatr
+JT  - Arquivos de neuro-psiquiatria
+JID - 0125444
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Alleles
+MH  - Case-Control Studies
+MH  - Genetic Predisposition to Disease/genetics
+MH  - Genotype
+MH  - Humans
+MH  - Polymorphism, Genetic/*genetics
+MH  - Receptor, Serotonin, 5-HT2A/*genetics
+MH  - Schizophrenia/*genetics
+EDAT- 2007/04/11 09:00
+MHDA- 2008/01/04 09:00
+PHST- 2006/07/04 [received]
+PHST- 2006/11/14 [accepted]
+AID - S0004-282X2007000100004 [pii]
+PST - ppublish
+SO  - Arq Neuropsiquiatr. 2007 Mar;65(1):11-4.
+
+PMID- 17629952
+OWN - NLM
+STAT- MEDLINE
+DA  - 20071015
+DCOM- 20080219
+LR  - 20080417
+PUBM- Print-Electronic
+IS  - 0165-1781 (Print)
+VI  - 153
+IP  - 2
+DP  - 2007 Oct 31
+TI  - Low baseline serotonin-2A receptors predict clinical response to
+      olanzapine in first-episode schizophrenia patients.
+PG  - 103-9
+AB  - The purpose of this study was to determine whether platelet serotonin-2A
+      (5-HT2A) binding sites and inositol 1,4,5 trisphosphate (IP3)
+      concentrations before treatment can identify olanzapine-responsive
+      patients. The study included 21 never medicated, first-episode
+      schizophrenia patients (antipsychotic-naive) and 21 patients with a
+      DSM-IV-TR diagnosis of paranoid schizophrenia who had not received depot
+      antipsychotic treatment in the previous 6 months or oral antipsychotic or
+      antidepressant treatment in the previous 2 months (antipsychotic-free). In
+      the antipsychotic-naive group, olanzapine responders had a significantly
+      lower number of 5-HT2A receptors and lower IP3 concentrations at baseline
+      than non-responders. The combination of baseline 5-HT2A and IP3 values
+      significantly predicted an improvement in negative symptomatology after 6
+      weeks of treatment with olanzapine. In the antipsychotic-free group,
+      responders had significantly higher positive and lower negative
+      symptomatology at baseline, together with a reduced number of 5-HT2A
+      receptors. However, basal 5-HT2A receptors or IP3 concentrations did not
+      significantly predict positive, negative or general clinical response. The
+      reported results suggest that platelet 5-HT2A binding might be a trait
+      marker that could help to identify those patients likely to show greater
+      improvement in negative symptomatology after olanzapine treatment.
+AD  - Department of Psychiatry, Hospital San Rafael, and Department of Clinical
+      Chemistry, Ciutat Sanitaria i Universitaria de Bellvitge, Barcelona,
+      Spain.
+FAU - Arranz, Belen
+AU  - Arranz B
+FAU - Rosel, Pilar
+AU  - Rosel P
+FAU - San, Luis
+AU  - San L
+FAU - Ramirez, Nicolas
+AU  - Ramirez N
+FAU - Duenas, Rosa Maria
+AU  - Duenas RM
+FAU - Salavert, Josep
+AU  - Salavert J
+FAU - Centeno, Meritxell
+AU  - Centeno M
+FAU - del Moral, Enrique
+AU  - del Moral E
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20070716
+PL  - Ireland
+TA  - Psychiatry Res
+JT  - Psychiatry research
+JID - 7911385
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Benzodiazepines)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 132539-06-1 (olanzapine)
+RN  - 85166-31-0 (Inositol 1,4,5-Trisphosphate)
+SB  - IM
+MH  - Adult
+MH  - Antipsychotic Agents/*pharmacokinetics/*therapeutic use
+MH  - Benzodiazepines/*pharmacokinetics/*therapeutic use
+MH  - Binding Sites
+MH  - Female
+MH  - Humans
+MH  - Inositol 1,4,5-Trisphosphate/blood
+MH  - Male
+MH  - Predictive Value of Tests
+MH  - Receptor, Serotonin, 5-HT2A/*blood/metabolism
+MH  - *Schizophrenia/blood/diagnosis/drug therapy
+MH  - Time Factors
+EDAT- 2007/07/17 09:00
+MHDA- 2008/02/20 09:00
+PHST- 2006/06/09 [received]
+PHST- 2006/10/31 [revised]
+PHST- 2006/12/16 [accepted]
+PHST- 2007/07/16 [aheadofprint]
+AID - S0165-1781(06)00405-7 [pii]
+AID - 10.1016/j.psychres.2006.12.015 [doi]
+PST - ppublish
+SO  - Psychiatry Res. 2007 Oct 31;153(2):103-9. Epub 2007 Jul 16.
+
+PMID- 17691947
+OWN - NLM
+STAT- MEDLINE
+DA  - 20070813
+DCOM- 20070918
+PUBM- Print
+IS  - 0929-8673 (Print)
+VI  - 14
+IP  - 19
+DP  - 2007
+TI  - HTR2A gene variants and psychiatric disorders: a review of current
+      literature and selection of SNPs for future studies.
+PG  - 2053-69
+AB  - Variants at the gene encoding for the 5-hydrosytryptamine (serotonin)
+      receptor 2A (HTR2A) have been associated with many psychiatric disorders
+      such as schizophrenia, mood disorders, attention deficit hyperactivity
+      disorder, suicide, anxiety disorders, obsessive-compulsive disorder,
+      eating disorders, and Alzheimer's disease. The studied SNPs differ across
+      studies, in the present review we focused on available evidence with the
+      aim of identifying the overall phenotypic profile of HTR2A variant
+      carriers. We then extensively analyzed all SNPs of the HTR2A gene with
+      criteria of frequency, haplotype blocks, previous evidence, functionality
+      in order to obtain a list of suitable SNPs for future studies that
+      properly cover all possible genetic control of the HTR2A gene. Genetic
+      association studies report conflicting and generally negative results.
+      Most replicated data suggest C allele of the 102 T/C and Tyr452 variants
+      as risk factor for psychosis and antipsychotic response, but the number of
+      not replicating studies does not allow to draw any definite conclusion.
+      Moreover their impact as risk factors is very small. In the other
+      investigated psychiatric fields, evidence shows no involvement or at least
+      a small and not replicated role for HTR2A gene variants. Conflicting and
+      negative results could be due to a real marginal role of this receptor
+      gene variants, or it could be caused by a lack of gene coverage of
+      investigated SNPs. We suggest a wider investigation of the HTR2A gene to
+      better understand its role in psychiatric disorders, preferably
+      complemented with the use of proteomic or metabolomic approaches.
+AD  - Institute of Psychiatry, University of Bologna, Italy.
+      alessandro.serretti@unibo.it
+FAU - Serretti, Alessandro
+AU  - Serretti A
+FAU - Drago, Antonio
+AU  - Drago A
+FAU - De Ronchi, Diana
+AU  - De Ronchi D
+LA  - eng
+PT  - Journal Article
+PT  - Review
+PL  - Netherlands
+TA  - Curr Med Chem
+JT  - Current medicinal chemistry
+JID - 9440157
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+SB  - IM
+MH  - Gene Expression
+MH  - Humans
+MH  - Mental Disorders/*genetics/metabolism
+MH  - Polymorphism, Single Nucleotide
+MH  - Receptor, Serotonin, 5-HT2A/*genetics/metabolism
+MH  - Suicide
+MH  - Variation (Genetics)
+RF  - 256
+EDAT- 2007/08/19 09:00
+MHDA- 2007/09/19 09:00
+PST - ppublish
+SO  - Curr Med Chem. 2007;14(19):2053-69.
+
+PMID- 9356559
+OWN - NLM
+STAT- MEDLINE
+DA  - 19971120
+DCOM- 19971120
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 154
+IP  - 11
+DP  - 1997 Nov
+TI  - PET evidence that loxapine is an equipotent blocker of 5-HT2 and D2
+      receptors: implications for the therapeutics of schizophrenia.
+PG  - 1525-9
+AB  - OBJECTIVE: Loxapine, a dibenzoxazepine antipsychotic, is closely related
+      to clozapine and shares clozapine's high affinity for binding to serotonin
+      5-HT2 and dopamine D4 receptors. The purpose of this study was to document
+      loxapine's 5-HT2 and D2 receptor occupancy in vivo in patients with
+      psychoses. METHOD: Ten patients who were taking loxapine (10-100 mg/day)
+      had their D2 and 5-HT2 receptors assessed by means of positron emission
+      tomography with [11C]raclopride and [18F]setoperone, respectively.
+      RESULTS: The D2 receptor occupancy ranged from 43% to 90%; 5-HT2 occupancy
+      varied from 27% to near saturation. Statistical comparison of the results
+      showed that loxapine was equipotent in blocking 5-HT2 and D2 receptors.
+      CONCLUSIONS: Loxapine differs from typical neuroleptics in demonstrating a
+      high degree of 5-HT2 receptor occupancy. However, it is not "atypical"
+      like clozapine and risperidone, since its 5-HT2 occupancy is not higher
+      than its D2 occupancy. The results demonstrate that a high level of 5-HT2
+      occupancy is not a sufficient condition for atypicality. If atypical
+      antipsychotic action is predicated on a combination of 5-HT2 and D2
+      effects, then it requires > 80% 5-HT2 occupancy in conjunction with < 80%
+      D2 occupancy.
+AD  - Schizophrenia Division, Clarke Institute of Psychiatry, University of
+      Toronto, Canada. kapur@clarke-inst.on.ca
+FAU - Kapur, S
+AU  - Kapur S
+FAU - Zipursky, R
+AU  - Zipursky R
+FAU - Remington, G
+AU  - Remington G
+FAU - Jones, C
+AU  - Jones C
+FAU - McKay, G
+AU  - McKay G
+FAU - Houle, S
+AU  - Houle S
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Dopamine Antagonists)
+RN  - 0 (Fluorine Radioisotopes)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Serotonin)
+RN  - 0 (Salicylamides)
+RN  - 1977-10-2 (Loxapine)
+RN  - 84225-95-6 (Raclopride)
+RN  - 86487-64-1 (setoperone)
+SB  - AIM
+SB  - IM
+MH  - Adult
+MH  - Cerebellum/drug effects/metabolism/*radionuclide imaging
+MH  - Corpus Striatum/drug effects/metabolism/*radionuclide imaging
+MH  - Dopamine Antagonists/diagnostic use
+MH  - Female
+MH  - Fluorine Radioisotopes/diagnostic use
+MH  - Humans
+MH  - Loxapine/pharmacokinetics/pharmacology/*therapeutic use
+MH  - Male
+MH  - Pyrimidinones/diagnostic use
+MH  - Raclopride
+MH  - Receptors, Dopamine D2/*drug effects/metabolism
+MH  - Receptors, Serotonin/*drug effects/metabolism
+MH  - Salicylamides/diagnostic use
+MH  - Schizophrenia/*drug therapy/radionuclide imaging
+MH  - *Tomography, Emission-Computed
+EDAT- 1997/11/14
+MHDA- 1997/11/14 00:01
+PST - ppublish
+SO  - Am J Psychiatry. 1997 Nov;154(11):1525-9.
+
+PMID- 9421827
+OWN - NLM
+STAT- MEDLINE
+DA  - 19980128
+DCOM- 19980128
+LR  - 20071114
+PUBM- Print
+IS  - 0278-5846 (Print)
+VI  - 21
+IP  - 7
+DP  - 1997 Oct
+TI  - Selective effects on prefrontal cortex serotonin by dopamine D3 receptor
+      agonism: interaction with low-dose haloperidol.
+PG  - 1141-53
+AB  - 1. Negative symptoms of schizophrenia are characterized by amotivation,
+      anhedonia and anergia. These aspects of the symptom profile can be modeled
+      by D3 agonism in animal behavioral models. 2. Serotonergic systems have
+      been implicated in pathophysiologic substrates for this disorder; most
+      notably, in deficit state schizophrenia, as newer 'atypical' neuroleptics
+      which are especially efficacious for treating this syndrome antagonize
+      central 5-HT2 receptors. 3. FC regions may also be important in chronic
+      negative symptoms, as hypofrontality has been associated with these
+      schizophrenic features. 4. The author examined effects of a
+      behaviorally-active dose of the D3 agonist, 7OH, on 5-HT metabolism in FC,
+      and the ability of a low-dose neuroleptic treatment to antagonize this
+      biochemical effect. 5. Acute administration of 7OH induced a selective
+      decrease of 5-HT turnover in the FC without affecting metabolism of this
+      transmitter in more subcortical DA regions. 6. Hal, which has previously
+      been demonstrated to antagonize electrophysiologic, biochemical and
+      behavioral effects of 7OH, was without effect on agonist-induced decreases
+      in 5-HT turnover. 7. The biochemical association between D3 agonism and
+      reductions of FC 5-HT may be significant for pathophysiologic mechanisms
+      of negative symptoms, and antagonism of this effect may differ for
+      neuroleptics with varying efficacy in alleviating these symptoms.
+AD  - Research Service, Veterans Administration Medical Center, Syracuse, New
+      York, USA.
+FAU - Lynch, M R
+AU  - Lynch MR
+LA  - eng
+GR  - N01MH30003/MH/United States NIMH
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, Non-P.H.S.
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - ENGLAND
+TA  - Prog Neuropsychopharmacol Biol Psychiatry
+JT  - Progress in neuro-psychopharmacology & biological psychiatry
+JID - 8211617
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Dopamine Agonists)
+RN  - 50-67-9 (Serotonin)
+RN  - 52-86-8 (Haloperidol)
+SB  - IM
+MH  - Animals
+MH  - Antipsychotic Agents/*pharmacology
+MH  - Dopamine Agonists/administration & dosage/*pharmacology
+MH  - Drug Interactions
+MH  - Haloperidol/*pharmacology
+MH  - Male
+MH  - Prefrontal Cortex/drug effects/physiology
+MH  - Rats
+MH  - Rats, Sprague-Dawley
+MH  - Schizophrenia/drug therapy/*physiopathology
+MH  - Serotonin/*metabolism
+EDAT- 1998/01/09
+MHDA- 1998/01/09 00:01
+AID - S0278584697001061 [pii]
+PST - ppublish
+SO  - Prog Neuropsychopharmacol Biol Psychiatry. 1997 Oct;21(7):1141-53.
+
+PMID- 9629566
+OWN - NLM
+STAT- MEDLINE
+DA  - 19980821
+DCOM- 19980821
+LR  - 20041117
+PUBM- Print
+IS  - 0893-133X (Print)
+VI  - 19
+IP  - 2
+DP  - 1998 Aug
+TI  - Serotonin subtype 2 receptor genes and clinical response to clozapine in
+      schizophrenia patients.
+PG  - 123-32
+AB  - Using a pharmacogenetic approach in 185 schizophrenics who have been
+      prospectively assessed for clozapine response, we have examined the
+      hypothesis that polymorphisms in the 5-HT2A (HTR2A), and 5-HT2C (HTR2C)
+      genes are involved in its variable response. A-1438 A-->G polymorphism in
+      the putative promoter and a silent T-->C 102 substitution in HTR2A were in
+      almost complete linkage disequilibrium, and neither was associated with
+      response (T-->C. 102 allele: chi 2 = 0.02; 1 df, p = .90; genotype: chi 2
+      = 0.02, 2 df, p = .99). A his452tyr HTR2A polymorphism was found to be
+      associated with clozapine response (his452tyr allele: chi 2 = 6.43, 1 df,
+      p = .01 [p = .04, Bonferroni corrected]; genotype: chi 2 = 6.54, 2 df, p =
+      .04 [p = .16, Bonferroni corrected]). No HTR2A haplotype was associated
+      with response. Interethnic differences were observed in the frequencies of
+      the cys23ser HTR2C polymorphism. This polymorphism was not significantly
+      associated with response in either of the ethnic groups (Caucasian and
+      African American genotype: chi 2 = 3.46, 2 df, p = .18; chi 2 = .31, 2 df,
+      p = .86, respectively). Although replication is required, the overall
+      results suggest that the his452tyr HTR2A polymorphism may be involved in
+      clozapine response.
+AD  - Neurogenetics Section, Clarke Institute of Psychiatry, University of
+      Toronto, Ontario, Canada.
+FAU - Masellis, M
+AU  - Masellis M
+FAU - Basile, V
+AU  - Basile V
+FAU - Meltzer, H Y
+AU  - Meltzer HY
+FAU - Lieberman, J A
+AU  - Lieberman JA
+FAU - Sevy, S
+AU  - Sevy S
+FAU - Macciardi, F M
+AU  - Macciardi FM
+FAU - Cola, P
+AU  - Cola P
+FAU - Howard, A
+AU  - Howard A
+FAU - Badri, F
+AU  - Badri F
+FAU - Nothen, M M
+AU  - Nothen MM
+FAU - Kalow, W
+AU  - Kalow W
+FAU - Kennedy, J L
+AU  - Kennedy JL
+LA  - eng
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Neuropsychopharmacology
+JT  - Neuropsychopharmacology : official publication of the American College of
+      Neuropsychopharmacology
+JID - 8904907
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Receptor, Serotonin, 5-HT2A)
+RN  - 0 (Receptor, Serotonin, 5-HT2C)
+RN  - 0 (Receptors, Serotonin)
+RN  - 5786-21-0 (Clozapine)
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Adult
+MH  - African Continental Ancestry Group/genetics
+MH  - Analysis of Variance
+MH  - Antipsychotic Agents/*therapeutic use
+MH  - Clozapine/*therapeutic use
+MH  - DNA/blood
+MH  - European Continental Ancestry Group/genetics
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Male
+MH  - North America
+MH  - Point Mutation
+MH  - *Polymorphism, Genetic
+MH  - Promoter Regions (Genetics)
+MH  - Receptor, Serotonin, 5-HT2A
+MH  - Receptor, Serotonin, 5-HT2C
+MH  - Receptors, Serotonin/*genetics
+MH  - Schizophrenia/*drug therapy/*genetics
+EDAT- 1998/06/18
+MHDA- 1998/06/18 00:01
+AID - S0893133X98000074 [pii]
+AID - 10.1016/S0893-133X(98)00007-4 [doi]
+PST - ppublish
+SO  - Neuropsychopharmacology. 1998 Aug;19(2):123-32.
+
+PMID- 9659858
+OWN - NLM
+STAT- MEDLINE
+DA  - 19980721
+DCOM- 19980721
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 155
+IP  - 7
+DP  - 1998 Jul
+TI  - 5-HT2 and D2 receptor occupancy of olanzapine in schizophrenia: a PET
+      investigation.
+PG  - 921-8
+AB  - OBJECTIVE: Olanzapine is a new atypical antipsychotic recently introduced
+      for the treatment of schizophrenia. The purpose of this study was to
+      investigate olanzapine's binding to the serotonin 5-HT2 and dopamine D2
+      receptors in schizophrenic patients being treated with clinically relevant
+      doses. METHOD: Twelve patients with schizophrenia were randomly assigned
+      to 5, 10, 15, or 20 mg/day of olanzapine in a prospective fashion. Three
+      other subjects taking 30-40 mg/day were also included. Once steady-state
+      plasma levels were achieved, dopamine D2 and serotonin 5-HT2 receptors
+      were assessed by using [11C]raclopride and [18F]setoperone positron
+      emission tomography imaging, respectively. Ratings of clinical status,
+      extrapyramidal side effects, and prolactin levels were also obtained.
+      RESULTS: Olanzapine induced near saturation of the 5-HT2 receptors, even
+      at 5 mg/day. Its D2 occupancy increased with dose: patients taking 5-20
+      mg/day showed 43%-80% D2 occupancy, while patients taking 30-40 mg/day
+      showed 83%-88%. CONCLUSIONS: Olanzapine is a potent 5-HT2 blocker and
+      shows a higher 5-HT2 than D2 occupancy at all doses. However, its D2
+      occupancy is higher than that of clozapine and similar to that of
+      risperidone. In the usual clinical dose range of 10-20 mg/day, its
+      occupancy varies from 71% to 80%, and this restricted range may explain
+      its freedom from extrapyramidal side effects and prolactin elevation.
+      However, doses of 30 mg/day and higher are associated with more than 80%
+      D2 occupancy and may have a higher likelihood of prolactin elevation and
+      extrapyramidal side effects.
+AD  - Schizophrenia Division, Clarke Institute of Psychiatry, Toronto, Ont.,
+      Canada. kapur@clarke-inst.on.ca
+FAU - Kapur, S
+AU  - Kapur S
+FAU - Zipursky, R B
+AU  - Zipursky RB
+FAU - Remington, G
+AU  - Remington G
+FAU - Jones, C
+AU  - Jones C
+FAU - DaSilva, J
+AU  - DaSilva J
+FAU - Wilson, A A
+AU  - Wilson AA
+FAU - Houle, S
+AU  - Houle S
+LA  - eng
+PT  - Clinical Trial
+PT  - Journal Article
+PT  - Randomized Controlled Trial
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Benzodiazepines)
+RN  - 0 (Carbon Radioisotopes)
+RN  - 0 (Fluorine Radioisotopes)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Serotonin)
+RN  - 0 (Salicylamides)
+RN  - 132539-06-1 (olanzapine)
+RN  - 28797-61-7 (Pirenzepine)
+RN  - 84225-95-6 (Raclopride)
+RN  - 86487-64-1 (setoperone)
+RN  - 9002-62-4 (Prolactin)
+SB  - AIM
+SB  - IM
+CIN - Schizophr Res. 2005 Jul 15;76(2-3):357-8. PMID: 15949669
+MH  - Adult
+MH  - Antipsychotic Agents/*pharmacokinetics/*therapeutic use
+MH  - Benzodiazepines
+MH  - Carbon Radioisotopes/diagnostic use
+MH  - Dose-Response Relationship, Drug
+MH  - Drug Administration Schedule
+MH  - Female
+MH  - Fluorine Radioisotopes/diagnostic use
+MH  - Humans
+MH  - Male
+MH  - Pirenzepine/*analogs & derivatives/pharmacokinetics/therapeutic use
+MH  - Prolactin/blood
+MH  - Pyrimidinones/diagnostic use
+MH  - Raclopride
+MH  - Receptors, Dopamine D2/drug effects/*metabolism
+MH  - Receptors, Serotonin/drug effects/*metabolism
+MH  - Salicylamides/diagnostic use
+MH  - Schizophrenia/*drug therapy/metabolism/radionuclide imaging
+MH  - *Tomography, Emission-Computed
+MH  - Treatment Outcome
+EDAT- 1998/07/11
+MHDA- 1998/07/11 00:01
+PST - ppublish
+SO  - Am J Psychiatry. 1998 Jul;155(7):921-8.
+
+PMID- 9734554
+OWN - NLM
+STAT- MEDLINE
+DA  - 19980916
+DCOM- 19980916
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 155
+IP  - 9
+DP  - 1998 Sep
+TI  - Lack of association between neuroleptic malignant syndrome and
+      polymorphisms in the 5-HT1A and 5-HT2A receptor genes.
+PG  - 1275-7
+AB  - OBJECTIVE: The molecular basis of neuroleptic malignant syndrome is
+      unclear, but studies suggest that genetic factors are involved in its
+      pathogenesis. Considering possible involvement of the serotonergic system
+      in neuroleptic malignant syndrome, the authors examined the association
+      between neuroleptic malignant syndrome and polymorphisms of the 5-HT1A and
+      5-HT2A receptor genes. METHOD: The authors examined the frequencies of
+      gene polymorphisms in the 5-HT1A (Arg219Leu) and 5-HT2A (Thr25Asn and
+      His452Tyr) receptor genes in 29 patients previously diagnosed with
+      neuroleptic malignant syndrome, 94 neuroleptic-treated patients with
+      schizophrenia who had no history of neuroleptic malignant syndrome, and 94
+      healthy comparison subjects. Polymerase chain reaction and restriction
+      fragment length polymorphism analyses were used to screen gene mutations.
+      RESULTS: No polymorphic allele was detected in the patients who had
+      experienced the neuroleptic malignant syndrome. CONCLUSIONS: The authors
+      cannot conclude that polymorphisms in the 5-HT1A and 5HT2A receptor genes
+      are factors determining susceptibility to the neuroleptic malignant
+      syndrome.
+AD  - Department of Psychiatry, Yokohama City University School of Medicine,
+      Yokohama, Japan.
+FAU - Kawanishi, C
+AU  - Kawanishi C
+FAU - Hanihara, T
+AU  - Hanihara T
+FAU - Shimoda, Y
+AU  - Shimoda Y
+FAU - Suzuki, K
+AU  - Suzuki K
+FAU - Sugiyama, N
+AU  - Sugiyama N
+FAU - Onishi, H
+AU  - Onishi H
+FAU - Miyakawa, T
+AU  - Miyakawa T
+FAU - Yamada, Y
+AU  - Yamada Y
+FAU - Kosaka, K
+AU  - Kosaka K
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Psychotropic Drugs)
+RN  - 0 (Receptors, Serotonin)
+RN  - 50-67-9 (Serotonin)
+SB  - AIM
+SB  - IM
+MH  - Adult
+MH  - Alleles
+MH  - Cardiopulmonary Resuscitation
+MH  - Female
+MH  - Gene Frequency
+MH  - Genotype
+MH  - Humans
+MH  - Male
+MH  - Neuroleptic Malignant Syndrome/etiology/*genetics/physiopathology
+MH  - *Polymorphism, Genetic
+MH  - Polymorphism, Restriction Fragment Length
+MH  - Psychotropic Drugs/adverse effects
+MH  - Receptors, Serotonin/*genetics
+MH  - Risk Factors
+MH  - Serotonin/physiology
+EDAT- 1998/09/12
+MHDA- 1998/09/12 00:01
+PST - ppublish
+SO  - Am J Psychiatry. 1998 Sep;155(9):1275-7.
+
+PMID- 9892300
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990127
+DCOM- 19990127
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 156
+IP  - 1
+DP  - 1999 Jan
+TI  - Serotonin 5-HT2 receptors in schizophrenia: a PET study using
+      [18F]setoperone in neuroleptic-naive patients and normal subjects.
+PG  - 72-8
+AB  - OBJECTIVE: Several postmortem studies have reported a decreased density of
+      serotonin 5-HT2 receptors in the prefrontal cortex in schizophrenia. The
+      purpose of this study was to investigate this in patients with
+      schizophrenia by means of [18F]setoperone and positron emission tomography
+      (PET) imaging. METHOD: Thirteen neuroleptic-free patients with
+      schizophrenia, 10 of whom were also neuroleptic-naive, were compared with
+      a group of 26 normal subjects in the same age range. The density of 5-HT2
+      receptors was assessed with the use of [18F]setoperone and PET in
+      standardized cortical regions of interest. RESULTS: Increasing age was
+      associated with similar declines in 5-HT2 receptors in all cortical
+      regions in the patient group and in the normal comparison group. After
+      control for the effect of age, there was no statistically significant
+      difference between the patients and the comparison subjects in 5-HT2
+      receptor density in any of the cortical regions. CONCLUSIONS: This study
+      failed to find the decrease in 5-HT2 receptors reported in postmortem
+      studies of schizophrenia. The study had the power to detect a decrease of
+      25% or more in 5-HT2 receptors, which was anticipated on the basis of the
+      previous postmortem studies. Thus, a primary serotonergic abnormality in
+      schizophrenia, if one exists, is either small or unlikely to be at the
+      level of the 5-HT2 receptors. This finding does not rule out a therapeutic
+      role for 5-HT2 antagonists in schizophrenia, but it does suggest that the
+      therapeutic contribution is likely to be an indirect one.
+AD  - The Clarke Institute of Psychiatry, Department of Psychiatry, University
+      of Toronto, ON, Canada.
+FAU - Lewis, R
+AU  - Lewis R
+FAU - Kapur, S
+AU  - Kapur S
+FAU - Jones, C
+AU  - Jones C
+FAU - DaSilva, J
+AU  - DaSilva J
+FAU - Brown, G M
+AU  - Brown GM
+FAU - Wilson, A A
+AU  - Wilson AA
+FAU - Houle, S
+AU  - Houle S
+FAU - Zipursky, R B
+AU  - Zipursky RB
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Contrast Media)
+RN  - 0 (Fluorine Radioisotopes)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptors, Serotonin)
+RN  - 86487-64-1 (setoperone)
+SB  - AIM
+SB  - IM
+MH  - Antipsychotic Agents/therapeutic use
+MH  - Brain Chemistry
+MH  - Cerebral Cortex/chemistry/radionuclide imaging
+MH  - Contrast Media
+MH  - Fluorine Radioisotopes/*diagnostic use
+MH  - Humans
+MH  - Prefrontal Cortex/*chemistry/radionuclide imaging
+MH  - Pyrimidinones/diagnostic use
+MH  - Receptors, Serotonin/*analysis
+MH  - Schizophrenia/*diagnosis/drug therapy/radionuclide imaging
+MH  - *Tomography, Emission-Computed
+EDAT- 1999/01/19
+MHDA- 1999/01/19 00:01
+PST - ppublish
+SO  - Am J Psychiatry. 1999 Jan;156(1):72-8.
+
+PMID- 9989565
+OWN - NLM
+STAT- MEDLINE
+DA  - 19990225
+DCOM- 19990225
+LR  - 20061115
+PUBM- Print
+IS  - 0002-953X (Print)
+VI  - 156
+IP  - 2
+DP  - 1999 Feb
+TI  - Clinical and theoretical implications of 5-HT2 and D2 receptor occupancy
+      of clozapine, risperidone, and olanzapine in schizophrenia.
+PG  - 286-93
+AB  - OBJECTIVE: Dopamine D2 receptor occupancy measurements provide a valid
+      predictor of antipsychotic response, extrapyramidal side effects, and
+      elevation of prolactin levels. The new antipsychotics clozapine,
+      risperidone, and olanzapine obtain antipsychotic response with few
+      extrapyramidal side effects and little prolactin elevation. The purpose of
+      this study was to compare the D2 and serotonin 5-HT2 receptor occupancies
+      of these drugs in patients receiving multiple-dose, steady-state regimens.
+      METHOD: Forty-four patients with schizophrenia (16 taking risperidone,
+      2-12 mg/day; 17 taking olanzapine, 5-60 mg/day; and 11 taking clozapine,
+      75-900 mg/day) had their D2 and 5-HT2 occupancies determined with the use
+      of [11C]raclopride and [18F]setoperone, respectively, and positron
+      emission tomography imaging. RESULTS: Clozapine showed a much lower D2
+      occupancy (16%-68%) than risperidone (63%-89%) and olanzapine (43%-89%).
+      Risperidone and olanzapine gave equal D2 occupancies at doses of 5 and 20
+      mg/day, respectively. All three drugs showed greater 5-HT2 than D2
+      occupancy at all doses, although the difference was greatest for
+      clozapine. CONCLUSIONS: Clozapine, at doses known to be effective in
+      routine clinical settings, showed a D2 occupancy clearly lower than that
+      of typical antipsychotics, while risperidone and olanzapine at their usual
+      clinical doses gave the same level of D2 occupancy as low-dose typical
+      antipsychotics. The results also suggest that some previous clinical
+      comparisons of antipsychotics may have been confounded by different levels
+      of D2 occupancy. Clinical comparisons of these drugs, matching for D2
+      occupancy, may provide a better measure of their true "atypicality" and
+      will help in understanding the contribution of non-D2 receptors to
+      antipsychotic effects.
+AD  - The Clarke Institute of Psychiatry, Department of Psychiatry, University
+      of Toronto, ON, Canada. kapur@clarke-inst.on.ca
+FAU - Kapur, S
+AU  - Kapur S
+FAU - Zipursky, R B
+AU  - Zipursky RB
+FAU - Remington, G
+AU  - Remington G
+LA  - eng
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - UNITED STATES
+TA  - Am J Psychiatry
+JT  - The American journal of psychiatry
+JID - 0370512
+RN  - 0 (Antipsychotic Agents)
+RN  - 0 (Benzodiazepines)
+RN  - 0 (Carbon Radioisotopes)
+RN  - 0 (Fluorine Radioisotopes)
+RN  - 0 (Pyrimidinones)
+RN  - 0 (Receptors, Dopamine D2)
+RN  - 0 (Receptors, Serotonin)
+RN  - 0 (Salicylamides)
+RN  - 106266-06-2 (Risperidone)
+RN  - 132539-06-1 (olanzapine)
+RN  - 28797-61-7 (Pirenzepine)
+RN  - 5786-21-0 (Clozapine)
+RN  - 84225-95-6 (Raclopride)
+RN  - 86487-64-1 (setoperone)
+SB  - AIM
+SB  - IM
+MH  - Adult
+MH  - Antipsychotic Agents/*metabolism/pharmacology/therapeutic use
+MH  - Benzodiazepines
+MH  - Carbon Radioisotopes/diagnostic use
+MH  - Clozapine/*metabolism/pharmacology/therapeutic use
+MH  - Drug Administration Schedule
+MH  - Female
+MH  - Fluorine Radioisotopes/diagnostic use
+MH  - Humans
+MH  - Male
+MH  - Middle Aged
+MH  - Pirenzepine/*analogs & derivatives/metabolism/pharmacology/therapeutic use
+MH  - Pyrimidinones/diagnostic use
+MH  - Raclopride
+MH  - Receptors, Dopamine D2/drug effects/*metabolism
+MH  - Receptors, Serotonin/drug effects/*metabolism
+MH  - Risperidone/*metabolism/pharmacology/therapeutic use
+MH  - Salicylamides/diagnostic use
+MH  - Schizophrenia/*drug therapy/metabolism/radionuclide imaging
+MH  - Tomography, Emission-Computed
+EDAT- 1999/02/16
+MHDA- 1999/02/16 00:01
+PST - ppublish
+SO  - Am J Psychiatry. 1999 Feb;156(2):286-93.
+

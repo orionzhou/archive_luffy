@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/98/trunk/misc/db/INC
+END
+function.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/98/trunk/misc/db/INC/function.pl
+END
+db_connect.pl
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/98/trunk/misc/db/INC/db_connect.pl
+END
+get_input.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/98/trunk/misc/db/INC/get_input.pl
+END

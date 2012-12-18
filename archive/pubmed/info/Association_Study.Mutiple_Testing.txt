@@ -1,0 +1,180 @@
+PMID- 13680525
+OWN - NLM
+STAT- MEDLINE
+DA  - 20030925
+DCOM- 20031121
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 73
+IP  - 4
+DP  - 2003 Oct
+TI  - "Are we there yet?": Deciding when one has demonstrated specific genetic
+      causation in complex diseases and quantitative traits.
+PG  - 711-9
+AB  - Although mathematical relationships can be proven by deductive logic,
+      biological relationships can only be inferred from empirical observations.
+      This is a distinct disadvantage for those of us who strive to identify the
+      genes involved in complex diseases and quantitative traits. If causation
+      cannot be proven, however, what does constitute sufficient evidence for
+      causation? The philosopher Karl Popper said, "Our belief in a hypothesis
+      can have no stronger basis than our repeated unsuccessful critical
+      attempts to refute it." We believe that to establish causation, as
+      scientists, we must make a serious attempt to refute our own hypotheses
+      and to eliminate all known sources of bias before association becomes
+      causation. In addition, we suggest that investigators must provide
+      sufficient data and evidence of their unsuccessful efforts to find any
+      confounding biases. In this editorial, we discuss what "causation" means
+      in the context of complex diseases and quantitative traits, and we suggest
+      guidelines for steps that may be taken to address possible confounders of
+      association before polymorphisms may be called "causative."
+FAU - Page, Grier P
+AU  - Page GP
+FAU - George, Varghese
+AU  - George V
+FAU - Go, Rodney C
+AU  - Go RC
+FAU - Page, Patricia Z
+AU  - Page PZ
+FAU - Allison, David B
+AU  - Allison DB
+LA  - eng
+GR  - DK056366/DK/United States NIDDK
+GR  - P01AR049084/AR/United States NIAMS
+GR  - P20RR016430/RR/United States NCRR
+GR  - P30DK056336/DK/United States NIDDK
+GR  - R01ES09912/ES/United States NIEHS
+PT  - Editorial
+PT  - Research Support, U.S. Gov't, P.H.S.
+PT  - Review
+DEP - 20030917
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+SB  - IM
+MH  - Cystic Fibrosis/genetics
+MH  - Genetic Diseases, Inborn/*genetics
+MH  - Humans
+MH  - National Institutes of Health (U.S.)
+MH  - *Quantitative Trait Loci
+MH  - Reproducibility of Results
+MH  - United States
+RF  - 75
+PMC - PMC1180596
+EDAT- 2003/09/19 05:00
+MHDA- 2003/12/03 05:00
+PHST- 2003/08/05 [received]
+PHST- 2003/08/06 [accepted]
+PHST- 2003/09/17 [aheadofprint]
+AID - AJHG40440 [pii]
+PST - ppublish
+SO  - Am J Hum Genet. 2003 Oct;73(4):711-9. Epub 2003 Sep 17.
+
+PMID- 16408254
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060208
+DCOM- 20060425
+LR  - 20071114
+PUBM- Print-Electronic
+IS  - 0002-9297 (Print)
+VI  - 78
+IP  - 3
+DP  - 2006 Mar
+TI  - Evaluating statistical significance in two-stage genomewide association
+      studies.
+PG  - 505-9
+AB  - Genomewide association studies are being conducted to unravel the genetic
+      etiology of complex human diseases. Because of cost constraints, these
+      studies typically employ a two-stage design, under which a large panel of
+      markers is examined in a subsample of subjects, and the most-promising
+      markers are then examined in all subjects. This report describes a simple
+      and efficient method to evaluate statistical significance for such genome
+      studies. The proposed method, which properly accounts for the correlated
+      nature of polymorphism data, provides accurate control of the overall
+      false-positive rate and is substantially more powerful than the standard
+      Bonferroni correction, especially when the markers are in strong linkage
+      disequilibrium.
+AD  - Department of Biostatistics, University of North Carolina, Chapel Hill,
+      27599-7420, USA. lin@bios.unc.edu
+FAU - Lin, D Y
+AU  - Lin DY
+LA  - eng
+GR  - 2 R01 CA082659-08/CA/United States NCI
+GR  - 2 R37 GM047845-15/GM/United States NIGMS
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+DEP - 20060111
+PL  - United States
+TA  - Am J Hum Genet
+JT  - American journal of human genetics
+JID - 0370475
+RN  - 0 (Genetic Markers)
+SB  - IM
+CIN - Am J Hum Genet. 2006 Jun;78(6):1094-5; author reply 1096. PMID: 16685665
+MH  - Data Interpretation, Statistical
+MH  - Genetic Diseases, Inborn/*genetics
+MH  - Genetic Markers/genetics
+MH  - *Genetic Predisposition to Disease
+MH  - *Genome, Human
+MH  - Genomics/*methods
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Software
+PMC - PMC1380293
+EDAT- 2006/01/13 09:00
+MHDA- 2006/04/28 09:00
+PHST- 2005/11/07 [received]
+PHST- 2006/01/02 [accepted]
+PHST- 2006/01/11 [aheadofprint]
+AID - S0002-9297(07)62389-1 [pii]
+AID - 10.1086/500812 [doi]
+PST - ppublish
+SO  - Am J Hum Genet. 2006 Mar;78(3):505-9. Epub 2006 Jan 11.
+
+PMID- 16540537
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060605
+DCOM- 20070212
+PUBM- Print-Electronic
+IS  - 0300-5771 (Print)
+VI  - 35
+IP  - 3
+DP  - 2006 Jun
+TI  - Commentary: grading the credibility of molecular evidence for complex
+      diseases.
+PG  - 572-8; discussion 593-6
+AD  - Department of Hygiene and Epidemiology, University of Ioannina School of
+      Medicine, Ioannina 45110, Greece. jioannid@cc.uoi.gr
+FAU - Ioannidis, John P A
+AU  - Ioannidis JP
+LA  - eng
+PT  - Comment
+PT  - Journal Article
+PT  - Review
+DEP - 20060315
+PL  - England
+TA  - Int J Epidemiol
+JT  - International journal of epidemiology
+JID - 7802871
+SB  - IM
+CON - Int J Epidemiol. 2006 Jun;35(3):562-71. PMID: 16540539
+MH  - Chronic Disease/epidemiology
+MH  - Disease/*etiology
+MH  - Epidemiologic Methods
+MH  - Epidemiology, Molecular
+MH  - Genetic Diseases, Inborn/genetics
+MH  - Humans
+MH  - Molecular Biology
+MH  - Risk Factors
+RF  - 54
+EDAT- 2006/03/17 09:00
+MHDA- 2007/02/13 09:00
+PHST- 2006/03/15 [aheadofprint]
+AID - dyl003 [pii]
+AID - 10.1093/ije/dyl003 [doi]
+PST - ppublish
+SO  - Int J Epidemiol. 2006 Jun;35(3):572-8; discussion 593-6. Epub 2006 Mar 15.
+

@@ -1,0 +1,1196 @@
+PMID- 14685227
+OWN - NLM
+STAT- MEDLINE
+DA  - 20031219
+DCOM- 20040115
+LR  - 20061115
+PUBM- Print
+IS  - 1476-4687 (Electronic)
+VI  - 426
+IP  - 6968
+DP  - 2003 Dec 18
+TI  - The International HapMap Project.
+PG  - 789-96
+AB  - The goal of the International HapMap Project is to determine the common
+      patterns of DNA sequence variation in the human genome and to make this
+      information freely available in the public domain. An international
+      consortium is developing a map of these patterns across the genome by
+      determining the genotypes of one million or more sequence variants, their
+      frequencies and the degree of association between them, in DNA samples
+      from populations with ancestry from parts of Africa, Asia and Europe. The
+      HapMap will allow the discovery of sequence variants that affect common
+      disease, will facilitate development of diagnostic tools, and will enhance
+      our ability to choose targets for therapeutic intervention.
+CN  - The International HapMap Consortium
+LA  - eng
+PT  - Journal Article
+PT  - Multicenter Study
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - England
+TA  - Nature
+JT  - Nature
+JID - 0410462
+RN  - 9007-49-2 (DNA)
+SB  - E
+SB  - IM
+CIN - Nature. 2003 Dec 18;426(6968):739. PMID: 14685177
+MH  - Base Sequence
+MH  - Continental Population Groups/genetics
+MH  - DNA/genetics
+MH  - Gene Frequency
+MH  - *Genome, Human
+MH  - Genomics/*methods
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - *International Cooperation
+MH  - Polymorphism, Single Nucleotide/genetics
+MH  - Public Sector
+MH  - Variation (Genetics)/*genetics
+OID - KIE: 115211
+OTO - KIE
+OT  - Biomedical and Behavioral Research
+OT  - Empirical Approach
+OT  - Genetics and Reproduction
+GN  - KIE: 68 refs.
+GN  - KIE: KIE Bib: genome mapping
+EDAT- 2003/12/20 05:00
+MHDA- 2004/01/16 05:00
+AID - 10.1038/nature02168 [doi]
+AID - nature02168 [pii]
+PST - ppublish
+SO  - Nature. 2003 Dec 18;426(6968):789-96.
+
+PMID- 15718463
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050218
+DCOM- 20050302
+LR  - 20070319
+PUBM- Print
+IS  - 1095-9203 (Electronic)
+VI  - 307
+IP  - 5712
+DP  - 2005 Feb 18
+TI  - Whole-genome patterns of common DNA variation in three human populations.
+PG  - 1072-9
+AB  - Individual differences in DNA sequence are the genetic basis of human
+      variability. We have characterized whole-genome patterns of common human
+      DNA variation by genotyping 1,586,383 single-nucleotide polymorphisms
+      (SNPs) in 71 Americans of European, African, and Asian ancestry. Our
+      results indicate that these SNPs capture most common genetic variation as
+      a result of linkage disequilibrium, the correlation among common SNP
+      alleles. We observe a strong correlation between extended regions of
+      linkage disequilibrium and functional genomic elements. Our data provide a
+      tool for exploring many questions that remain regarding the causal role of
+      common human DNA variation in complex human traits and for investigating
+      the nature of genetic variation within and between human populations.
+AD  - Perlegen Sciences Inc., 2021 Stierlin Court, Mountain View, CA 94043, USA.
+FAU - Hinds, David A
+AU  - Hinds DA
+FAU - Stuve, Laura L
+AU  - Stuve LL
+FAU - Nilsen, Geoffrey B
+AU  - Nilsen GB
+FAU - Halperin, Eran
+AU  - Halperin E
+FAU - Eskin, Eleazar
+AU  - Eskin E
+FAU - Ballinger, Dennis G
+AU  - Ballinger DG
+FAU - Frazer, Kelly A
+AU  - Frazer KA
+FAU - Cox, David R
+AU  - Cox DR
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Science
+JT  - Science (New York, N.Y.)
+JID - 0404511
+RN  - 0 (Genetic Markers)
+SB  - IM
+CIN - Science. 2005 Feb 18;307(5712):1052-3. PMID: 15718454
+MH  - African Americans/*genetics
+MH  - Algorithms
+MH  - Asian Continental Ancestry Group/*genetics
+MH  - Case-Control Studies
+MH  - Chromosome Mapping
+MH  - Databases, Genetic
+MH  - European Continental Ancestry Group/*genetics
+MH  - Female
+MH  - Gene Frequency
+MH  - Genetic Markers
+MH  - Genetic Predisposition to Disease
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Haplotypes
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - Male
+MH  - Multifactorial Inheritance
+MH  - *Polymorphism, Single Nucleotide
+MH  - Recombination, Genetic
+MH  - Risk Factors
+MH  - Selection (Genetics)
+MH  - *Variation (Genetics)
+EDAT- 2005/02/19 09:00
+MHDA- 2005/03/03 09:00
+AID - 307/5712/1072 [pii]
+AID - 10.1126/science.1105436 [doi]
+PST - ppublish
+SO  - Science. 2005 Feb 18;307(5712):1072-9.
+
+PMID- 15961272
+OWN - NLM
+STAT- MEDLINE
+DA  - 20050704
+DCOM- 20051207
+LR  - 20071114
+PUBM- Print
+IS  - 0888-7543 (Print)
+VI  - 86
+IP  - 2
+DP  - 2005 Aug
+TI  - High-density single-nucleotide polymorphism maps of the human genome.
+PG  - 117-26
+AB  - Here we report a large, extensively characterized set of single-nucleotide
+      polymorphisms (SNPs) covering the human genome. We determined the allele
+      frequencies of 55,018 SNPs in African Americans, Asians
+      (Japanese-Chinese), and European Americans as part of The SNP Consortium's
+      Allele Frequency Project. A subset of 8333 SNPs was also characterized in
+      Koreans. Because these SNPs were ascertained in the same way, the data set
+      is particularly useful for modeling. Our results document that much
+      genetic variation is shared among populations. For autosomes, some 44% of
+      these SNPs have a minor allele frequency > or =10% in each population, and
+      the average allele frequency differences between populations with
+      different continental origins are less than 19%. However, the several
+      percentage point allele frequency differences among the closely related
+      Korean, Japanese, and Chinese populations suggest caution in using
+      mixtures of well-established populations for case-control genetic studies
+      of complex traits. We estimate that approximately 7% of these SNPs are
+      private SNPs with minor allele frequencies <1%. A useful set of
+      characterized SNPs with large allele frequency differences between
+      populations (>60%) can be used for admixture studies. High-density maps of
+      high-quality, characterized SNPs produced by this project are freely
+      available.
+AD  - Washington University, Division of Dermatology, St. Louis, MO, USA.
+FAU - Miller, Raymond D
+AU  - Miller RD
+FAU - Phillips, Michael S
+AU  - Phillips MS
+FAU - Jo, Inho
+AU  - Jo I
+FAU - Donaldson, Miriam A
+AU  - Donaldson MA
+FAU - Studebaker, Joel F
+AU  - Studebaker JF
+FAU - Addleman, Nicholas
+AU  - Addleman N
+FAU - Alfisi, Steven V
+AU  - Alfisi SV
+FAU - Ankener, Wendy M
+AU  - Ankener WM
+FAU - Bhatti, Hamid A
+AU  - Bhatti HA
+FAU - Callahan, Chad E
+AU  - Callahan CE
+FAU - Carey, Benjamin J
+AU  - Carey BJ
+FAU - Conley, Cheryl L
+AU  - Conley CL
+FAU - Cyr, Justin M
+AU  - Cyr JM
+FAU - Derohannessian, Vram
+AU  - Derohannessian V
+FAU - Donaldson, Rachel A
+AU  - Donaldson RA
+FAU - Elosua, Carolina
+AU  - Elosua C
+FAU - Ford, Stacey E
+AU  - Ford SE
+FAU - Forman, Angela M
+AU  - Forman AM
+FAU - Gelfand, Craig A
+AU  - Gelfand CA
+FAU - Grecco, Nicole M
+AU  - Grecco NM
+FAU - Gutendorf, Susan M
+AU  - Gutendorf SM
+FAU - Hock, Cricket R
+AU  - Hock CR
+FAU - Hozza, Mark J
+AU  - Hozza MJ
+FAU - Hur, Soyoung
+AU  - Hur S
+FAU - In, Sun Mi
+AU  - In SM
+FAU - Jackson, Diana L
+AU  - Jackson DL
+FAU - Jo, Sangmee Ahn
+AU  - Jo SA
+FAU - Jung, Sung-Chul
+AU  - Jung SC
+FAU - Kim, Sook
+AU  - Kim S
+FAU - Kimm, Kuchan
+AU  - Kimm K
+FAU - Kloss, Ellen F
+AU  - Kloss EF
+FAU - Koboldt, Daniel C
+AU  - Koboldt DC
+FAU - Kuebler, Jennifer M
+AU  - Kuebler JM
+FAU - Kuo, Feng-Shen
+AU  - Kuo FS
+FAU - Lathrop, Jessica A
+AU  - Lathrop JA
+FAU - Lee, Jong-Keuk
+AU  - Lee JK
+FAU - Leis, Kathy L
+AU  - Leis KL
+FAU - Livingston, Stephanie A
+AU  - Livingston SA
+FAU - Lovins, Elizabeth G
+AU  - Lovins EG
+FAU - Lundy, Maria L
+AU  - Lundy ML
+FAU - Maggan, Sima
+AU  - Maggan S
+FAU - Minton, Matthew
+AU  - Minton M
+FAU - Mockler, Michael A
+AU  - Mockler MA
+FAU - Morris, David W
+AU  - Morris DW
+FAU - Nachtman, Eric P
+AU  - Nachtman EP
+FAU - Oh, Bermseok
+AU  - Oh B
+FAU - Park, Chan
+AU  - Park C
+FAU - Park, Chang-Wook
+AU  - Park CW
+FAU - Pavelka, Nicholas
+AU  - Pavelka N
+FAU - Perkins, Adrienne B
+AU  - Perkins AB
+FAU - Restine, Stephanie L
+AU  - Restine SL
+FAU - Sachidanandam, Ravi
+AU  - Sachidanandam R
+FAU - Reinhart, Andrew J
+AU  - Reinhart AJ
+FAU - Scott, Kathryn E
+AU  - Scott KE
+FAU - Shah, Gira J
+AU  - Shah GJ
+FAU - Tate, Jatana M
+AU  - Tate JM
+FAU - Varde, Shobha A
+AU  - Varde SA
+FAU - Walters, Amy
+AU  - Walters A
+FAU - White, J Rebecca
+AU  - White JR
+FAU - Yoo, Yeon-Kyeong
+AU  - Yoo YK
+FAU - Lee, Jong-Eun
+AU  - Lee JE
+FAU - Boyce-Jacino, Michael T
+AU  - Boyce-Jacino MT
+FAU - Kwok, Pui-Yan
+AU  - Kwok PY
+CN  - The SNP Consortium Allele Frequency Project
+LA  - eng
+GR  - R01 HG001720-08/HG/United States NHGRI
+PT  - Journal Article
+PT  - Research Support, Non-U.S. Gov't
+PL  - United States
+TA  - Genomics
+JT  - Genomics
+JID - 8800135
+SB  - IM
+MH  - Alleles
+MH  - *Chromosome Mapping
+MH  - Databases, Genetic
+MH  - Gene Frequency
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Humans
+MH  - *Polymorphism, Single Nucleotide
+MH  - Sequence Analysis, DNA
+PMC - PMC1885222
+MID - NIHMS16099
+EDAT- 2005/06/18 09:00
+MHDA- 2005/12/13 09:00
+PHST- 2004/12/17 [received]
+PHST- 2005/03/30 [revised]
+PHST- 2005/04/16 [accepted]
+AID - S0888-7543(05)00118-7 [pii]
+AID - 10.1016/j.ygeno.2005.04.012 [doi]
+PST - ppublish
+SO  - Genomics. 2005 Aug;86(2):117-26.
+
+PMID- 16255080
+OWN - NLM
+STAT- MEDLINE
+DA  - 20051027
+DCOM- 20051123
+LR  - 20071114
+PUBM- Print
+IS  - 1476-4687 (Electronic)
+VI  - 437
+IP  - 7063
+DP  - 2005 Oct 27
+TI  - A haplotype map of the human genome.
+PG  - 1299-320
+AB  - Inherited genetic variation has a critical but as yet largely
+      uncharacterized role in human disease. Here we report a public database of
+      common variation in the human genome: more than one million single
+      nucleotide polymorphisms (SNPs) for which accurate and complete genotypes
+      have been obtained in 269 DNA samples from four populations, including ten
+      500-kilobase regions in which essentially all information about common DNA
+      variation has been extracted. These data document the generality of
+      recombination hotspots, a block-like structure of linkage disequilibrium
+      and low haplotype diversity, leading to substantial correlations of SNPs
+      with many of their neighbours. We show how the HapMap resource can guide
+      the design and analysis of genetic association studies, shed light on
+      structural variation and recombination, and identify loci that may have
+      been subject to natural selection during human evolution.
+CN  - International HapMap Consortium
+LA  - eng
+GR  - R01 HG001720-06/HG/United States NHGRI
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - England
+TA  - Nature
+JT  - Nature
+JID - 0410462
+RN  - 0 (DNA, Mitochondrial)
+SB  - IM
+CIN - Nature. 2005 Oct 27;437(7063):1241-2. PMID: 16251937
+MH  - Chromosomes, Human, Y/genetics
+MH  - DNA, Mitochondrial/genetics
+MH  - Gene Frequency/genetics
+MH  - *Genome, Human
+MH  - Haplotypes/*genetics
+MH  - Humans
+MH  - Linkage Disequilibrium/genetics
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Recombination, Genetic/genetics
+MH  - Selection (Genetics)
+PMC - PMC1880871
+MID - NIHMS16100
+EDAT- 2005/10/29 09:00
+MHDA- 2005/12/13 09:00
+AID - 10.1038/nature04226 [doi]
+PST - ppublish
+SO  - Nature. 2005 Oct 27;437(7063):1299-320.
+
+PMID- 16702437
+OWN - NLM
+STAT- MEDLINE
+DA  - 20060921
+DCOM- 20061218
+LR  - 20070813
+PUBM- Print-Electronic
+IS  - 0016-6731 (Print)
+VI  - 174
+IP  - 1
+DP  - 2006 Sep
+TI  - Fine-scale map of encyclopedia of DNA elements regions in the Korean
+      population.
+PG  - 491-7
+AB  - The International HapMap Project aims to generate detailed human genome
+      variation maps by densely genotyping single-nucleotide polymorphisms
+      (SNPs) in CEPH, Chinese, Japanese, and Yoruba samples. This will
+      undoubtedly become an important facility for genetic studies of diseases
+      and complex traits in the four populations. To address how the genetic
+      information contained in such variation maps is transferable to other
+      populations, the Korean government, industries, and academics have
+      launched the Korean HapMap project to genotype high-density Encyclopedia
+      of DNA Elements (ENCODE) regions in 90 Korean individuals. Here we show
+      that the LD pattern, block structure, haplotype diversity, and
+      recombination rate are highly concordant between Korean and the two HapMap
+      Asian samples, particularly Japanese. The availability of information from
+      both Chinese and Japanese samples helps to predict more accurately the
+      possible performance of HapMap markers in Korean disease-gene studies.
+      Tagging SNPs selected from the two HapMap Asian maps, especially the
+      Japanese map, were shown to be very effective for Korean samples. These
+      results demonstrate that the HapMap variation maps are robust in related
+      populations and will serve as an important resource for the studies of the
+      Korean population in particular.
+AD  - DNA Link, Seoul, 120-110, Korea.
+FAU - Yoo, Yeon-Kyeong
+AU  - Yoo YK
+FAU - Ke, Xiayi
+AU  - Ke X
+FAU - Hong, Sungwoo
+AU  - Hong S
+FAU - Jang, Hye-Yoon
+AU  - Jang HY
+FAU - Park, Kyunghee
+AU  - Park K
+FAU - Kim, Sook
+AU  - Kim S
+FAU - Ahn, TaeJin
+AU  - Ahn T
+FAU - Lee, Yeun-Du
+AU  - Lee YD
+FAU - Song, Okryeol
+AU  - Song O
+FAU - Rho, Na-Young
+AU  - Rho NY
+FAU - Lee, Moon Sue
+AU  - Lee MS
+FAU - Lee, Yeon-Su
+AU  - Lee YS
+FAU - Kim, Jaeheup
+AU  - Kim J
+FAU - Kim, Young J
+AU  - Kim YJ
+FAU - Yang, Jun-Mo
+AU  - Yang JM
+FAU - Song, Kyuyoung
+AU  - Song K
+FAU - Kimm, Kyuchan
+AU  - Kimm K
+FAU - Weir, Bruce
+AU  - Weir B
+FAU - Cardon, Lon R
+AU  - Cardon LR
+FAU - Lee, Jong-Eun
+AU  - Lee JE
+FAU - Hwang, Jung-Joo
+AU  - Hwang JJ
+LA  - eng
+GR  - United Kingdom Wellcome Trust
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20060515
+PL  - United States
+TA  - Genetics
+JT  - Genetics
+JID - 0374636
+RN  - 9007-49-2 (DNA)
+SB  - IM
+MH  - Asian Continental Ancestry Group/genetics
+MH  - Chromosome Mapping/*methods
+MH  - DNA/analysis
+MH  - Databases, Nucleic Acid
+MH  - Genetics, Population/methods
+MH  - *Genome, Human
+MH  - Genotype
+MH  - Humans
+MH  - Korea
+MH  - Linkage Disequilibrium
+MH  - Polymorphism, Single Nucleotide
+MH  - Recombination, Genetic
+PMC - PMC1569806
+EDAT- 2006/05/17 09:00
+MHDA- 2006/12/19 09:00
+PHST- 2006/05/15 [aheadofprint]
+AID - genetics.105.052225 [pii]
+AID - 10.1534/genetics.105.052225 [doi]
+PST - ppublish
+SO  - Genetics. 2006 Sep;174(1):491-7. Epub 2006 May 15.
+
+PMID- 17943122
+OWN - NLM
+STAT- MEDLINE
+DA  - 20071018
+DCOM- 20071121
+PUBM- Print
+IS  - 1476-4687 (Electronic)
+VI  - 449
+IP  - 7164
+DP  - 2007 Oct 18
+TI  - A second generation human haplotype map of over 3.1 million SNPs.
+PG  - 851-61
+AB  - We describe the Phase II HapMap, which characterizes over 3.1 million
+      human single nucleotide polymorphisms (SNPs) genotyped in 270 individuals
+      from four geographically diverse populations and includes 25-35% of common
+      SNP variation in the populations surveyed. The map is estimated to capture
+      untyped common variation with an average maximum r2 of between 0.9 and
+      0.96 depending on population. We demonstrate that the current generation
+      of commercial genome-wide genotyping products captures common Phase II
+      SNPs with an average maximum r2 of up to 0.8 in African and up to 0.95 in
+      non-African populations, and that potential gains in power in association
+      studies can be obtained through imputation. These data also reveal novel
+      aspects of the structure of linkage disequilibrium. We show that 10-30% of
+      pairs of individuals within a population share at least one region of
+      extended genetic identity arising from recent ancestry and that up to 1%
+      of all common variants are untaggable, primarily because they lie within
+      recombination hotspots. We show that recombination rates vary
+      systematically around genes and between genes of different function.
+      Finally, we demonstrate increased differentiation at non-synonymous,
+      compared to synonymous, SNPs, resulting from systematic differences in the
+      strength or efficacy of natural selection between populations.
+AD  - The Scripps Research Institute, 10550 North Torrey Pines Road MEM275, La
+      Jolla, California 92037, USA.
+CN  - International HapMap Consortium
+FAU - Frazer, Kelly A
+AU  - Frazer KA
+FAU - Ballinger, Dennis G
+AU  - Ballinger DG
+FAU - Cox, David R
+AU  - Cox DR
+FAU - Hinds, David A
+AU  - Hinds DA
+FAU - Stuve, Laura L
+AU  - Stuve LL
+FAU - Gibbs, Richard A
+AU  - Gibbs RA
+FAU - Belmont, John W
+AU  - Belmont JW
+FAU - Boudreau, Andrew
+AU  - Boudreau A
+FAU - Hardenbol, Paul
+AU  - Hardenbol P
+FAU - Leal, Suzanne M
+AU  - Leal SM
+FAU - Pasternak, Shiran
+AU  - Pasternak S
+FAU - Wheeler, David A
+AU  - Wheeler DA
+FAU - Willis, Thomas D
+AU  - Willis TD
+FAU - Yu, Fuli
+AU  - Yu F
+FAU - Yang, Huanming
+AU  - Yang H
+FAU - Zeng, Changqing
+AU  - Zeng C
+FAU - Gao, Yang
+AU  - Gao Y
+FAU - Hu, Haoran
+AU  - Hu H
+FAU - Hu, Weitao
+AU  - Hu W
+FAU - Li, Chaohua
+AU  - Li C
+FAU - Lin, Wei
+AU  - Lin W
+FAU - Liu, Siqi
+AU  - Liu S
+FAU - Pan, Hao
+AU  - Pan H
+FAU - Tang, Xiaoli
+AU  - Tang X
+FAU - Wang, Jian
+AU  - Wang J
+FAU - Wang, Wei
+AU  - Wang W
+FAU - Yu, Jun
+AU  - Yu J
+FAU - Zhang, Bo
+AU  - Zhang B
+FAU - Zhang, Qingrun
+AU  - Zhang Q
+FAU - Zhao, Hongbin
+AU  - Zhao H
+FAU - Zhao, Hui
+AU  - Zhao H
+FAU - Zhou, Jun
+AU  - Zhou J
+FAU - Gabriel, Stacey B
+AU  - Gabriel SB
+FAU - Barry, Rachel
+AU  - Barry R
+FAU - Blumenstiel, Brendan
+AU  - Blumenstiel B
+FAU - Camargo, Amy
+AU  - Camargo A
+FAU - Defelice, Matthew
+AU  - Defelice M
+FAU - Faggart, Maura
+AU  - Faggart M
+FAU - Goyette, Mary
+AU  - Goyette M
+FAU - Gupta, Supriya
+AU  - Gupta S
+FAU - Moore, Jamie
+AU  - Moore J
+FAU - Nguyen, Huy
+AU  - Nguyen H
+FAU - Onofrio, Robert C
+AU  - Onofrio RC
+FAU - Parkin, Melissa
+AU  - Parkin M
+FAU - Roy, Jessica
+AU  - Roy J
+FAU - Stahl, Erich
+AU  - Stahl E
+FAU - Winchester, Ellen
+AU  - Winchester E
+FAU - Ziaugra, Liuda
+AU  - Ziaugra L
+FAU - Altshuler, David
+AU  - Altshuler D
+FAU - Shen, Yan
+AU  - Shen Y
+FAU - Yao, Zhijian
+AU  - Yao Z
+FAU - Huang, Wei
+AU  - Huang W
+FAU - Chu, Xun
+AU  - Chu X
+FAU - He, Yungang
+AU  - He Y
+FAU - Jin, Li
+AU  - Jin L
+FAU - Liu, Yangfan
+AU  - Liu Y
+FAU - Shen, Yayun
+AU  - Shen Y
+FAU - Sun, Weiwei
+AU  - Sun W
+FAU - Wang, Haifeng
+AU  - Wang H
+FAU - Wang, Yi
+AU  - Wang Y
+FAU - Wang, Ying
+AU  - Wang Y
+FAU - Xiong, Xiaoyan
+AU  - Xiong X
+FAU - Xu, Liang
+AU  - Xu L
+FAU - Waye, Mary M Y
+AU  - Waye MM
+FAU - Tsui, Stephen K W
+AU  - Tsui SK
+FAU - Xue, Hong
+AU  - Xue H
+FAU - Wong, J Tze-Fei
+AU  - Wong JT
+FAU - Galver, Luana M
+AU  - Galver LM
+FAU - Fan, Jian-Bing
+AU  - Fan JB
+FAU - Gunderson, Kevin
+AU  - Gunderson K
+FAU - Murray, Sarah S
+AU  - Murray SS
+FAU - Oliphant, Arnold R
+AU  - Oliphant AR
+FAU - Chee, Mark S
+AU  - Chee MS
+FAU - Montpetit, Alexandre
+AU  - Montpetit A
+FAU - Chagnon, Fanny
+AU  - Chagnon F
+FAU - Ferretti, Vincent
+AU  - Ferretti V
+FAU - Leboeuf, Martin
+AU  - Leboeuf M
+FAU - Olivier, Jean-Francois
+AU  - Olivier JF
+FAU - Phillips, Michael S
+AU  - Phillips MS
+FAU - Roumy, Stephanie
+AU  - Roumy S
+FAU - Sallee, Clementine
+AU  - Sallee C
+FAU - Verner, Andrei
+AU  - Verner A
+FAU - Hudson, Thomas J
+AU  - Hudson TJ
+FAU - Kwok, Pui-Yan
+AU  - Kwok PY
+FAU - Cai, Dongmei
+AU  - Cai D
+FAU - Koboldt, Daniel C
+AU  - Koboldt DC
+FAU - Miller, Raymond D
+AU  - Miller RD
+FAU - Pawlikowska, Ludmila
+AU  - Pawlikowska L
+FAU - Taillon-Miller, Patricia
+AU  - Taillon-Miller P
+FAU - Xiao, Ming
+AU  - Xiao M
+FAU - Tsui, Lap-Chee
+AU  - Tsui LC
+FAU - Mak, William
+AU  - Mak W
+FAU - Song, You Qiang
+AU  - Song YQ
+FAU - Tam, Paul K H
+AU  - Tam PK
+FAU - Nakamura, Yusuke
+AU  - Nakamura Y
+FAU - Kawaguchi, Takahisa
+AU  - Kawaguchi T
+FAU - Kitamoto, Takuya
+AU  - Kitamoto T
+FAU - Morizono, Takashi
+AU  - Morizono T
+FAU - Nagashima, Atsushi
+AU  - Nagashima A
+FAU - Ohnishi, Yozo
+AU  - Ohnishi Y
+FAU - Sekine, Akihiro
+AU  - Sekine A
+FAU - Tanaka, Toshihiro
+AU  - Tanaka T
+FAU - Tsunoda, Tatsuhiko
+AU  - Tsunoda T
+FAU - Deloukas, Panos
+AU  - Deloukas P
+FAU - Bird, Christine P
+AU  - Bird CP
+FAU - Delgado, Marcos
+AU  - Delgado M
+FAU - Dermitzakis, Emmanouil T
+AU  - Dermitzakis ET
+FAU - Gwilliam, Rhian
+AU  - Gwilliam R
+FAU - Hunt, Sarah
+AU  - Hunt S
+FAU - Morrison, Jonathan
+AU  - Morrison J
+FAU - Powell, Don
+AU  - Powell D
+FAU - Stranger, Barbara E
+AU  - Stranger BE
+FAU - Whittaker, Pamela
+AU  - Whittaker P
+FAU - Bentley, David R
+AU  - Bentley DR
+FAU - Daly, Mark J
+AU  - Daly MJ
+FAU - de Bakker, Paul I W
+AU  - de Bakker PI
+FAU - Barrett, Jeff
+AU  - Barrett J
+FAU - Chretien, Yves R
+AU  - Chretien YR
+FAU - Maller, Julian
+AU  - Maller J
+FAU - McCarroll, Steve
+AU  - McCarroll S
+FAU - Patterson, Nick
+AU  - Patterson N
+FAU - Pe'er, Itsik
+AU  - Pe'er I
+FAU - Price, Alkes
+AU  - Price A
+FAU - Purcell, Shaun
+AU  - Purcell S
+FAU - Richter, Daniel J
+AU  - Richter DJ
+FAU - Sabeti, Pardis
+AU  - Sabeti P
+FAU - Saxena, Richa
+AU  - Saxena R
+FAU - Schaffner, Stephen F
+AU  - Schaffner SF
+FAU - Sham, Pak C
+AU  - Sham PC
+FAU - Varilly, Patrick
+AU  - Varilly P
+FAU - Altshuler, David
+AU  - Altshuler D
+FAU - Stein, Lincoln D
+AU  - Stein LD
+FAU - Krishnan, Lalitha
+AU  - Krishnan L
+FAU - Smith, Albert Vernon
+AU  - Smith AV
+FAU - Tello-Ruiz, Marcela K
+AU  - Tello-Ruiz MK
+FAU - Thorisson, Gudmundur A
+AU  - Thorisson GA
+FAU - Chakravarti, Aravinda
+AU  - Chakravarti A
+FAU - Chen, Peter E
+AU  - Chen PE
+FAU - Cutler, David J
+AU  - Cutler DJ
+FAU - Kashuk, Carl S
+AU  - Kashuk CS
+FAU - Lin, Shin
+AU  - Lin S
+FAU - Abecasis, Goncalo R
+AU  - Abecasis GR
+FAU - Guan, Weihua
+AU  - Guan W
+FAU - Li, Yun
+AU  - Li Y
+FAU - Munro, Heather M
+AU  - Munro HM
+FAU - Qin, Zhaohui Steve
+AU  - Qin ZS
+FAU - Thomas, Daryl J
+AU  - Thomas DJ
+FAU - McVean, Gilean
+AU  - McVean G
+FAU - Auton, Adam
+AU  - Auton A
+FAU - Bottolo, Leonardo
+AU  - Bottolo L
+FAU - Cardin, Niall
+AU  - Cardin N
+FAU - Eyheramendy, Susana
+AU  - Eyheramendy S
+FAU - Freeman, Colin
+AU  - Freeman C
+FAU - Marchini, Jonathan
+AU  - Marchini J
+FAU - Myers, Simon
+AU  - Myers S
+FAU - Spencer, Chris
+AU  - Spencer C
+FAU - Stephens, Matthew
+AU  - Stephens M
+FAU - Donnelly, Peter
+AU  - Donnelly P
+FAU - Cardon, Lon R
+AU  - Cardon LR
+FAU - Clarke, Geraldine
+AU  - Clarke G
+FAU - Evans, David M
+AU  - Evans DM
+FAU - Morris, Andrew P
+AU  - Morris AP
+FAU - Weir, Bruce S
+AU  - Weir BS
+FAU - Tsunoda, Tatsuhiko
+AU  - Tsunoda T
+FAU - Mullikin, James C
+AU  - Mullikin JC
+FAU - Sherry, Stephen T
+AU  - Sherry ST
+FAU - Feolo, Michael
+AU  - Feolo M
+FAU - Skol, Andrew
+AU  - Skol A
+FAU - Zhang, Houcan
+AU  - Zhang H
+FAU - Zeng, Changqing
+AU  - Zeng C
+FAU - Zhao, Hui
+AU  - Zhao H
+FAU - Matsuda, Ichiro
+AU  - Matsuda I
+FAU - Fukushima, Yoshimitsu
+AU  - Fukushima Y
+FAU - Macer, Darryl R
+AU  - Macer DR
+FAU - Suda, Eiko
+AU  - Suda E
+FAU - Rotimi, Charles N
+AU  - Rotimi CN
+FAU - Adebamowo, Clement A
+AU  - Adebamowo CA
+FAU - Ajayi, Ike
+AU  - Ajayi I
+FAU - Aniagwu, Toyin
+AU  - Aniagwu T
+FAU - Marshall, Patricia A
+AU  - Marshall PA
+FAU - Nkwodimmah, Chibuzor
+AU  - Nkwodimmah C
+FAU - Royal, Charmaine D M
+AU  - Royal CD
+FAU - Leppert, Mark F
+AU  - Leppert MF
+FAU - Dixon, Missy
+AU  - Dixon M
+FAU - Peiffer, Andy
+AU  - Peiffer A
+FAU - Qiu, Renzong
+AU  - Qiu R
+FAU - Kent, Alastair
+AU  - Kent A
+FAU - Kato, Kazuto
+AU  - Kato K
+FAU - Niikawa, Norio
+AU  - Niikawa N
+FAU - Adewole, Isaac F
+AU  - Adewole IF
+FAU - Knoppers, Bartha M
+AU  - Knoppers BM
+FAU - Foster, Morris W
+AU  - Foster MW
+FAU - Clayton, Ellen Wright
+AU  - Clayton EW
+FAU - Watkin, Jessica
+AU  - Watkin J
+FAU - Gibbs, Richard A
+AU  - Gibbs RA
+FAU - Belmont, John W
+AU  - Belmont JW
+FAU - Muzny, Donna
+AU  - Muzny D
+FAU - Nazareth, Lynne
+AU  - Nazareth L
+FAU - Sodergren, Erica
+AU  - Sodergren E
+FAU - Weinstock, George M
+AU  - Weinstock GM
+FAU - Wheeler, David A
+AU  - Wheeler DA
+FAU - Yakub, Imtaz
+AU  - Yakub I
+FAU - Gabriel, Stacey B
+AU  - Gabriel SB
+FAU - Onofrio, Robert C
+AU  - Onofrio RC
+FAU - Richter, Daniel J
+AU  - Richter DJ
+FAU - Ziaugra, Liuda
+AU  - Ziaugra L
+FAU - Birren, Bruce W
+AU  - Birren BW
+FAU - Daly, Mark J
+AU  - Daly MJ
+FAU - Altshuler, David
+AU  - Altshuler D
+FAU - Wilson, Richard K
+AU  - Wilson RK
+FAU - Fulton, Lucinda L
+AU  - Fulton LL
+FAU - Rogers, Jane
+AU  - Rogers J
+FAU - Burton, John
+AU  - Burton J
+FAU - Carter, Nigel P
+AU  - Carter NP
+FAU - Clee, Christopher M
+AU  - Clee CM
+FAU - Griffiths, Mark
+AU  - Griffiths M
+FAU - Jones, Matthew C
+AU  - Jones MC
+FAU - McLay, Kirsten
+AU  - McLay K
+FAU - Plumb, Robert W
+AU  - Plumb RW
+FAU - Ross, Mark T
+AU  - Ross MT
+FAU - Sims, Sarah K
+AU  - Sims SK
+FAU - Willey, David L
+AU  - Willey DL
+FAU - Chen, Zhu
+AU  - Chen Z
+FAU - Han, Hua
+AU  - Han H
+FAU - Kang, Le
+AU  - Kang L
+FAU - Godbout, Martin
+AU  - Godbout M
+FAU - Wallenburg, John C
+AU  - Wallenburg JC
+FAU - L'Archeveque, Paul
+AU  - L'Archeveque P
+FAU - Bellemare, Guy
+AU  - Bellemare G
+FAU - Saeki, Koji
+AU  - Saeki K
+FAU - Wang, Hongguang
+AU  - Wang H
+FAU - An, Daochang
+AU  - An D
+FAU - Fu, Hongbo
+AU  - Fu H
+FAU - Li, Qing
+AU  - Li Q
+FAU - Wang, Zhen
+AU  - Wang Z
+FAU - Wang, Renwu
+AU  - Wang R
+FAU - Holden, Arthur L
+AU  - Holden AL
+FAU - Brooks, Lisa D
+AU  - Brooks LD
+FAU - McEwen, Jean E
+AU  - McEwen JE
+FAU - Guyer, Mark S
+AU  - Guyer MS
+FAU - Wang, Vivian Ota
+AU  - Wang VO
+FAU - Peterson, Jane L
+AU  - Peterson JL
+FAU - Shi, Michael
+AU  - Shi M
+FAU - Spiegel, Jack
+AU  - Spiegel J
+FAU - Sung, Lawrence M
+AU  - Sung LM
+FAU - Zacharia, Lynn F
+AU  - Zacharia LF
+FAU - Collins, Francis S
+AU  - Collins FS
+FAU - Kennedy, Karen
+AU  - Kennedy K
+FAU - Jamieson, Ruth
+AU  - Jamieson R
+FAU - Stewart, John
+AU  - Stewart J
+LA  - eng
+GR  - United Kingdom Wellcome Trust
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+PL  - England
+TA  - Nature
+JT  - Nature
+JID - 0410462
+SB  - IM
+MH  - Continental Population Groups/genetics
+MH  - Female
+MH  - Haplotypes/*genetics
+MH  - Homozygote
+MH  - Humans
+MH  - Linkage Disequilibrium/genetics
+MH  - Male
+MH  - Polymorphism, Single Nucleotide/*genetics
+MH  - Recombination, Genetic/genetics
+MH  - Selection (Genetics)
+EDAT- 2007/10/19 09:00
+MHDA- 2007/12/06 09:00
+PHST- 2007/04/12 [received]
+PHST- 2007/09/18 [accepted]
+AID - nature06258 [pii]
+AID - 10.1038/nature06258 [doi]
+PST - ppublish
+SO  - Nature. 2007 Oct 18;449(7164):851-61.
+
+PMID- 18302794
+OWN - NLM
+STAT- MEDLINE
+DA  - 20080411
+DCOM- 20080425
+PUBM- Electronic
+IS  - 1471-2156 (Electronic)
+VI  - 9
+DP  - 2008
+TI  - An evaluation of the performance of HapMap SNP data in a Shanghai Chinese
+      population: analyses of allele frequency, linkage disequilibrium pattern
+      and tagging SNPs transferability on chromosome 1q21-q25.
+PG  - 19
+AB  - BACKGROUND: The HapMap project aimed to catalog millions of common single
+      nucleotide polymorphisms (SNPs) in the human genome in four major
+      populations, in order to facilitate association studies of complex
+      diseases. To examine the transferability of Han Chinese in Beijing HapMap
+      data to the Southern Han Chinese in Shanghai, we performed comparative
+      analyses between genotypes from over 4,500 SNPs in a 21 Mb region on
+      chromosome 1q21-q25 in 80 unrelated Shanghai Chinese and 45 HapMap Chinese
+      data. RESULTS: Three thousand and forty-two SNPs were analyzed after
+      removal of SNPs that failed quality control and those not in the HapMap
+      panel. We compared the allele frequency distributions, linkage
+      disequilibrium patterns, haplotype frequency distributions and tagging SNP
+      sets transferability between the HapMap population and Shanghai Chinese
+      population. Among the four HapMap populations, Beijing Chinese showed the
+      best correlation with Shanghai population on allele frequencies, linkage
+      disequilibrium and haplotype frequencies. Tagging SNP sets selected from
+      four HapMap populations at different thresholds were evaluated in the
+      Shanghai sample. Under the threshold of r2 equal to 0.8 or 0.5, both
+      HapMap Chinese and Japanese data showed better coverage and tagging
+      efficiency than Caucasian and African data. CONCLUSION: Our study
+      supported the applicability of HapMap Beijing Chinese SNP data to the
+      study of complex diseases among southern Chinese population.
+AD  - Shanghai Diabetes Institute, Department of Endocrinology and Metabolism,
+      Shanghai Jiao Tong University Affiliated Sixth People's Hospital, 600
+      Yishan Road, Shanghai, 200233, China. alfredhc@sjtu.edu.cn
+FAU - Hu, Cheng
+AU  - Hu C
+FAU - Jia, Weiping
+AU  - Jia W
+FAU - Zhang, Weihua
+AU  - Zhang W
+FAU - Wang, Congrong
+AU  - Wang C
+FAU - Zhang, Rong
+AU  - Zhang R
+FAU - Wang, Jie
+AU  - Wang J
+FAU - Ma, Xiaojing
+AU  - Ma X
+CN  - International Type 2 Diabetes 1q Consortium
+FAU - Xiang, Kunsan
+AU  - Xiang K
+LA  - eng
+GR  - DK073490/DK/United States NIDDK
+GR  - U01-DK58026/DK/United States NIDDK
+PT  - Comparative Study
+PT  - Journal Article
+PT  - Research Support, N.I.H., Extramural
+PT  - Research Support, Non-U.S. Gov't
+DEP - 20080227
+PL  - England
+TA  - BMC Genet
+JT  - BMC genetics
+JID - 100966978
+SB  - IM
+MH  - Asian Continental Ancestry Group/*genetics
+MH  - China
+MH  - *Chromosome Mapping
+MH  - Chromosomes, Human, Pair 1/*genetics
+MH  - Gene Frequency
+MH  - Genetic Predisposition to Disease/*genetics
+MH  - Genomics
+MH  - Humans
+MH  - Linkage Disequilibrium
+MH  - *Polymorphism, Single Nucleotide
+PMC - PMC2292209
+EDAT- 2008/02/28 09:00
+MHDA- 2008/04/26 09:00
+PHST- 2007/06/06 [received]
+PHST- 2008/02/27 [accepted]
+PHST- 2008/02/27 [aheadofprint]
+AID - 1471-2156-9-19 [pii]
+AID - 10.1186/1471-2156-9-19 [doi]
+PST - epublish
+SO  - BMC Genet. 2008 Feb 27;9:19.
+
+PMID- 18317571
+OWN - NLM
+STAT- In-Data-Review
+DA  - 20080304
+PUBM- Electronic
+IS  - 0973-2063 (Electronic)
+VI  - 2
+IP  - 6
+DP  - 2008
+TI  - On the challenges of the HapMap resource.
+PG  - 238-9
+AB  - The International HapMap Project provides a key resource of genotypic data
+      on human lymphoblastoid cell lines derived from four major world
+      populations of European, African, Chinese and Japanese ancestry for
+      researchers to associate with various phenotypic data to find genes
+      affecting health, disease and response to drugs. Recently, the HapMap
+      resource has significantly benefited research areas such as gene
+      expression variation studies. Besides some intrinsic limitations, there
+      are a few challenges that should be considered in the next wave of
+      research using this tremendous resource. We suggest that overcoming these
+      challenges or considering the confounding variables in the interpretation
+      of results can provide more insights into the current views of the human
+      genome as well as complex traits such as drug response variation and
+      susceptibility to common diseases.
+FAU - Zhang, Wei
+AU  - Zhang W
+FAU - Dolan, M Eileen
+AU  - Dolan ME
+LA  - eng
+PT  - Journal Article
+DEP - 20080111
+PL  - Singapore
+TA  - Bioinformation
+JT  - Bioinformation
+JID - 101258255
+PMC - PMC2258425
+EDAT- 2008/03/05 09:00
+MHDA- 2008/03/05 09:00
+PHST- 2007/12/29 [received]
+PHST- 2008/01/09 [accepted]
+PST - epublish
+SO  - Bioinformation. 2008 Jan 11;2(6):238-9.
+

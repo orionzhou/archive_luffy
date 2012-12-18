@@ -1,9 +1,0 @@
-#PBS -l nodes={$nodes}:ppn={$ppn},mem={$mem},walltime={$walltime}
-#PBS -m ae
-#PBS -q {$queue} 
-
-{$chdir_str}
-{$module_str}
-{$cmd}
-
-

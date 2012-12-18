@@ -1,5 +1,5 @@
-BOOST = $(soft)/boost/1.44.0
-LIBSEQ = $(soft)/libsequence/1.6.9
+BOOST = $(soft)/boost/1.47.0
+LIBSEQ = $(soft)/libsequence/1.7.3
 SAMTOOLS = $(prefix)/soft/samtools
 BAMTOOLS = $(prefix)/soft/bamtools
 GECO = $(prefix)/soft/geco

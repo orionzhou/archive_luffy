@@ -1,5 +1,5 @@
-BOOST = /soft/sle11/boost/1.44.0
-LIBSEQ = /soft/sle11/libsequence/1.6.9
+BOOST = /soft/sle11/boost/1.47.0
+LIBSEQ = /soft/sle11/libsequence/1.7.3
 
 CC      = mpiCC 
 CFLAGS  = -Wall -g -wd981 -wd383 -wd1418 -wd177 -wd593 -I$(BOOST)/include -I$(LIBSEQ)/include

@@ -15,25 +15,45 @@ use Data::Dumper;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-my $dir_i = "/project/youngn/zhoup/Data/misc3/spada.crp/Athaliana";
-my $f_pre = "$dir_i/31_model_SPADA/61_final.gtb";
+my $org = "Athaliana";
+my $dir_i = "/project/youngn/zhoup/Data/misc3/spada.crp/$org";
 my $f_ref = "$dir_i/01_genome/01_refseq.fa";
 my $f_gtb = "$dir_i/01_genome/61_gene.gtb";
+my $f_pre = "$dir_i/31_model_SPADA/61_final.gtb";
 
-my $dir = "/project/youngn/zhoup/Data/misc2/crp.evo";
-my $f01 = "$dir/01_seq.tbl";
-#prepare_seq($f_pre, $f_ref, $dir);
-my $f02 = "$dir/02_pairs.tbl";
-#screen_pairs_raw($f01, $f02);
-my $f03 = "$dir/03_yass.tbl";
-#screen_pairs_yass($f01, $f02, $f03);
-my $f04 = "$dir/04_yass_filtered.tbl";
-#filter_yass($f03, $f04);
-my $f09 = "$dir/09.tbl";
-#prepare_plot($f01, $f04, $f09);
+my $dir = "/project/youngn/zhoup/Data/misc2/crp.evo/$org";
+my $f01 = "$dir/01.gtb";
+my $f_fam = "$dir/../../crp.annotation/family_info.tbl";
+#add_fam_info($f_pre, $f_fam, $f01);
+my $f02 = "$dir/02_seq.tbl";
+#prepare_seq($f01, $f_ref, $dir);
+my $f05 = "$dir/05_pairs.tbl";
+#screen_pairs_raw($f02, $f05);
+my $f07 = "$dir/07_yass.tbl";
+#screen_pairs_yass($f02, $f05, $f07);
+my $f09 = "$dir/09_yass_filtered.tbl";
+#filter_yass($f07, $f09);
+my $f10 = "$dir/10.tbl";
+#prepare_plot($f02, $f09, $f10);
 my $d11 = "$dir/11_figs";
-comparative_plot($f09, $d11, $f_pre, $f_gtb);
+#comparative_plot($f10, $d11, $f_gtb);
 
+sub add_fam_info {
+    my ($fgi, $ff, $fgo) = @_;
+    my $tgi = readTable(-in=>$fgi, -header=>1);
+    my $tf = readTable(-in=>$ff, -header=>1);
+    my $h = { map {$tf->elm($_, "id") => $tf->elm($_, "cat")} (0..$tf->nofRow-1) };
+
+    for my $i (0..$tgi->nofRow-1) {
+        my $fam = $tgi->elm($i, "cat3");
+        my $cat = $h->{$fam};
+        $tgi->setElm($i, "note", $cat);
+    }
+
+    open(FH, ">$fgo") or die "cannot write to $fgo\n";
+    print FH $tgi->tsv(1);
+    close FH;
+}
 sub run_yass {
     my ($seq1, $seq2) = @_;
     my $f_bin = "/project/youngn/zhoup/Source/yass-1.14/src/yass";
@@ -67,23 +87,22 @@ sub prepare_seq {
     my $fo = "$dir/01_seq.tbl";
     open(FHO, ">$fo") or die "cannot open $fo for writing\n";
     print FHO join("\t", qw/id fam chr beg end strand locC 
-      seq_pro seq_cds seq_ext/)."\n";
+      seq_pro seq_ext/)."\n";
     for my $i (0..$t->nofRow-1) {
         my ($id, $fam, $chr, $begM, $endM, $str, $locCS, $seq_pro) = 
           map {$t->elm($i, $_)} qw/id cat3 chr beg end strand locC seq/;
         my $locC = locStr2Ary($locCS);
-        my $seq_cds = seqRet($locC, $chr, $str, $f_ref);
 
         my $beg = max(1, $begM-1000);
         my $end = min($endM+1000, seqLen($chr, $f_ref));
+        my $seq_ext = seqRet([[$beg, $end]], $chr, $str, $f_ref);
         $locC = [ sort {$a->[0] <=> $b->[0]} @$locC ];
         $locC = [ reverse @$locC ] if $str eq "-";
         my $locCR = $str eq "-" ?
           [ map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$locC ] : 
           [ map {[$_->[0]-$beg+1, $_->[1]-$beg+1]} @$locC ];
-        my $seq_ext = seqRet([[$beg, $end]], $chr, $str, $f_ref);
         print FHO join("\t", $id, $fam, $chr, $beg, $end, $str, locAry2Str($locCR),
-          $seq_pro, $seq_cds, $seq_ext)."\n";
+          $seq_pro, $seq_ext)."\n";
     }
     close FHO;
 }
@@ -211,14 +230,11 @@ sub prepare_plot {
     close FH;
 }
 sub comparative_plot {
-    my ($f09, $d11, $f_pre, $f_gtb) = @_;
+    my ($f09, $d11, $f_gtb) = @_;
     make_path($d11) unless -d $d11;
     remove_tree($d11, {keep_root=>1});
     my $t = readTable(-in=>$f09, -header=>1);
-
-    my $tp = readTable(-in=>$f_pre, -header=>1);
-    my $hp = { map {$tp->elm($_, "id") => $tp->subTable([$_])} (0..$tp->nofRow-1) };
-    my ($tg, $ref, $idGs) = gtbSum($f_gtb, 0);
+    my $tg = readTable(-in=>$f_gtb, -header=>1);
   
     for my $i (0..$t->nofRow-1) {
         my ($id, $fam, $id1, $chr1, $beg1, $end1, $str1, $locS1, $id2, $chr2, $beg2, $end2, $str2, $locS2, $matchS) = $t->row($i);

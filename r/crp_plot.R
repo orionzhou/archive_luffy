@@ -1,36 +1,73 @@
-dir = file.path(DIR_Misc2, "crp_plot")
-fi = file.path(DIR_Misc2, "genefam/41_genefam.tbl")
-g1 = read.table(fi, header=TRUE, sep="\t", quote="", as.is=T)
-g2 = g1[g1$type1=='crp_gene',]
+library(ggplot2)
+library(data.table)
+library(RColorBrewer)
 
-g3 = g2[as.character(g2$chr)!="chrU",]
+ff = file.path(DIR_Misc2, "crp.annotation/family_info.tbl")
+tf = read.table(ff, header=TRUE, sep="\t", as.is=T)
+fams = unique(tf$cat)
 
-freq = table(g3$note)
-fams = names(freq[freq>20])
-g4 = cbind(g3, family=g3$note)
-g4$family=as.character(g4$family)
-idxs_other = ! g4$family %in% fams
-g4$family[idxs_other] = rep("other", sum(idxs_other))
+org = "Mtruncatula"
+org = "Mtruncatula_4.0"
+org = "Athaliana"
+fg = file.path(DIR_Misc3, "spada.crp", org, "31_model_SPADA", "61_final.tbl")
+diro = file.path(DIR_Misc2, "crp.evo")
 
-g10 = g4
+t1 = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)
+colnames(t1)[which(colnames(t1)=="start")] = "beg"
+t2 = t1[tolower(substr(t1$chr,1,3))=="chr" & tolower(t1$chr)!='chru', -which(colnames(t1)=="sequence")]
 
-pos = as.numeric(substr(g10$chr, 4, 5)) * 1000000000 + (g10$beg + g10$end) / 2
-names(pos) = g10$id
-cl = locCluster(pos, 100000)
+tli = t2
+locs = as.numeric(substr(tli$chr, 4, 5)) * 1000000000 + (tli$beg + tli$end) / 2
+names(locs) = tli$id
+cl = locCluster(locs, 50000)
+tlo = merge(tli, cl, by="id")
 
-g20 = merge(g10, cl, by="id")
+td = merge(tlo, tf, by.x="family", by.y="id")
 
-p <- ggplot(data=g20) +
-	geom_point(mapping=aes(x=(beg+end)/2, y=cluster_y, colour=family), shape=18, size=0.7) +
-	scale_colour_brewer(palette='Set1') +
-	scale_x_continuous(name='chr position (bp)', formatter='comma', limits=c(1,48000000)) +
-	scale_y_continuous(name='', breaks=seq(0,22,10), limits=c(1,22)) +
+pal <- colorRampPalette(brewer.pal(9,"Set1"))
+p <- ggplot(data=td) +
+	geom_point(mapping=aes(x=(beg+end)/2/1000000, y=cluster_y, colour=factor(cat, levels=fams)), shape=18, size=0.8) +
+	scale_colour_manual(values=pal(length(unique(td$cat)))) +
+	scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
+	scale_y_continuous(name='', expand=c(0.04, 0)) +
 	facet_grid(chr ~ .) + 
-	opts(legend.title=theme_blank()) +
-	opts(axis.text.x=theme_text(size=8, angle=0)) +
-	opts(axis.text.y=theme_blank(), axis.ticks=theme_blank(), axis.ticks.margin=unit(0,'cm'))
-ggsave(p, filename=file.path(dir, '01.png'), width=8, heigh=5)
+	theme(legend.position='right', legend.title=element_blank()) +
+	theme(axis.text.x=element_text(size=8, angle=0)) +
+	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
+ggsave(p, filename=sprintf("%s/%s.png", diro, org), width=8, heigh=5)
 
-g21 = merge(g2, cl, by="id", all.x=all)
 write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
+locCluster <- function(pos, wsize) {
+  npos = length(pos)
+  df = data.frame(id=names(pos), pos=pos, cluster=1:npos)
+  df = df[order(df$pos),]
+  for (i in 1:npos) {
+    for (j in (i+1):npos) {
+      if(j>npos) {
+        next
+      }
+      if(df$pos[j] - df$pos[i] <= wsize) {
+  	    df$cluster[j] = df$cluster[i]
+  	  }
+    }
+  }
+  clusters = unique(df$cluster)
+  tmp = cbind(cluster1=clusters, cluster2=1:length(clusters))
+  x = merge(df, tmp, by.x='cluster', by.y='cluster1')
+  
+  df2 = data.frame(id=x$id, pos=x$pos, cluster=x$cluster2, cluster_y=1)
+  df2 = df2[order(df2$pos),]
+  
+  clusterP = ''
+  for (i in 1:npos) {
+    if(df2$cluster[i] == clusterP) {
+      df2$cluster_y[i] = df2$cluster_y[i-1] + 1
+    } else {
+      clusterP = df2$cluster[i]
+    }
+  }
+
+  hist(as.matrix(table(df2$cluster)), xlab='cluster size', main=paste(wsize, 'bp', sep=''))
+  df2
+}

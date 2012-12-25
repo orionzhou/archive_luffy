@@ -1,133 +1,74 @@
-BOOST = $(soft)/boost/1.47.0
-LIBSEQ = $(soft)/libsequence/1.7.3
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+CXX = g++
+CC = $(CXX)
+
+BOOST ?= $(soft)/boost/1.47.0
+LIBSEQ ?= $(soft)/libsequence/1.7.3
 SAMTOOLS = $(prefix)/soft/samtools
 BAMTOOLS = $(prefix)/soft/bamtools
 GECO = $(prefix)/soft/geco
 
-CC      = g++
-CFLAGS  = -Wall -g -I$(BOOST)/include -I$(LIBSEQ)/include -I$(SAMTOOLS)/include -I$(BAMTOOLS)/include -I$(GECO)/include
-LIBS    = -lbamtools -lsequence -lboost_system -lboost_regex -lboost_iostreams -lboost_filesystem -lboost_program_options -lgeco
-LDFLAGS = -L$(BOOST)/lib -L$(LIBSEQ)/lib -L$(SAMTOOLS)/lib -L$(BAMTOOLS)/lib -L$(GECO)/lib
-DEP     =
-BIN_DIR = bin
-BIN_NAME= test msConvert readGz cov_window bamDepth \
+DEBUG_LEVEL     = -g
+EXTRA_CCFLAGS   = -Wall -m64
+CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
+CCFLAGS         = $(CXXFLAGS)
+
+CPPFLAGS        = -I$(BOOST)/include -I$(LIBSEQ)/include -I$(SAMTOOLS)/include -I$(BAMTOOLS)/include -I$(GECO)/include
+LDLIBS          = -lsequence -lboost_system -lboost_regex -lboost_iostreams -lboost_filesystem -lboost_program_options -lbamtools -lgeco
+LDFLAGS         = -L$(BOOST)/lib -L$(LIBSEQ)/lib -L$(SAMTOOLS)/lib -L$(BAMTOOLS)/lib -L$(GECO)/lib
+
+SRCEXT   = cc
+SRCDIR   = src
+OBJDIR   = obj
+BINDIR   = bin
+
+BINNAMES = test msConvert readGz cov_window bamDepth \
   sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSelectInds sspConvert ssp2Vcf\
   bamPreprocess bamCheck viewRead \
   bamPickStretched bamPickOrphan bamPickReads bamPickBpReads \
   bam2Fastq bamISD bamStat \
   seqRec seqSplit alnStat
-EXE     = $(addprefix $(BIN_DIR)/,$(BIN_NAME))
-vpath %.h src 
-vpath %.cc src
-vpath %.o obj
-all: $(BIN_DIR) $(EXE) 
+BINS    := $(addprefix $(BINDIR)/, $(BINNAMES))
+SRCS    := $(wildcard $(SRCDIR)/*.$(SRCEXT))
+OBJS    := $(patsubst $(SRCDIR)/%.$(SRCEXT), $(OBJDIR)/%.o, $(SRCS))
 
-bin/msConvert: msConvert.cc
-	$(CC) $(CFLAGS) src/msConvert.cc $(LDFLAGS) $(LIBS) -o $@
 
-bin/test: test.cc
-	$(CC) $(CFLAGS) src/test.cc $(LDFLAGS) $(LIBS) -o $@
+.PHONY: all clean
 
-bin/readGz: readGz.cc
-	$(CC) $(CFLAGS) src/readGz.cc $(LDFLAGS) $(LIBS) -o $@
+all: $(BINS)
 
-bin/sspStat: sspStat.cc
-	$(CC) $(CFLAGS) src/sspStat.cc $(LDFLAGS) $(LIBS) -o $@
+$(OBJS): | $(OBJDIR)
+$(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.h
 
-bin/sspDiff: sspDiff.cc
-	$(CC) $(CFLAGS) src/sspDiff.cc $(LDFLAGS) $(LIBS) -o $@
+$(BINS): | $(BINDIR)
+$(BINS): $(BINDIR)/%: $(SRCDIR)/%.$(SRCEXT)
 
-bin/sspSlide: sspSlide.cc
-	$(CC) $(CFLAGS) src/sspSlide.cc $(LDFLAGS) $(LIBS) -o $@
+BIN_SSP = sspFilter sspSelectInds sspSetOG sspSample sspConvert ssp2Vcf seqSplit
+$(addprefix $(BINDIR)/, $(BIN_SSP)): $(OBJDIR)/ssp.o
 
-bin/bamDepth: bamDepth.cc $(SAMTOOLS)/lib/libbam.a
-	$(CC) $(CFLAGS) src/bamDepth.cc $(LDFLAGS) $(LIBS) -lbam -lm -lz -o $@
+BIN_BAM = bamCheck viewRead bamPickStretched bamPickOrphan bamPickReads bamPickBpReads bam2Fastq bamISD 
+$(addprefix $(BINDIR)/, $(BIN_BAM)): $(OBJDIR)/bam_utils.o
 
-bin/sspFilter: sspFilter.cc ssp.o
-	$(CC) $(CFLAGS) src/sspFilter.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
+$(BINDIR)/alnStat: $(OBJDIR)/read.o
+$(BINDIR)/bamDepth: $(SAMTOOLS)/lib/libbam.a -lbam -lm -lz
+$(BINDIR)/cov_window: $(addprefix $(OBJDIR)/, read.o ssp.o)
+$(BINDIR)/seqRec: $(addprefix $(OBJDIR)/, geco_sequences.o read.o ssp.o)
+$(BINDIR)/bamPreprocess: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
+$(BINDIR)/bamStat: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
 
-bin/sspSetOG: sspSetOG.cc obj/ssp.o
-	$(CC) $(CFLAGS) src/sspSetOG.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
+$(BINDIR)/%:
+	@echo "Linking $@..."
+	$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
-bin/sspSample: sspSample.cc ssp.o
-	$(CC) $(CFLAGS) src/sspSample.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
+$(OBJDIR)/%.o:
+	@echo "Compiling $@..."
+	$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $< -c -o $@
 
-bin/sspSelectInds: sspSelectInds.cc ssp.o
-	$(CC) $(CFLAGS) src/sspSelectInds.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/sspConvert: sspConvert.cc ssp.o
-	$(CC) $(CFLAGS) src/sspConvert.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/ssp2Vcf: ssp2Vcf.cc ssp.o
-	$(CC) $(CFLAGS) src/ssp2Vcf.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/cov_window: cov_window.cc read.o ssp.o
-	$(CC) $(CFLAGS) src/cov_window.cc obj/read.o obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/seqRec: seqRec.h seqRec.cc geco_sequences.o read.o ssp.o
-	$(CC) $(CFLAGS) src/seqRec.cc obj/geco_sequences.o obj/read.o obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/seqSplit: seqSplit.cc ssp.o
-	$(CC) $(CFLAGS) src/seqSplit.cc obj/ssp.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/alnStat: alnStat.cc read.o
-	$(CC) $(CFLAGS) src/alnStat.cc obj/read.o $(LDFLAGS) $(LIBS) -o $@
-
-#high-level
-bin/bamCheck: bamCheck.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamCheck.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/viewRead: viewRead.cc bam_utils.o
-	$(CC) $(CFLAGS) src/viewRead.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamPickStretched: bamPickStretched.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamPickStretched.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamPickOrphan: bamPickOrphan.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamPickOrphan.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamPickReads: bamPickReads.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamPickReads.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamPickBpReads: bamPickBpReads.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamPickBpReads.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamPreprocess: bamPreprocess.cc bam_utils.o read.o
-	$(CC) $(CFLAGS) src/bamPreprocess.cc obj/bam_utils.o obj/read.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bam2Fastq: bam2Fastq.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bam2Fastq.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamISD: bamISD.cc bam_utils.o
-	$(CC) $(CFLAGS) src/bamISD.cc obj/bam_utils.o $(LDFLAGS) $(LIBS) -o $@
-
-bin/bamStat: bamStat.cc bam_utils.o read.o
-	$(CC) $(CFLAGS) src/bamStat.cc obj/bam_utils.o obj/read.o $(LDFLAGS) $(LIBS) -o $@
-
-#low-level
-obj/bam_utils.o: bam_utils.cc bam_utils.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-obj/geco_sequences.o: geco_sequences.cc geco_sequences.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-obj/ssp.o: ssp.cc ssp.h 
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-obj/read.o: read.cc read.h 
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-obj/common.o: common.cc common.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-obj/init.o: init.cc init.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $< -c -o $@
-
-$(BIN_DIR):
-	@echo Bin Dir is $(BIN_DIR)
-	@if [ ! -d $(BIN_DIR) ]; then mkdir -p $(BIN_DIR); fi
+$(BINDIR) $(OBJDIR):
+	@mkdir -p $@
 
 clean:
-	rm -f obj/*.o
-	rm -f bin/* 
-
+	$(RM) -r $(OBJDIR)
+	$(RM) -r $(BINDIR)

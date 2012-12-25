@@ -26,17 +26,17 @@ my $f01 = "$dir/01.gtb";
 my $f_fam = "$dir/../../crp.annotation/family_info.tbl";
 #add_fam_info($f_pre, $f_fam, $f01);
 my $f02 = "$dir/02_seq.tbl";
-#prepare_seq($f01, $f_ref, $dir);
+#prepare_seq($f01, $f_ref, $f02);
 my $f05 = "$dir/05_pairs.tbl";
 #screen_pairs_raw($f02, $f05);
 my $f07 = "$dir/07_yass.tbl";
 #screen_pairs_yass($f02, $f05, $f07);
 my $f09 = "$dir/09_yass_filtered.tbl";
 #filter_yass($f07, $f09);
-my $f10 = "$dir/10.tbl";
-#prepare_plot($f02, $f09, $f10);
-my $d11 = "$dir/11_figs";
-#comparative_plot($f10, $d11, $f_gtb);
+my $f11 = "$dir/11.tbl";
+#prepare_plot($f02, $f09, $f11);
+my $d21 = "$dir/21_figs";
+#comparative_plot($f11, $d21, $f_gtb);
 
 sub add_fam_info {
     my ($fgi, $ff, $fgo) = @_;
@@ -53,6 +53,59 @@ sub add_fam_info {
     open(FH, ">$fgo") or die "cannot write to $fgo\n";
     print FH $tgi->tsv(1);
     close FH;
+}
+sub prepare_seq {
+    my ($f_pre, $f_ref, $fo) = @_;
+    my $t = readTable(-in=>$f_pre, -header=>1);
+
+    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
+    print FHO join("\t", qw/id fam cat chr beg end strand locC seq_pro seq_cds seq_ext/)."\n";
+    for my $i (0..$t->nofRow-1) {
+        my ($id, $fam, $cat, $chr, $begM, $endM, $str, $locCS, $seq_pro) = 
+          map {$t->elm($i, $_)} qw/id cat3 note chr beg end strand locC seq/;
+        my $locC = locStr2Ary($locCS);
+        my $seq_cds = seqRet($locC, $chr, $str, $f_ref);
+
+        my $beg = max(1, $begM-1000);
+        my $end = min($endM+1000, seqLen($chr, $f_ref));
+        my $seq_ext = seqRet([[$beg, $end]], $chr, $str, $f_ref);
+        $locC = [ sort {$a->[0] <=> $b->[0]} @$locC ];
+        $locC = [ reverse @$locC ] if $str eq "-";
+        my $locCR = $str eq "-" ?
+          [ map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$locC ] : 
+          [ map {[$_->[0]-$beg+1, $_->[1]-$beg+1]} @$locC ];
+        print FHO join("\t", $id, $fam, $cat, $chr, $beg, $end, $str, locAry2Str($locCR),
+          $seq_pro, $seq_cds, $seq_ext)."\n";
+    }
+    close FHO;
+}
+sub screen_pairs_raw {
+    my ($fi, $fo) = @_;
+    my $t = readTable(-in=>$fi, -header=>1);
+    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
+    print FHO join("\t", qw/id1 id2 identity/)."\n";
+
+    my $h = group($t->colRef("fam"));
+    for my $fam (sort(keys(%$h))) {
+        my ($idx, $cnt) = @{$h->{$fam}};
+        for my $i ($idx..$idx+$cnt-1) {
+            for my $j ($i+1..$idx+$cnt-1) {
+                my ($id1, $chr1, $beg1, $end1, $seq1) = 
+                  map {$t->elm($i, $_)} qw/id chr beg end seq_cds/;
+                my ($id2, $chr2, $beg2, $end2, $seq2) = 
+                  map {$t->elm($j, $_)} qw/id chr beg end seq_cds/;
+#                next if ($chr1 eq $chr2 && abs($beg1-$beg2) < 100_000);
+                my $seqO1 = Bio::Seq->new(-id=>$id1, -seq=>$seq1);
+                my $seqO2 = Bio::Seq->new(-id=>$id2, -seq=>$seq2);
+                my ($lenA, $lenM, $lenI, $lenG, $len1, $len2) = run_pw_aln($seqO1, $seqO2, 2);
+#                die Dumper($lenA, $lenM, $lenI, $lenG) if $id1 eq "h0003.01" && $id2 eq "h0059.01";
+                my $idty = sprintf "%.03f", $lenM/$lenA;
+                next if $idty < 0.7;
+                print FHO join("\t", $id1, $id2, $idty)."\n";
+            }
+        }
+    }
+    close FHO;
 }
 sub run_yass {
     my ($seq1, $seq2) = @_;
@@ -80,60 +133,6 @@ sub run_yass {
     system("rm $fi1 $fi2 $fo");
     return \@ary;
 }
-sub prepare_seq {
-    my ($f_pre, $f_ref, $dir) = @_;
-    my $t = readTable(-in=>$f_pre, -header=>1);
-
-    my $fo = "$dir/01_seq.tbl";
-    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
-    print FHO join("\t", qw/id fam chr beg end strand locC 
-      seq_pro seq_ext/)."\n";
-    for my $i (0..$t->nofRow-1) {
-        my ($id, $fam, $chr, $begM, $endM, $str, $locCS, $seq_pro) = 
-          map {$t->elm($i, $_)} qw/id cat3 chr beg end strand locC seq/;
-        my $locC = locStr2Ary($locCS);
-
-        my $beg = max(1, $begM-1000);
-        my $end = min($endM+1000, seqLen($chr, $f_ref));
-        my $seq_ext = seqRet([[$beg, $end]], $chr, $str, $f_ref);
-        $locC = [ sort {$a->[0] <=> $b->[0]} @$locC ];
-        $locC = [ reverse @$locC ] if $str eq "-";
-        my $locCR = $str eq "-" ?
-          [ map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$locC ] : 
-          [ map {[$_->[0]-$beg+1, $_->[1]-$beg+1]} @$locC ];
-        print FHO join("\t", $id, $fam, $chr, $beg, $end, $str, locAry2Str($locCR),
-          $seq_pro, $seq_ext)."\n";
-    }
-    close FHO;
-}
-sub screen_pairs_raw {
-    my ($fi, $fo) = @_;
-    my $t = readTable(-in=>$fi, -header=>1);
-    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
-    print FHO join("\t", qw/fam id1 id2 pct_idty/)."\n";
-
-    my $h = group($t->colRef("fam"));
-    for my $fam (sort(keys(%$h))) {
-        my ($idx, $cnt) = @{$h->{$fam}};
-        for my $i ($idx..$idx+$cnt-1) {
-            for my $j ($i+1..$idx+$cnt-1) {
-                my ($id1, $chr1, $beg1, $end1, $seq1) = 
-                  map {$t->elm($i, $_)} qw/id chr beg end seq_cds/;
-                my ($id2, $chr2, $beg2, $end2, $seq2) = 
-                  map {$t->elm($j, $_)} qw/id chr beg end seq_cds/;
-                next if ($chr1 eq $chr2 && abs($beg1-$beg2) < 100_000);
-                my $seqO1 = Bio::Seq->new(-id=>$id1, -seq=>$seq1);
-                my $seqO2 = Bio::Seq->new(-id=>$id2, -seq=>$seq2);
-                my $aln = run_water($seqO1, $seqO2);
-                my $pct_idty = sprintf "%.01f", $aln->percentage_identity();
-                if($pct_idty > 70) {
-                    print FHO join("\t", $fam, $id1, $id2, $pct_idty)."\n";
-                }
-            }
-        }
-    }
-    close FHO;
-}
 sub screen_pairs_yass {
     my ($f01, $f02, $f03) = @_;
     
@@ -145,11 +144,11 @@ sub screen_pairs_yass {
     }
 
     open(FHO, ">$f03") or die "cannot open $f03 for writing\n";
-    print FHO join("\t", qw/fam id1 id2 locC1 locC2 match/)."\n";
+    print FHO join("\t", qw/id1 id2 locC1 locC2 match/)."\n";
 
     my $t = readTable(-in=>$f02, -header=>1);
     for my $i (0..$t->nofRow-1) {
-        my ($fam, $id1, $id2) = $t->row($i);
+        my ($id1, $id2) = $t->row($i);
         my ($loc1, $seq1) = @{$hs->{$id1}};
         my ($loc2, $seq2) = @{$hs->{$id2}};
 
@@ -162,7 +161,7 @@ sub screen_pairs_yass {
             push @aryStr, join("_", $b1, $e1, $str, $b2, $e2, $pct_idty/100, $e, $len_aln);
         }
         my $str = join(",", @aryStr);
-        print FHO join("\t", $fam, $id1, $id2, locAry2Str($loc1), locAry2Str($loc2), $str)."\n";
+        print FHO join("\t", $id1, $id2, locAry2Str($loc1), locAry2Str($loc2), $str)."\n";
     }
     close FHO;
 }
@@ -171,10 +170,10 @@ sub filter_yass {
     my $t = readTable(-in=>$f03, -header=>1);
 
     open(FH, ">$f04") or die "cannot open $f04 for writing\n";
-    print FH join("\t", qw/id fam id1 id2 locC1 locC2 match/)."\n";
+    print FH join("\t", qw/id id1 id2 locC1 locC2 match/)."\n";
     my $id = 0;
     for my $i (0..$t->nofRow-1) {
-        my ($fam, $id1, $id2, $locS1, $locS2, $matchStr) = $t->row($i);
+        my ($id1, $id2, $locS1, $locS2, $matchStr) = $t->row($i);
         my $loc1 = locStr2Ary($locS1);
         my $loc2 = locStr2Ary($locS2);
 
@@ -193,23 +192,23 @@ sub filter_yass {
         next if $flag == 0;
 
         $matchStr = join(",", map {join("_", @$_)} @msf);
-        print FH join("\t", ++$id, $fam, $id1, $id2, $locS1, $locS2, $matchStr)."\n";
+        print FH join("\t", ++$id, $id1, $id2, $locS1, $locS2, $matchStr)."\n";
     }
     close FH;
 }
 sub prepare_plot {
-    my ($f01, $f04, $f09) = @_;
-    my $ts = readTable(-in=>$f01, -header=>1);
+    my ($fs, $fy, $fo) = @_;
+    my $ts = readTable(-in=>$fs, -header=>1);
     my $hs = { map {$ts->elm($_, "id") => $ts->rowRef($_)} (0..$ts->nofRow-1) };
-    my $t = readTable(-in=>$f04, -header=>1);
+    my $t = readTable(-in=>$fy, -header=>1);
 
-    open(FH, ">$f09") or die "cannot open $f04 for writing\n";
-    print FH join("\t", qw/id fam id1 chr1 beg1 end1 str1 locC1 id2 chr2 beg2 end2 str2 locC2 match/)."\n";
+    open(FH, ">$fo") or die "cannot open $fo for writing\n";
+    print FH join("\t", qw/id id1 chr1 beg1 end1 str1 locC1 id2 chr2 beg2 end2 str2 locC2 match/)."\n";
     my $id = 0;
     for my $i (0..$t->nofRow-1) {
-        my ($id, $fam, $id1, $id2, $locS1, $locS2, $matchStr) = $t->row($i);
-        my ($chr1, $beg1, $end1, $str1) = @{$hs->{$id1}}[2..5];
-        my ($chr2, $beg2, $end2, $str2) = @{$hs->{$id2}}[2..5];
+        my ($id, $id1, $id2, $locS1, $locS2, $matchStr) = $t->row($i);
+        my ($chr1, $beg1, $end1, $str1) = @{$hs->{$id1}}[3..6];
+        my ($chr2, $beg2, $end2, $str2) = @{$hs->{$id2}}[3..6];
         my $locCR1 = locStr2Ary($locS1);
         my $locCR2 = locStr2Ary($locS2);
         my $locC1 = $str1 eq "-" ? [ map {[$end1-$_->[1]+1, $end1-$_->[0]+1]} reverse(@$locCR1) ] : [ map {[$beg1+$_->[0]-1, $beg1+$_->[1]-1]} @$locCR1 ];
@@ -224,20 +223,20 @@ sub prepare_plot {
             my ($bg2, $eg2) = $strm2 eq "+" ? ($beg2+$bl2-1, $beg2+$el2-1) : ($end2-$el2+1, $end2-$bl2+1);
             push @ps, join("_", $bg1, $eg1, $strm1, $bg2, $eg2, $strm2, $pct, $e, $len);
         }
-        print FH join("\t", $id, $fam, $id1, $chr1, $beg1, $end1, $str1, locAry2Str($locC1), 
+        print FH join("\t", $id, $id1, $chr1, $beg1, $end1, $str1, locAry2Str($locC1), 
             $id2, $chr2, $beg2, $end2, $str2, locAry2Str($locC2), join(",", @ps))."\n";
     }
     close FH;
 }
 sub comparative_plot {
-    my ($f09, $d11, $f_gtb) = @_;
-    make_path($d11) unless -d $d11;
-    remove_tree($d11, {keep_root=>1});
-    my $t = readTable(-in=>$f09, -header=>1);
+    my ($fi, $do, $f_gtb) = @_;
+    make_path($do) unless -d $do;
+    remove_tree($do, {keep_root=>1});
+    my $t = readTable(-in=>$fi, -header=>1);
     my $tg = readTable(-in=>$f_gtb, -header=>1);
   
     for my $i (0..$t->nofRow-1) {
-        my ($id, $fam, $id1, $chr1, $beg1, $end1, $str1, $locS1, $id2, $chr2, $beg2, $end2, $str2, $locS2, $matchS) = $t->row($i);
+        my ($id, $id1, $chr1, $beg1, $end1, $str1, $locS1, $id2, $chr2, $beg2, $end2, $str2, $locS2, $matchS) = $t->row($i);
         my ($loc1, $loc2) = (locStr2Ary($locS1), locStr2Ary($locS2));
         my @ms = map {[split("_", $_)]} split(",", $matchS);
         next if $i > 10;
@@ -317,7 +316,7 @@ sub comparative_plot {
             $gd->filledPolygon($pl, $co_pe);
         }
         
-        my $fo = "$d11/$id.png";
+        my $fo = "$do/$id.png";
         open(FH, ">$fo") or die "cannot open $fo for write\n";
         print FH $gd->png();
         close FH;

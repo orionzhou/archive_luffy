@@ -15,7 +15,7 @@ require Exporter;
 
 sub loc2Feature {
     my ($locC, $str, $id, $chr, $locE, $loc5, $loc3) = rearrange([qw/locC strand id chr locE loc5 loc3/], @_);
-    $str = ($str =~ /^\-1?$/) ? -1 : 1;
+    $str = (defined($str) && $str =~ /^\-1?$/) ? -1 : 1;
     $locE = [] unless defined($locE);
     $loc5 = [] unless defined($loc5);
     $loc3 = [] unless defined($loc3);
@@ -41,7 +41,8 @@ sub loc2Feature {
     return $fe;
 }
 sub gtb2Feature {
-    my ($id, $str, $locCS, $locES, $loc5S, $loc3S) = @$_[0,5,8,6,9,10];
+    my ($rowRef) = @_;
+    my ($id, $str, $locCS, $locES, $loc5S, $loc3S) = @$rowRef[0,5,8,6,9,10];
     my ($locC, $locE, $loc5, $loc3) = map {locStr2Ary($_)} ($locCS, $locES, $loc5S, $loc3S);
     my $fe = loc2Feature(-id=>$id, -strand=>$str, -locC=>$locC, -locE=>$locE);
     return $fe;

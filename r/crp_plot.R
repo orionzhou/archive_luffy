@@ -37,37 +37,3 @@ p <- ggplot(data=td) +
 ggsave(p, filename=sprintf("%s/%s.png", diro, org), width=8, heigh=5)
 
 write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
-
-locCluster <- function(pos, wsize) {
-  npos = length(pos)
-  df = data.frame(id=names(pos), pos=pos, cluster=1:npos)
-  df = df[order(df$pos),]
-  for (i in 1:npos) {
-    for (j in (i+1):npos) {
-      if(j>npos) {
-        next
-      }
-      if(df$pos[j] - df$pos[i] <= wsize) {
-  	    df$cluster[j] = df$cluster[i]
-  	  }
-    }
-  }
-  clusters = unique(df$cluster)
-  tmp = cbind(cluster1=clusters, cluster2=1:length(clusters))
-  x = merge(df, tmp, by.x='cluster', by.y='cluster1')
-  
-  df2 = data.frame(id=x$id, pos=x$pos, cluster=x$cluster2, cluster_y=1)
-  df2 = df2[order(df2$pos),]
-  
-  clusterP = ''
-  for (i in 1:npos) {
-    if(df2$cluster[i] == clusterP) {
-      df2$cluster_y[i] = df2$cluster_y[i-1] + 1
-    } else {
-      clusterP = df2$cluster[i]
-    }
-  }
-
-  hist(as.matrix(table(df2$cluster)), xlab='cluster size', main=paste(wsize, 'bp', sep=''))
-  df2
-}

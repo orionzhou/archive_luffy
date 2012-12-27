@@ -60,11 +60,11 @@ $(BINDIR)/bamStat: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
 
 $(BINDIR)/%:
 	@echo "Linking $@..."
-	$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
+	@$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 $(OBJDIR)/%.o:
 	@echo "Compiling $@..."
-	$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $< -c -o $@
+	@$(CC) $(CCFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) $< -c -o $@
 
 $(BINDIR) $(OBJDIR):
 	@mkdir -p $@

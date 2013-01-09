@@ -1,10 +1,13 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Localdb; use Run; 
-use LWP; use LWP::UserAgent; use HTML::TableExtract; #use Net::SFTP; use Net::SSH::Perl;
-use Bio::Seq; use Bio::SeqIO; use Bio::SearchIO; use Path::Class;
-use Time::HiRes qw/gettimeofday tv_interval/; use Term::ANSIColor; use Data::Dumper;
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/; use Math::Round qw/round/;
+use strict;
+use Common;
+use Data::Dumper;
+use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
+use LWP;
+use LWP::UserAgent;
+use HTML::TableExtract;
+use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 @EXPORT = qw/postUrl fetch_plaza fetch_mtgi/;
 @EXPORT_OK = qw//;
 sub postUrl {
@@ -20,6 +23,7 @@ sub postUrl {
     }
 }
 sub fetch_plaza {
+    my $DIR_Circos;
     my $url = "http://bioinformatics.psb.ugent.be/legume-plaza/genes/from";
     my $param = {
 #  "mt" => ["Medicago%20truncatula", 2330, 46587],
@@ -34,7 +38,7 @@ sub fetch_plaza {
         my ($spd, $numP, $numR) = @{$param->{$sp}};
         my $dirT = "/tmp/$sp";
 #  unlink $dirT;
-        my $fo = file($DIR_Circos, "02_coords", "$sp.txt");
+        my $fo = "$DIR_Circos/02_coords/$sp.txt";
         my $fh = new IO::File $fo, "w";
         print $fh join("\t", qw/gene transcript start end strand chr type family/)."\n";
         my $iStr = join(",", (1..$numP));
@@ -61,9 +65,8 @@ sub fetch_plaza {
 }
 sub fetch_mtgi {
     my ($fi, $fo) = rearrange(['in', 'out'], @_);
-    $fi = file($DIR_Misc2, "mtgi", "lib.txt");
-    $fo = file($DIR_Misc2, "mtgi", "lib_tc.txt");
-    print "$fi is not there\n" unless -e $fi;
+#    $fi = "$DIR_Misc2/mtgi/lib.txt";
+#    $fo = "$DIR_Misc2/mtgi/lib_tc.txt";
     my $fhi = new IO::File $fi, "r";
     my $fho = new IO::File $fo, "w";
     my $cnt = 0;

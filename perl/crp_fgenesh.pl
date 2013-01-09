@@ -1,7 +1,11 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Run; use Localdb; use Readfile; use Path::Class;
-use Parser; use Gff; use Crp; use Mapping;
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
+use strict;
+use InitPath;
+use Common;
+use Path::Class;
+use Gff;
+use Crp;
+use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 my $refDb = "mt_35";
 my $dirW = dir($DIR_Misc2, "crp");

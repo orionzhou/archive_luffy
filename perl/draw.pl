@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 use strict;
+use Cwd qw/abs_path/;
+use File::Basename qw/dirname/;
+BEGIN { unshift @INC, dirname(abs_path($0)); }
 use InitPath;
 use Common;
 use Bio::Graphics;
@@ -7,66 +10,22 @@ use Bio::SeqFeature::Generic;
 use Data::Dumper;
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
 
-#drawFes(-param=>$p);
-my $loc1 = locStr2Obj('7900000..8100000', 'chr4');
-my $loc2 = locStr2Obj('13500001..13750000', 'chr2');
-my $loc3 = locStr2Obj('22558001..22563500', 'chr6');
-#drawRange(-loc=>$loc3, -out=>file($DIR_Out, "tmp3.png"), -ps=>$p->{opts});
+my @pKs = qw/key glyph height bgcolor fgcolor connector desc/;
+my $pVs = { 
+    mt_30 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
+    mt_35 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
+    mt_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
+    mt_35_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
+    mt_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
+    mt_35_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
+    mt_35_defl => [qw/DEFL_CDS transcript 6 orchid slateblue dashed 1/],
+    mt_35_crp_hit =>[qw/CRP_hit_support transcript2 6 tbs springgreen solid 0/],
+    mt_35_crp_jcvi => [qw/CRPs_built_by_JCVI processed_transcript 6 gold slateblue solid 1/],
+    mt_35_crp_model => [qw/CRP_true_models processed_transcript 6 springgreen slateblue solid 1/],
+};
 
-my $dirW = dir($DIR_Misc2, "gbrowse_figs");
-my $f02 = file($dirW, "02_location.txt");
-#cmpModel1(-out=>$f02, -db=>$dbr1, -dbs=>[$dbr2, $dbr3]);
-my $f11 = file($dirW, "11_models.txt");
-#showModel(-out=>$f11, -db=>$opt->[1]->{db}, -opt=>$opt->[1]->{opt});
 
-sub drawGeneTrack {
-    for my $chr (1..8) {
-        my $chrName = "MtChr$chr";
-        my $chrLen = getChrLen($chrName);
-        my $step = 1e6;
-        my $its = ceil($chrLen/$step);
-        for my $i (0..$its-1) {
-            my ($start, $end) = ($i*$step+1, ($i+1)*$step);
-            $end = $end > $chrLen ? $chrLen : $end;
-            my $fImg = file($DIR_Misc2, "uniqCovRatio", "geneTrack", sprintf("%s[%02dM-%02dM].png", $chrName, $i, $i+1));
-            my $regexHash = {"late nodulin|cysteine\-rich"=>"crimson", "NB\-ARC|NB\-LRR|NBS\-LRR"=>"limegreen"};
-            drawRange(-chr=>$chr, -start=>$start, -end=>$end, -width=>1500, -out=>$fImg, -hilite=>$regexHash);
-        }
-    }
-}
-sub getTrackConf {
-    my ($db, $opt) = @_;
-    my $r;
-    my @pKs = qw/key glyph height bgcolor fgcolor connector desc/;
-    my $pVs = { 
-        mt_30 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
-        mt_35 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
-        mt_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
-        mt_35_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
-        mt_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
-        mt_35_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
-        mt_35_defl => [qw/DEFL_CDS transcript 6 orchid slateblue dashed 1/],
-        mt_35_crp_hit =>[qw/CRP_hit_support transcript2 6 tbs springgreen solid 0/],
-        mt_35_crp_jcvi => [qw/CRPs_built_by_JCVI processed_transcript 6 gold slateblue solid 1/],
-        mt_35_crp_model => [qw/CRP_true_models processed_transcript 6 springgreen slateblue solid 1/],
-    };
-    die "no track configuration for $db\[$opt]\n" unless exists $pVs->{$db};
-    my $ref = $pVs->{$db};
-    $ref = { map {$pKs[$_] => $ref->[$_]} (0..$#pKs) };
-    if($opt eq "match") {
-        $ref->{label} = sub {my ($fe) = @_; return $fe->id." [".$fe->score."]";};
-    } elsif($opt eq "mRNA") {
-        $ref->{label} = sub {my ($fe) = @_; return $fe->id." [".$fe->source."]";};
-    } 
-    if($db eq "mt_35_crp_hit") {
-        $ref->{bgcolor} = sub {my $fe = shift; return $fe->source_tag eq 'picked' ? "floralwhite" : "lightgrey";};
-        $ref->{label} = sub {my $fe = shift; return join(" ", $fe->id, $fe->source_tag, $fe->score);};
-    }
-#  $ref->{label} = 1;
-#  $ref->{desc} = 0;
-    return $ref;
-}
-sub drawRange {
+sub plotFeaturesByLoc_from_db {
     my ($loc, $ps, $fo, $hilite, $xtracks) = rearrange([qw/loc ps out hilite xtracks/], @_);
     my ($chr, $s, $e) = map {$loc->$_} qw/seq_id start end/;
     my $panel = Bio::Graphics::Panel->new(

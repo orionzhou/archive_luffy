@@ -42,8 +42,9 @@ sub loc2Feature {
 }
 sub gtb2Feature {
     my ($rowRef) = @_;
-    my ($id, $str, $locCS, $locES, $loc5S, $loc3S) = @$rowRef[0,5,8,6,9,10];
+    my ($id, $str, $locCS, $locES, $loc5S, $loc3S, $cat1) = @$rowRef[0,5,8,6,9,10,14];
     my ($locC, $locE, $loc5, $loc3) = map {locStr2Ary($_)} ($locCS, $locES, $loc5S, $loc3S);
+    $id = "$id [$cat1]" if $cat1 ne "gene";
     my $fe = loc2Feature(-id=>$id, -strand=>$str, -locC=>$locC, -locE=>$locE);
     return $fe;
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-use lib ($ENV{"m"}."/mt2/modules");
+use lib $ENV{"SCRIPT_HOME_PERL"};
 use InitPath;
 use Common;
 use Bio::SeqIO;
@@ -222,6 +222,10 @@ sub change_zm_fasta_id {
     close FHO;
 }
 sub get_fas_gaps {
+#my $dir = "$DIR_Genome/Mtruncatula_4.0";
+#my $f01 = "$dir/01_refseq.fa";
+#my $f51 = "$dir/51_gap_loc.tbl";
+#get_fas_gaps($f01, $f51);
     my ($fi, $fo) = @_;
     my $seqI = Bio::SeqIO->new(-file=>"<$fi", -format=>"fasta");
 
@@ -237,9 +241,43 @@ sub get_fas_gaps {
         }
     }
 }
-my $dir = "$DIR_Genome/Mtruncatula_4.0";
-my $f01 = "$dir/01_refseq.fa";
-my $f51 = "$dir/51_gap_loc.tbl";
-get_fas_gaps($f01, $f51);
+sub tair9_updates {
+#my $dir = "$DIR_Misc2/crp.ssp";
+#tair9_updates("$dir/tair9_updates_raw.tbl", "$dir/tair9_updates.tbl");
+    my ($fi, $fo) = @_;
+    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
+    print FHO join("\t", qw/chr pos1 pos2 nt_old nt_new/)."\n";
+    
+    my $hb;
+    my $t = readTable(-in=>$fi, -header=>1);
+    for my $i (1..$t->nofRow) {
+        my ($chr, $version, $pos1, $pos2, $type, $nt, $nt_new) = $t->row($i-1);
+        if(!defined($hb->{$chr})) {
+            print FHO join("\t", $chr, 1, 1, '', '')."\n";
+            $hb->{$chr} = 1;
+        }
+
+        my $len;
+        if($nt =~ /^Nx(\d+)$/) {
+            $len = $1;
+        } else {
+            $len = length($nt);
+        }
+
+        if($type eq "substitution") {
+            print FHO join("\t", $chr, $pos1, $pos2, $nt, $nt_new)."\n";
+        } elsif($type eq "insertion") {
+            print FHO join("\t", $chr, $pos1, $pos2, '', '')."\n";
+            print FHO join("\t", $chr, $pos1+1, $pos2+1+$len, '', '')."\n";
+        } elsif($type eq "deletion") {
+            print FHO join("\t", $chr, $pos1, $pos2, '', '')."\n";
+            print FHO join("\t", $chr, $pos1+1+$len, $pos2+1, '', '')."\n";
+        } else {
+            die "unknown type: $type\n";
+        }
+    }
+    close FHO;
+}
+
 
 

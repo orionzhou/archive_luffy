@@ -4,7 +4,7 @@ use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter AutoLoader/;
 @EXPORT = qw/$DIR_Work $DIR_Data $DIR_Src $DIR_Tmp
-    $DIR_In $DIR_Out $DIR_Misc1 $DIR_Misc2 $DIR_Misc3
+    $DIR_In $DIR_Out $DIR_Misc1 $DIR_Misc2 $DIR_Misc3 $DIR_Misc4
     $DIR_Genome $DIR_Db/;
 @EXPORT_OK = qw//;
 our $DIR_Src = $ENV{'src'};
@@ -18,6 +18,7 @@ our $DIR_Tmp = "/project/scratch/zhoup/tmp";
 our $DIR_Misc1 = "$DIR_Data/misc1";
 our $DIR_Misc2 = "$DIR_Data/misc2";
 our $DIR_Misc3 = "$DIR_Data/misc3";
+our $DIR_Misc4 = "$DIR_Data/misc4";
 
 
 1;

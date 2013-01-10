@@ -24,9 +24,9 @@ fi
 
 echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ plpa ]]; then
-    export jjj=kkk
+    export repo=$home/repos
 elif [[ $HOSTNAME =~ cfans ]]; then
-    export jjj=kkk
+    export repo=$home/repos
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
     if [[ $HOSTNAME =~ ^noddy|^tern && "`dropbox.py status`" = 'Dropbox isn'"'"'t running!' ]] ; then
         dropbox.py start ;
@@ -65,12 +65,11 @@ export home=$HOME
 export src=$home/Source
 export data=$home/Data
 export dbox=$home/Dropbox
+export repo=$home/repos
 
 # repositories
-export repo=$dbox/repos
+export code=$repo/code
 export spada=$repo/spada
-export pzcode=$repo/pzcode
-export pzconfig=$repo/pzconfig
 
 # Perl
 export PERL_HOME=$prefix/soft/perl

@@ -1,0 +1,100 @@
+#!/bin/bash
+shopt -s nocasematch
+export PS1="\[$(tput setaf 7)\]\u@\h:\W $ \[$(tput sgr0)\]"
+alias vi='vim'
+alias ll='ls -l'
+alias la='ls -al'
+alias du='du -BM --max-depth=1'
+alias ssh='ssh -Y'
+umask 006
+
+system=`uname -s`
+arch=`uname -m | tr ' ' '-'`
+
+#color scheme for "ls" command
+if [ "$system" = "Linux" ]; then
+    [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
+    [ -e "$DIR_COLORS" ] || DIR_COLORS=""
+    eval "`dircolors -b $DIR_COLORS`"
+elif [ "$system" = "Darwin" ]; then
+    export CLICOLOR=1
+    export LSCOLORS=dxfxcxdxbxegedabagacad
+    alias ls="ls -G"
+fi
+
+echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
+if [[ $HOSTNAME =~ plpa ]]; then
+    export jjj=kkk
+elif [[ $HOSTNAME =~ cfans ]]; then
+    export jjj=kkk
+elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
+    if [[ $HOSTNAME =~ ^noddy|^tern && "`dropbox.py status`" = 'Dropbox isn'"'"'t running!' ]] ; then
+        dropbox.py start ;
+    fi 
+elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
+    export soft=/nfs/soft-sle11
+    
+    for subpath in libsequence/1.7.3 boost/1.47.0 \
+      blast/2.2.22 blat/34 \
+      exonerate/2.2.0 structure/2.3.1 clustalw/2.1 phyml/3.0
+    do
+        export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
+        export PATH=$soft/$subpath/bin:$PATH
+    done
+else
+    echo 'unknown host -> check your bash_profile'
+fi
+
+# Add software paths
+export prefix=$HOME/$arch
+export PATH=$PATH:$prefix/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$prefix/lib
+if [[ -d $prefix/soft ]]; then
+    for dir_lib in `find $prefix/soft -type d -name lib`
+    do
+        export LD_LIBRARY_PATH=$dir_lib:$LD_LIBRARY_PATH
+    done
+    for bin_lib in `find $prefix/soft -type d -name bin`
+    do
+        export PATH=$bin_lib:$PATH
+    done
+fi
+
+# generic locations
+export home=$HOME
+export src=$home/Source
+export data=$home/Data
+export dbox=$home/Dropbox
+
+# repositories
+export repo=$dbox/repos
+export spada=$repo/spada
+export pzcode=$repo/pzcode
+export pzconfig=$repo/pzconfig
+
+# Perl
+export PERL_HOME=$prefix/soft/perl
+#export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
+#export PERL_MB_OPT="--install_base $PERL_HOME"
+export CPANLIB=$PERL_HOME/lib/perl5
+export PERL5LIB=$PERL_HOME/lib/perl5
+export SCRIPT_HOME_PERL=$pzcode/perl
+export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
+
+# Python
+export PYTHON_HOME=$prefix/soft/python
+export SCRIPT_HOME_PYTHON=$pzcode/python
+export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
+
+# C++
+export PATH=$pzcode/c++/bin:$PATH
+
+# R
+export SCRIPT_HOME_R=$pzcode/r
+
+# SVN
+export SVN_EDITOR=vi
+
+# ROOT
+export ROOTSYS=$prefix/soft/root
+

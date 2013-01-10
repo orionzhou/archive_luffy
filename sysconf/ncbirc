@@ -1,0 +1,5 @@
+[BLAST]
+BLASTDB=/home/youngn/zhoup/Data/db/blast
+
+[NCBI]
+data=/home/youngn/zhoup/x86_64/soft/blast/data

@@ -1,0 +1,24 @@
+filetype plugin on
+syntax on
+au BufWinEnter * silent loadview
+colorscheme desert 
+set number
+set numberwidth=4
+set cindent
+set smartindent
+set autoindent
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set foldmethod=indent
+set foldnestmax=2
+nnoremap <space> za
+vnoremap <space> zf
+set cinkeys=0{,0},:,0#,!^F
+set bs=2
+if has("autocmd")
+  autocmd BufEnter * :lcd %:p:h
+endif " has("autocmd")
+au BufWinLeave * mkview
+
+

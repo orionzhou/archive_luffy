@@ -1,7 +1,7 @@
 
-DIR_Home <- Sys.getenv("work");
-DIR_Data  <- file.path(DIR_Home, "Data");
-DIR_Dropbox  <- file.path(DIR_Home, "Dropbox");
+DIR_Home <- Sys.getenv("home");
+DIR_Data <- Sys.getenv("data");
+DIR_Drop <- Sys.getenv("dbox");
 DIR_Misc1 <- file.path(DIR_Data, "misc1");
 DIR_Misc2 <- file.path(DIR_Data, "misc2");
 DIR_Misc3 <- file.path(DIR_Data, "misc3");

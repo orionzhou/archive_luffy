@@ -30,17 +30,16 @@ p = ggplot(d05, aes(x=type2, y=snpDensity, fill=type2)) +
 ggsave(p, filename = file.path(dir, pre, "32_snpDensity.png"), width=12, height=9)
 
 
-pre = "22_seq"
-accs = get_mt_ids("opt12")
-outgroups = c("HM102")
-napi_thresh = 40
-napo_thresh = 1
-nsm_thresh = 1
 
-pre = "23_seq"
-accs = get_mt_ids("opt13")
-outgroups = c("HM330")
-napi_thresh = 40 
+dir = file.path(DIR_Misc1, "seq06")
+f_info = file.path(dir, "32_info.tbl")
+d01 = read.table(f_info, header=T, sep="\t", stringsAsFactors=T)
+d02 = d01[d01$type == "cds",]
+
+opt = "opt02"
+accs = get_mt_ids(opt)
+outgroups = c("HM102")
+napi_thresh = 26
 napo_thresh = 1
 nsm_thresh = 1
 
@@ -62,9 +61,9 @@ r31 = cbind(r01[order(r01$id),], num_acc_passed_ingroup=r11[order(r11[,1]), 2], 
 r32 = cbind(r31, num_acc_passed=r31$num_acc_passed_ingroup+r31$num_acc_passed_outgroup, num_snp_max=apply(r31[,c(5,6)], 1, max))
 r33 = cbind(r32, select=as.numeric(r32$num_acc_passed_ingroup >= napi_thresh & r32$num_acc_passed_outgroup>=napo_thresh & r32$num_snp_max>=nsm_thresh))
 
-f01 = file.path(dir, pre, "01_stat.tbl")
+f01 = file.path(dir, opt, "01_stat.tbl")
 write.table(r33, f01, sep="\t", col.names=T, row.names=F, quote=F)
-f02 = file.path(dir, pre, "02_ids.tbl")
+f02 = file.path(dir, opt, "02_ids.tbl")
 write.table(r33[r33$select==1, c('id','length')], f02, sep="\t", col.names=T, row.names=F, quote=F)
 
 

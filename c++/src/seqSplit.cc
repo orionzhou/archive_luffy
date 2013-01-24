@@ -57,7 +57,7 @@ int main( int argc, char* argv[] ) {
   po::options_description cmdOpts("Allowed options");
   cmdOpts.add_options()
     ("help,h", "produce help message")
-    ("f_acc,a", po::value<string>(&f_acc)->default_value("/project/youngn/zhoup/Scripts/conf/acc_ids.tbl"), "acc option file")
+    ("f_acc,a", po::value<string>(&f_acc)->default_value("/home/youngn/zhoup/repos/code/conf/acc_ids.tbl"), "acc option file")
     ("opt_ind,t", po::value<string>(&opt_ind), "ind option")
     ("opt_conf,c", po::value<int>(&opt_conf)->default_value(1), "id_all tion")
     ("f_in,i", po::value<string>(&f_in), "input sequence file")

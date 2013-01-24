@@ -4,8 +4,8 @@
 CXX = g++
 CC = $(CXX)
 
-BOOST ?= $(soft)/boost/1.47.0
-LIBSEQ ?= $(soft)/libsequence/1.7.3
+BOOST ?= $(soft_msi)/boost/1.47.0
+LIBSEQ ?= $(soft_msi)/libsequence/1.7.3
 SAMTOOLS = $(prefix)/soft/samtools
 BAMTOOLS = $(prefix)/soft/bamtools
 GECO = $(prefix)/soft/geco

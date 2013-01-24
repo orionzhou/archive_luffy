@@ -1,4 +1,5 @@
 library(ggplot2)
+library(plyr)
 library(data.table)
 library(RColorBrewer)
 
@@ -6,15 +7,54 @@ ff = file.path(DIR_Misc2, "crp.annotation/family_info.tbl")
 tf = read.table(ff, header=TRUE, sep="\t", as.is=T)
 fams = unique(tf$cat)
 
-org = "Mtruncatula"
-org = "Mtruncatula_4.0"
-org = "Athaliana"
-fg = file.path(DIR_Misc3, "spada.crp", org, "31_model_SPADA", "61_final.tbl")
-diro = file.path(DIR_Misc2, "crp.evo")
+famstrs = c()
+for (fam in fams) {
+  idxs= which(tf$cat == fam)
+  idx_idxs_b = which( idxs != c(-1, idxs[-length(idxs)]+1) )
+  idx_idxs_e = c(idx_idxs_b[-1]-1, length(idxs))
 
+  fameles = c()
+  for (j in 1:length(idx_idxs_b)) {
+    famele = ifelse( idx_idxs_b[j] == idx_idxs_e[j], tf$id[idxs[idx_idxs_b[j]]], 
+      sprintf("%s-%s", tf$id[idxs[idx_idxs_b[j]]], tf$id[idxs[idx_idxs_e[j]]]) )
+    fameles = c(fameles, famele)
+  }
+  famstr = paste(fameles, collapse=",")
+  famstrs = c(famstrs, famstr)
+}
+fami = data.frame(cat=fams, ids=famstrs)
+
+diro = file.path(DIR_Drop, "Docs/research/MS_SPADA/supplement")
+
+org = "Mtruncatula_4.0"
+orgs = c("Athaliana", "Mtruncatula_3.5", "Osativa")
+
+dc=c()
+for (i in 1:length(orgs)) {
+  org = orgs[i]
+  fg = sprintf("%s/spada.crp.%s/41_perf_eval/SPADA/61_final.tbl", DIR_Misc4, org)
+  tg = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)[,c("id","family")]
+  tg2 = merge(tg, tf, by.x='family', by.y='id')
+  tg3 = ddply(tg2, .(cat), "nrow")
+  colnames(tg3)[2] = org
+  if(i==1) {
+    dc = tg3
+  } else {
+    dc = merge(dc, tg3, by.x='cat', all=T)
+  }
+}
+dc = merge(fami, dc, by="cat", all=T)
+dc[is.na(dc)] <- 0
+colnames(dc)[1] = c('family')
+dc = dc[order(dc$ids),]
+apply(dc[,orgs], 2, sum)
+write.table(dc, file.path(diro, 'crp.family.number.tbl'), col.names=T, row.names=F, quote=F, sep='\t')
+
+org = orgs[3]
+fg = sprintf("%s/spada.crp.%s/41_perf_eval/SPADA/61_final.tbl", DIR_Misc4, org)
 t1 = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)
 colnames(t1)[which(colnames(t1)=="start")] = "beg"
-t2 = t1[tolower(substr(t1$chr,1,3))=="chr" & tolower(t1$chr)!='chru', -which(colnames(t1)=="sequence")]
+t2 = t1[tolower(substr(t1$chr,1,3))=="chr" & substr(t1$chr,4,5)<=9 & substr(t1$chr,4,5)>=0, -which(colnames(t1)=="sequence")]
 
 tli = t2
 locs = as.numeric(substr(tli$chr, 4, 5)) * 1000000000 + (tli$beg + tli$end) / 2
@@ -34,6 +74,24 @@ p <- ggplot(data=td) +
 	theme(legend.position='right', legend.title=element_blank()) +
 	theme(axis.text.x=element_text(size=8, angle=0)) +
 	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
-ggsave(p, filename=sprintf("%s/%s.png", diro, org), width=8, heigh=5)
+ggsave(p, filename=sprintf("%s/%s.pdf", diro, org), width=8, heigh=6)
 
-write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+#write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+
+org = "Athaliana"
+org = "Osativa"
+fs1 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_una.tbl")
+fs2 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_spa.tbl")
+fs3 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_cur.tbl")
+ts1 = read.table(fs1, header=T, sep="\t", as.is=T)
+ts2 = read.table(fs2, header=T, sep="\t", as.is=T)
+ts3 = read.table(fs3, header=T, sep="\t", as.is=T)
+table(ts1$tag)
+table(ts2$tag)
+
+org = "Athaliana"
+org = "Mtruncatula_3.5"
+org = "Osativa"
+fi = sprintf("%s/spada.crp.%s/41_perf_eval/21_stat_SPADA_0.001.tbl", DIR_Misc4, org)
+ti = read.table(fi, sep="\t", header=T)
+table(ti$tag)

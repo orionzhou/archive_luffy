@@ -32,14 +32,14 @@ elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
         dropbox.py start ;
     fi 
 elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
-    export soft=/nfs/soft-sle11
+    export soft_msi=/nfs/soft-sle11
     
     for subpath in libsequence/1.7.3 boost/1.47.0 \
       blast/2.2.22 blat/34 \
       exonerate/2.2.0 structure/2.3.1 clustalw/2.1 phyml/3.0
     do
-        export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
-        export PATH=$soft/$subpath/bin:$PATH
+        export LD_LIBRARY_PATH=$soft_msi/$subpath/lib:$LD_LIBRARY_PATH
+        export PATH=$soft_msi/$subpath/bin:$PATH
     done
 else
     echo 'unknown host -> check your bash_profile'
@@ -49,14 +49,19 @@ fi
 export prefix=$HOME/$arch
 export PATH=$PATH:$prefix/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$prefix/lib
-if [[ -d $prefix/soft ]]; then
-    for dir_lib in `find $prefix/soft -type d -name lib`
+export soft=$prefix/soft
+if [[ -d $soft ]]; then
+    for subpath in  bamtools bedtools blast bowtie2 bwa \
+        CAP3 clustalo cmake cufflinks \
+        emboss gd geco genometools gmap hmmer mysql \
+        pindel R root samtools tophat trimAl wise2
     do
-        export LD_LIBRARY_PATH=$dir_lib:$LD_LIBRARY_PATH
-    done
-    for bin_lib in `find $prefix/soft -type d -name bin`
-    do
-        export PATH=$bin_lib:$PATH
+        if [[ -d $soft/$subpath/lib ]]; then
+            export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
+        fi
+        if [[ -d $soft/$subpath/bin ]]; then
+            export PATH=$soft/$subpath/bin:$PATH
+        fi
     done
 fi
 
@@ -93,6 +98,9 @@ export SCRIPT_HOME_R=$code/r
 
 # SVN
 export SVN_EDITOR=vi
+
+# LATEX
+export PATH=$prefix/soft/tex/bin/x86_64-linux:$PATH
 
 # ROOT
 export ROOTSYS=$prefix/soft/root

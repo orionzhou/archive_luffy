@@ -341,7 +341,7 @@ sub convert2Gtb {
     my ($fi, $fo, $f_ref) = @_;
     
     open(FHO, ">$fo") or die "cannot open $fo for writing\n";
-    print FHO join("\t", qw/id parent chr beg end strand locE locI locC loc5 loc3 phase source conf cat1 cat2 cat3 note/)."\n";
+    print FHO join("\t", qw/id parent chr beg end strand locE locI locC loc5 loc3 phase source conf cat1 cat2 cat3 note seq/)."\n";
 
     my $ti = readTable(-in=>$fi, -header=>1);
     my $t = $ti->match_pattern("\$_->[6] ne ''");

@@ -1,9 +1,8 @@
 #!/usr/bin/perl
 use strict;
-use lib ($ENV{"m"}."/mt2/modules");
-use Init;
+use lib ($ENV{"SCRIPT_HOME_PERL"});
+use InitPath;
 use Common; 
-use Readfile;
 use Seq;
 use Medicago;
 use Data::Dumper;
@@ -22,12 +21,12 @@ my $f00 = "$DIR_Genome/mt_35/10_model/66_final.gtb";
 
 #cut -f1-6 13_seq.tbl > 32_info.tbl
 
-my $opt_ind = "opt12";
+my $opt_ind = "opt02";
 my ($accs, $opt_conf) = get_mt_ids($opt_ind);
 print "seqSplit -i 13_seq.tbl -t $opt_ind -c $opt_conf -d $opt_ind/01_stat.tbl -o $opt_ind\n"; 
 
 my ($sub_pre, $sub_opt1, $sub_opt2, $sub_opt3) = ("subset_opt12", "opt12.1", "opt12.2", "opt12.3");
-subset_fasta_by_opt(-dir=>"$dir/$opt_ind", -pre=>$sub_pre, -opts=>[$sub_opt1, $sub_opt2, $sub_opt3]);
+#subset_fasta_by_opt(-dir=>"$dir/$opt_ind", -pre=>$sub_pre, -opts=>[$sub_opt1, $sub_opt2, $sub_opt3]);
 sub subset_fasta_by_opt {
     my ($dir, $pre, $opts) = rearrange(['dir', 'pre', 'opts'], @_);
     system("mkdir -p $dir/$pre") unless -d "$dir/$pre";

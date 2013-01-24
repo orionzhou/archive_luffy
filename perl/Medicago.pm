@@ -1,6 +1,5 @@
 package Medicago;
 use strict;
-use Init;
 use Common;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
@@ -10,7 +9,7 @@ require Exporter;
 @EXPORT_OK = qw//;
 sub get_mt_ids {
     my ($opt) = @_;
-    my $fi = "$DIR_Mt3/../conf/acc_ids.tbl";
+    my $fi = $ENV{"code"}."/conf/acc_ids.tbl";
     my $t = readTable(-in=>$fi, -header=>1);
 
     my $idx = -1;

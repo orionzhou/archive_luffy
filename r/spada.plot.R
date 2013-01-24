@@ -34,6 +34,7 @@ p <- ggplot(te2) +
   labs(shape='') +
   theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=7))
 ggsave(file.path(dirO, "performance_e.pdf"), p, width=5, height=3.5)
+ggsave(file.path(dirO, "performance_e.png"), p, width=5, height=3.5)
 
 ts1 = t[t$e == 0.001, c(-3, -4)]
 ts2 = reshape(ts1, idvar=c("org", "soft"), varying=list(3:6), timevar="type", v.names='value', times=colnames(ts1)[3:6], direction='long')
@@ -49,7 +50,8 @@ p <- ggplot(ts2) +
   theme(axis.text.x = element_text(size=7, hjust=1, vjust=1, angle=30)) + 
   theme(strip.text.x=element_text(face="italic"), strip.text.y=element_blank()) +
   labs(fill='', colour='')
-ggsave(file.path(dirO, "performance_soft.pdf"), p, width=5, height=7)
+ggsave(file.path(dirO, "performance_soft.pdf"), p, width=5, height=6)
+ggsave(file.path(dirO, "performance_soft.png"), p, width=5, height=6)
 
 t1 = t[, -4]
 t2 = reshape(t1, idvar=c("org", "soft", "e"), varying=list(4:7), timevar="type", v.names='value', times=colnames(t1)[4:7], direction='long')
@@ -66,4 +68,5 @@ p <- ggplot(t2) +
   theme(axis.text.x = element_text(size=7, hjust=1, vjust=1, angle=45), strip.text.y=element_text(face="italic"), strip.text.x=element_text(size=7)) +
   theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=8)) +
   labs(fill='', colour='')
-ggsave(file.path(dirO, "performance_all.pdf"), p, width=10, height=7)
+ggsave(file.path(dirO, "../supplement/performance_all.pdf"), p, width=10, height=7)
+ggsave(file.path(dirO, "../supplement/performance_all.png"), p, width=10, height=7)

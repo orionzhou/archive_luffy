@@ -1,14 +1,61 @@
 #!/usr/bin/perl -w
 use strict;
+use lib ($ENV{"SCRIPT_HOME_PERL"});
+use InitPath;
 use Common;
 use Seq;
+use Data::Dumper;
 use List::Util qw/min max sum/;
+use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-$ENV{'PATH'} = join(":", "/project/youngn/zhoup/Source/signalp-3.0",
-    "/home/msi/zhoup/bin/x86_64/bin",
-    $ENV{'PATH'});
+#my $org = "Athaliana";
+#my $org = "Mtruncatula_3.5";
+my $org = "Osativa";
+my $dir = "$DIR_Misc2/crp.gs/$org";
+my $f_ref = "$DIR_Misc4/genome/$org/01_refseq.fa";
 
-my $dir = "/project/youngn/zhoup/Data/misc2/crp_misc";
+my $f01 = "$dir/01.gtb";
+my $f05 = "$dir/05_renamed.gtb";
+crp_rename($f01, $f_ref, $f05);
+sub crp_rename {
+    my ($fi, $f_ref, $fo) = @_;
+    my $ti = readTable(-in=>$fi, -header=>1);
+    $ti->sort("cat3", 1, 0, "chr", 1, 0, "beg", 0, 0);
+    
+    my @chrs = uniq($ti->col("chr"));
+    my @len_digits = map {getDigits(seqLen($_, $f_ref) / 1000000)} @chrs;
+    my $chr_digits = getDigits(scalar(grep /\d+/, @chrs));
+    my $h = { map {$chrs[$_] => $len_digits[$_]} 0..$#chrs };
+
+    for my $i (0..$ti->nofRow-1) {
+        my ($chr, $beg, $fam) = map {$ti->elm($i, $_)} qw/chr beg cat3/;
+        my $begStr = sprintf "%0".$h->{$chr}."d", $beg/1000000;
+        my $chrStr = $chr;
+        $chrStr =~ s/chr//i;
+        $chrStr = sprintf "%0".$chr_digits."d", $chrStr if $chrStr =~ /^\d+$/;
+
+        my $id = sprintf "%s_chr%s_%sM", lc($fam), $chrStr, $begStr;
+        $ti->setElm($i, "id", $id);
+    }
+    
+    my $ref = group($ti->colRef("id"));
+    my $hd = { map { $_ => getDigits($ref->{$_}->[1]) } keys(%$ref) };
+    my $hc;
+    for my $i (0..$ti->nofRow-1) {
+        my $id = $ti->elm($i, "id");
+        $hc->{$id} ||= 0;
+        my $cnt = ++$hc->{$id};
+        
+        $id = sprintf "%s_%0".$hd->{$id}."d", $id, $cnt;
+        $ti->setElm($i, "id", $id);
+        my $pa = "$id.p";
+        $ti->setElm($i, "parent", $pa);
+    }
+    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
+    print FHO $ti->tsv(1);
+    close FHO;
+}
+
 my $d10 = "$dir/10_sigp";
 my $f10_01 = "$d10/01.gtb";
 my $f10_06 = "$d10/06.fa";

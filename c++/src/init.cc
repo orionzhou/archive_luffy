@@ -18,16 +18,9 @@ using namespace Sequence;
 using namespace Sequence::Alignment;
 using namespace boost::filesystem;
 
-path dirHome( getenv("work") );
+path dirHome( getenv("home") );
+path dirData( getenv("data") );
 path dirPre( getenv("prefix") );
-path dirBin = dirPre / "bin";
-path dirData = dirHome / "Data";
-path dirGenome = dirData / "genome";
-path dirRepo = dirData / "repo";
-path dirVnt = dirData / "variant";
-path dirIn = dirData / "in";
-path dirConf = dirIn / "conf";
-path dirStat = dirData / "stat";
 path dirMisc1 = dirData / "misc1";
 path dirMisc2 = dirData / "misc2";
 

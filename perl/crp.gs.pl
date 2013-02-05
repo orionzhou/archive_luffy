@@ -4,19 +4,53 @@ use lib ($ENV{"SCRIPT_HOME_PERL"});
 use InitPath;
 use Common;
 use Seq;
+use Gtb;
 use Data::Dumper;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-#my $org = "Athaliana";
-#my $org = "Mtruncatula_3.5";
-my $org = "Osativa";
-my $dir = "$DIR_Misc2/crp.gs/$org";
+my $ver = "20130131";
+my $org;
+$org = "Athaliana";
+#$org = "Mtruncatula_3.5";
+#$org = "Osativa";
+my $dir = "$DIR_Misc2/crp.gs/$ver/$org";
 my $f_ref = "$DIR_Misc4/genome/$org/01_refseq.fa";
 
 my $f01 = "$dir/01.gtb";
+my $f02 = "$dir/02_curation.tbl";
+my $f_ext = "$DIR_Misc4/spada.crp.$org.simple/31_model_evaluation/61_final.gtb";
+my $f04 = "$dir/04_updated.gtb";
+my $f11 = "$dir/11_new.gtb";
+#update_gs($f01, $f_ext, $f02, $f04, $f11);
+#gtb2Gff($f11, "$dir/11_new.gff");
+sub update_gs {
+    my ($fg, $fge, $fa, $fo, $fon) = @_;
+    my $tg = readTable(-in=>$fg, -header=>1);
+    my $ta = readTable(-in=>$fa, -header=>1);
+
+    my $tge = readTable(-in=>$fge, -header=>1);
+    my $he = { map {$tge->elm($_, "id") => $_} (0..$tge->nofRow-1) };
+
+    $ta = $ta->match_pattern("\$_->[-1] eq 1");
+    my @idxs = map {$he->{$_}} $ta->col("id");
+    my $tn = $tge->subTable(\@idxs, [$tge->header]);
+    printf "%s: %d new models added\n", $org, $tn->nofRow;
+
+    for my $i (0..$tn->nofRow-1) {
+        $tg->addRow( $tn->rowRef($i) );
+    }
+    open(FH, ">$fo") or die "cannot open $fo for writing\n";
+    print FH $tg->tsv(1);
+    close FH;
+    open(FH, ">$fon") or die "cannot open $fon for writing\n";
+    print FH $tn->tsv(1);
+    close FH;
+}
+
+#$f04 = $f01;
 my $f05 = "$dir/05_renamed.gtb";
-crp_rename($f01, $f_ref, $f05);
+#crp_rename($f04, $f_ref, $f05);
 sub crp_rename {
     my ($fi, $f_ref, $fo) = @_;
     my $ti = readTable(-in=>$fi, -header=>1);
@@ -55,6 +89,7 @@ sub crp_rename {
     print FHO $ti->tsv(1);
     close FHO;
 }
+#gtb2Gff($f05, "$dir/05.gff");
 
 my $d10 = "$dir/10_sigp";
 my $f10_01 = "$d10/01.gtb";

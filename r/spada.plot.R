@@ -1,5 +1,6 @@
 require(ggplot2)
 require(RColorBrewer)
+require(grid)
 
 orgs = c('Athaliana', 'Mtruncatula_3.5', 'Osativa')
 dirO = file.path(DIR_Drop, "Docs/research/MS_SPADA/figures")
@@ -24,34 +25,36 @@ te2 = reshape(te1, idvar=c("org", "e"), varying=list(3:6), timevar="type", v.nam
 te2 = cbind(te2, loge=log10(te2$e))
 te2$type = factor(te2$type, levels=c('sp_nt','sp_exon','sn_nt','sn_exon'))
 p <- ggplot(te2) + 
-  geom_line(mapping=aes(loge, value, group=type), size=0.2) +
+  geom_line(mapping=aes(loge, value, group=type), size=0.5) +
   geom_point(mapping=aes(loge, value, colour=type), size=1.5) +
-  scale_colour_brewer(palette="Set1", labels=c("sn_nt"="Nucleotide Sensitivity", "sn_exon"='Exon Sensitivity', "sp_nt"='Nucleotide Specifity', "sp_exon"='Exon Specifity')) + 
+  scale_colour_brewer(palette="Set1", labels=c("sn_nt"="Nucleotide\nSensitivity", "sn_exon"='Exon\nSensitivity', "sp_nt"='Nucleotide\nSpecifity', "sp_exon"='Exon\nSpecifity')) + 
   scale_x_continuous(name='E-value cutoff', breaks=seq(-8,0,1), labels=10^seq(-8,0,1)) +
   scale_y_continuous(name='Sensitivity / Specificity') +
-  facet_grid(. ~ org) +
-  theme(axis.text.x=element_text(size=7, hjust=1, vjust=1, angle=45), strip.text.x=element_text(face="italic")) +
+  facet_grid(org ~ .) +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=9, hjust=1, vjust=1, angle=20), strip.text.y=element_text(face="italic")) +
   labs(shape='') +
-  theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=7))
-ggsave(file.path(dirO, "performance_e.pdf"), p, width=5, height=3.5)
-ggsave(file.path(dirO, "performance_e.png"), p, width=5, height=3.5)
+  theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=9), legend.margin=unit(0, "cm"))
+ggsave(file.path(dirO, "performance_e.pdf"), p, width=4, height=6)
+ggsave(file.path(dirO, "performance_e.png"), p, width=4, height=6)
 
 ts1 = t[t$e == 0.001, c(-3, -4)]
 ts2 = reshape(ts1, idvar=c("org", "soft"), varying=list(3:6), timevar="type", v.names='value', times=colnames(ts1)[3:6], direction='long')
 ts2$type = factor(ts2$type, levels=c('sn_nt','sn_exon','sp_nt','sp_exon'))
 ts2$soft = factor(ts2$soft, levels=c('GeneID', 'Augustus_de_novo', 'GlimmerHMM', 'GeneMark', 'GeneWise_SplicePredictor', 'Augustus_evidence', 'SPADA', 'All'))
 p <- ggplot(ts2) + 
-  geom_bar(mapping=aes(soft, value, fill=type), stat='identity', width=0.7) +
-  scale_fill_brewer(palette="Set1", labels=c("sn_nt"="Nucleotide Sensitivity", "sn_exon"='Exon Sensitivity', "sp_nt"='Nucleotide Specifity', "sp_exon"='Exon Specifity')) + 
+  geom_bar(mapping=aes(soft, value, fill=type), stat='identity', position='dodge', width=0.7) +
+  scale_fill_brewer(palette="Paired", labels=c("sn_nt"="Nucleotide\nSensitivity", "sn_exon"='Exon\nSensitivity', "sp_nt"='Nucleotide\nSpecifity', "sp_exon"='Exon\nSpecifity')) + 
   scale_x_discrete(name='Gene Predicting Component') +
   scale_y_continuous(name='Sensitivity / Specificity') + 
-  facet_grid(type ~ org) +
-  theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=7)) +
-  theme(axis.text.x = element_text(size=7, hjust=1, vjust=1, angle=30)) + 
-  theme(strip.text.x=element_text(face="italic"), strip.text.y=element_blank()) +
+  facet_grid(org ~ .) +
+  theme_bw() +
+  theme(legend.title=element_blank(), legend.position="top", legend.direction="horizontal", legend.text=element_text(size=9)) +
+  theme(axis.text.x = element_text(size=9, hjust=1, vjust=1, angle=20)) + 
+  theme(strip.text.y=element_text(face="italic")) +
   labs(fill='', colour='')
-ggsave(file.path(dirO, "performance_soft.pdf"), p, width=5, height=6)
-ggsave(file.path(dirO, "performance_soft.png"), p, width=5, height=6)
+ggsave(file.path(dirO, "performance_soft.pdf"), p, width=4, height=6)
+ggsave(file.path(dirO, "performance_soft.png"), p, width=4, height=6)
 
 t1 = t[, -4]
 t2 = reshape(t1, idvar=c("org", "soft", "e"), varying=list(4:7), timevar="type", v.names='value', times=colnames(t1)[4:7], direction='long')

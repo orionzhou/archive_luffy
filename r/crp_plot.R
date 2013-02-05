@@ -32,7 +32,7 @@ orgs = c("Athaliana", "Mtruncatula_3.5", "Osativa")
 dc=c()
 for (i in 1:length(orgs)) {
   org = orgs[i]
-  fg = sprintf("%s/spada.crp.%s/41_perf_eval/SPADA/61_final.tbl", DIR_Misc4, org)
+  fg = sprintf("%s/spada.crp.%s.simple/31_model_evaluation/61_final.tbl", DIR_Misc4, org)
   tg = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)[,c("id","family")]
   tg2 = merge(tg, tf, by.x='family', by.y='id')
   tg3 = ddply(tg2, .(cat), "nrow")
@@ -50,8 +50,8 @@ dc = dc[order(dc$ids),]
 apply(dc[,orgs], 2, sum)
 write.table(dc, file.path(diro, 'crp.family.number.tbl'), col.names=T, row.names=F, quote=F, sep='\t')
 
-org = orgs[3]
-fg = sprintf("%s/spada.crp.%s/41_perf_eval/SPADA/61_final.tbl", DIR_Misc4, org)
+org = orgs[2]
+fg = sprintf("%s/spada.crp.%s.simple/31_model_evaluation/61_final.tbl", DIR_Misc4, org)
 t1 = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)
 colnames(t1)[which(colnames(t1)=="start")] = "beg"
 t2 = t1[tolower(substr(t1$chr,1,3))=="chr" & substr(t1$chr,4,5)<=9 & substr(t1$chr,4,5)>=0, -which(colnames(t1)=="sequence")]
@@ -74,24 +74,25 @@ p <- ggplot(data=td) +
 	theme(legend.position='right', legend.title=element_blank()) +
 	theme(axis.text.x=element_text(size=8, angle=0)) +
 	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
-ggsave(p, filename=sprintf("%s/%s.pdf", diro, org), width=8, heigh=6)
+ggsave(p, filename=sprintf("%s/%s.pdf", diro, org), width=8, heigh=5)
 
 #write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
 org = "Athaliana"
 org = "Osativa"
 fs1 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_una.tbl")
-fs2 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_spa.tbl")
-fs3 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_cur.tbl")
 ts1 = read.table(fs1, header=T, sep="\t", as.is=T)
-ts2 = read.table(fs2, header=T, sep="\t", as.is=T)
-ts3 = read.table(fs3, header=T, sep="\t", as.is=T)
 table(ts1$tag)
+fs2 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_spa.tbl")
+ts2 = read.table(fs2, header=T, sep="\t", as.is=T)
 table(ts2$tag)
+fs3 = file.path(DIR_Misc2, "crp.ssp", org, "11_stat_cur.tbl")
+ts3 = read.table(fs3, header=T, sep="\t", as.is=T)
+table(ts3$tag)
 
 org = "Athaliana"
 org = "Mtruncatula_3.5"
 org = "Osativa"
-fi = sprintf("%s/spada.crp.%s/41_perf_eval/21_stat_SPADA_0.001.tbl", DIR_Misc4, org)
-ti = read.table(fi, sep="\t", header=T)
+fi = sprintf("%s/spada.crp.%s.simple/33_stat_spa.tbl", DIR_Misc4, org)
+ti = read.table(fi, sep="\t", header=T, as.is=T)
 table(ti$tag)

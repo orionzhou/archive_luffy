@@ -11,23 +11,25 @@ use InitPath;
 use Common;
 use CompareModel;
 
-my $org = "Athaliana";
+my $org;
+$org = "Athaliana";
+#$org = "Mtruncatula_3.5";
 #$org = "Osativa";
 
 my $dir = "$DIR_Misc2/crp.ssp/$org";
-my $f_gtb_gs = "$DIR_Misc4/spada.crp.$org/41_perf_eval/01_model.gtb";
+my $f_gtb_gs = "$DIR_Misc2/crp.gs/20130129/$org/05_renamed.gtb";
 
-my $f_gtb_spa = "$DIR_Misc4/spada.crp.$org/41_perf_eval/SPADA/61_final.gtb";
+my $f_gtb_spa = "$DIR_Misc4/spada.crp.$org.simple/31_model_evaluation/61_final.gtb";
 my $f_sta_spa = "$dir/11_stat_spa.tbl";
-eval_gtb($f_gtb_spa, $f_gtb_gs, $f_sta_spa);
+eval_gtb($f_gtb_gs, $f_gtb_spa, $f_sta_spa);
 
 my $f_gtb_una = "$dir/08.gtb";
 my $f_sta_una = "$dir/11_stat_una.tbl";
-eval_gtb($f_gtb_una, $f_gtb_gs, $f_sta_una);
+eval_gtb($f_gtb_gs, $f_gtb_una, $f_sta_una);
 
 my $f_gtb_cur = "$DIR_Misc4/spada.crp.$org/01_preprocessing/61_gene.gtb";
 my $f_sta_cur = "$dir/11_stat_cur.tbl";
-eval_gtb($f_gtb_cur, $f_gtb_gs, $f_sta_cur);
+eval_gtb($f_gtb_gs, $f_gtb_cur, $f_sta_cur);
 
 sub model_eval {
     my ($f_eval, $f_ref_gtb, $fo) = @_;
@@ -62,22 +64,11 @@ sub model_eval {
     }
     close FH;
 }
-sub get_sn_sp {
-    my ($fi) = @_;
-    my $t = readTable(-in=>$fi, -header=>1);
-    my $sn_nt = sum($t->col("lenTP")) / ( sum($t->col("lenTP")) + sum($t->col("lenFN")) );
-    my $sp_nt = sum($t->col("lenTP")) / ( sum($t->col("lenTP")) + sum($t->col("lenFP")) );
-    my $sn_ex = sum($t->col("exonTP")) / ( sum($t->col("exonTP")) + sum($t->col("exonFN")) );
-    my $sp_ex = sum($t->col("exonTP")) / ( sum($t->col("exonTP")) + sum($t->col("exonFP")) );
-    return ($sn_nt, $sp_nt, $sn_ex, $sp_ex);
-}
 sub eval_gtb {
     my ($f_gtb_qry, $f_gtb_ref, $f_stat) = @_;
     my $f_eval = "eval.tbl";
-    compare_models($f_gtb_qry, $f_gtb_gs, $f_eval);
-    model_eval($f_eval, $f_gtb_gs, $f_stat);
-    my ($sn_nt, $sp_nt, $sn_ex, $sp_ex) = get_sn_sp($f_stat);
-    print join(" ", $sn_nt, $sp_nt, $sn_ex, $sp_ex)."\n";
+    compare_models($f_gtb_qry, $f_gtb_ref, $f_eval);
+    model_eval($f_eval, $f_gtb_ref, $f_stat);
     runCmd("rm -f $f_eval");
 }
 

@@ -1,9 +1,11 @@
-dirW = "/project/youngn/zhoup/Data/genome/Mtruncatula_4.0"
-fs = file.path(dirW, "51_gap_loc.tbl")
-t1 = read.table(fs, sep="\t", header=TRUE, as.is=TRUE)
+dirW = "/home/youngn/zhoup/Data/genome/Mtruncatula_4.0"
+fc = file.path(dirW, "51_seqlen.tbl")
+tc = read.table(fc, sep="\t", header=TRUE, as.is=TRUE)
+tc = tc[tc$id < 'chr9',]
 
-tc = t1[t1$id < 'chr9' & t1$type == 'chr',]
-tg = t1[t1$id < 'chr9' & t1$type == 'gap',]
+fg = file.path(dirW, "52_gap_loc.tbl")
+tg = read.table(fg, sep="\t", header=TRUE, as.is=TRUE)
+tg = tg[tg$id < 'chr9',]
 
 tt = table(tg$len)
 x1 = data.frame(gap_len=as.numeric(names(tt)), gap_cnt=as.numeric(tt))
@@ -23,7 +25,7 @@ tt = tapply(tg$len, as.factor(tg$id), mean)
 ttm = data.frame(id=names(tt), mean_gap_len=tt)
 tt = tapply(tg$len, as.factor(tg$id), median)
 ttd = data.frame(id=names(tt), median_gap_len=tt)
-ts = merge(tc[,c('id','len')], ttl, by='id')
+ts = merge(tc[,c('id','length')], ttl, by='id')
 ts = merge(ts, ttn, by='id')
 ts = merge(ts, ttm, by='id')
 ts = merge(ts, ttd, by='id')

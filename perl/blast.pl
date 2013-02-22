@@ -3,7 +3,6 @@ use strict;
 use Init;
 use Common;
 use Run;
-use Path::Class;
 use Mtb;
 use Hmm;
 my $ps = {

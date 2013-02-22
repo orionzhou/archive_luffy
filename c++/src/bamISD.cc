@@ -20,27 +20,27 @@ using namespace BamTools;
 
 typedef map<int32_t, uint32_t> IntMap;
 struct LibStat {
-  uint32_t total;
-  uint32_t unmapped;
-  uint32_t unpaired;
-  uint32_t unpaired_dup;
-  uint32_t unpaired_uniq;
-  uint32_t paired;
-  uint32_t paired_dup;
-  uint32_t paired_uniq;
-  uint32_t paired_proper;
-  IntMap isd;
-  LibStat() {
-    total = 0;
-    unmapped = 0;
-    unpaired = 0;
-    unpaired_dup = 0;
-    unpaired_uniq = 0;
-    paired = 0;
-    paired_dup = 0;
-    paired_uniq = 0;
-    paired_proper = 0;
-  }
+    uint32_t total;
+    uint32_t unmapped;
+    uint32_t unpaired;
+    uint32_t unpaired_dup;
+    uint32_t unpaired_uniq;
+    uint32_t paired;
+    uint32_t paired_dup;
+    uint32_t paired_uniq;
+    uint32_t paired_proper;
+    IntMap isd;
+    LibStat() {
+        total = 0;
+        unmapped = 0;
+        unpaired = 0;
+        unpaired_dup = 0;
+        unpaired_uniq = 0;
+        paired = 0;
+        paired_dup = 0;
+        paired_uniq = 0;
+        paired_proper = 0;
+    }
 };
 typedef map<string, LibStat> StrLibMap;
 int main(int argc, char *argv[]) {

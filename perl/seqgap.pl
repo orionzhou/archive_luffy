@@ -6,19 +6,20 @@
   
 =head1 NAME
   
-  seqextract.pl - extract one or more sequence records from an input fasta file
+  seqgap.pl - report gap ('N's) locations in an input fasta file
 
 =head1 SYNOPSIS
   
-  seqextract.pl [-help] [-out output-file] <input-file> <IDs>
+  seqgap.pl [-help] [-min minimum-length] [-out output-file] <input-file>
 
   Options:
       -help   brief help message
       -out    output file, instead of stdout
+      -min    minimum length of gaps to report (default: 1)
 
 =head1 DESCRIPTION
 
-  This program extracts sequences from the input fasta file
+  This program report locations of all gaps ('N's) from the input fasta file
 
 =head1 OPTIONS
 
@@ -31,10 +32,6 @@
 =item B<input-file>
   
   Needs to be fasta format
-
-=item B<IDs>
-  
-  Fasta IDs
 
 =item B<output-file>
 
@@ -66,17 +63,19 @@ my $fi = '';
 my $fo = '';
 my $fhi;
 my $fho;
+my $len_min = 1;
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
     "help|h"  => \$help_flag,
     "out|o=s" => \$fo,
+    "min|i=i" => \$len_min,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
 my @ids;
-($fi, @ids)= @ARGV;
+($fi)= @ARGV;
 if(!$fi) {
     pod2usage(2);
 } elsif ($fi eq '-' || $fi eq "stdin") {
@@ -92,21 +91,19 @@ if(!$fo || $fo eq "stdout") {
 }
 
 my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
-my $seqHO = Bio::SeqIO->new(-fh=>$fho, -format=>'fasta');
-my %h = map {$_=>1} @ids;
-my $cnt = 0;
+open($fho, ">$fo") or die "cannot open $fo for writing\n";
+print $fho join("\t", qw/id beg end len/)."\n";
+
 while(my $seqO = $seqHI->next_seq()) {
-    my ($id) = ($seqO->id);
-    if(exists $h{$id}) {
-        $seqHO->write_seq($seqO);
-        $cnt ++;
+    my ($id, $seq, $seqlen) = ($seqO->id, $seqO->seq, $seqO->length);
+    while($seq =~ /N+/ig) {
+        my ($beg, $end) = ($-[0]+1, $+[0]);
+        my $len = $end - $beg + 1;
+        next if $len < $len_min;
+        print $fho join("\t", $id, $beg, $end, $len)."\n";
     }
 }
 $seqHI->close();
-$seqHO->close();
-printf "  %4d sequences extracted\n", $cnt;
+close $fho;
 
 exit 0;
-
-
-

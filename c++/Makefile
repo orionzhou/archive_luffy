@@ -24,12 +24,13 @@ SRCDIR   = src
 OBJDIR   = obj
 BINDIR   = bin
 
-BINNAMES = test msConvert readGz cov_window bamDepth \
+BINNAMES = test msConvert readGz cov_window bamDepth blastTiling \
   sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSelectInds sspConvert ssp2Vcf\
   bamPreprocess bamCheck viewRead \
   bamPickStretched bamPickOrphan bamPickReads bamPickBpReads \
   bam2Fastq bamISD bamStat \
-  seqRec seqSplit alnStat
+  seqSplit alnStat \
+#  seqRec
 BINS    := $(addprefix $(BINDIR)/, $(BINNAMES))
 SRCS    := $(wildcard $(SRCDIR)/*.$(SRCEXT))
 OBJS    := $(patsubst $(SRCDIR)/%.$(SRCEXT), $(OBJDIR)/%.o, $(SRCS))
@@ -52,6 +53,7 @@ BIN_BAM = bamCheck viewRead bamPickStretched bamPickOrphan bamPickReads bamPickB
 $(addprefix $(BINDIR)/, $(BIN_BAM)): $(OBJDIR)/bam_utils.o
 
 $(BINDIR)/alnStat: $(OBJDIR)/read.o
+$(BINDIR)/blastTiling: $(OBJDIR)/common.o
 $(BINDIR)/bamDepth: $(SAMTOOLS)/lib/libbam.a -lbam -lm -lz
 $(BINDIR)/cov_window: $(addprefix $(OBJDIR)/, read.o ssp.o)
 $(BINDIR)/seqRec: $(addprefix $(OBJDIR)/, geco_sequences.o read.o ssp.o)

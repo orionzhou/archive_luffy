@@ -221,26 +221,6 @@ sub change_zm_fasta_id {
     close FHI;
     close FHO;
 }
-sub get_fas_gaps {
-#my $dir = "$DIR_Genome/Mtruncatula_4.0";
-#my $f01 = "$dir/01_refseq.fa";
-#my $f51 = "$dir/51_gap_loc.tbl";
-#get_fas_gaps($f01, $f51);
-    my ($fi, $fo) = @_;
-    my $seqI = Bio::SeqIO->new(-file=>"<$fi", -format=>"fasta");
-
-    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
-    print FHO join("\t", qw/id beg end len type/)."\n";
-    while(my $seqObj = $seqI->next_seq()) {
-        my ($id, $seq, $seqlen) = ($seqObj->id, $seqObj->seq, $seqObj->length);
-        print FHO join("\t", $id, 1, $seqlen, $seqlen, 'chr')."\n";
-        while($seq =~ /N+/ig) {
-            my ($beg, $end) = ($-[0]+1, $+[0]);
-            my $len = $end - $beg + 1;
-            print FHO join("\t", $id, $beg, $end, $len, 'gap')."\n";
-        }
-    }
-}
 sub tair9_updates {
 #my $dir = "$DIR_Misc2/crp.ssp";
 #tair9_updates("$dir/tair9_updates_raw.tbl", "$dir/tair9_updates.tbl");

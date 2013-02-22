@@ -1,8 +1,8 @@
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <assert.h>
@@ -13,7 +13,7 @@
 using namespace std;
 using boost::format;
 
-namespace common {
-
-
+void pos_split(const LocPair& lpi, const DubVec& scores, LocPair& lpo, IntVec& idxs, const int& opt) {
 }
+
+

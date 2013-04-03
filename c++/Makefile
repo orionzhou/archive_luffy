@@ -4,11 +4,11 @@
 CXX = g++
 CC = $(CXX)
 
-BOOST ?= $(soft_msi)/boost/1.47.0
-LIBSEQ ?= $(soft_msi)/libsequence/1.7.3
-SAMTOOLS = $(prefix)/soft/samtools
-BAMTOOLS = $(prefix)/soft/bamtools
-GECO = $(prefix)/soft/geco
+BOOST    ?= $(soft)/boost
+LIBSEQ   ?= $(soft)/libsequence
+SAMTOOLS ?= $(soft)/samtools
+BAMTOOLS ?= $(soft)/bamtools
+GECO     ?= $(soft)/geco
 
 DEBUG_LEVEL     = -g
 EXTRA_CCFLAGS   = -Wall -m64
@@ -53,7 +53,7 @@ BIN_BAM = bamCheck viewRead bamPickStretched bamPickOrphan bamPickReads bamPickB
 $(addprefix $(BINDIR)/, $(BIN_BAM)): $(OBJDIR)/bam_utils.o
 
 $(BINDIR)/alnStat: $(OBJDIR)/read.o
-$(BINDIR)/blastTiling: $(OBJDIR)/common.o
+$(BINDIR)/blastTiling: $(OBJDIR)/location.o
 $(BINDIR)/bamDepth: $(SAMTOOLS)/lib/libbam.a -lbam -lm -lz
 $(BINDIR)/cov_window: $(addprefix $(OBJDIR)/, read.o ssp.o)
 $(BINDIR)/seqRec: $(addprefix $(OBJDIR)/, geco_sequences.o read.o ssp.o)

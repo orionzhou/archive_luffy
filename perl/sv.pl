@@ -1,11 +1,13 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Getopt::Long; use Run; 
-use Bio::Seq; use Bio::SeqIO; use Graph; use Bam;
-use Readfile; use Writefile; use Annotate; use Align; use Parser; use Medicago;
-use Gff; use CircosConf; use Draw; use Parser; use Seq; use Convert; use GeneModel;
-use Time::HiRes qw/gettimeofday tv_interval/; use Data::Dumper;use Path::Class; 
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/; use Math::Round qw/round/;
+use strict; 
+use Init;
+use Common;
+use Getopt::Long;
+use Data::Dumper;
+use Path::Class; 
+use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
+
 my $refDb = "mt_35";
 my $f_genome = file($DIR_Genome, $refDb, "41_genome.fa");
 my ($program, $beg, $end) = ('', 0, -1);

@@ -6,7 +6,7 @@ alias ll='ls -l'
 alias la='ls -al'
 alias du='du -BM --max-depth=1'
 alias ssh='ssh -Y'
-umask 006
+umask 027
 
 system=`uname -s`
 arch=`uname -m | tr ' ' '-'`
@@ -33,16 +33,15 @@ elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
     fi 
 elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     export soft_msi=/nfs/soft-sle11
+    if [[ $HOSTNAME =~ ^node ]]; then
+        export soft_msi=/soft
+    fi
     
-    for subpath in libsequence/1.7.3 boost/1.47.0 \
-      blast/2.2.22 blat/34 \
-      exonerate/2.2.0 structure/2.3.1 clustalw/2.1 phyml/3.0
+    for subpath in blat/34 \
+      exonerate/2.2.0 structure/2.3.1 clustalw/2.1
     do
-        if [[ -d $soft_msi/$subpath/lib ]]; then
-            export LD_LIBRARY_PATH=$soft_msi/$subpath/lib:$LD_LIBRARY_PATH
-        fi
-        if [[ -d $soft_msi/$subpath/bin ]]; then
-            export PATH=$soft_msi/$subpath/bin:$PATH
+        if [[ -d $soft/$subpath/bin ]]; then
+            export PATH=$soft/$subpath/bin:$PATH
         fi
     done
 else
@@ -55,17 +54,20 @@ export PATH=$PATH:$prefix/bin
 #export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
 export soft=$prefix/soft
 if [[ -d $soft ]]; then
-    for subpath in zlib gcc \
+    for subpath in zlib gcc boost libsequence \
         bamtools bedtools bowtie2 bwa \
         blast CAP3 clustalo cmake cufflinks \
         emboss gd geco genometools gmap hmmer mysql \
         pindel R root samtools tophat trimAl wise2
     do
+        if [[ -d $soft/$subpath/bin ]]; then
+            export PATH=$soft/$subpath/bin:$PATH
+        fi
         if [[ -d $soft/$subpath/lib ]]; then
             export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
         fi
-        if [[ -d $soft/$subpath/bin ]]; then
-            export PATH=$soft/$subpath/bin:$PATH
+        if [[ -d $soft/$subpath/lib64 ]]; then
+            export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
         fi
     done
 fi

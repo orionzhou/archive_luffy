@@ -1,8 +1,0 @@
-#PBS -l nodes=1:ppn=2,mem=5GB,walltime=150:00:00
-#PBS -m ae
-#PBS -q elmob 
-
-cd /project/youngn/zhoup/Data/repo/mt_35/30_vnt
-samtools mpileup -gD -A -q 1 -f $data/genome/mt_35/41_genome.fa -b 01_bamlist/acc26.txt -R -r chr8 > 11_bcf/acc26_chr8.bcf
-
-

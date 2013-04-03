@@ -1,6 +1,6 @@
 package Bam; 
 use strict;
-use Init;
+use InitPath;
 use Common;
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
@@ -11,13 +11,13 @@ require Exporter;
     bam_sort check_bam/;
 @EXPORT_OK = qw//;
 
-our $picard = $ENV{"src"}."/picard/dist";
-our $gatk = $ENV{"src"}."/gatk/dist";
+our $picard = $ENV{"src"}."/picard-tools-1.87";
+our $gatk = $ENV{"src"}."/GenomeAnalysisTK-2.4-7";
 our $svtoolkit = $ENV{"src"}."/svtoolkit";
 sub bam_sort {
     my ($fi, $fo_pre) = @_;
-    my $cmd = "java -Xmx4g -jar $picard/SortSam.jar \\
-        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_Tmp \\
+    my $cmd = "java -Xmx7g -jar $picard/SortSam.jar \\
+        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
         INPUT=$fi OUTPUT=$fo_pre";
     runCmd($cmd);
 }

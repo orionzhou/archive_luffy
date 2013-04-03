@@ -7,39 +7,14 @@ use List::Util qw/min max sum/;
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter AutoLoader/;
-@EXPORT = qw/find_block filter_block extract_unmapped/;
+@EXPORT = qw/assign_block filter_block extract_unmapped/;
 @EXPORT_OK = qw//;
 
-
-
 sub assign_block {
-    my ($t) = @_;
-
-    my $clu = 0;
-    my ($qBegP, $qEndP, $strdP, $hIdP, $hBegP, $hEndP);
-    for my $i (0..$t->nofRow-1) {
-        next if $t->elm($i, "clu") > 0;
-        $t->setElm($i, "clu", ++$clu);
-        ($qBegP, $qEndP, $strdP, $hIdP, $hBegP, $hEndP) = 
-            map {$t->elm($i, $_)} qw/qBeg qEnd strand hId hBeg hEnd/;
-        for my $j ($i+1..$t->nofRow-1) {
-            my ($qBeg, $qEnd, $strd, $hId, $hBeg, $hEnd) = 
-                map {$t->elm($j, $_)} qw/qBeg qEnd strand hId hBeg hEnd/;
-            if( abs($qBeg-$qEndP)<10000 && $hId eq $hIdP && $strd eq $strdP &&
-                ( ($strd eq "+" && abs($hBeg-$hEndP)<1000000) ||
-                  ($strd eq "-" && abs($hEnd-$hBegP)<1000000) ) ) {
-                $t->setElm($j, "clu", $clu);
-                ($qBegP, $qEndP, $hIdP, $hBegP, $hEndP) = ($qBeg, $qEnd, $hId, $hBeg, $hEnd);
-            }
-        }
-    }
-    return $t;
-}
-sub find_block {
     my ($fi, $fo) = @_;
     my $ti = readTable(-in=>$fi, -header=>1);
     $ti->sort("qId", 1, 0, "qBeg", 0, 0);
-    $ti->addCol([(0)x$ti->nofRow], "clu");
+    $ti->addCol([(0)x$ti->nofRow], "block");
 
     open(FHO, ">$fo") or die "cannot open $fo for writing\n";
     print FHO join("\t", $ti->header)."\n";
@@ -47,33 +22,52 @@ sub find_block {
     for my $qId (sort(keys(%$ref))) {
         my ($idx, $cnt) = @{$ref->{$qId}};
         my $t = $ti->subTable([$idx..$idx+$cnt-1], [$ti->header]);
-        $t = assign_block($t);
+        
+        my $block = 0;
+        my ($qBegP, $qEndP, $strdP, $hIdP, $hBegP, $hEndP);
+        for my $i (0..$t->nofRow-1) {
+            next if $t->elm($i, "block") > 0;
+            $t->setElm($i, "block", ++$block);
+            ($qBegP, $qEndP, $strdP, $hIdP, $hBegP, $hEndP) = 
+                map {$t->elm($i, $_)} qw/qBeg qEnd strand hId hBeg hEnd/;
+            for my $j ($i+1..$t->nofRow-1) {
+                my ($qBeg, $qEnd, $strd, $hId, $hBeg, $hEnd) = 
+                    map {$t->elm($j, $_)} qw/qBeg qEnd strand hId hBeg hEnd/;
+                if( abs($qBeg-$qEndP)<10000 && $hId eq $hIdP && $strd eq $strdP &&
+                    ( ($strd eq "+" && abs($hBeg-$hEndP)<1000000) ||
+                      ($strd eq "-" && abs($hEnd-$hBegP)<1000000) ) ) {
+                    $t->setElm($j, "block", $block);
+                    ($qBegP, $qEndP, $hIdP, $hBegP, $hEndP) = ($qBeg, $qEnd, $hId, $hBeg, $hEnd);
+                }
+            }
+        }
         print FHO $t->tsv(0);
     }
     close FHO;
 }
 sub filter_block {
-    my ($fi, $fl, $fo1, $fo2) = @_;
+    my ($fi, $fl, $fo1, $fo2, $min_cov) = @_;
+    $min_cov ||= 0.2;
     
     my $tl = readTable(-in=>$fl, -header=>1);
     my $hl = { map {$tl->elm($_, "id") => $tl->elm($_, "length")} (0..$tl->nofRow-1) };
     
     my $t = readTable(-in=>$fi, -header=>1);
-    $t->sort("qId", 1, 0, "clu", 0, 0, "qBeg", 0, 0);
+    $t->sort("qId", 1, 0, "block", 0, 0, "qBeg", 0, 0);
     
     open(FHO1, ">$fo1") or die "cannot write to $fo1\n";
     print FHO1 join("\t", $t->header)."\n";
     open(FHO2, ">$fo2") or die "cannot write to $fo2\n";
-    print FHO2 join("\t", qw/qId qBeg qEnd strand hId hBeg hEnd qLen hLen clu lenS cov/)."\n";
+    print FHO2 join("\t", qw/qId qBeg qEnd strand hId hBeg hEnd qLen hLen block lenS cov/)."\n";
     my $ref1 = group($t->colRef("qId"));
     for my $qId (sort keys %$ref1) {
         my ($idx1, $cnt1) = @{$ref1->{$qId}};
         my $t1 = $t->subTable([$idx1..$idx1+$cnt1-1], [$t->header]);
         my $lenS = $hl->{$qId};
 
-        my $ref2 = group($t1->colRef("clu"));
-        for my $clu (sort {$a<=>$b} keys %$ref2) {
-            my ($idx2, $cnt2) = @{$ref2->{$clu}};
+        my $ref2 = group($t1->colRef("block"));
+        for my $block (sort {$a<=>$b} keys %$ref2) {
+            my ($idx2, $cnt2) = @{$ref2->{$block}};
             my $t2 = $t1->subTable([$idx2..$idx2+$cnt2-1], [$t1->header]);
             my $qBeg = min($t2->col("qBeg"));
             my $qEnd = max($t2->col("qEnd"));
@@ -85,10 +79,10 @@ sub filter_block {
             my $hLen = locAryLen(posMerge($hLoc));
             my ($strand, $hId) = map {$t2->elm(0, $_)} qw/strand hId/;
             my $cov = sprintf "%.03f", $qLen / $lenS;
-            next if $cov < 0.2;
+            next if $cov < $min_cov;
             print FHO1 $t2->tsv(0);
             print FHO2 join("\t", $qId, $qBeg, $qEnd, $strand, $hId, $hBeg, $hEnd,
-                $qLen, $hLen, $clu, $lenS, $cov)."\n";
+                $qLen, $hLen, $block, $lenS, $cov)."\n";
         }
     }
 }
@@ -111,6 +105,60 @@ sub extract_unmapped {
     $seqHI->close();
     $seqHO->close();
     printf "  %4d sequences extracted\n", $cnt;
+}
+
+sub mummer_coords2tbl {
+    my ($fi, $fo) = @_;
+    open(FHI, "<$fi") or die "cannot open $fi for reading\n";
+    open(FHO, ">$fo") or die "cannot open $fo for writing\n";
+    print FHO join("\t", qw/qId qBeg qEnd strand hId hBeg hEnd qLen hLen pct_idty/)."\n";
+    my $i = 1;
+    while(<FHI>) {
+        chomp;
+        my $line = $_;
+        my @ps = split /\|/, $line;
+        next if @ps != 5 || $ps[0] =~ /\[S1\]/;
+        my ($hBeg, $hEnd) = split(" ", $ps[0]);
+        my ($qBeg, $qEnd) = split(" ", $ps[1]);
+        my $strd = $qBeg > $qEnd ? "-" : "+";
+        ($qBeg, $qEnd) = ($qEnd, $qBeg) if $strd eq "-";
+        my ($hLen, $qLen) = split(" ", $ps[2]);
+        my ($hId, $qId) = split(" ", $ps[4]);
+        my $pct = $ps[3];
+        $pct =~ s/(^ +)|( +$)//g;
+        die "$line\n" if $hEnd-$hBeg+1 != $hLen || $qEnd-$qBeg+1 != $qLen;
+        print FHO join("\t", $qId, $qBeg, $qEnd, $strd, $hId, $hBeg, $hEnd, $qLen, $hLen, $pct)."\n";
+    }
+    close FHI;
+    close FHO;
+}
+sub mummer_tiling {
+    my ($fi, $fo) = @_;
+    my $t = readTable(-in=>$fi, -header=>1);
+    $t->sort("qId", 1, 0, "qBeg", 0, 0);
+    my $ref = group($t->colRef("qId"));
+
+    open(FHO, ">$fo") or die "cannot write to $fo\n";
+    print FHO join("\t", $t->header)."\n";
+    for my $qId (sort keys(%$ref)) {
+        my ($idx, $cnt) = @{$ref->{$qId}};
+        my @locs = map {[$t->elm($_, "qBeg"), $t->elm($_, "qEnd")]} ($idx..$idx+$cnt-1);
+        my @stats = map {$t->elm($_, "qLen")} ($idx..$idx+$cnt-1);
+        my $refs = tiling(\@locs, \@stats, 2);
+        for (@$refs) {
+            my ($beg, $end, $idxR) = @$_;
+            next if ($end - $beg + 1) < 1000;
+            my $idxA = $idxR + $idx;
+            my ($qId2, $qBeg, $qEnd, $strand, $hId, $hBeg, $hEnd, $qLen, $hLen, $pct) 
+                = $t->row($idxA);
+            my $begH = sprintf "%d", $hBeg + ($beg-$qBeg) * ($hEnd-$hBeg)/($qEnd-$qBeg);
+            my $endH = sprintf "%d", $hEnd - ($qEnd-$end) * ($hEnd-$hBeg)/($qEnd-$qBeg);
+            $qLen = $end - $beg + 1;
+            $hLen = $endH - $begH + 1;
+            print FHO join("\t", $qId, $beg, $end, $strand, $hId, $begH, $endH, $qLen, $hLen, $pct)."\n";
+        }
+    }
+    close FHO;
 }
 
 1;

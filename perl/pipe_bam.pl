@@ -1,100 +1,85 @@
 #!/usr/bin/perl
 use strict;
-use Init;
-use Common;
-use Bam;
+use lib ($ENV{"SCRIPT_HOME_PERL"});
 use Getopt::Long;
 use Data::Dumper;
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
-use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
+use File::Basename;
+use File::Path qw/make_path remove_tree/;
+use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-my ($program, $beg, $end) = ('', 0, -1);
-GetOptions('beg|b=i'=>\$beg, 'end|e=i'=>\$end, 'program|p=s'=>\$program);
+use InitPath;
+use Common;
+use Bam;
 
-my $f_genome = "$DIR_Genome/mt_35/41_genome.fa";
-my $dir = "$DIR_Misc3/hapmap/15_pipe_bam";
+my ($program, $lb) = ('', '');
+GetOptions('lib|l=s'=>\$lb, 'program|p=s'=>\$program);
 
-my $f01 = "$dir/01_sample.tbl";
-#sample_info("$dir/../09_fastq.tbl", $f01);
-sub sample_info {
-    my ($fi, $fo) = @_;
-    my $ti = readTable(-in=>$fi, -header=>1);
-    open(FH, ">$fo");
-    print FH join("\t", qw/idx sm lbs rgs pi pl/)."\n";
-    my $ref = group($ti->colRef("sm"));
-    my $i = 1;
-    for my $sm (sort(keys(%$ref))) {
-        my ($idx, $cnt) = @{$ref->{$sm}};
-        my $ts = $ti->subTable([$idx..$idx+$cnt-1]);
-        die ">1 sample for $sm\n" unless uniq($ts->col("sm")) == 1;
-        my $sm = $ts->elm(0, "sm");
-        my @lbs = $ts->col("lb");
-        my $lb = join(",", uniq(@lbs));
-        my @pis = $ts->col("pi");
-        my $pi = join(",", uniq(@pis));
-        my @rgs = $ts->col("rg");
-        my $rg = join(",", @rgs);
-        my $pl = $ts->elm(0, "pl");
-        print FH join("\t", $i++, $sm, $lb, $rg, $pi, $pl)."\n";
+my $f_ref = "$DIR_genome/Mtruncatula_4.0/01_refseq.fa";
+my $f_lst = "$DIR_misc3/ncgr_fastq/11_library.tbl";
+my $dir = "$DIR_misc3/hapmap_mt40/15_pipe_bam";
+my $dir_fq = "$DIR_misc3/hapmap_mt40/11_pipe_bwa/06_pos_sorted";
+
+pipe_bam_run($dir, $f_lst, $dir_fq, $lb) if $program eq "run";
+sub read_lib_list {
+    my ($f_lst) = @_;
+    my $t = readTable(-in=>$f_lst, -header=>1);
+    my $h;
+    for my $i (0..$t->nofRow-1) {
+        my ($sm, $lb, $idxs, $rl, $pi, $pl, $pd) = $t->row($i);
+        my @idxs = split(",", $idxs);
+        $h->{$lb} = [$sm, \@idxs, $rl, $pi, $pl, $pd];
     }
-    close FH;
+    return $h;
 }
+sub pipe_bam_run {
+    my ($dir, $f_lst, $dir_fq, $lb) = @_;
+    my $h = read_lib_list($f_lst);
+   
+    die "no library named '$lb'\n" unless exists $h->{$lb};
+    my ($sm, $idxs, $rl, $pi, $pl) = @{$h->{$lb}};
+    print join(", ", @$idxs)."\n";
+    my @fis;
+    for my $idx (@$idxs) {
+        my $fi = "$dir_fq/$idx.bam";
+        die "$idx [$fi] is not there\n" unless -s $fi;
+        push @fis, $fi;
+    }
 
-pipe_bam($dir, $beg, $end) if $program eq "pipe_bam";
-sub pipe_bam {
-    my ($dir, $beg, $end) = @_;
-    my $f01 = "$dir/01_sample.tbl";
-    my $d03 = "$dir/03_pos_sorted";
+    my $cmd;
     my $d05 = "$dir/05_dup_marked";
+    make_path($d05) unless -d $d05;
+    my $input_str = join(" ", map {"INPUT=$_"} @fis);
+    my ($f05, $f05b) = ("$d05/$lb.bam", "$d05/$lb.txt");
+    $cmd = "java -Xmx12g -jar $picard/MarkDuplicates.jar \\
+        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+        $input_str OUTPUT=$f05 METRICS_FILE=$f05b";
+    runCmd($cmd);
+    runCmd("samtools index $f05");
+    
     my $d07 = "$dir/07_realigned";
+    make_path($d07) unless -d $d07;
+    my ($f07, $f07b) = ("$d07/$lb.bam", "$d07/$lb.intervals");
+    $cmd = "java -Xmx12g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+        -T RealignerTargetCreator -I $f05 -R $f_ref -o $f07b";
+    runCmd($cmd);
+    $cmd = "java -Xmx12g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+        -T IndelRealigner -I $f05 -R $f_ref -targetIntervals $f07b -o $f07 \\
+        -LOD 0.4 --maxReadsForRealignment 20000 --maxReadsInMemory 200000";
+
     my $d12 = "$dir/12_stat";
-    system("mkdir -p $d05") unless -d $d05;
-    system("mkdir -p $d07") unless -d $d07;
-    system("mkdir -p $d12") unless -d $d12;
-    my $t = readTable(-in=>$f01, -header=>1);
-    for my $i ($beg..$end) {
-        my ($idx, $sm, $lbs, $rgs, $pi, $pl) = $t->row($i-1);
-        my $cmd;
-
-        my @rgs = split ",", $rgs;
-        my $input_str = join(" ", map {"INPUT=$d03/$_.bam"} @rgs);
-        my ($f05, $f05b) = ("$d05/$sm.bam", "$d05/$sm.txt");
-        $cmd = "java -Xmx12g -jar $picard/MarkDuplicates.jar \\
-            VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_Tmp \\
-            $input_str OUTPUT=$f05 METRICS_FILE=$f05b";
-=cut
-        runCmd($cmd);
-        runCmd("samtools index $f05");
-=cut
-        
-        my ($f07, $f07b) = ("$d07/$sm.bam", "$d07/$sm.intervals");
-=cut
-        $cmd = "java -Xmx12g -Djava.io.tmpdir=$DIR_Tmp -jar $gatk/GenomeAnalysisTK.jar \\
-            -T RealignerTargetCreator -I $f05 -R $f_genome -o $f07b";
-        runCmd($cmd);
-        $cmd = "java -Xmx12g -Djava.io.tmpdir=$DIR_Tmp -jar $gatk/GenomeAnalysisTK.jar \\
-            -T IndelRealigner -I $f05 -R $f_genome -targetIntervals $f07b -o $f07 \\
-            -LOD 0.4 --maxReadsForRealignment 20000 --maxReadsInMemory 200000";
-        runCmd($cmd);
-
-=cut
-        my $f12 = "$d12/$sm";
-        runCmd("bamISD -i $f07 -o $f12");
-    }
+    make_path($d12) unless -d $d12;
+    my $f12 = "$d12/$sm";
+    runCmd("bamISD -i $f07 -o $f12");
 }
 
-sort_readname($dir, $beg, $end) if $program eq "sort_readname";
 sub sort_readname {
-    my ($dir, $beg, $end) = @_;
+    my ($dir, $lb) = @_;
     my $d13 = "$dir/13_dup_removed";
     my $d21 = "$dir/21_rn_sorted";
-    for my $i ($beg..$end) {
-        my $id = sprintf "HM%03d", $i;
-        my $cmd = "java -Xmx4g -jar $picard/SortSam.jar \\
-            VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_Tmp \\
-            SORT_ORDER=queryname INPUT=$d13/$id.bam OUTPUT=$d21/$id.bam";
-        runCmd($cmd);
-    }
+    my $cmd = "java -Xmx12g -jar $picard/SortSam.jar \\
+        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+        SORT_ORDER=queryname INPUT=$d13/$lb.bam OUTPUT=$d21/$lb.bam";
+    runCmd($cmd);
 }
   
 stat_dup($dir) if $program eq "stat_dup";

@@ -78,12 +78,10 @@ sub pipe_ncgr {
 #    runCmd("samtools sort -m 5000000000 -n $f01 $d03/$id");
         my $f03 = "$d03/$id.bam";
         runCmd("bam2Fastq -i $f03 -o $d09 -s $id -m $f02", 1);
-=cut
-        runCmd("samtools sort -m 5000000000 -n $d01/$id.bam $d03/$id", 1);
-        runCmd("bamPreprocess -i $f03 -o $d04/$id", 1);
-        runCmd("samtools sort -m 5000000000 $d04/$id $d05/$id", 1);
-        runCmd("samtools index $d05/$id.bam", 1);
-=cut
+#        runCmd("samtools sort -m 5000000000 -n $d01/$id.bam $d03/$id", 1);
+#        runCmd("bamPreprocess -i $f03 -o $d04/$id", 1);
+#        runCmd("samtools sort -m 5000000000 $d04/$id $d05/$id", 1);
+#        runCmd("samtools index $d05/$id.bam", 1);
     }
 }
 

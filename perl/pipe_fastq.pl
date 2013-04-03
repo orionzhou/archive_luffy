@@ -15,10 +15,10 @@ my $f01 = "$dir/01_fastq.tbl";
 my $d03 = "$dir/03_fastq_stats";
 #run_fastqc($f01, $d03);
 my $f04 = "$dir/04_fastq_stats.tbl";
-get_fastq_stats($f01, $d03, $f04);
+#get_fastq_stats($f01, $d03, $f04);
 my $f11 = "$dir/11_library.tbl";
 my $f21 = "$dir/21_sample.tbl";
-#cat_lib_info($f01, $f11, $f21);
+cat_lib_info($f04, $f11, $f21);
 
 sub check_fastq {
     my ($fi, $fo) = @_;
@@ -48,6 +48,7 @@ sub run_fastqc {
         die "$fq2 is not there\n" unless -s $fq2;
         runCmd("$f_bin -o $do -t 2 $fq1 $fq2", 1);
     }
+    runCmd("rm $do/*.zip");
 }
 sub parse_fastqc {
     my ($fi) = @_;
@@ -85,16 +86,20 @@ sub get_fastq_stats {
     $ti->addCol([('') x $ti->nofRow], "pct_dup1");
     $ti->addCol([('') x $ti->nofRow], "pct_dup2");
     for my $i (0..$ti->nofRow-1) {
-        my ($idx, $sm, $lb, $run, $pl, $pi, $dir_rel) = $ti->row($i);
-        my $id = sprintf "$sm\_$lb\_%02d", $run;
-        my $fs1 = "$dir/$id.1.fq_fastqc/fastqc_data.txt";
-        my $fs2 = "$dir/$id.2.fq_fastqc/fastqc_data.txt";
+        my ($idx, $sm, $lb, $rn, $pl, $pi, $dir_rel) = $ti->row($i);
+        $rn = sprintf "$sm\_$lb\_%02d", $rn;
+        $ti->setElm($i, "rn", $rn);
+        $lb = "$sm\_$lb";
+        $ti->setElm($i, "lb", $lb);
+
+        my $fs1 = "$dir/$rn.1.fq_fastqc/fastqc_data.txt";
+        my $fs2 = "$dir/$rn.2.fq_fastqc/fastqc_data.txt";
         next unless -s $fs1;
         my $s1 = parse_fastqc($fs1);
         my $s2 = parse_fastqc($fs2);
-        die "n_seq not equal for $idx:$id\n" unless $s1->{'n_seq'} == $s2->{'n_seq'}; 
-        die "encoding not same for $idx:$id\n" unless $s1->{'encoding'} == $s2->{'encoding'}; 
-        die "seq_len not equal for $idx:$id\n" unless $s1->{'seq_len'} == $s2->{'seq_len'}; 
+        die "n_seq not equal for $idx:$rn\n" unless $s1->{'n_seq'} == $s2->{'n_seq'}; 
+        die "encoding not same for $idx:$rn\n" unless $s1->{'encoding'} == $s2->{'encoding'}; 
+        die "seq_len not equal for $idx:$rn\n" unless $s1->{'seq_len'} == $s2->{'seq_len'}; 
         $ti->setElm($i, "rl", $s1->{'seq_len'});
         $ti->setElm($i, "n_seq", $s1->{'n_seq'});
         $ti->setElm($i, "encoding", $s1->{'encoding'});
@@ -112,18 +117,18 @@ sub cat_lib_info {
     my $ti = readTable(-in=>$fi, -header=>1);
     my $h;
     for my $i (0..$ti->nofRow-1) {
-        my ($idx, $sm, $lb, $run) = $ti->row($i);
+        my ($idx, $sm, $lb, $rn) = $ti->row($i);
         $h->{$sm}->{$lb} ||= [];
-        push @{$h->{$sm}->{$lb}}, [$run, $idx];
+        push @{$h->{$sm}->{$lb}}, [$rn, $idx];
     }
 
     open(FHO1, ">$fo1") or die "cannot write to $fo1\n";
-    print FHO1 join("\t", qw/sm lb runs idxs/)."\n";
+    print FHO1 join("\t", qw/sm lb rns idxs/)."\n";
     for my $sm (sort(keys(%$h))) {
         for my $lb (sort(keys(%{$h->{$sm}}))) {
-            my $runs = join(",", map {$_->[0]} @{$h->{$sm}->{$lb}});
+            my $rns = join(",", map {$_->[0]} @{$h->{$sm}->{$lb}});
             my $idxs = join(",", map {$_->[1]} @{$h->{$sm}->{$lb}});
-            print FHO1 join("\t", $sm, $lb, $runs, $idxs)."\n";
+            print FHO1 join("\t", $sm, $lb, $rns, $idxs)."\n";
         }
     }
     close FHO1;

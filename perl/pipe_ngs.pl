@@ -73,7 +73,7 @@ sub pipe_run {
 
         my $f6 = "$d06/$rn.bam";
         runCmd("bwa sampe $f_bwa -r \\
-            '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl' \\
+            '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
             $f3a $f3b $f1a $f1b | samtools view -Sb - > $f3", 1);
         runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
             TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\

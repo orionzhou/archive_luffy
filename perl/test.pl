@@ -17,7 +17,7 @@ sub test_time {
     printf "***%.01f min\n", tv_interval($t0, $t1) / 60;
 }
 sub gmSnp {
-    my $DIR_Work = dir($DIR_Misc2, 'gm_snp2');
+    my $dir = "$DIR_data/misc2/gm_snp2";
     my $paramR = [
         {fname=>'01_LG_G_1_10.txt', head=>1, left=>1},
         {fname=>'01_LG_G_1_10_noSSRs.txt', head=>3, left=>1},
@@ -28,8 +28,8 @@ sub gmSnp {
         {fname=>'summer07_O.txt', head=>3, left=>1},
         {fname=>'01_LG_G_oct08.txt', head=>2, left=>1} ];
     for my $param (@$paramR[2]) {
-        my $fIn = file($DIR_Work, $param->{fname});
-        #writeGmSnp($fIn, $param);
+        my $fi = $dir."/".$param->{fname};
+        #writeGmSnp($fi, $param);
     }
 }
 sub testDeepMerge {
@@ -49,7 +49,7 @@ sub test_pg_connect {
         or die "cannot connect to pgsql\n";
 }
 sub convId2Url {
-    my $dir = dir($DIR_In, "seminar_March_7");
+    my $dir = "$DIR_in/seminar_March_7";
     my @fns = qw/frog_a bovine_a human_a mouse_a frog_b bovine_b human_b mouse_b/;
     my $seqNH = Bio::SeqIO->new(-file=>">$dir/hemoglobin_na.fa", -format=>"fasta");
     my $seqAH = Bio::SeqIO->new(-file=>">$dir/hemoglobin_aa.fa", -format=>"fasta");
@@ -73,7 +73,7 @@ sub convId2Url {
 }
 sub cp_fq_scratch {
 #cp_fq_scratch();
-    my $fi = "$DIR_Misc3/hapmap/09_fastq.tbl";
+    my $fi = "$DIR_misc3/hapmap/09_fastq.tbl";
     my $do = "/project/scratch/zhoup/data_for_taehyun/fastq";
     my $t = readTable(-in=>$fi, -header=>1);
     my %h_sm = map { $_=>1 } qw/HM004 HM010 HM050 HM056 HM101/;
@@ -122,5 +122,5 @@ sub double_genome {
     $seqHO->close();
 }
 
-
+runCmd("ls -l", 0);
 

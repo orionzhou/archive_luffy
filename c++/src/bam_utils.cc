@@ -19,131 +19,138 @@ const char REVCOMP_LOOKUP[] = {'T', 0, 'G', 'H', 0, 0, 'C', 'D', 0, 0, 0, 0, 'K'
 }
 
 bool Utilities::ParseRegionString(const std::string& regionString, const BamReader& reader, BamRegion& region) {
-  if( regionString.empty() ) return false;
-  size_t foundFirstColon = regionString.find(':');
-  string chrS, chrE;
-  int posS, posE;
-  if( foundFirstColon == string::npos ) {
-    chrS = regionString;
-    posS = 0;
-    chrE = regionString;
-    posE = -1;
-  } else {
-    chrS = regionString.substr(0, foundFirstColon);
-    size_t foundRangeDots = regionString.find("..", foundFirstColon+1);
-    if( foundRangeDots == string::npos ) {
-      posS = atoi( regionString.substr(foundFirstColon+1).c_str() );
-      chrE = chrS;
-      posE = -1;
+    if( regionString.empty() ) return false;
+    size_t foundFirstColon = regionString.find(':');
+    string chrS, chrE;
+    int posS, posE;
+    if( foundFirstColon == string::npos ) {
+        chrS = regionString;
+        posS = 0;
+        chrE = regionString;
+        posE = -1;
     } else {
-      posS = atoi( regionString.substr(foundFirstColon+1, foundRangeDots-foundFirstColon-1).c_str() );
-      size_t foundSecondColon = regionString.find(":", foundRangeDots+1);
-      if( foundSecondColon == string::npos ) {
-        chrE = chrS;
-        posE = atoi( regionString.substr(foundRangeDots+2).c_str() );
-      } else {
-        chrE = regionString.substr(foundRangeDots+2, foundSecondColon-(foundRangeDots+2));
-        posE = atoi( regionString.substr(foundSecondColon+1).c_str() );
-      }
+        chrS = regionString.substr(0, foundFirstColon);
+        size_t foundRangeDots = regionString.find("..", foundFirstColon+1);
+        if( foundRangeDots == string::npos ) {
+            posS = atoi( regionString.substr(foundFirstColon+1).c_str() );
+            chrE = chrS;
+            posE = -1;
+        } else {
+            posS = atoi( regionString.substr(foundFirstColon+1, foundRangeDots-foundFirstColon-1).c_str() );
+            size_t foundSecondColon = regionString.find(":", foundRangeDots+1);
+            if( foundSecondColon == string::npos ) {
+                chrE = chrS;
+                posE = atoi( regionString.substr(foundRangeDots+2).c_str() );
+            } else {
+                chrE = regionString.substr(foundRangeDots+2, foundSecondColon-(foundRangeDots+2));
+                posE = atoi( regionString.substr(foundSecondColon+1).c_str() );
+            }
+        }
     }
-  }
 
-  const RefVector references = reader.GetReferenceData();
-  
-  int refIdS = reader.GetReferenceID(chrS);
-  if(refIdS == (int)references.size()) return false;
-  const RefData& refS = references.at(refIdS);
-  if(posS > refS.RefLength) return false;
+    const RefVector references = reader.GetReferenceData();
 
-  int refIdE = reader.GetReferenceID(chrE);
-  if(refIdE == (int)references.size()) return false;
-  const RefData& refE = references.at(refIdE);
-  if(posE > refE.RefLength) return false;
+    int refIdS = reader.GetReferenceID(chrS);
+    if(refIdS == (int)references.size()) return false;
+    const RefData& refS = references.at(refIdS);
+    if(posS > refS.RefLength) return false;
 
-  if(posE == -1) posE = refE.RefLength;
+    int refIdE = reader.GetReferenceID(chrE);
+    if(refIdE == (int)references.size()) return false;
+    const RefData& refE = references.at(refIdE);
+    if(posE > refE.RefLength) return false;
 
-  region.LeftRefID = refIdS;
-  region.LeftPosition = posS;
-  region.RightRefID = refIdE;
-  region.RightPosition = posE;
-  return true;
+    if(posE == -1) posE = refE.RefLength;
+
+    region.LeftRefID = refIdS;
+    region.LeftPosition = posS;
+    region.RightRefID = refIdE;
+    region.RightPosition = posE;
+    return true;
 }
 bool Utilities::CheckReadPair(const BamAlignment& al1, const BamAlignment& al2, int32_t& is) {
-  string name1 = al1.Name, name2 = al2.Name; 
-  bool isfirst1 = al1.IsFirstMate(), isfirst2 = al2.IsFirstMate();
-  bool ismapped1 = al1.IsMapped(), ismapped2 = al2.IsMapped();
-  bool ismatemapped1 = al1.IsMateMapped(), ismatemapped2 = al2.IsMateMapped();
-  int is1 = al1.InsertSize, is2 = al2.InsertSize;
-  int pos1 = al1.Position, pos2 = al2.Position;
-  int matepos1 = al1.MatePosition, matepos2 = al2.MatePosition;
-  string rg1, rg2;
-  al1.GetTag("RG", rg1);
-  al2.GetTag("RG", rg2);
-
-  if(!ismapped1 && pos1 != -1) pos1 = -1;
-  if(!ismapped2 && pos2 != -1) pos2 = -1;
-
-  if(rg1 != rg2) {
-    cout << format("reads not belong to same RG: %s != %s\n") % rg1 % rg2;
-    return false;
-  }
-
-  if(name1 != name2) {
-    cout << format("read name not identical: %s != %s\n") % name1 % name2;
-    return false;
-  }
-  
-  if(ismapped1 != ismatemapped2 || ismapped2 != ismatemapped1) {
-    cout << format("mapping tag inconsistency: %s\n %d-%d %d-%d\n") % name1 % ismapped1 % ismatemapped2 % ismapped2 % ismatemapped1;
-    return false;
-  }
-  
-  if( (isfirst1 && isfirst2) || (!isfirst1 && !isfirst2) ) {
-    cout << format("reads not paired: %s\n") % name1;
-    return false;
-  }
-  
-  if(abs(is1) != abs(is2)) {
-    cout << format("insert size not equal: %s [%d %d]\n") % name1 % is1 % is2;
-    return false;
-  }
-  
-  if(pos1 != matepos2 || pos2 != matepos1) {
-    cout << format("positions not match: [%d - %d] : [%d - %d]\n") % pos1 % matepos1 % pos2 % matepos2;
-    return false;
-  }
-  
-  is = abs(is1);
-  return true;
-}
-void Utilities::PrintReads(const string& name, const int& n_total, BamAlnVector& als) {
-  cout << format("%s\t%d\n") % name % n_total;
-  for (BamAlnVector::iterator it = als.begin(); it != als.end(); it++) {
-    BamAlignment al(*it);
-    string rg;
-    al.GetTag("RG", rg);
-    cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al.IsFirstMate() % rg % al.IsMapped() % al.IsMateMapped() % al.RefID % al.Position % al.MatePosition % al.InsertSize;
-  }
-}
-void Utilities::PrintReads(const string& name, const int& n_total, BamAlnPairVector& alpairs) {
-  cout << format("%s\t%d\n") % name % n_total;
-  for (BamAlnPairVector::iterator it = alpairs.begin(); it != alpairs.end(); it ++) {
-    BamAlignment al1 = it->first, al2 = it->second;
+    string name1 = al1.Name, name2 = al2.Name; 
+    bool isfirst1 = al1.IsFirstMate(), isfirst2 = al2.IsFirstMate();
+    bool ismapped1 = al1.IsMapped(), ismapped2 = al2.IsMapped();
+    bool ismatemapped1 = al1.IsMateMapped(), ismatemapped2 = al2.IsMateMapped();
+    int is1 = al1.InsertSize, is2 = al2.InsertSize;
+    int pos1 = al1.Position, pos2 = al2.Position;
+    int matepos1 = al1.MatePosition, matepos2 = al2.MatePosition;
     string rg1, rg2;
     al1.GetTag("RG", rg1);
     al2.GetTag("RG", rg2);
-    cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al1.IsFirstMate() % rg1 % al1.IsMapped() % al1.IsMateMapped() % al1.RefID % al1.Position % al1.MatePosition % al1.InsertSize;
-    cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al2.IsFirstMate() % rg2 % al2.IsMapped() % al2.IsMateMapped() % al2.RefID % al2.Position % al2.MatePosition % al2.InsertSize;
-  }
+
+    if(!ismapped1 && pos1 != -1) pos1 = -1;
+    if(!ismapped2 && pos2 != -1) pos2 = -1;
+
+    if(rg1 != rg2) {
+        cout << format("reads not belong to same RG: %s != %s\n") % rg1 % rg2;
+        return false;
+    }
+
+    if(name1 != name2) {
+        cout << format("read name not identical: %s != %s\n") % name1 % name2;
+        return false;
+    }
+
+    if(ismapped1 != ismatemapped2 || ismapped2 != ismatemapped1) {
+        cout << format("mapping tag inconsistency: %s\n %d-%d %d-%d\n") % name1 % ismapped1 % ismatemapped2 % ismapped2 % ismatemapped1;
+        return false;
+    }
+
+    if( (isfirst1 && isfirst2) || (!isfirst1 && !isfirst2) ) {
+        cout << format("reads not paired: %s\n") % name1;
+        return false;
+    }
+
+    if(abs(is1) != abs(is2)) {
+        cout << format("insert size not equal: %s [%d %d]\n") % name1 % is1 % is2;
+        return false;
+    }
+
+    if(pos1 != matepos2 || pos2 != matepos1) {
+        cout << format("positions not match: [%d - %d] : [%d - %d]\n") % pos1 % matepos1 % pos2 % matepos2;
+        return false;
+    }
+
+    is = abs(is1);
+    return true;
+}
+void Utilities::PrintReads(const string& name, const int& n_total, BamAlnVector& als) {
+    cout << format("%s\t%d\n") % name % n_total;
+    for (BamAlnVector::iterator it = als.begin(); it != als.end(); it++) {
+        BamAlignment al(*it);
+        string rg;
+        al.GetTag("RG", rg);
+        cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al.IsFirstMate() % rg % al.IsMapped() % al.IsMateMapped() % al.RefID % al.Position % al.MatePosition % al.InsertSize;
+    }
+}
+void Utilities::PrintReads(const string& name, const int& n_total, BamAlnPairVector& alpairs) {
+    cout << format("%s\t%d\n") % name % n_total;
+    for (BamAlnPairVector::iterator it = alpairs.begin(); it != alpairs.end(); it ++) {
+        BamAlignment al1 = it->first, al2 = it->second;
+        string rg1, rg2;
+        al1.GetTag("RG", rg1);
+        al2.GetTag("RG", rg2);
+        cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al1.IsFirstMate() % rg1 % al1.IsMapped() % al1.IsMateMapped() % al1.RefID % al1.Position % al1.MatePosition % al1.InsertSize;
+        cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al2.IsFirstMate() % rg2 % al2.IsMapped() % al2.IsMateMapped() % al2.RefID % al2.Position % al2.MatePosition % al2.InsertSize;
+    }
 }
 void Utilities::PrintRead(const BamAlignment& al) {
-  string rg;
-  al.GetTag("RG", rg);
-  string strand1 = al.IsReverseStrand() ? "-" : "+";
-  string strand2 = al.IsMateReverseStrand() ? "-" : "+";
-  cout << format("%s\t[%s] (%d-%d) (%s|%s) {%d} [%d:%d %d] %d\n") % 
-    al.Name % al.IsFirstMate() % al.IsMapped() % al.IsMateMapped() % strand1 % strand2 % 
-    al.MapQuality % al.RefID % al.Position % al.MatePosition % al.InsertSize;
+    string mate1 = al.IsFirstMate() ? "mate1" : "mate2";
+    string qc = al.IsFailedQC() ? "failedQC" : "passedQC";
+    string dup = al.IsDuplicate() ? "dup" : "!dup";
+    string proper = al.IsProperPair() ? "proper" : "!proper";
+    string mapped1 = al.IsMapped() ? "mapped" : "!mapped";
+    string mapped2 = al.IsMateMapped() ? "mapped" : "!mapped";
+    string strand1 = al.IsReverseStrand() ? "-" : "+";
+    string strand2 = al.IsMateReverseStrand() ? "-" : "+";
+    cout << format("%s\t%s\t%s\t%s\t%s\tIS=%d\n") % al.Name % mate1
+        % qc % dup % proper % al.InsertSize;
+    cout << format("  me\t%s\t%s:%d[%s] (%d)\n") % mapped1
+        % al.RefID % al.Position % strand1 % al.MapQuality;
+    cout << format("  buddy\t%s\t%s:%d[%s]\n") % mapped2
+        % al.MateRefID % al.MatePosition % strand2;
 }
 bool isPair1 (const BamAlignment& a1, const BamAlignment& a2) {
   BamAlignment al1 = a1, al2 = a2;

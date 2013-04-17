@@ -65,6 +65,7 @@ sub run_pindel {
     my $f03 = "$dir/03_stat.tbl"; 
     my $t = readTable(-in=>$f03, -header=>1);
   
+    $ENV{PATH} = "$ENV{PATH}:$pindel";
     my $d21 = "$dir/21_orphan";
     my $d31 = "$dir/31_pindel";
     
@@ -73,17 +74,17 @@ sub run_pindel {
         my $t2 = $t->match_pattern("\$_->[0] eq '$sm'");
         die "cannot find $sm in table\n" unless $t2->nofRow == 1;
         my ($rns, $is_mld, $is_mno) = map {$t2->elm(0, $_)} qw/rns is_mld is_mno/;
-#    runCmd("bamPickOrphan -i $d01/$id.bam -o $d21/01_read_id/$id.txt -r $chr", 1);
-#    runCmd("bamPickReads -i $d21/01_read_id/$id.txt -b $d02/$id.bam -o $d21/02_info/$id.txt -t $id", 1);
+        runCmd("bamPickOrphan -i $d01/$sm.bam -o $d21/01_read_id/$sm.txt -r $chr", 1);
+        runCmd("bamPickReads -i $d21/01_read_id/$sm.txt -b $d02/$sm.bam -o $d21/02_info/$id.txt -t $id", 1);
     }
     
     my $f_str = join(" ", map {sprintf "21_orphan/11_pindel/%s.txt", $_} @$sms);
-#  print "cat $f_str > 21_orphan/11_pindel.txt\n";
-#  print "pindel -f $f_genome -p 21_orphan/11_pindel.txt -o $d24/01 -c $chr -T 4\n";
-#  print "pindel2vcf -p 31_pindel/01_D -r ../01_reference/41_genome.fa -R Mt3.5 -d 20110501\n";
-#  parse_pindel("$d31/01_D", "$d31/11.tbl");
+    print "cat $f_str > 21_orphan/11_pindel.txt\n";
+    print "pindel -f $f_ref -p 21_orphan/11_pindel.txt -o $d24/01 -c $chr -T 4\n";
+    print "pindel2vcf -p 31_pindel/01_D -r ../01_reference/41_genome.fa -R Mt3.5 -d 20110501\n";
+#    parse_pindel("$d31/01_D", "$d31/11.tbl");
 
-#  print "cov_window -i $d11/04_bp.tbl -o $d11/11_cov.tbl -t acc26 -c 1\n";
+#    print "cov_window -i $d11/04_bp.tbl -o $d11/11_cov.tbl -t acc26 -c 1\n";
 }
 sub run_crest {
     my ($dir, $sms) = @_;
@@ -92,7 +93,8 @@ sub run_crest {
     my $f03 = "$dir/03_stat.tbl"; 
     my $t = readTable(-in=>$f03, -header=>1);
     
-    my $f_ref_2bit = "$DIR_db/blat/mt_40.2bit";
+    $ENV{PATH} = "$ENV{PATH}:$crest";
+    my $f_ref_2bit = "$DIR_db/blat/Mtruncatula_4.0.2bit";
     my $d33 = "$dir/33_crest";
 
 #gfClient `cat $m/pbs/host` 1986 $DIR_Db/blat test.fa test.psl

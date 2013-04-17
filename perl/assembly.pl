@@ -28,8 +28,8 @@ my $f05 = "$dir/05_tiled.tbl";
 =end
 =cut
 
-#my $acc = "hm056";
-my $acc = "hm340";
+my $acc = "hm056";
+#my $acc = "hm340";
 my $dir = "/home/youngn/zhoup/Data/misc3/$acc";
 my $f_seq = "$dir/01_assembly.fa";
 my $f_len = "$dir/11_seqlen.tbl";
@@ -41,8 +41,8 @@ my $d21 = "$dir/21_blastn";
 make_path($d21) unless -d $d21;
 my $f21_02 = "$d21/02_raw.tbl";
 my $f21_05 = "$d21/05_tiled.tbl";
-#print "blastn -db \$data/db/blast/mt4.0 -outfmt 6 -query $f_seq -out $f21_02\n";
-#print "blastTiling -i $f21_02 -o $f21_05\n";
+runCmd("blastn -db \$data/db/blast/mt4.0 -outfmt 6 -query $f_seq -out $f21_02\n", 1);
+runCmd("blastTiling -i $f21_02 -o $f21_05");
 
 # run R script assembly.R
 my $f21_21 = "$d21/21_scaffold_status.tbl";

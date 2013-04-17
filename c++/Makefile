@@ -26,9 +26,9 @@ BINDIR   = bin
 
 BINNAMES = test msConvert readGz cov_window bamDepth blastTiling \
   sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSelectInds sspConvert ssp2Vcf\
-  bamPreprocess bamCheck viewRead \
+  bamViewRead bamPreprocess bamCheck  \
   bamPickStretched bamPickOrphan bamPickReads bamPickBpReads \
-  bam2Fastq bamISD bamStat \
+  bam2Fastq bamStat bamOrphanStat \
   seqSplit alnStat \
 #  seqRec
 BINS    := $(addprefix $(BINDIR)/, $(BINNAMES))
@@ -49,7 +49,7 @@ $(BINS): $(BINDIR)/%: $(SRCDIR)/%.$(SRCEXT)
 BIN_SSP = sspFilter sspSelectInds sspSetOG sspSample sspConvert ssp2Vcf seqSplit
 $(addprefix $(BINDIR)/, $(BIN_SSP)): $(OBJDIR)/ssp.o
 
-BIN_BAM = bamCheck viewRead bamPickStretched bamPickOrphan bamPickReads bamPickBpReads bam2Fastq bamISD 
+BIN_BAM = bamCheck bamViewRead bamPickStretched bamPickOrphan bamPickReads bamPickBpReads bam2Fastq bamStat
 $(addprefix $(BINDIR)/, $(BIN_BAM)): $(OBJDIR)/bam_utils.o
 
 $(BINDIR)/alnStat: $(OBJDIR)/read.o
@@ -58,7 +58,7 @@ $(BINDIR)/bamDepth: $(SAMTOOLS)/lib/libbam.a -lbam -lm -lz
 $(BINDIR)/cov_window: $(addprefix $(OBJDIR)/, read.o ssp.o)
 $(BINDIR)/seqRec: $(addprefix $(OBJDIR)/, geco_sequences.o read.o ssp.o)
 $(BINDIR)/bamPreprocess: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
-$(BINDIR)/bamStat: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
+$(BINDIR)/bamOrphanStat: $(addprefix $(OBJDIR)/, bam_utils.o read.o)
 
 $(BINDIR)/%:
 	@echo "Linking $@..."

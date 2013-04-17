@@ -11,9 +11,12 @@ require Exporter;
     bam_sort check_bam/;
 @EXPORT_OK = qw//;
 
-our $picard = $ENV{"src"}."/picard-tools-1.87";
-our $gatk = $ENV{"src"}."/GenomeAnalysisTK-2.4-7";
-our $svtoolkit = $ENV{"src"}."/svtoolkit";
+our $picard = "$DIR_src/picard-tools-1.87";
+our $gatk = "$DIR_src/GenomeAnalysisTK-2.4-7";
+our $svtoolkit = "$DIR_src/svtoolkit";
+our $pindel = "$DIR_src/pindel024t";
+our $crest = "$DIR_src/crest";
+
 sub bam_sort {
     my ($fi, $fo_pre) = @_;
     my $cmd = "java -Xmx7g -jar $picard/SortSam.jar \\

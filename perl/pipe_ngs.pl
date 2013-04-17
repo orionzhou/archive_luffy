@@ -10,12 +10,12 @@ use InitPath;
 use Common;
 use Bam;
 
-my ($opt, $rni, $lbi, $smi, $beg, $end) = (('') x 4, 0, -1);
+my ($opt, $rn, $lb, $sm, $beg, $end) = (('') x 4, 0, -1);
 GetOptions(
     'opt|p=s' => \$opt,
-    'rn|r=s'  => \$rni,
-    'lb|l=s'  => \$lbi,
-    'sm|s=s'  => \$smi,
+    'rn|r=s'  => \$rn,
+    'lb|l=s'  => \$lb,
+    'sm|s=s'  => \$sm,
     'beg|b=i' => \$beg, 'end|e=i' => \$end, 
 );
 
@@ -28,18 +28,18 @@ my $dir = "$DIR_misc3/hapmap_mt40/11_pipe_mapping";
 my $d03 = "$dir/03_bwa";
 my $d06 = "$dir/06_pos_sorted";
 my $f09 = "$dir/09_status_run.tbl";
-my $d11 = "$dir/11_dup_marked";
+my $d11 = "$dir/11_dedup";
 my $f19 = "$dir/19_status_lib.tbl";
 my $d21 = "$dir/21_realigned";
 my $f29 = "$dir/29_status_sample.tbl";
 my $d31 = "$dir/31_stat";
 
 if($opt eq "run") {
-    pipe_run($dir, $f_rn, $f_bwa, $rni, $beg, $end);
+    pipe_run($dir, $f_rn, $f_bwa, $rn, $beg, $end);
 } elsif($opt eq "lib") {
-    pipe_lib($dir, $f_lb, $d06, $lbi);
+    pipe_lib($dir, $f_lb, $d06, $lb);
 } elsif($opt eq "sample") {
-    pipe_sample($dir, $f_sm, $d11, $f_ref, $smi);
+    pipe_sample($dir, $f_sm, $d11, $f_ref, $sm);
 } elsif($opt eq "update") {
     status_update($dir, $f_rn, $f_lb, $f_sm, $f09, $f19, $f29);
 } else {
@@ -68,17 +68,17 @@ sub pipe_run {
         my $f3b = "$d03/$rn.2.sai";
         my $f3  = "$d03/$rn.bam";
         my $tag = ($encoding < 1.8 & $encoding >= 1.3) ? "-I" : "";
-        runCmd("bwa aln -t 4 -n 0.06 $tag $f_bwa $f1a > $f3a", 1);
-        runCmd("bwa aln -t 4 -n 0.06 $tag $f_bwa $f1b > $f3b", 1);
+        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1a > $f3a", 1);
+        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1b > $f3b", 1);
 
+        my $tag_is = ($pi == 6500) ? "-a 10000" : ($pi == 3000) ? "-a 6000" : "";
         my $f6 = "$d06/$rn.bam";
-        runCmd("bwa sampe $f_bwa -r \\
-            '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
+        runCmd("bwa sampe $f_bwa $tag_is \\
+            -r '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
             $f3a $f3b $f1a $f1b | samtools view -Sb - > $f3", 1);
         runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
             TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
             INPUT=$f3 OUTPUT=$f6 SORT_ORDER=coordinate", 1);
-        runCmd("samtools index $f6", 1);
     }
 }
 sub pipe_lib {
@@ -102,14 +102,16 @@ sub pipe_lib {
         push @fis, $fi;
     }
 
-    my $d11 = "$dir/11_dup_marked";
+    my $d11 = "$dir/11_dedup";
     make_path($d11) unless -d $d11;
     my $input_str = join(" ", map {"INPUT=$_"} @fis);
-    my ($f11, $f11b) = ("$d11/$lb.bam", "$d11/$lb.txt");
-    runCmd("java -Xmx12g -jar $picard/MarkDuplicates.jar \\
+    my ($f11, $f11b) = ("$d11/$lb.bam", "$d11/$lb.dup.txt");
+    runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
         VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+        REMOVE_DUPLICATES=true \\
         $input_str OUTPUT=$f11 METRICS_FILE=$f11b", 1);
     runCmd("samtools index $f11", 1);
+    runCmd("bamStat -i $d11/$lb.bam -o $d11/$lb", 1);
 }
 sub pipe_sample {
     my ($dir, $f_sm, $dirI, $f_ref, $sm) = @_;
@@ -146,7 +148,7 @@ sub pipe_sample {
     my $d31 = "$dir/31_stat";
     make_path($d31) unless -d $d31;
     my $f31 = "$d31/$sm";
-    runCmd("bamISD -i $f21 -o $f31", 1);
+    runCmd("bamStat -i $f21 -o $f31", 1);
 }
 sub sort_readname {
     my ($dir, $lb) = @_;

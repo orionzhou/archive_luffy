@@ -1,4 +1,4 @@
-#/usr/bin/perl -w
+#!/usr/bin/perl -w
 use POSIX /ceil floor/;
 
 my @alphabet = (
@@ -147,7 +147,8 @@ sub dot_matrix_word {
 }
 
 
-dot_matrix_word("lian lian is Good");
+my ($name) = @ARGV;
+dot_matrix_word($name);
 
 
 

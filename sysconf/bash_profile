@@ -23,9 +23,7 @@ elif [ "$system" = "Darwin" ]; then
 fi
 
 echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
-if [[ $HOSTNAME =~ plpa ]]; then
-    export repo=$home/repos
-elif [[ $HOSTNAME =~ cfans ]]; then
+if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
     export repo=$home/repos
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
     if [[ $HOSTNAME =~ ^noddy|^tern && "`dropbox.py status`" = 'Dropbox isn'"'"'t running!' ]] ; then
@@ -80,7 +78,7 @@ export dbox=$home/Dropbox
 export repo=$home/repos
 
 # repositories
-export code=$repo/code
+export code=$repo/pzcode
 export spada=$repo/spada
 
 # Perl

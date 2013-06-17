@@ -1,88 +1,107 @@
-library(ggplot2)
-library(plyr)
-library(grid)
-library(RColorBrewer)
 source("comp.plot.fun.R")
 
-f_gap_ref = file.path(DIR_Data, "genome/Mtruncatula_4.0/52_gap_loc.tbl")
-t_gap_ref = read.table(f_gap_ref, header=TRUE, sep="\t", as.is=T)
-#tg = tg[tg$len>=5000 & substr(tg$id,1,3)=="chr",]
+########## load genome1 datasets
+dat1.name = "hm056"
+#dat1.name = "hm340"
 
-f_len_ref = file.path(DIR_Data, "genome/Mtruncatula_4.0/51_seqlen.tbl")
-t_len_ref = read.table(f_len_ref, header=TRUE, sep="\t", as.is=T)
+dat1.dir = file.path("/home/youngn/zhoup/Data/misc3", dat1.name)
 
-f_crp = file.path(DIR_Misc4, "spada.crp.Mtruncatula_4.0/31_model_evaluation/61_final.gtb")
-t_crp = read.table(f_crp, header=TRUE, sep="\t", as.is=T)[,c(1:6,13:18)]
+# sequence lengths
+f_len = file.path(dat1.dir, "11_seqlen.tbl")
+dat1.seqlen = read.table(f_len, header=TRUE, sep="\t", as.is=T)
 
-f_gen_ref = file.path(DIR_Data, "genome/Mtruncatula_4.0/65_phase_fixed.gtb")
-t_gen_ref = read.table(f_gen_ref, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(1:6,13:18)]
+# gap locations
+f_gap = file.path(dat1.dir, "12_gaploc.tbl")
+dat1.gap = read.table(f_gap, header=TRUE, sep="\t", as.is=T)
+
+# gene annotation
+dat1.gene = NULL
+dat1.te = NULL
+dat1.nbs = NULL
+
+#f_crp = "/home/youngn/zhoup/Data/misc4/spada.crp.HM340/31_model_evaluation/61_final.gtb"
+#dat1.crp = read.table(f_crp, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
+dat1.crp = NULL
+
+# mappability
+dat1.mapp = NULL
+
+# wrapping
+dat1 = list( name=dat1.name, dir=dat1.dir, seqlen=dat1.seqlen, gap=dat1.gap,
+	gene=dat1.gene, te=dat1.te, nbs=dat1.nbs, crp=dat1.crp, mapp=dat1.mapp )
+
+########## load genome2 datasets
+dat2.name = "hm101"
+
+dat2.dir = "/home/youngn/zhoup/Data/genome/Mtruncatula_4.0"
+
+# sequence lengths
+f_len = file.path(dat2.dir, "15_seqlen.tbl")
+dat2.seqlen = read.table(f_len, header=TRUE, sep="\t", as.is=T)
+
+# gap locations
+f_gap = file.path(dat2.dir, "16_gap_loc.tbl")
+dat2.gap = read.table(f_gap, header=TRUE, sep="\t", as.is=T)
+
+# gene annotation
+f_gen = file.path(dat2.dir, "21_gene.gtb")
+dat2.gene = read.table(f_gen, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
+
+f_te = file.path(dat2.dir, "41_te.gtb")
+dat2.te = read.table(f_te, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
+
+f_nbs = file.path(dat2.dir, "42_nbs.gtb")
+dat2.nbs = read.table(f_nbs, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
+
+f_crp = file.path(dat2.dir, "43_crp.gtb")
+dat2.crp = read.table(f_crp, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
+
+# mappability
+f_mapp = "/home/youngn/zhoup/Data/db/gem/Mtruncatula_4.0.bw"
+dat2.mapp = import(f_mapp)
+
+# wrapping
+dat2 = list( name=dat2.name, dir=dat2.dir, seqlen=dat2.seqlen, gap=dat2.gap,
+	gene=dat2.gene, te=dat2.te, nbs=dat2.nbs, crp=dat2.crp, mapp=dat2.mapp )
+
+########## load (blast) comparison dataset
+f_aln = file.path(dat1.dir, '21_blastn/05_tiled.tbl')
+aln = read.table(f_aln, header=TRUE, sep="\t", as.is=T)
 
 
-acc = "hm056"
-#acc = "hm340"
-dir = file.path(DIR_Misc3, acc)
+########## comparison plot using a region in genome2
+regions = read.table(file.path(dat2.dir, "81_regions.tbl"), header=T, sep="\t", as.is=T)
+i = 8
+chr=regions$chr[i]; beg=regions$beg[i]; end=regions$end[i]
 
-f_len = file.path(dir, "11_seqlen.tbl")
-t_len = read.table(f_len, header=TRUE, sep="\t", as.is=T)
+# save path for PNG file
+fn = sprintf("%s/figs/%s_%d.png", dat1.dir, chr, beg)
 
-f_gap = file.path(dir, "12_gaploc.tbl")
-t_gap = read.table(f_gap, header=TRUE, sep="\t", as.is=T)
+# filtering comparison
+tas = aln[aln$hId==chr & ( (beg<=aln$hBeg & aln$hBeg<=end) | (beg<=aln$hEnd & aln$hEnd<=end) ), ]
+source("comp.plot.fun.R")
 
+# data preprocessing
+dat = data_preprocess(tas, dat1, dat2)
 
-f05 = file.path(dir, '21_blastn/05_tiled.tbl')
-t05 = read.table(f05, header=TRUE, sep="\t", as.is=T)
-t_aln = t05
+# plot
+source("comp.plot.fun.R")
+subtitle = sprintf("%s:%g-%gK", chr, beg/1000, end/1000)
+comp.plot(fn, dat, width=2000, height=1000, subtitle=subtitle)
 
-##### assign alignment blocks
-list.tmp = assign_block_mapping(t_aln)
-t11 = list.tmp$df
-t12 = list.tmp$dfb
-t12b = cbind(t12, qGap=t12$qLen-t12$qLen_aln, hGap=t12$hLen-t12$hLen_aln)
-t12c = t12b[t12b$hGap > 100000,]
-
-t13 = merge(t12, t_len, by='qId')
-t14 = cbind(t13, pct_cov=t13$qLen_aln/t13$len_scaf)
-
-sum_tw <- function(cutoff, df) {
-	df = df[df$pct_cov >= cutoff,]
-	c('num_qId'=length(unique(df$qId)), 'num_block'=nrow(df), 'qLen_aln'=sum(df$qLen_aln), 'hLen_aln'=sum(df$hLen_aln), 'qLen'=sum(df$qLen))
+########## batch plot
+regions = read.table(file.path(dat2.dir, "81_regions.tbl"), header=T, sep="\t", as.is=T)
+for (i in 1:nrow(regions)) {
+	chr=regions$chr[i]; beg=regions$beg[i]; end=regions$end[i]
+	fn = sprintf("%s/figs/%s_%d.png", dat1.dir, chr, beg)
+	tas = aln[aln$hId==chr & ( (beg<=aln$hBeg & aln$hBeg<=end) | (beg<=aln$hEnd & aln$hEnd<=end) ), ]
+	dat = data_preprocess(tas, dat1, dat2)
+	subtitle = sprintf("%s:%g-%gK", chr, beg/1000, end/1000)
+	comp.plot(fn, dat, width=2000, height=1000, subtitle=subtitle)
 }
-ldply(seq(0,0.3,0.05), sum_tw, t14)
 
-t15 = t14[t14$pct_cov >= 0.05,]
+########## comparison plot using a region in genome1
+id = "scaffold_119"
 
-f_aln = file.path(dir, '21_blastn', "15_aln.tbl")
-write.table(t11, file=f_aln, col.names=T, row.names=F, sep="\t", quote=F)
+tas = aln[aln$qId==id & aln$qLen >= 1000,]
 
-f_blk = file.path(dir, '21_blastn', "16_blk.tbl")
-write.table(t15, file=f_blk, col.names=T, row.names=F, sep="\t", quote=F)
-
-##### read in alignment/block table
-f_blk = file.path(dir, '21_blastn', "16_blk.tbl")
-t_blk = read.table(f_blk, header=TRUE, sep="\t", as.is=T)
-
-f_aln = file.path(dir, '21_blastn', "15_aln.tbl")
-t_aln = read.table(f_aln, header=TRUE, sep="\t", as.is=T)
-
-##### plot a chromosome region with mapping info
-title = sprintf("%s / Mt4.0 (A17)", toupper(acc))
-
-source("assembly_functions.R")
-chr = 'chr7'
-beg = 20022555
-end = 20116342
-tas = t_aln[t_aln$hId==chr & ( (beg<=t_aln$hBeg & t_aln$hBeg<=end) | (beg<=t_aln$hEnd & t_aln$hEnd<=end) ), ]
-dat = data_preprocess(tas, t_len, t_len_ref, t_gap, t_gap_ref, t_gen_ref)
-fn = sprintf("%s/figs/%s_%d_%d.png", dir, chr, beg, end)
-plot_final(fn, dat, width=2000, height=1000, title=title)
-
-source("assembly_functions.R")
-nums = c(0,1,119,189,359,432,1000,1180,1181,1186,1188,1191,1203,1824,3189,4144)
-#nums = c(1203)
-for (num in nums) {
-	id = sprintf("scaffold_%d", num)
-	fn = sprintf("%s/figs/%s.png", dir, id)
-	tas = t_aln[t_aln$qId==id & t_aln$qLen >= 1000,]
-	dat = data_preprocess(tas, t_len, t_len_ref, t_gap, t_gap_ref, t_gen_ref)
-	plot_final(fn, dat, width=2000, height=1000, title=title)
-}

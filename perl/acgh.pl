@@ -1,12 +1,10 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Localdb; use Run; 
-use Bio::Seq; use Bio::SeqIO; use Graph; use Bio::SeqFeature::Generic; use SamPileup;
-use Readfile; use Writefile; use Annotate; use Align; use Parser; use Mapping;
-use Gff; use CircosConf; use Draw; use Parser; use Seq; use Convert; use GeneModel;
-use Time::HiRes qw/gettimeofday tv_interval/; use Data::Dumper;use Path::Class; 
-use Term::ANSIColor qw/:constants/;
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/; use Math::Round qw/round/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
+
 my $dirW = dir($DIR_Misc2, "acgh");
 my $f00 = file($dirW, "00_raw.tbl");
 my $f01 = file($dirW, "01_seq.fa");

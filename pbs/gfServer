@@ -1,9 +1,10 @@
-#PBS -l nodes=1:ppn=2,mem=5GB,walltime=150:00:00
+#PBS -l nodes=1:ppn=2,mem=5GB,walltime=50:00:00
 #PBS -m ae
-#PBS -q elmob
+#PBS -M zhoux379@umn.edu
+#PBS -q mirror
 
-cd $m/pbs
-echo $HOST > host
+cd $code/pbs
+echo $HOSTNAME > host
 cd $data/db/blat
-gfServer start localhost 1986 mt_35.2bit
+gfServer start localhost 1986 Mtruncatula_4.0.2bit
 

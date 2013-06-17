@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib "$FindBin::Bin";
+
 use Common;
 use Seq;
 use Align;

@@ -1,3 +1,8 @@
+library(grid)
+library(plyr)
+library(rtracklayer)
+library(hash)
+
 ## data processing functions
 assign_block <- function(dfi, gap_prop=0.4, gap_len=5000) {
 	if(ncol(dfi) == 3) { dfi = cbind(dfi, strand="+") }
@@ -100,7 +105,7 @@ prepare_coord <- function(dfi) {
 
 filter_assign_block <- function(dfi, dfb) {
 	if(ncol(dfi) == 3) { dfi = cbind(dfi, strand="+") }
-	colnames(dfi) = c('id','beg','end','strand')
+	colnames(dfi)[1:4] = c('id','beg','end','strand')
 	idxs.raw = c()
 	blk.idxs = c()
 	for (i in 1:nrow(dfb)) {
@@ -112,7 +117,7 @@ filter_assign_block <- function(dfi, dfb) {
 		}
 	}
 	
-	if(is.null(idxs.raw)) {idxs=NULL} else {idxs=sort(unique(idxs.raw))}
+	if(length(idxs.raw) == 0) {idxs=NULL} else {idxs=sort(unique(idxs.raw))}
 	blks = c()
 	begs.a = c()
 	ends.a = c()
@@ -149,7 +154,7 @@ filter_assign_block <- function(dfi, dfb) {
 		ends.a = c(ends.a, end.a)
 		strands.a = c(strands.a, strand.a)
 	}
-	data.frame(idx=idxs, block=blks, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
+	cbind(dfi[idxs,], block=blks, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
 }
 
 get_ticks <- function(dfb, tick_itv) {
@@ -175,18 +180,56 @@ get_ticks <- function(dfb, tick_itv) {
 	list(tick=dft, line=dfl)
 }
 
-data_preprocess <- function(tas, t_len, t_len_ref, t_gap, t_gap_ref, t_gen_ref) {
+filter_assign_block_wig <- function(bw, dfb) {
+	h = hash()
+	for (i in 1:nrow(dfb)) {	
+		id=dfb$id[i]; beg=dfb$beg[i]; end=dfb$end[i]; blk=dfb$block[i]
+		idxs = which( seqnames(bw)==id & ( (beg<=start(bw) & start(bw)<=end) | (beg<=end(bw) & end(bw)<=end) ) )
+		h[idxs] = i
+	}
+	
+	idxs = as.numeric(keys(h)); blk.idxs = values(h)
+	bws = bw[idxs, ]
+	dfi = data.frame(id=seqnames(bws), beg=start(bws), end=end(bws), strand="+", score=score(bws), stringsAsFactors=F)
+	
+	blks=c(); begs.a = c(); ends.a = c(); strands.a = c()
+	for (i in 1:nrow(dfi)) {
+		id=dfi[i,1]; beg=dfi[i,2]; end=dfi[i,3]; strand=dfi[i,4]
+		blk.idx = blk.idxs[i]
+		
+		blk = dfb$block[blk.idx]
+		blk.beg = dfb$beg[blk.idx]
+		blk.end = dfb$end[blk.idx]
+		blk.strand = dfb$strand[blk.idx]
+		blk.beg.a = dfb$beg.a[blk.idx]
+		blk.end.a = dfb$end.a[blk.idx]
+		
+		beg = max(beg, blk.beg)
+		end = min(blk.end, end)
+		beg.a = ifelse( blk.strand == "-", blk.end.a - (end - blk.beg), blk.beg.a + (beg - blk.beg) )
+		end.a = ifelse( blk.strand == "-", blk.end.a - (beg - blk.beg), blk.beg.a + (end - blk.beg) )
+		strand.a = blk.strand
+		
+		blks = c(blks, blk)
+		begs.a = c(begs.a, beg.a)
+		ends.a = c(ends.a, end.a)
+		strands.a = c(strands.a, strand.a)
+	}
+	cbind(dfi, block=blks, beg.a=begs.a, end.a=ends.a, stringsAsFactors=F)
+}
+
+data_preprocess <- function(tas, dat1, dat2) {
 	dfm = assign_block_mapping(tas, 10000, 10000)$df
 	dfm = dfm[order(dfm$hId, dfm$hBeg, dfm$hEnd), !colnames(dfm) %in% c('block')]
 
 	list1 = assign_block(dfm[,c('qId', 'qBeg', 'qEnd', 'strand')])
 	list2 = assign_block(dfm[,c('hId', 'hBeg', 'hEnd')])
 
-	dfb1.1 = merge(list1$dfb, t_len, by='id')
+	dfb1.1 = merge(list1$dfb, dat1$seqlen, by='id')
 	dfb1.2 = prepare_coord(dfb1.1)
 	dfb1 = dfb1.2
 
-	dfb2.1 = merge(list2$dfb, t_len_ref, by='id')
+	dfb2.1 = merge(list2$dfb, dat2$seqlen, by='id')
 	dfb2.2 = prepare_coord(dfb2.1)
 	dfb2 = dfb2.2
 
@@ -197,29 +240,34 @@ data_preprocess <- function(tas, t_len, t_len_ref, t_gap, t_gap_ref, t_gen_ref) 
 
 	dfm.a = filter_assign_block(dfm[,c('qId','qBeg','qEnd','strand')], dfb1)
 	dfm.b = filter_assign_block(dfm[,c('hId','hBeg','hEnd')], dfb2)
-	stopifnot(sort(dfm.a$idx) == 1:nrow(dfm), sort(dfm.b$idx)==1:nrow(dfm))
+	stopifnot(rownames(dfm.a) == rownames(dfm), rownames(dfm.b) == rownames(dfm))
 	dfm.2 = cbind(dfm, blk1=dfm.a$block, blk1.beg.a=dfm.a$beg.a, blk1.end.a=dfm.a$end.a, blk1.strand.a=dfm.a$strand.a, blk2=dfm.b$block, blk2.beg.a=dfm.b$beg.a, blk2.end.a=dfm.b$end.a, blk2.strand.a=dfm.b$strand.a, stringsAsFactors=F)
 	comp = dfm.2
-
-	annt1 = data.frame()
-
-	df2 = t_gen_ref[,c('id','chr','beg','end','strand','note')]
-	df2.1 = filter_assign_block(df2[,2:5], dfb2)
-	df2.2 = cbind(df2[df2.1$idx,], df2.1[,-1])
-	annt2 = df2.2
-
-	dfg1.1 = filter_assign_block(t_gap[,1:3], dfb1)
-	dfg1 = cbind(t_gap[dfg1.1$idx,], dfg1.1[,-1])
-
-	dfg2.1 = filter_assign_block(t_gap_ref[,1:3], dfb2)
-	dfg2 = cbind(t_gap_ref[dfg2.1$idx,], dfg2.1[,-1])
-
-	color = c()
-	fill = c('assembly gap'='black', 'gene(+)'='forestgreen', 'gene(-)'='dodgerblue')
 	
-	list(seg1=dfb1, seg2=dfb2, comp=comp, annt1=annt1, annt2=annt2, 
-		xaxis1=xaxis1, xaxis2=xaxis2, gap1=dfg1, gap2=dfg2, 
-		max_len=max_len, color=color, fill=fill)
+	name1 = dat1.name; name2 = dat2.name
+	
+	if(empty(dat1$gap)) {gap1=NULL} else {gap1=filter_assign_block(dat1$gap, dfb1)}
+	if(empty(dat2$gap)) {gap2=NULL} else {gap2=filter_assign_block(dat2$gap, dfb2)}
+
+	if(empty(dat1$gene)) {gene1=NULL} else {gene1=filter_assign_block(dat1$gene, dfb1)}
+	if(empty(dat2$gene)) {gene2=NULL} else {gene2=filter_assign_block(dat2$gene, dfb2)}
+	
+	if(empty(dat1$te)) {te1=NULL} else {te1=filter_assign_block(dat1$te, dfb1)}
+	if(empty(dat2$te)) {te2=NULL} else {te2=filter_assign_block(dat2$te, dfb2)}
+
+	if(empty(dat1$nbs)) {nbs1=NULL} else {nbs1=filter_assign_block(dat1$nbs, dfb1)}
+	if(empty(dat2$nbs)) {nbs2=NULL} else {nbs2=filter_assign_block(dat2$nbs, dfb2)}
+
+	if(empty(dat1$crp)) {crp1=NULL} else {crp1=filter_assign_block(dat1$crp, dfb1)}
+	if(empty(dat2$crp)) {crp2=NULL} else {crp2=filter_assign_block(dat2$crp, dfb2)}
+	
+	if(empty(dat1$mapp)) {mapp1=NULL} else {mapp1=filter_assign_block_wig(dat1$mapp, dfb1)}
+	if(empty(dat2$mapp)) {mapp2=NULL} else {mapp2=filter_assign_block_wig(dat2$mapp, dfb2)}
+	
+	list(name1=name1, name2=name2, seg1=dfb1, seg2=dfb2, xaxis1=xaxis1, xaxis2=xaxis2, comp=comp, 
+		gap1=gap1, gap2=gap2, mapp1=mapp1, mapp2=mapp2,
+		gene1=gene1, gene2=gene2, te1=te1, te2=te2, nbs1=nbs1, nbs2=nbs2, crp1=crp1, crp2=crp2,
+		max_len=max_len)
 }
 
 ## plotting functions
@@ -298,35 +346,31 @@ plot_xaxis <- function(xaxis, y=unit(0,'npc'), tick.above=F, vp=NULL) {
 		y = text.y,	just = text.just, 
 		gp = gpar(cex=0.7), vp = vp)
 }
-plot_feature_ds <- function(df, y=unit(0.5,'npc'), height=unit(5,'points'), fill.p='red', fill.n='blue', text.above=F, text.rot=0, vp=NULL) {
+plot_feature_ds <- function(df, y=unit(0.5,'npc'), height=unit(5,'points'), fill='slategray3', fill.p=fill, fill.n=fill, text.show=F, text.offset=unit(15,'points'), text.above=F, text.rot=0, vp=NULL) {
 	colnames(df) = c('id','beg','end','strand')
-	rect.fills = c()
-	for (i in 1:nrow(df)) {
-		if(df$strand[i] == "+") {
-			rect.y = y + unit(2, 'points')
-			rect.fill = fill.p
-		} else {
-			rect.y = y - height - unit(1, 'points')
-			rect.fill = fill.n
-		}
-		if( i == 1 ) { rect.ys = rect.y } else { rect.ys = unit.c(rect.ys, rect.y) }
-		rect.fills = c(rect.fills, rect.fill)
+	dfp = df[df$strand == "+",]
+	dfn = df[df$strand == "-",]
+	if( !empty(dfp) ) {
+		grid.rect( 
+		x = unit(dfp$beg, 'native'), y = y + unit(2, 'points'),
+		width = unit(dfp$end-dfp$beg, 'native'), 
+		height = height, just = c('left', 'bottom'),
+		gp = gpar(lwd=0, fill=fill.p, alpha=0.9), vp = vp)
 	}
-	grid.rect( 
-		x = unit(df$beg, 'native'), y = rect.ys,
-		width = unit(df$end-df$beg, 'native'), 
-		height = rep(height, nrow(df)), just = c('left', 'bottom'),
-		gp = gpar(lwd=0, fill=rect.fills, alpha=0.9), vp = vp)	
+	if( !empty(dfn) ) {
+		grid.rect( 
+		x = unit(dfn$beg, 'native'), y = y - unit(2, 'points'),
+		width = unit(dfn$end-dfn$beg, 'native'), 
+		height = height, just = c('left', 'top'),
+		gp = gpar(lwd=0, fill=fill.n, alpha=0.9), vp = vp)
+	}
 
-	if(text.above) {
-		text.y = y + unit(15, 'points')
-	} else {
-		text.y = y - unit(15, 'points')
-	}
-	grid.text( df$id, 
-		x = unit(df$beg, 'native'), 
-		y = text.y, just = c("left","center"), 
+	if( text.show ) {
+		text.y = ifelse(text.above, y+text.offset, y-text.offset)
+		grid.text( df$id, 
+		x = unit(df$beg, 'native'), y = text.y, just = c("left","center"), 
 		rot = text.rot, gp = gpar(cex=0.8, fontfamily="Helvetica-Narrow"), vp = vp)
+	}
 }
 plot_feature <- function(df, y=unit(0.5,'npc'), height=unit(5,'points'), fill='grey', vp=NULL) {
 	colnames(df) = c('id','beg','end')
@@ -363,6 +407,24 @@ plot_comparison <- function(comp, y1=unit(0.95, 'npc'), y2=unit(0.05, 'npc'), fi
 		gp = gpar(fill=comp.fills, alpha=alpha, lwd=0),
 		vp = vp)
 }
+plot_hist <- function(df, fill='grey', vp=NULL) {
+	colnames(df)[1:3] = c("beg", "end", "score")
+	grid.rect( 
+		x = unit(df$beg,'native'), y=unit(0, 'native'), 
+		width = unit(df$end-df$beg,'native'), height=unit(df$score,'native'), 
+		just=c('left','bottom'),
+		gp = gpar(lwd=0, fill=fill, alpha=1), vp=vp)
+}
+plot_title <- function(main="", subtitle="", vp=NULL) {
+	grid.text(main, 
+		x = unit(0.5,'npc'), y = unit(1,'npc'), 
+		gp = gpar(cex=1.5, fontface='bold', fontfamily='Helvetica'),
+		vp=vp)
+	grid.text(subtitle, 
+		x = unit(0.5,'npc'), y = unit(1,'npc') - unit(2,'lines'), 
+		gp = gpar(cex=1, fontface='bold', fontfamily='Helvetica'),
+		vp=vp)
+}
 plot_legend <- function(fill, x=unit(0.5,'npc'), y=unit(0.5,'npc'), height=unit(5,'points'), width=unit(30,'points'), vp=NULL) {
 	n = length(fill)
 	fill.labels = names(fill)
@@ -398,62 +460,82 @@ plot_scale <- function(max_len, x=unit(0.5,'npc'), y=unit(0.5,'npc'), vp=NULL) {
 		gp = gpar(cex=0.9, fontfamily="Helvetica"), vp = vp)
 }
 
-plot_final <- function(fn, dat, width=2000, height=1000, title="") {
+comp.plot <- function(fn, dat, width=2000, height=1000, subtitle="") {
+	main = sprintf("(Top) %s : %s (Bottom)", toupper(dat$name1), toupper(dat$name2))
+
+	fill = c('assembly gap'='black', 'gene'='tan', 'TE'='slategray3', 'nbs-lrr'='forestgreen', 'crp'='dodgerblue', 'mappability'='maroon')
+
 	seg1=dat$seg1; seg2=dat$seg2; comp=dat$comp
-	annt1=dat$annt1; annt2=dat$annt2
 	xaxis1=dat$xaxis1; xaxis2=dat$xaxis2
 	gap1=dat$gap1; gap2=dat$gap2
-	color=dat$color; fill=dat$fill
+	mapp1=dat$mapp1; mapp2=dat$mapp2
+	gene1=dat$gene1; gene2=dat$gene2
+	te1=dat$te1; te2=dat$te2
+	nbs1=dat$nbs1; nbs2=dat$nbs2
+	crp1=dat$crp1; crp2=dat$crp2
 	max_len=dat$max_len
 	
 	png(filename = fn, width = width, height = height)
 	grid.newpage()
-	vpf = viewport(	x = unit(0.5,"npc"), y = unit(0.5,"npc"), 
-		width = unit(1, "npc") - unit(4, "lines"), height = unit(1, "npc") - unit(6,"lines"), 
-		just=c("center", "center"))
+	vpf = viewport(x=unit(0.5,"npc"), y=unit(0.5,"npc"), 
+		width=unit(1,"npc")-unit(4,"lines"), height = unit(1,"npc")-unit(6,"lines"), 
+		just=c("center","center"), name='all')
 	pushViewport(vpf)
 
-	vp.layout = viewport(
-		layout=grid.layout(3, 1, widths=unit(1, "npc"), heights=unit(c(0.3,0.4,0.3), "npc")))
-	pushViewport(vp.layout)
-
-	vp1 <- viewport(layout.pos.col=1, layout.pos.row=1, xscale=c(1,max_len), name='top')
-	pushViewport(vp1); upViewport()
-	vp2 <- viewport(layout.pos.col=1, layout.pos.row=3, xscale=c(1,max_len), name='bot')
-	pushViewport(vp2); upViewport()
-	vpm <- viewport(layout.pos.col=1, layout.pos.row=2, xscale=c(1,max_len), name='mapping')
+	vptt <- viewport(x=0.5, y=0.95, width=1, height=0.1, xscale=c(1,max_len), name='title_top')
+	pushViewport(vptt); upViewport()
+	vplt <- viewport(x=0.5, y=0.85, width=1, height=0.1, xscale=c(1,max_len), name='legend_top')
+	pushViewport(vplt); upViewport()
+	vpat <- viewport(x=0.5, y=0.75, width=1, height=0.1, xscale=c(1,max_len), name='annt_top')
+	pushViewport(vpat); upViewport()
+	vpxt <- viewport(x=0.5, y=0.65, width=1, height=0.1, xscale=c(1,max_len), name='axis_top')
+	pushViewport(vpxt); upViewport()
+	vpm <- viewport(x=0.5, y=0.5, width=1, height=0.2, xscale=c(1,max_len), name='mapping')
 	pushViewport(vpm); upViewport()
+	vpxb <- viewport(x=0.5, y=0.35, width=1, height=0.1, xscale=c(1,max_len), name='axis_bot')
+	pushViewport(vpxb); upViewport()
+	vpd1 <- viewport(x=0.5, y=0.3, width=1, height=unit(30,'points'), just='top', xscale=c(1,max_len), name='data1')
+	pushViewport(vpd1); upViewport()
 
 	# top 
-	grid.rect(gp=gpar(fill='grey', alpha=0.2, lwd=0), vp = vp1)
-	plot_segment(seg1[,c('id','beg.a','end.a','strand')], y=unit(10,'points'), text.above=T, text.rot=30, vp=vp1)
-	plot_xaxis(xaxis1, y=unit(0,'npc'), tick.above=F, vp=vp1)
-
+#	grid.rect(gp=gpar(fill='grey', alpha=0.2, lwd=0), vp = vpxt)
+	plot_segment(seg1[,c('id','beg.a','end.a','strand')], y=unit(10,'points'), text.above=T, text.rot=30, vp=vpxt)
+	plot_xaxis(xaxis1, y=unit(0,'npc'), tick.above=F, vp=vpxt)
+	
 	# bottom
-	grid.rect(gp=gpar(fill='grey', alpha=0.2, lwd=0), vp = vp2)
-	plot_segment(seg2[,c('id','beg.a','end.a','strand')], y=unit(1,'npc')-unit(10,'points'), text.above=F, text.rot=-30, vp=vp2)
-	plot_xaxis(xaxis2, y=unit(1,'npc'), tick.above=T, vp=vp2)
+#	grid.rect(gp=gpar(fill='grey', alpha=0.2, lwd=0), vp = vpxb)
+	plot_segment(seg2[,c('id','beg.a','end.a','strand')], y=unit(1,'npc')-unit(10,'points'), text.above=F, text.rot=-30, vp=vpxb)
+	plot_xaxis(xaxis2, y=unit(1,'npc'), tick.above=T, vp=vpxb)
 
-	if(nrow(annt2) > 0) {
-		plot_feature_ds(annt2[,c('note','beg.a','end.a','strand.a')], y=unit(1,'npc')-unit(10,'points'), height=unit(5,'points'), fill.p=fill['gene(+)'], fill.n=fill['gene(-)'], text.above=F, text.rot=-40, vp=vp2)
+	if( !empty(gene2) ) {
+		plot_feature_ds(gene2[,c('note','beg.a','end.a','strand.a')], y=unit(1,'npc')-unit(10,'points'), height=unit(5,'points'), fill=fill['gene'], text.show=F, text.offset=unit(30,'points'), text.above=F, text.rot=-40, vp=vpxb)
+	}
+	if( !empty(te2) ) {
+		plot_feature_ds(te2[,c('note','beg.a','end.a','strand.a')], y=unit(1,'npc')-unit(10,'points'), height=unit(5,'points'), fill=fill['TE'], vp=vpxb)
+	}
+	if( !empty(crp2) ) {
+		plot_feature_ds(crp2[,c('note','beg.a','end.a','strand.a')], y=unit(1,'npc')-unit(10,'points'), height=unit(5,'points'), fill=fill['crp'], vp=vpxb)
+	}
+	if( !empty(nbs2) ) {
+		plot_feature_ds(nbs2[,c('note','beg.a','end.a','strand.a')], y=unit(1,'npc')-unit(10,'points'), height=unit(5,'points'), fill=fill['nbs-lrr'], vp=vpxb)
 	}
 
 	# middle
 	plot_comparison(comp, y1=unit(0.95, 'npc'), y2=unit(0.05, 'npc'), alpha=0.5, vp=vpm)
-	if(nrow(gap1) > 0) {
-		plot_feature(gap1[,c('id','beg.a','end.a')], y=unit(0.95,'npc')+unit(3, 'points'), height=unit(5,'points'), fill=fill['assembly gap'], vp=vpm)
+	if( !empty(gap1) ) {
+		plot_feature(gap1[,c('id','beg.a','end.a')], y=unit(0.95,'npc')+unit(3,'points'), height=unit(5,'points'), fill=fill['assembly gap'], vp=vpm)
 	}
-	if(nrow(gap2) > 0) {
-		plot_feature(gap2[,c('id','beg.a','end.a')], y=unit(0.05,'npc')-unit(3, 'points'), height=unit(5,'points'), fill=fill['assembly gap'], vp=vpm)
+	if( !empty(gap2) ) {
+		plot_feature(gap2[,c('id','beg.a','end.a')], y=unit(0.05,'npc')-unit(3,'points'), height=unit(5,'points'), fill=fill['assembly gap'], vp=vpm)
 	}
-
+	if( !empty(mapp2) ) {
+		plot_hist(mapp2[,c('beg.a','end.a','score')], fill=fill['mappability'], vp=vpd1)
+	}
+	
 	# misc
-	grid.text(title, 
-		x = unit(0.5,'npc'), y = unit(1,'npc') - unit(2,'lines'), 
-		gp = gpar(cex=1.5, fontface='bold', fontfamily='Helvetica'),
-		vp=vpf)
-	plot_legend(fill, x=unit(0.05,'npc'), y=unit(0.5,'npc'), vp=vp1)
-	plot_scale(max_len, x=unit(0.9,'npc'), vp=vp1)
+	plot_title(main=main, subtitle=subtitle, vptt)
+	plot_legend(fill, x=unit(0.05,'npc'), y=unit(0.5,'npc'), vp=vplt)
+	plot_scale(max_len, x=unit(0.9,'npc'), vp=vplt)
 
 	dev.off()
 }

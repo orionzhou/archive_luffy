@@ -1,41 +1,42 @@
 #!/usr/bin/perl -w
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib $FindBin::Bin;
 use Path::Class;
 use Getopt::Long;
 use File::Basename;
 use File::Path qw/make_path remove_tree/;
 use Data::Dumper;
+
 use InitPath;
 use Common;
 use Bam;
 use Medicago;
 
-my ($opt, $sm) = (('') x 2);
+our $pindel = "$DIR_src/pindel024t";
+our $crest = "$DIR_src/crest";
+$ENV{PATH} = "$pindel:$crest:$ENV{PATH}";
+$ENV{PERL5LIB} = "$crest:$ENV{PERL5LIB}";
+
+my ($opt, $sm) = ('') x 2;
 GetOptions('opt|p=s'=>\$opt, 'sm|s=s'=>\$sm);
 
-my $sms = get_mt_ids('acc26');
-my $f_ref = "$DIR_genome/Mtruncatula_4.0/01_refseq.fa";
+my $f_ref = "$DIR_genome/Mtruncatula_4.0/11_genome.fa";
 my $f_bwa = "$DIR_db/bwa/mt_40";
+my $f_rn = "$DIR_misc3/ncgr_fastq/04_fastq_stats.tbl";
 my $f_sm = "$DIR_misc3/ncgr_fastq/21_sample.tbl";
 
 my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
-my $d01 = "$dir/01_pos_sorted"; # ln -sf ../11_pipe_bwa/13_dup_removed 01_pos_sorted
-my $d02 = "$dir/02_rn_sorted"; # ln -sf ../11_pipe_bwa/21_rn_sorted 02_rn_sorted
-my $f03 = "$dir/03_stat.tbl"; # ln -sf ../15_pipe_bam/13_stat.tbl 03_stat.tbl
-if($opt eq "hydra") {
-    run_hydra($dir, $sms);
-} elsif($opt eq "pindel") {
-    run_pindel($dir, $sms);
-} elsif($opt eq "crest") {
-    run_crest($dir, $sms);
-} elsif($opt eq "genome_strip") {
-    run_genome_strip($dir, $sms);
-} elsif($opt eq "tigrasv") {
-    run_tigrasv($dir, $sms);
-} else {
-    die "unknown option: $opt\n";
-}
+my $dirI = "$dir/../11_pipe_mapping/21_realigned";
+my $f_stat = "$dir/../11_pipe_mapping/71_stat.tbl";
+
+#run_hydra($dir, $sm);
+my $d31 = "$dir/31_pindel";
+run_pindel($dirI, $d31, $sm, $f_ref, $f_stat, $f_rn);
+my $d33 = "$dir/33_crest";
+#run_crest($dirI, $d33, $sm, $f_ref);
+#run_genome_strip($dir, $sm);
+#run_tigrasv($dir, $sm);
 
 sub run_hydra {
     my ($dir, $sms) = @_;
@@ -58,65 +59,129 @@ sub run_hydra {
         runCmd("$hydra -in $d11/$sm.bed -out $d13/$sm -mld $is_mld -mno $is_mno -ms 5");
     }
 }
-sub run_pindel {
-    my ($dir, $sms) = @_;
-    my $d01 = "$dir/01_pos_sorted"; 
-    my $d02 = "$dir/02_rn_sorted"; 
-    my $f03 = "$dir/03_stat.tbl"; 
-    my $t = readTable(-in=>$f03, -header=>1);
-  
-    $ENV{PATH} = "$ENV{PATH}:$pindel";
-    my $d21 = "$dir/21_orphan";
-    my $d31 = "$dir/31_pindel";
+sub prepare_pindel {
+    my ($fi, $fo, $fs, $fr, $sm) = @_;
+    open(FHI, "<$fi") or die "cannot read $fi\n";
+    while(<FHI>) {
+        next if /^id\t/;
+        chomp;
+        my ($id1, $mate1, $type1, $chr1, $beg1, $end1, $strd1, $cigar1, $mq1, $is1, $rg1, $seq1) = split("\t", $_);
+        my $line2 = <FHI>;
+        chomp($line2);
+        my ($id2, $mate2, $type2, $chr2, $beg2, $end2, $strd2, $cigar2, $mq2, $is2, $rg2, $seq2) = split("\t", $line2);
+        die "$id1/$mate1:$chr1 $beg1 $rg1 <> $id2/$mate2:$chr2 $beg2 $rg2\n" if $id1 ne $id2 || $mate1 != 1 || $mate2 != 2;
+    } 
+    close FHI;
+}
+sub prepare_pindel_s {
+    my ($fi, $fo, $fs, $fr, $sm) = @_;
     
-    my $chr = "chr5";
-    for my $sm (@$sms) {
-        my $t2 = $t->match_pattern("\$_->[0] eq '$sm'");
-        die "cannot find $sm in table\n" unless $t2->nofRow == 1;
-        my ($rns, $is_mld, $is_mno) = map {$t2->elm(0, $_)} qw/rns is_mld is_mno/;
-        runCmd("bamPickOrphan -i $d01/$sm.bam -o $d21/01_read_id/$sm.txt -r $chr", 1);
-        runCmd("bamPickReads -i $d21/01_read_id/$sm.txt -b $d02/$sm.bam -o $d21/02_info/$id.txt -t $id", 1);
+    my $ts = readTable(-in=>$fs, -header=>1);
+    my $h = { map {$ts->elm($_, "lb") => $ts->elm($_, "is_median")} (0..$ts->nofRow-1) };
+    
+    my $tr = readTable(-in=>$fr, -header=>1);
+    for my $i (0..$tr->nofRow-1) {
+        my ($rn, $lb) = map {$tr->elm($i, $_)} qw/rn lb/;
+        next unless exists $h->{$lb};
+        $h->{$rn} = $h->{$lb};
     }
-    
-    my $f_str = join(" ", map {sprintf "21_orphan/11_pindel/%s.txt", $_} @$sms);
-    print "cat $f_str > 21_orphan/11_pindel.txt\n";
-    print "pindel -f $f_ref -p 21_orphan/11_pindel.txt -o $d24/01 -c $chr -T 4\n";
-    print "pindel2vcf -p 31_pindel/01_D -r ../01_reference/41_genome.fa -R Mt3.5 -d 20110501\n";
-#    parse_pindel("$d31/01_D", "$d31/11.tbl");
 
+    open(FHI, "<$fi") or die "cannot read $fi\n";
+    open(FHO, ">$fo") or die "cannot read $fo\n";
+    while(<FHI>) {
+        next if /^id\t/;
+        chomp;
+        my ($id1, $mate1, $type1, $chr1, $beg1, $end1, $strd1, $cigar1, $mq1, $is1, $rg1, $seq1) = split("\t", $_);
+        my $line2 = <FHI>;
+        chomp($line2);
+        my ($id2, $mate2, $type2, $chr2, $beg2, $end2, $strd2, $cigar2, $mq2, $is2, $rg2, $seq2) = split("\t", $line2);
+        die "$id1/$mate1:$chr1 $beg1 <> $id2/$mate2:$chr2 $beg2\n" if $id1 ne $id2 || $mate1 != 1 || $mate2 != 2;
+        
+        next if $mq1 eq 0 || $mq2 eq 0;
+        my ($id, $type) = ($id1, $type1);
+
+        die "unequal RG: $id1 $rg1 $rg2\n" if $rg1 && $rg2 && $rg1 ne $rg2;
+        my $rg = $rg1 ? $rg1 : $rg2;
+        die "no is_meadian for $rg\n" unless exists $$h{$rg};
+        my $is = $$h{$rg};
+        if($type == 1) {
+            if( $chr1 ) {
+                print FHO "\@$id/$mate2\n";
+                print FHO "$seq2\n";
+                print FHO join("\t", $strd1, $chr1, $end1, $mq1, $is, $sm)."\n";
+            } else {
+                print FHO "\@$id/$mate1\n";
+                print FHO "$seq1\n";
+                print FHO join("\t", $strd2, $chr2, $end2, $mq2, $is, $sm)."\n";
+            }
+        } elsif($type == 2) {
+                print FHO "\@$id/$mate2\n";
+                print FHO "$seq2\n";
+                print FHO join("\t", $strd1, $chr1, $end1, $mq1, $is, $sm)."\n";
+                print FHO "\@$id/$mate1\n";
+                print FHO "$seq1\n";
+                print FHO join("\t", $strd2, $chr2, $end2, $mq2, $is, $sm)."\n";
+        } else {
+            die "unknown type: $type at $id\n" unless $type == 3;
+            if( $seq2 ) {
+                $is = abs($is1);
+                print FHO "\@$id/$mate2\n";
+                print FHO "$seq2\n";
+                print FHO join("\t", $strd1, $chr1, $end1, $mq1, $is, $sm)."\n";
+            } else {
+                $is = abs($is2);
+                print FHO "\@$id/$mate1\n";
+                print FHO "$seq1\n";
+                print FHO join("\t", $strd2, $chr2, $end2, $mq2, $is, $sm)."\n";
+            }
+        }
+    }
+    close FHI;
+    close FHO;
+}
+sub run_pindel {
+    my ($dirI, $dir, $sm, $f_ref, $f_stat, $f_rn) = @_;
+  
+    my $d21 = "$dir/21_orphan";
+    make_path($d21) unless -d $d21;
+    
+#    runCmd("bamPickOrphan -i $dirI/$sm.bam -o $d21/$sm.tbl", 1);
+#    runCmd("sort -k1,1 -k2,2n -t \$\'\\t\' -T $DIR_tmp -o $d21/$sm.sorted.tbl $d21/$sm.tbl", 1);
+    prepare_pindel("$d21/$sm.sorted.tbl", "$d21/$sm.pindel", $f_stat, $f_rn, $sm);
+    
+    my $d31 = "$dir/31_predSV";
+    make_path($d31) unless -d $d31;
+    runCmd("pindel -f $f_ref -p $d21/$sm.pindel -o $d31/$sm -T 4\n", 1);
+#    print "pindel2vcf -p $d31/$sm\_D -r $f_ref -R Mt4.0 -d 20130501\n";
 #    print "cov_window -i $d11/04_bp.tbl -o $d11/11_cov.tbl -t acc26 -c 1\n";
 }
 sub run_crest {
-    my ($dir, $sms) = @_;
-    my $d01 = "$dir/01_pos_sorted"; 
-    my $d02 = "$dir/02_rn_sorted"; 
-    my $f03 = "$dir/03_stat.tbl"; 
-    my $t = readTable(-in=>$f03, -header=>1);
+    my ($dirI, $dir, $sm, $f_ref) = @_;
     
-    $ENV{PATH} = "$ENV{PATH}:$crest";
     my $f_ref_2bit = "$DIR_db/blat/Mtruncatula_4.0.2bit";
-    my $d33 = "$dir/33_crest";
 
-#gfClient `cat $m/pbs/host` 1986 $DIR_Db/blat test.fa test.psl
-    my $chr = "chr5";
-    for my $sm (@$sms) {
-        runCmd("extractSClip.pl -i $d01/$sm.bam --ref_genome $f_ref \\
-            -o $d33/01_in -r $chr", 1);
-        runCmd("CREST.pl -f $d33/01_in/$sm.bam.$chr.cover -d $d01/$sm.bam \\
-            --ref_genome $f_ref --2bitdir $DIR_db/blat -t $f_ref_2bit -o $d33/03_predSV \\
-            --blatserver elmob111 --blatport 1986 -r $chr", 1);
-    }
+    my $gfServer = `cat \$code/pbs/host`;
+    $gfServer =~ s/\s*//g;
+
+    my $d11 = "$dir/11_softclip";
+    make_path($d11) unless -d $d11;
+    runCmd("extractSClip.pl -i $dirI/$sm.bam --ref_genome $f_ref -o $d11", 1);
+
+    my $d31 = "$dir/31_predSV";
+    make_path($d31) unless -d $d31;
+    runCmd("CREST.pl -f $d11/$sm.bam.cover -d $dirI/$sm.bam \\
+        --ref_genome $f_ref --2bitdir $DIR_db/blat -t $f_ref_2bit -o $d31 \\
+        --blatserver $gfServer --blatport 1986", 1);
     
-    my $d33_03 = "$d33/03_predSV";
-    my $f33_11 = "$d33/11_sum.tbl";
-    open(FHO, ">$f33_11") or die "cannot write to $f33_11\n";
+    my $f41 = "$dir/41_sum.tbl";
+    open(FHO, ">$f41") or die "cannot write to $f41\n";
     print FHO join("\t", qw/acc chr_l pos_l strand_l n_sc_l chr_r pos_r strand_r n_sc_r type cov_l cov_r len_l len_r pct_idty_l pct_reads_nu_l pct_idty_r pct_reads_nu_r beg_con chr_b beg_con_map end_con chr_e end_con_map seq beg_con2 chr_b2 beg_con_map2 end_con2 chr_e2 end_con_map2 seq2/)."\n";
     
-    opendir(my $dh, $d33_03) || die "cannot open $d33_03\n";
+    opendir(my $dh, $d31) || die "cannot open $d31\n";
     for my $fn (sort readdir $dh) {
         if($fn =~ /^(HM\d+)\.bam\.predSV/) {
             my $acc = $1;
-            my $fi = "$d33_03/$fn";
+            my $fi = "$d31/$fn";
             open(FHI, "<$fi") or die "cannot read $fi\n";
             while(<FHI>) {
                 chomp;

@@ -40,6 +40,37 @@ p <- ggplot(data=tw) +
 	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
 ggsave(p, filename=file.path(dir, "figs/03_coverage.png"), width=7, height=5)
 
+##### assign alignment blocks
+list.tmp = assign_block_mapping(t_aln)
+t11 = list.tmp$df
+t12 = list.tmp$dfb
+t12b = cbind(t12, qGap=t12$qLen-t12$qLen_aln, hGap=t12$hLen-t12$hLen_aln)
+t12c = t12b[t12b$hGap > 100000,]
+
+t13 = merge(t12, t_len, by='qId')
+t14 = cbind(t13, pct_cov=t13$qLen_aln/t13$len_scaf)
+
+sum_tw <- function(cutoff, df) {
+	df = df[df$pct_cov >= cutoff,]
+	c('num_qId'=length(unique(df$qId)), 'num_block'=nrow(df), 'qLen_aln'=sum(df$qLen_aln), 'hLen_aln'=sum(df$hLen_aln), 'qLen'=sum(df$qLen))
+}
+ldply(seq(0,0.3,0.05), sum_tw, t14)
+
+t15 = t14[t14$pct_cov >= 0.05,]
+
+f_aln = file.path(dir, '21_blastn', "15_aln.tbl")
+write.table(t11, file=f_aln, col.names=T, row.names=F, sep="\t", quote=F)
+
+f_blk = file.path(dir, '21_blastn', "16_blk.tbl")
+write.table(t15, file=f_blk, col.names=T, row.names=F, sep="\t", quote=F)
+
+##### read in alignment/block table
+f_blk = file.path(dir, '21_blastn', "16_blk.tbl")
+t_blk = read.table(f_blk, header=TRUE, sep="\t", as.is=T)
+
+f_aln = file.path(dir, '21_blastn', "15_aln.tbl")
+t_aln = read.table(f_aln, header=TRUE, sep="\t", as.is=T)
+
 ##### get unmapped scaffolds for NR blast
 f05 = file.path(dir, "21_blastn/05_tiled.tbl")
 t05 = read.table(f05, header=TRUE, sep="\t", as.is=T)

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib "$FindBin::Bin";
 use InitPath;
 use Common;
 use Gff;
@@ -72,7 +73,6 @@ sub convId2Url {
     }
 }
 sub cp_fq_scratch {
-#cp_fq_scratch();
     my $fi = "$DIR_misc3/hapmap/09_fastq.tbl";
     my $do = "/project/scratch/zhoup/data_for_taehyun/fastq";
     my $t = readTable(-in=>$fi, -header=>1);
@@ -106,8 +106,6 @@ sub fasta_mask {
     close FHO;
 }
 sub double_genome {
-#my $fi = "/project/youngn/zhoup/Data/misc3/spada/Athaliana/01_genome/01_refseq.fa";
-#my $fo = "/project/youngn/zhoup/Data/misc3/spada/Athaliana_large/01_genome/01_refseq.fa";
 #double_genome($fi, $fo);
     my ($fi, $fo) = @_;
     my $seqHI = Bio::SeqIO->new(-file=>"<$fi", -format=>'fasta');
@@ -122,5 +120,38 @@ sub double_genome {
     $seqHO->close();
 }
 
-runCmd("ls -l", 0);
+use Vcf;
+my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
+my $fi = "$dir/HM056_chr5_SI.vcf";
+my $fo = "$dir/HM056_chr5_SI.tbl";
+open(FHO, ">$fo") or die "cannot write $fo\n";
+    my $vcf = Vcf->new(file=>$fi);
+    $vcf->parse_header();
+
+    my $header_printed=0;
+
+    while (my $x=$vcf->next_data_hash()) {
+        if ( !$header_printed ) {
+            print FHO "chr\tpos\ttype\tend\tsvlen\tntlen\thomlen\thomseq\tref\talt";
+            for my $col (sort keys %{$$x{gtypes}}) {
+                print FHO "\t$col";
+            }
+            print FHO "\n";
+
+            $header_printed = 1;
+        }
+
+        my $y = $$x{INFO};
+        my ($ntlen, $homseq) = (0, "");
+        $ntlen = $$y{NTLEN} if exists $$y{NTLEN};
+        $homseq = $$y{HOMSEQ} if exists $$y{HOMSEQ};
+        print FHO join("\t", $$x{CHROM}, $$x{POS}, $$y{SVTYPE}, $$y{END}, $$y{SVLEN}, 
+            $ntlen, $$y{HOMLEN}, $homseq, $$x{REF}, $$x{ALT}->[0]);
+        for my $col (sort keys %{$$x{gtypes}}) {
+            my ($al1,$sep,$al2) = exists($$x{gtypes}{$col}{GT}) ? $vcf->parse_alleles($x,$col) : ('.','/','.');
+            my $gt = $al1.'/'.$al2;
+            print FHO "\t".$gt;
+        }
+        print FHO "\n";
+    }
 

@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Run; 
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
+use InitPath; use Common; use Run; 
 use Bio::Seq; use Bio::SeqIO; use Graph; use Bio::SeqFeature::Generic;
 use Readfile; use Writefile; use Annotate; use Align; use Qry; use Getopt::Long;
 use Gff; use CircosConf; use Draw; use Parser; use Seq; use Convert; use GeneModel;

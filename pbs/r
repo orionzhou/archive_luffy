@@ -1,6 +1,7 @@
 #PBS -l nodes=1:ppn=2,mem=5GB,walltime=10:00:00
 #PBS -m ae
-#PBS -q elmob 
+#PBS -q lab 
 
-cd /project/youngn/zhoup/Scripts/r
-R CMD BATCH cnv.R
+cd /home/youngn/zhoup/repos/code/pbs
+./test.pl
+#R CMD BATCH cnv.R

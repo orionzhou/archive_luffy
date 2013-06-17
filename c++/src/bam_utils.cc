@@ -136,7 +136,7 @@ void Utilities::PrintReads(const string& name, const int& n_total, BamAlnPairVec
         cout << format("\t%d[%s] (%d-%d) [%d:%d %d] %d\n") % al2.IsFirstMate() % rg2 % al2.IsMapped() % al2.IsMateMapped() % al2.RefID % al2.Position % al2.MatePosition % al2.InsertSize;
     }
 }
-void Utilities::PrintRead(const BamAlignment& al) {
+void Utilities::PrintRead(const BamAlignment& al, const RefVector& refs) {
     string mate1 = al.IsFirstMate() ? "mate1" : "mate2";
     string qc = al.IsFailedQC() ? "failedQC" : "passedQC";
     string dup = al.IsDuplicate() ? "dup" : "!dup";
@@ -145,12 +145,14 @@ void Utilities::PrintRead(const BamAlignment& al) {
     string mapped2 = al.IsMateMapped() ? "mapped" : "!mapped";
     string strand1 = al.IsReverseStrand() ? "-" : "+";
     string strand2 = al.IsMateReverseStrand() ? "-" : "+";
+    string chr1 = al.RefID == -1 ? "?" : refs[al.RefID].RefName;
+    string chr2 = al.MateRefID == -1 ? "?" : refs[al.MateRefID].RefName;
     cout << format("%s\t%s\t%s\t%s\t%s\tIS=%d\n") % al.Name % mate1
         % qc % dup % proper % al.InsertSize;
     cout << format("  me\t%s\t%s:%d[%s] (%d)\n") % mapped1
-        % al.RefID % al.Position % strand1 % al.MapQuality;
+        % chr1 % al.Position % strand1 % al.MapQuality;
     cout << format("  buddy\t%s\t%s:%d[%s]\n") % mapped2
-        % al.MateRefID % al.MatePosition % strand2;
+        % chr2 % al.MatePosition % strand2;
 }
 bool isPair1 (const BamAlignment& a1, const BamAlignment& a2) {
   BamAlignment al1 = a1, al2 = a2;

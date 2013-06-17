@@ -1,6 +1,13 @@
 #!/usr/bin/perl
-use strict; use Init; use Common; use Readfile; use Localdb; use Run;
-use Bio::Seq; use Path::Class; use Data::Dumper; use Seq; 
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
+
+use InitPath;
+use Common;
+use Bio::Seq;
+use Data::Dumper;
+use Seq;
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
 use Time::HiRes qw/gettimeofday tv_interval/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;

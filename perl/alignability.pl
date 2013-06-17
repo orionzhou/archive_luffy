@@ -1,6 +1,13 @@
 #!/usr/bin/perl -w
-use strict; use Path::Class; use Data::Dumper;
-use Init; use Common; use Seq; use Readfile; 
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
+use Path::Class; 
+use Data::Dumper;
+
+use InitPath;
+use Common;
+use Seq;
 
 my $genome = "mt_35";
 my $dir = dir($DIR_Genome, $genome);

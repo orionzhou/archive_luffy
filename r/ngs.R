@@ -1,57 +1,70 @@
-sms = get_mt_ids("acc33")
+library(plyr)
+library(ggplot2)
+
+##### calculate library parameters
 len_assembly = 505561755
 len_bases = 376163954
 len_alignable = 308662854
 
-dir = "/project/youngn/zhoup/Data/misc3/hapmap"
-dirO = "/project/youngn/zhoup/Data/misc3/hapmap/80_stat"
-f_rg = file.path(dir, "09_fastq.tbl")
-t_rg = read.table(f_rg, header=T, sep="\t", as.is=T)[,c('sm','rg','lb','rl','pi')]
+dir = file.path(DIR_Misc3, "hapmap_mt40/11_pipe_mapping")
+f_rn = file.path(dir, "../../ncgr_fastq/04_fastq_stats.tbl")
+t_rn = read.table(f_rn, header=T, sep="\t", as.is=T)[,c('sm','lb','rn','rl')]
 
-f13a = file.path(dir, "15_pipe_bam/13_stat.tbl")
-s1 = read.table(f13a, header=T, sep="\t", as.is=T)
-s1.1 = merge(t_rg[,c('rg','lb')], s1, by='rg')
-s1.2 = s1.1[,-1]
+t_lb = ddply(t_rn, .(lb), summarise, rl=unique(rl)[1])
 
-sum_by_col <- function(df, cols) {
-  if(length(cols) == 1) {
-    sum(df[,cols])
-  } else {
-    colSums(df[,cols])
-  }
+f61 = file.path(dir, "61_stat_raw.tbl")
+t61 = read.table(f61, header=T, sep="\t", as.is=T)
+f62 = file.path(dir, "62_isd.tbl")
+t62 = read.table(f62, header=T, sep="\t", as.is=T)
+
+
+rglb = data.frame(rg=t61$rg, lb=t61$rg, stringsAsFactors=F)
+for (i in 1:nrow(rglb)) {
+	idxs1 = which(t_rn$rn == rglb$rg[i])
+	if(length(idxs1) == 1) {
+		rglb$lb[i] = t_rn$lb[idxs1[1]]
+	}
 }
-s1.3 = ddply(s1.2, .(lb), sum_by_col, cols=2:10)
-s1.4 = merge(unique(t_rg[,c('lb','rl')]), s1.3)
 
-s2 = cbind(s1.4, pct_dup=NA, cov_total=NA, cov_rmdup=NA, cov_uniq=NA, is_mean=NA, is_median=NA, is_sd=NA, is_mad=NA, is_mld=NA, is_mno=NA)
-s2$pct_dup = (s2$paired_dup * 2 + s2$unpaired_dup) / (s2$paired * 2 + s2$unpaired)
-s2$cov_total = s2$total * s2$rl * 2 / len_assembly 
-s2$cov_rmdup = ((s2$paired-s2$paired_dup)*2 + (s2$unpaired-s2$unpaired_dup)) * s2$rl / len_bases 
-s2$cov_uniq = (s2$paired_uniq * 2 + s2$unpaired_uniq) * s2$rl / len_alignable
+t61.1 = merge(rglb, t61, by='rg')
+
+ts.1 = ddply(t61.1, .(lb), summarise, 
+	total=sum(total), unmapped=sum(unmapped), unpaired=sum(unpaired), unpaired_dedup=sum(unpaired_dedup), unpaired_uniq=sum(unpaired_uniq), 
+	paired=sum(paired), paired_dedup=sum(paired_dedup), 
+	paired_uniq=sum(paired_uniq), paired_proper=sum(paired_proper))
+
+ts.2 = merge(t_lb, ts.1, by='lb')
+ts.2$rl = as.numeric(ts.2$rl)
+ts = ts.2
+ts.3 = cbind(ts, 
+	pct_dedup=(ts$paired_dedup * 2 + ts$unpaired_dedup) / (ts$paired * 2 + ts$unpaired), 
+	cov_total=ts$total * ts$rl * 2 / len_assembly, 
+	cov_dedup=((ts$paired_dedup)*2 + (ts$unpaired_dedup)) * ts$rl / len_bases,
+	cov_uniq=(ts$paired_uniq * 2 + ts$unpaired_uniq) * ts$rl / len_alignable,
+	is_mean=NA, is_median=NA, is_sd=NA, is_mad=NA, is_mld=NA, is_mno=NA) 
 
 
-f13b = file.path(dir, "15_pipe_bam/13_stat_isd.tbl")
-i1 = read.table(f13b, header=T, sep="\t", as.is=T)
-i1.1 = merge(t_rg[,c('rg','lb')], i1, by='rg')
-i1.2 = i1.1[,-1]
+t62.1 = merge(rglb, t62, by='rg')
+t62.2 = ddply(t62.1, .(lb, is), summarise, cnt=sum(cnt))
 
-i2 = ddply(i1.2, .(lb, is), sum_by_col, cols=3)
-colnames(i2)[3] = "cnt"
-
-for (i in 1:nrow(s2)) {
-  if(is.na(s2$total[i])) next
-  d1 = i2[i2$lb == s2$lb[i], c('is','cnt')]
-  d2 = with(d1, rep(is, cnt))
-  s2$is_mean[i] = mean(d2)
-  s2$is_sd[i] = sd(d2)
-  s2$is_median[i] = median(d2)
-  tmp = quantile(d2, c(0.159, 0.841))
-  s2$is_rsd[i] = (tmp[2] - tmp[1]) / 2
-  s2$is_mad[i] = mad(d2)
+ts = ts.3
+ti = t62.2
+for (i in 1:nrow(ts)) {
+	if(is.na(ts$total[i])) next
+	lb = ts$lb[i]
+	
+	d1 = ti[ti$lb==lb, c('is','cnt')]
+	d2 = with(d1, rep(is, cnt))
+	ts$is_mean[i] = mean(d2)
+	ts$is_sd[i] = sd(d2)
+	ts$is_median[i] = median(d2)
+	tmp = quantile(d2, c(0.159, 0.841))
+	ts$is_rsd[i] = (tmp[2] - tmp[1]) / 2
+	ts$is_mad[i] = mad(d2)
 }
-s2$is_mld = 10 * s2$is_mad
-s2$is_mno = s2$is_median + 20 * s2$is_mad
-write.table(s2, file.path(dir, "15_pipe_bam/14_stat.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+ts$is_mld = 10 * ts$is_mad
+ts$is_mno = ts$is_median + 20 * ts$is_mad
+write.table(ts, file.path(dir, "71_stat.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
 # plot coverage
 s4$id = factor(s4$id, levels=sort(unique(s4$id), decreasing=TRUE))

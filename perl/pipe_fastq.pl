@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib $FindBin::Bin;
 use Data::Dumper;
 use File::Basename;
 use File::Path qw/make_path remove_tree/;

@@ -1,5 +1,9 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Localdb; use Run; 
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use InitPath;
+use Common;
 use Bio::Seq; use Bio::SeqIO; use Graph; use Bio::SeqFeature::Generic;
 use Readfile; use Writefile; use Annotate; use Align;
 use Time::HiRes qw/gettimeofday tv_interval/; use Data::Dumper;use Path::Class; 

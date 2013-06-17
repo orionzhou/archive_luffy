@@ -1,22 +1,46 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Bio::Tools::GFF; use Localdb; use Path::Class;
-use Parser; use Gff; use Crp; use Mapping; use GeneModel; use Writefile; use Readfile;
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
-use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
-my ($feDb, $refDb) = ("mt_35_crp_jcvi", "mt_35");
-my $dirW = dir($DIR_Misc2, "jcvi");
-my $f01 = file($dirW, "01_id_mapping.txt");
-my $f02 = file($dirW, "02_raw.gff");
-my $f03 = file($dirW, "03.gff");
-#gff_conv_jcvi(-mapping=>$f01, -in=>$f02, -out=>$f03);
-my $f04 = file($dirW, "04.gff");
-#gff_conv_loc(-in=>$f03, -out=>$f04, -db=>$refDb);
-my $f11 = file($dirW, "11.gtb");
-#gff2Gtb(-in=>$f04, -out=>$f11);
-my $f12 = file($dirW, "12.gff");
-#gtb2Gff(-in=>$f11, -out=>$f12);
-my $ld = Localdb->new(-db=>$feDb);
-#$ld->loadGff(-files=>$f12, -empty=>1);
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use Getopt::Long;
+use Pod::Usage;
+use Common;
 
+my ($fi, $fo) = ('') x 2;
+my $help_flag;
+
+#----------------------------------- MAIN -----------------------------------#
+GetOptions(
+    "help|h"  => \$help_flag,
+    "in|i=s"  => \$fi,
+    "out|o=s" => \$fo,
+) or pod2usage(2);
+pod2usage(1) if $help_flag;
+pod2usage(2) if !$fi || !$fo;
+
+open(FHI, "<$fi") || die "Can't open file $fi for reading";
+open(FHO, ">$fo") || die "Can't open file $fo for writing";
+
+print FHO "##gff-version 3\n";
+while(<FHI>) {
+    chomp;
+    next if !$_ || /^\#/;
+    my @ps = split "\t";
+    my $h = parse_gff_tags($ps[8]);
+    
+    if(exists $h->{"conf_class"}) {
+        $h->{"Note"} = sprintf("[%s]%s", $h->{"conf_class"}, $h->{"Note"});
+        $ps[8] = join(";", map {$_."=".$h->{$_}} keys(%$h));
+    }
+   
+    my $tag_te = $ps[2] eq "gene" && exists $h->{"Name"} && $h->{"Name"} =~ /Medtr\w{1,2}te/;
+    $ps[2] = "transposable_element_gene" if $tag_te;
+    
+    $ps[2] = "transposable_element_gene" if $ps[2] eq "transposable_element";
+#    $ps[7] = ".";
+    print FHO join("\t", @ps)."\n";
+}
+close FHI;
+close FHO;
 
 

@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   in.push(io::gzip_decompressor());
   in.push(fh);
   
-  streamsize ss;
+//  streamsize ss;
   string line;
   uint32_t cnt = 0;
   while ( getline(in, line) ) {

@@ -19,70 +19,112 @@ using namespace BamTools;
 
 
 int main(int argc, char *argv[]) {
-  string fi, fo, regionStr, tag;
-  clock_t time1 = clock();
-  po::options_description cmdOpts("Allowed options");
-  cmdOpts.add_options()
-    ("help,h", "produce help message")
-    ("f_in,i", po::value<string>(&fi), "input (BAM) file")
-    ("f_out,o", po::value<string>(&fo), "output file")
-    ("region,r", po::value<string>(&regionStr), "region")
-  ;
-  po::variables_map vm;
-  po::store(po::parse_command_line(argc, argv, cmdOpts), vm);
-  po::notify(vm);
-  if(vm.count("help") || !vm.count("f_in") || !vm.count("f_out") || !vm.count("region")) {
-    cout << cmdOpts << endl;
-    return 1;
-  }
-  
-  Utilities utils;
-  BamReader reader;
-  BamRegion region;
-  BamWriter writer;
-  
-  reader.Open(fi);
-  utils.ParseRegionString(regionStr, reader, region); 
-  reader.SetRegion(region);
-  cout << format("region set to: %s\n") % regionStr;
-  ofstream fho( fo.c_str() );
-
-  map<string, int> rm;
-  map<string, int>::iterator rm_it;
-  pair< map<string, int>::iterator, bool > rm_p;
-
-  BamAlignment al;
-  vector<CigarOp> cigars;
-  int refId = region.LeftRefID;
-  while( reader.GetNextAlignment(al) ) {
-    if( al.IsDuplicate() || al.MapQuality == 0) continue;
-    cigars =  al.CigarData;
-    int type = 0;
-// type = 1(unmapped) 2(mapped on a different chr) 3(soft-clipped)
-    if( al.IsMapped() && !al.IsMateMapped() ) {
-      type = 1;
-    } else if( al.IsMapped() && al.IsMateMapped() ) {
-      if ( al.MateRefID != refId ) {
-        type = 2;
-      } else if( (cigars[0].Type == 'S' && cigars[0].Length >= 10) ||
-        (cigars[cigars.size()-1].Type == 'S' && cigars[cigars.size()-1].Length >= 10) ) {
-        type = 3;
-      }
+    string fi, fo, regionStr;
+    clock_t time1 = clock();
+    po::options_description cmdOpts("Allowed options");
+    cmdOpts.add_options()
+        ("help,h", "produce help message")
+        ("in,i", po::value<string>(&fi), "input (BAM) file")
+        ("out,o", po::value<string>(&fo), "output file")
+        ("region,r", po::value<string>(&regionStr), "region")
+    ;
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, cmdOpts), vm);
+    po::notify(vm);
+    if(vm.count("help") || !vm.count("in") || !vm.count("out")) {
+        cout << cmdOpts << endl;
+        return 1;
     }
 
-    if(type > 0) {
-      rm_p = rm.insert( pair<string, int> (al.Name, type) );
-      if(rm_p.second == false) {
-        cout << format("reading %s twice\n") % al.Name;
-        exit(0);
-      }
-      int orphanIsFirst = al.IsFirstMate() ? 0 : 1;
-      if(type == 3) orphanIsFirst = al.IsFirstMate() ? 1 : 0; 
-      fho << format("%s\t%d\t%d\n") % al.Name % type % orphanIsFirst;
+    Utilities util;
+    BamReader reader;
+    fs::path fi1( fi );
+    fs::path fi2( fi + ".bai" );
+    if( exists(fi1) ) {
+        reader.Open(fi1.string());
+        reader.OpenIndex(fi2.string());
+        if( reader.HasIndex() ) {
+            cout << format("%s opened with index ...\n") % fi;
+            if( vm.count("region") ) {
+                BamRegion region;
+                if( util.ParseRegionString(regionStr, reader, region) ) {
+                    reader.SetRegion(region);
+                    cout << format("region set to: %s\n") % regionStr;
+                } else {
+                    cerr << format("invalid region string: %s\n") % regionStr;
+                    exit(1);
+                }
+            } else {
+                cout << "no region specified: starting from scratch\n";
+            }
+        } else {
+            cout << format("%s opened without index ...\n") % fi;
+        }
+    } else {
+        cerr << format("cannot read from %s ...\n") % fi;
+        exit(1);
     }
-  }
-  reader.Close();
+    RefVector refs = reader.GetReferenceData();
 
-  cout << right << setw(60) << format("(running time: %.01f minutes)\n") % ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
-  return EXIT_SUCCESS;
+    ofstream fho( fo.c_str() );
+    fho << "id\tmate\ttype\tchr\tbeg\tend\tstrd\tcigar\tmq\tis\trg\tseq\n";
+
+    BamAlignment al;
+    string id="", chr="", strd="", cigar="", rg="", seq="";
+    int mate, type, beg, end, mq, is;
+    vector<CigarOp> cigars;
+    while( reader.GetNextAlignment(al) ) {
+//        if( al.IsDuplicate() ) continue;
+        id = al.Name;
+        mate = al.IsFirstMate() ? 1 : 2;
+        cigars = al.CigarData;
+        type = 0; // type = 1(orphan) 2(inter-chromosomal) 3(soft-clip)
+        seq = al.QueryBases;
+        
+        if(al.IsMapped()) chr = refs[al.RefID].RefName;
+        beg = al.Position;
+        end = al.GetEndPosition();
+        strd = al.IsReverseStrand() ? "-" : "+";
+        cigar = util.getCigarString(cigars);
+        mq = al.MapQuality;
+        is = al.InsertSize;
+        al.GetTag("RG", rg);
+        
+        if( (al.IsMapped() && !al.IsMateMapped()) || (!al.IsMapped() && al.IsMateMapped()) ) {
+            type = 1;
+            if( al.IsMapped() ) {
+                fho << format("%d\t%d\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\n") 
+                    % id % mate % type % chr % beg % end % strd % cigar % mq % "" % "" % "" ;
+            } else {
+                fho << format("%d\t%d\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\n") 
+                    % id % mate % type % ""  % ""  % ""  % ""   % ""    % "" % "" % rg % seq;
+            }
+        } else if( al.IsMapped() && al.IsMateMapped() ) {
+            if ( al.RefID != al.MateRefID ) {
+                type = 2;
+                fho << format("%d\t%d\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\n") 
+                    % id % mate % type % chr % beg % end % strd % cigar % mq % "" % rg % seq;
+            } else if( (cigars[0].Type == 'S' && cigars[0].Length >= 10) ||
+    (cigars[cigars.size()-1].Type == 'S' && cigars[cigars.size()-1].Length >= 10) ) {
+                type = 3;
+                
+                fho << format("%d\t%d\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\n") 
+                    % id % mate % type % ""  % ""  % ""  % ""   % cigar % "" % "" % rg % seq;
+
+                mate = al.IsFirstMate() ? 2 : 1;
+                chr = refs[al.MateRefID].RefName;
+                beg = al.MatePosition;
+                end = al.MatePosition + al.Length;
+                strd = al.IsMateReverseStrand() ? "-" : "+";
+                mq = 60;
+                is = -al.InsertSize;
+                fho << format("%d\t%d\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\n") 
+                    % id % mate % type % chr % beg % end % strd % ""    % mq % is % "" % "" ;
+            }
+        }
+    }
+    reader.Close();
+
+    cout << right << setw(60) << format("(running time: %.01f minutes)\n") % ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
+    return EXIT_SUCCESS;
 }

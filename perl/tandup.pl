@@ -1,5 +1,9 @@
 #!/usr/bin/perl -w
-use strict; use Init; use Common; use Localdb; use Run; use Annotate; 
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use InitPath;
+use Common;
 use Readfile; use Run; use VntOut; use SeqRecover; use Qry; use Vnt;
 use VntEffect; use Gff; use Draw; use Parser; use Seq; use Convert;
 use Bio::Seq; use Bio::SeqIO; use Bio::SearchIO; use Path::Class; use Align;

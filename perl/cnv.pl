@@ -1,5 +1,8 @@
 #!/usr/bin/perl
-use strict; use Init; use Common; use Readfile; use Localdb;
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
+use InitPath; use Common; use Readfile; use Localdb;
 use Bio::Seq; use WindowStat; use Medicago;
 use Time::HiRes qw/gettimeofday tv_interval/; use Data::Dumper; use Path::Class; 
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/;

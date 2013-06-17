@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
         ("help,h", "produce help message")
         ("in,i", po::value<string>(&fi), "input (BAM) file")
         ("name,n", po::value<string>(&name), "read name")
-        ("region,r", po::value<string>(&regionStr)->default_value(""), "region")
+        ("region,r", po::value<string>(&regionStr), "region")
         ("more,m", po::value<int>(&n_more)->default_value(0), "number more reads to display")
         ("out,o", po::value<string>(&fo)->default_value(""), "output (BAM) file")
     ;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         reader.OpenIndex(fi2.string());
         if( reader.HasIndex() ) {
             cout << format("%s opened with index ...\n") % fi;
-            if(regionStr != "") {
+            if( vm.count("region") ) {
                 BamRegion region;
                 if( util.ParseRegionString(regionStr, reader, region) ) {
                     reader.SetRegion(region);
@@ -64,6 +64,7 @@ int main(int argc, char *argv[]) {
         cerr << format("cannot read from %s ...\n") % fi;
         exit(1);
     }
+    RefVector refs = reader.GetReferenceData();
 
     BamAlignment al, al1, al2;
     bool tag_f = false, tag_s = false;
@@ -81,9 +82,18 @@ int main(int argc, char *argv[]) {
         if(tag_f == true && tag_s == true) break;
     }
     reader.Close();
-    
-    util.PrintRead(al1);
-    util.PrintRead(al2);
+    if(tag_f != true) {
+        cerr << "cannot find first mate\n";
+        util.PrintRead(al2, refs);
+        exit(1);
+    } else if(tag_s != true) {
+        cerr << "cannot find second mate\n";
+        util.PrintRead(al1, refs);
+        exit(1);
+    } else {
+        util.PrintRead(al1, refs);
+        util.PrintRead(al2, refs);
+    }
     if( fo != "" ) {
         BamWriter writer;
         writer.Open(fo, reader.GetHeader(), reader.GetReferenceData());

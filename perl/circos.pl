@@ -1,7 +1,8 @@
 #!/usr/bin/perl
-use strict; use Init; use Common; use Localdb; use Circos;
-use Bio::Seq; use Path::Class; use Data::Dumper; use Readfile;
-use Clone qw/clone/;
+use strict;
+use FindBin;
+use lib "$FindBin::Bin";
+
 my ($feDb, $refDb) = ("mt_35", "mt_35");
 getChrConf(-refdb=>$refDb, -opt=>1);
 #getChrConf_2();

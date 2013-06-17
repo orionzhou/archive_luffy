@@ -14,8 +14,6 @@ require Exporter;
 our $picard = "$DIR_src/picard-tools-1.87";
 our $gatk = "$DIR_src/GenomeAnalysisTK-2.4-7";
 our $svtoolkit = "$DIR_src/svtoolkit";
-our $pindel = "$DIR_src/pindel024t";
-our $crest = "$DIR_src/crest";
 
 sub bam_sort {
     my ($fi, $fo_pre) = @_;

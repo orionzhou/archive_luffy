@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib $FindBin::Bin;
 use Getopt::Long;
 use Data::Dumper;
 use File::Basename;
@@ -19,38 +20,53 @@ GetOptions(
     'beg|b=i' => \$beg, 'end|e=i' => \$end, 
 );
 
-my $f_ref = "$DIR_genome/Mtruncatula_4.0/01_refseq.fa";
+my $f_ref = "$DIR_genome/Mtruncatula_4.0/11_genome.fa";
 my $f_bwa = "$DIR_db/bwa/mt_40";
 my $f_rn = "$DIR_misc3/ncgr_fastq/04_fastq_stats.tbl";
 my $f_lb = "$DIR_misc3/ncgr_fastq/11_library.tbl";
 my $f_sm = "$DIR_misc3/ncgr_fastq/21_sample.tbl";
 my $dir = "$DIR_misc3/hapmap_mt40/11_pipe_mapping";
-my $d03 = "$dir/03_bwa";
-my $d06 = "$dir/06_pos_sorted";
-my $f09 = "$dir/09_status_run.tbl";
-my $d11 = "$dir/11_dedup";
-my $f19 = "$dir/19_status_lib.tbl";
+
+my $d03 = "$dir/03_aln";
+my $d06 = "$dir/06_fixmate_sort";
+
+my $d12 = "$dir/12_dedup";
+my $d19 = "$dir/19_remap_dedup";
+
 my $d21 = "$dir/21_realigned";
-my $f29 = "$dir/29_status_sample.tbl";
-my $d31 = "$dir/31_stat";
+
+my $d31 = "$dir/31_bcf_raw";
+
+my $f51 = "$dir/51_status_run.tbl";
+my $f52 = "$dir/52_status_lib.tbl";
+my $f53 = "$dir/53_status_sample.tbl";
+
+my $f61 = "$dir/61_stat_raw.tbl";
+my $f62 = "$dir/62_isd.tbl";
 
 if($opt eq "run") {
     pipe_run($dir, $f_rn, $f_bwa, $rn, $beg, $end);
 } elsif($opt eq "lib") {
-    pipe_lib($dir, $f_lb, $d06, $lb);
+    pipe_lib($dir, $f_lb, $lb);
+} elsif($opt eq "lib.remap") {
+    pipe_lib_remap($dir, $f_lb, $lb, $f_bwa);
 } elsif($opt eq "sample") {
-    pipe_sample($dir, $f_sm, $d11, $f_ref, $sm);
+    pipe_sample($dir, $f_sm, $f_ref, $sm);
+} elsif($opt eq "vnt") {
+    pipe_vnt($dir, $f_sm, $f_ref, $sm);
 } elsif($opt eq "update") {
-    status_update($dir, $f_rn, $f_lb, $f_sm, $f09, $f19, $f29);
+    status_update($dir, $f_rn, $f_lb, $f_sm, $f51, $f52, $f53);
+} elsif($opt eq "stat") {
+    stats($dir, $f_sm, $f61, $f62);
 } else {
     die "unknown option: $opt\n";
 }
 
 sub pipe_run {
     my ($dir, $f_rn, $f_bwa, $rni, $beg, $end) = @_;
-    my $d03 = "$dir/03_bwa";
+    my $d03 = "$dir/03_aln";
     make_path($d03) unless -d $d03;
-    my $d06 = "$dir/06_pos_sorted";
+    my $d06 = "$dir/06_fixmate_sort";
     make_path($d06) unless -d $d06;
     
     my $dir_abs = dirname($f_rn);
@@ -64,25 +80,23 @@ sub pipe_run {
         die "$f1a is not there\n" unless -s $f1a;
         die "$f1b is not there\n" unless -s $f1b;
 
-        my $f3a = "$d03/$rn.1.sai";
-        my $f3b = "$d03/$rn.2.sai";
-        my $f3  = "$d03/$rn.bam";
         my $tag = ($encoding < 1.8 & $encoding >= 1.3) ? "-I" : "";
-        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1a > $f3a", 1);
-        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1b > $f3b", 1);
+#        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1a > $d03/$rn.1.sai", 1);
+#        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1b > $d03/$rn.2.sai", 1);
 
         my $tag_is = ($pi == 6500) ? "-a 10000" : ($pi == 3000) ? "-a 6000" : "";
-        my $f6 = "$d06/$rn.bam";
-        runCmd("bwa sampe $f_bwa $tag_is \\
-            -r '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
-            $f3a $f3b $f1a $f1b | samtools view -Sb - > $f3", 1);
+#        runCmd("bwa sampe $f_bwa \\
+#            -r '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
+#            $d03/$rn.1.sai $d03/$rn.2.sai $f1a $f1b \\
+#            | samtools view -Sb - > $d03/$rn.bam", 1);
         runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
             TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
-            INPUT=$f3 OUTPUT=$f6 SORT_ORDER=coordinate", 1);
+            INPUT=$d03/$rn.bam OUTPUT=$d06/$rn.bam SORT_ORDER=coordinate", 1);
     }
 }
 sub pipe_lib {
-    my ($dir, $f_lb, $dirI, $lb) = @_;
+    my ($dir, $f_lb, $lb) = @_;
+    my $dirI = "$dir/06_fixmate_sort";
 
     my $t = readTable(-in=>$f_lb, -header=>1);
     my $h;
@@ -102,19 +116,76 @@ sub pipe_lib {
         push @fis, $fi;
     }
 
-    my $d11 = "$dir/11_dedup";
+    my $d11 = "$dir/11_markdup";
     make_path($d11) unless -d $d11;
     my $input_str = join(" ", map {"INPUT=$_"} @fis);
-    my ($f11, $f11b) = ("$d11/$lb.bam", "$d11/$lb.dup.txt");
     runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
         VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+        $input_str OUTPUT=$d11/$lb.bam METRICS_FILE=$d11/$lb.dup.txt", 1);
+    
+    my $d12 = "$dir/12_dedup";
+    make_path($d12) unless -d $d12;
+    runCmd("bamtools filter -in $d11/$lb.bam -script \\
+        $DIR_code/conf/dedup.json -out $d12/$lb.bam", 1);
+    runCmd("bamStat -i $d12/$lb.bam -o $d12/$lb", 1);
+    runCmd("samtools index $d12/$lb.bam", 1);
+}
+sub pipe_lib_remap {
+    my ($dir, $f_lb, $lb, $f_bwa) = @_;
+    die "not a LIPE: $lb\n" unless $lb =~ /lipe/i;
+
+    my $t = readTable(-in=>$f_lb, -header=>1);
+    my $h;
+    for my $i (0..$t->nofRow-1) {
+        my ($sm, $lb, $rns, $idxs) = $t->row($i);
+        $h->{$lb} = $sm;
+    }
+    die "no library named '$lb'\n" unless exists $h->{$lb};
+    my $sm = $h->{$lb};
+ 
+    my $d12 = "$dir/12_dedup";
+    my $d15 = "$dir/15_remap_reads";
+    make_path($d15) unless -d $d15;
+    runCmd("bamtools filter -in $d12/$lb.bam -script \\
+        $DIR_code/conf/filter_lipe.json -out $d15/$lb.bam", 1);
+    runCmd("samtools sort -n $d15/$lb.bam $d15/$lb.namesorted", 1);
+    runCmd("$DIR_src/bamUtil/bin/bam bam2FastQ --in $d15/$lb.namesorted.bam \\
+        --readname --firstOut $d15/$lb.1.fq --secondOut $d15/$lb.2.fq \\
+        --unpairedOut $d15/$lb.fq", 1);
+    
+    my $d16 = "$dir/16_remap_aln";
+    make_path($d16) unless -d $d16;
+    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d15/$lb.1.fq > $d16/$lb.1.sai", 1);
+    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d15/$lb.2.fq > $d16/$lb.2.sai", 1);
+    runCmd("bwa sampe $f_bwa -r \\
+        '\@RG\\tID:$lb\\tSM:$sm\\tLB:$lb\\tPL:ILLUMINA\\tPU:lane' \\
+        $d16/$lb.1.sai $d16/$lb.2.sai $d15/$lb.1.fq $d15/$lb.2.fq \\
+        | samtools view -Sb - > $d16/$lb.bam", 1);
+    
+    my $d17 = "$dir/17_remap_sorted";
+    make_path($d17) unless -d $d17;
+    runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
+        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
+        INPUT=$d16/$lb.bam  OUTPUT=$d17/$lb.bam SORT_ORDER=coordinate", 1);
+    
+    my $d18 = "$dir/18_remap_markdup";
+    make_path($d18) unless -d $d18;
+    runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
+        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
         REMOVE_DUPLICATES=true \\
-        $input_str OUTPUT=$f11 METRICS_FILE=$f11b", 1);
-    runCmd("samtools index $f11", 1);
-    runCmd("bamStat -i $d11/$lb.bam -o $d11/$lb", 1);
+        INPUT=$d17/$lb.bam OUTPUT=$d18/$lb.bam METRICS_FILE=$d18/$lb.dup.txt", 1);
+    
+    my $d19 = "$dir/19_remap_dedup";
+    make_path($d19) unless -d $d19;
+    runCmd("bamtools filter -in $d18/$lb.bam -script \\
+        $DIR_code/conf/dedup.json -out $d19/$lb.bam", 1);
+    runCmd("samtools index $d19/$lb.bam", 1);
+    runCmd("bamStat -i $d19/$lb.bam -o $d19/$lb", 1);
 }
 sub pipe_sample {
-    my ($dir, $f_sm, $dirI, $f_ref, $sm) = @_;
+    my ($dir, $f_sm, $f_ref, $sm) = @_;
+    my $dirI1 = "$dir/12_dedup";
+    my $dirI2 = "$dir/19_remap_dedup";
 
     my $t = readTable(-in=>$f_sm, -header=>1);
     my $h;
@@ -129,7 +200,7 @@ sub pipe_sample {
     print join("\n", @lbs)."\n";
     my @fis;
     for my $lb (@lbs) {
-        my $fi = "$dirI/$lb.bam";
+        my $fi = ($lb =~ /lipe/i) ? "$dirI2/$lb.bam" : "$dirI1/$lb.bam";
         die "$lb [$fi] is not there\n" unless -s $fi;
         push @fis, $fi;
     }
@@ -137,51 +208,48 @@ sub pipe_sample {
     my $d21 = "$dir/21_realigned";
     make_path($d21) unless -d $d21;
     my $input_str = join(" ", map {"-I $_"} @fis);
-    my ($f21, $f21b) = ("$d21/$sm.bam", "$d21/$sm.intervals");
-    runCmd("java -Xmx12g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
-        -T RealignerTargetCreator -R $f_ref -o $f21b", 1);
-    runCmd("java -Xmx12g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
-        -T IndelRealigner $input_str \\
-        -R $f_ref -targetIntervals $f21b -o $f21 \\
+    runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+        -T RealignerTargetCreator -R $f_ref $input_str \\
+        -o $d21/$sm.intervals", 1);
+    runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+        -T IndelRealigner -R $f_ref $input_str \\
+        -targetIntervals $d21/$sm.intervals -o $d21/$sm.bam \\
         -LOD 0.4 --maxReadsForRealignment 20000 --maxReadsInMemory 200000", 1);
+    runCmd("bamStat -i $d21/$sm.bam -o $d21/$sm", 1);
+}
+sub pipe_vnt {
+    my ($dir, $f_sm, $f_ref, $sm) = @_;
+    my $d21 = "$dir/21_realigned";
 
-    my $d31 = "$dir/31_stat";
+    my $d31 = "$dir/31_bcf_raw";
     make_path($d31) unless -d $d31;
-    my $f31 = "$d31/$sm";
-    runCmd("bamStat -i $f21 -o $f31", 1);
+    runCmd("samtools mpileup -gD -f $f_ref $d21/$sm.bam -q 10 > $d31/$sm.bcf", 1);
 }
-sub sort_readname {
-    my ($dir, $lb) = @_;
-    my $d13 = "$dir/13_dup_removed";
-    my $d21 = "$dir/21_rn_sorted";
-    my $cmd = "java -Xmx12g -jar $picard/SortSam.jar \\
-        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
-        SORT_ORDER=queryname INPUT=$d13/$lb.bam OUTPUT=$d21/$lb.bam";
-    runCmd($cmd);
-}
-sub stat_isd {
-    my ($dir) = @_;
-    my $f01 = "$dir/01_sample.tbl";
-    my $d12 = "$dir/12_stat";
-    my $t = readTable(-in=>$f01, -header=>1);
-    my $to1 = Data::Table->new([], [qw/rg total unmapped unpaired paired unpaired_dup unpaired_uniq paired_dup paired_uniq paired_proper/]);
+ 
+sub stats {
+    my ($dir, $f_sm, $fo1, $fo2) = @_;
+    my $dirI = "$dir/21_realigned";
+    my $t = readTable(-in=>$f_sm, -header=>1);
+    my $to1 = Data::Table->new([], [qw/rg total unmapped unpaired unpaired_dedup unpaired_uniq  paired paired_dedup paired_uniq paired_proper/]);
     my $to2 = Data::Table->new([], [qw/rg is cnt/]);
     for my $i (0..$t->nofRow-1) {
-        my ($idx, $sm, $lbs, $rgs, $pi, $pl) = $t->row($i);
-        my $f12a = "$d12/$sm.tbl";
-        my $ta = readTable(-in=>$f12a, -header=>1);
+        my ($sm, $lbs) = $t->row($i);
+        my $fa = "$dirI/$sm.tbl";
+        next unless -s $fa;
+        my $ta = readTable(-in=>$fa, -header=>1);
         for my $j (0..$ta->nofRow-1) {
             $to1->addRow($ta->rowRef($j));
         }
 
-        my $f12b = "$d12/$sm\_isd.tbl";
-        my $tb = readTable(-in=>$f12b, -header=>1);
+        my $fb = "$dirI/$sm.isd.tbl";
+        my $tb = readTable(-in=>$fb, -header=>1);
         for my $j (0..$tb->nofRow-1) {
             $to2->addRow($tb->rowRef($j));
         }
     }
-    open(FH1, ">$dir/13_stat.tbl");
-    open(FH2, ">$dir/13_stat_isd.tbl");
+    
+    open(FH1, ">$fo1") or die "cannot open $fo1 for writing\n";
+    open(FH2, ">$fo2") or die "cannot open $fo2 for writing\n";
     print FH1 $to1->tsv(1);
     print FH2 $to2->tsv(1);
     close FH1;
@@ -219,10 +287,10 @@ sub stat_dup {
 sub status_update {
     my ($dir, $f_run, $f_lib, $f_sam, $fo1, $fo2, $fo3) = @_;
     
-    my $d03 = "$dir/03_bwa";
-    my $d06 = "$dir/06_pos_sorted";
+    my $d03 = "$dir/03_aln";
+    my $d06 = "$dir/06_fixmate_sort";
     open(FH1, ">$fo1") or die "Cannot open $fo1 for writing\n";
-    print FH1 join("\t", qw/idx sm lb rn 03_bwa 06_pos_sorted/)."\n";
+    print FH1 join("\t", qw/idx sm lb rn aln fixmate_sort/)."\n";
     my $tr = readTable(-in=>$f_run, -header=>1);
     for my $i (0..$tr->nofRow-1) {
         my ($idx, $sm, $lb, $rn, $pl, $rl, $pi, $dir_rel, $n_seq, $encoding) = $tr->row($i);
@@ -235,14 +303,16 @@ sub status_update {
     print "\n";
     close FH1;
    
-    my $d11 = "$dir/11_dup_marked";
+    my $d11 = "$dir/11_dedup";
+    my $d18 = "$dir/18_remap_dedup";
     open(FH2, ">$fo2") or die "Cannot open $fo2 for writing\n";
-    print FH2 join("\t", qw/sm lb 11_dup_marked rns/)."\n";
+    print FH2 join("\t", qw/sm lb dedup rns/)."\n";
     my $tl = readTable(-in=>$f_lib, -header=>1);
     for my $i (0..$tl->nofRow-1) {
         my ($sm, $lb, $rns, $idxs) = $tl->row($i);
-        my $tag11 = check_bam("$d11/$lb.bam");
-        print FH2 join("\t", $sm, $lb, $tag11, $rns, $idxs)."\n";
+        my $fi = ($lb =~ /lipe/i) ? "$d18/$lb.bam" : "$d11/$lb.bam";
+        my $tag = check_bam($fi);
+        print FH2 join("\t", $sm, $lb, $tag, $rns, $idxs)."\n";
         print "  checking lib $lb\r";
     }
     print "\n";
@@ -250,12 +320,12 @@ sub status_update {
 
     my $d21 = "$dir/21_realigned";
     open(FH3, ">$fo3") or die "Cannot open $fo3 for writing\n";
-    print FH3 join("\t", qw/sm 21_realigned lbs/)."\n";
+    print FH3 join("\t", qw/sm realigned lbs/)."\n";
     my $ts = readTable(-in=>$f_sam, -header=>1);
     for my $i (0..$ts->nofRow-1) {
         my ($sm, $lbs) = $ts->row($i);
-        my $tag21 = check_bam("$d21/$sm.bam");
-        print FH3 join("\t", $sm, $tag21, $lbs)."\n";
+        my $tag = check_bam("$d21/$sm.bam");
+        print FH3 join("\t", $sm, $tag, $lbs)."\n";
         print "  checking sample $sm\r";
     }
     print "\n";

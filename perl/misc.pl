@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
-use lib $ENV{"SCRIPT_HOME_PERL"};
+use FindBin;
+use lib $FindBin::Bin;
 use InitPath;
 use Common;
 use Bio::SeqIO;
@@ -9,37 +10,6 @@ use Seq;
 use Data::Dumper;
 use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
-sub sra2Fq {
-    my ($fi, $fo) = @_;
-    my $cmd = "awk '{  if(NR % 4 == 1) {
-                                        print \"@\" \$2 > \"$fo\"
-                                    } else if(NR % 4 == 3) {
-                                        print \"+\" \$2 > \"$fo\"
-                                    } else if(NF == 1) {
-                                        print > \"$fo\"
-                                    } else {
-                                        print \"error format:\" \$0 > \"/dev/stderr\"
-                                        exit 1
-                                    }
-                                } END {print NR/4 \" reads processed\"}' $fi";
-    system($cmd);
-}
-sub download_SRA {
-    my ($d02, $url1, $url2, $url3) = @_; 
-    for my $j (1..2) {
-        my $url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/static/$url1/$url2/$url3\_$j.fastq.bz2";
-        my $pre = "$url2\_$url3\_$j";
-        my $f1 = file($d02, "$pre\_orig.fq.bz2");
-        system("wget $url -O $f1");
-        my $f2 = file($d02, "$pre\_orig.fq");
-        system("bunzip2 $f1");
-        my $f3 = file($d02, "$pre.fq");
-        sra2Fq($f2, $f3);
-        my $f4 = file($d02, "$pre.fq.gz");
-        system("gzip $f3");
-        system("rm $f2");
-    }
-}
 sub getRInput {
 #getRInput(-outdir=>$d01, -fwin=>$f02, -param=>$p);
     my ($outDir, $f, $param) = rearrange(['outdir', 'fwin', 'param'], @_);
@@ -183,40 +153,6 @@ goldengate_Convert2Illumina($fi, $f_ref, $fo);
         
         my $seq_str = "$seq_up\[$ref/$var\]$seq_dw";
         print FHO join($sep, $locus, $seq_str, "SNP", "Mt3.5", $chr, $pos, $src, 0, "Forward", "Plus")."\n";
-    }
-    close FHI;
-    close FHO;
-}
-sub change_zm_fasta_id {
-#my $dir = "/project/youngn/zhoup/Data/misc3/spada/Zmays/01_genome";
-#change_zm_fasta_id("$dir/ZmB73_RefGen_v2.masked.fasta", "$dir/01_refseq.fa");
-    my ($fi, $fo) = @_;
-    open(FHI, "<$fi");
-    open(FHO, ">$fo");
-    while(<FHI>) {
-        chomp;
-        if(/^\>(.+)$/) {
-            if($1 =~ /chromosome (\w+)$/) {
-                my $id = $1;
-                if($id =~ /^\d+$/) {
-                    $id = "chr$id";
-                } elsif($id eq "UNKNOWN") {
-                    $id = "chrU";
-                } elsif($id eq "mitochondrion") {
-                    $id = "Mt";
-                } elsif($id eq "chloroplast") {
-                    $id = "Pt"
-                } else {
-                    die "unknonw chr ID: $id\n";
-                }
-                print FHO ">$id\n";
-                print "  $id\n";
-            } else {
-                die "unknown chr ID: $1\n";
-            }
-        } else {
-            print FHO $_."\n";
-        }
     }
     close FHI;
     close FHO;

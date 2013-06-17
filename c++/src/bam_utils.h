@@ -23,7 +23,7 @@ class Utilities {
     bool FixReads(const string& name, BamAlnVector& als, int& type, int& n_total, vector<int32_t>& iss, BamAlnPairVector& alnpairs);
     static void PrintReads(const string& name, const int& n_total, BamAlnVector& als);
     static void PrintReads(const string& name, const int& n_total, BamAlnPairVector& alpairs);
-    static void PrintRead(const BamAlignment& al);
+    static void PrintRead(const BamAlignment& al, const RefVector& refs);
     static void Reverse(string& sequence);
     static void ReverseComplement(string& sequence);
     static string getCigarString(const vector<CigarOp> cigars); 

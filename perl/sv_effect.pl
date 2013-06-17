@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 use strict; 
-use Init;
+use FindBin;
+use lib $FindBin::Bin;
+use InitPath;
 use Path::Class;
 use WindowStat;
 use Genemodel;

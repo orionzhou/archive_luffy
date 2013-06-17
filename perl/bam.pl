@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
+use FindBin;
+use lib "$FindBin::Bin";
 use Common;
 use Data::Dumper;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;

@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 use strict;
-use Init;
+use FindBin;
+use lib "$FindBin::Bin";
+use InitPath;
 use Common;
 use Data::Dumper;
 use Hmm;

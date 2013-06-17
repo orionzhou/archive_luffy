@@ -1,5 +1,9 @@
 #!/usr/bin/perl
-use strict; use Init; use Common; use Convert; use Localdb; 
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use InitPath;
+use Common; use Convert; use Localdb; 
 use Readfile; use Writefile; use VntRet; use VntEffect;
 use Bio::Seq; use Path::Class; use Data::Dumper;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;

@@ -1,8 +1,11 @@
 #!/usr/bin/perl -w
 use strict;
-use Init;
-use Data::Dumper;
+use FindBin;
+use lib $FindBin::Bin;
+use File::Path qw/make_path remove_tree/;
+use InitPath;
 use Mapping;
+use Data::Dumper;
 use Gff;
 use Gtb;
 my @pKs = qw/fedb refdb best gap pctidty pctcov/;
@@ -19,17 +22,22 @@ my $pVs = {
     31 => [qw/mt_30      mt_35 1 1000 0.9 0.1/],
     32 => [qw/mt_35_map  mt_30 1 3000 0.8/],
     41 => [qw/mt_35_cgh  mt_35 1 10   0.9/],
+    42 => [qw/mt_35_affy mt_35 1 1    0.9/],
+    43 => [qw/hm340_affy hm340 1 1    0.9/],
     51 => [qw/gm_snp     Gmax  1 10   0.8/],
     62 => [qw/crp_at     Athaliana  1 3000 0.9/],
     64 => [qw/crp_os     Osativa  1 3000 0.9/],
 };
-my $opt = 64;
+my $opt = 43;
 my $p = { map { $pKs[$_] => $pVs->{$opt}->[$_] } 0..$#pKs };
-my $dir = "$DIR_Misc2/mapping/$opt\_".$p->{fedb};
-system("mkdir -p $dir") unless -d $dir;
+my $dir = "$DIR_misc2/mapping/$opt\_".$p->{fedb};
+make_path($dir) unless -d $dir;
 
 my $f01 = "$dir/01_seq.fa";
-#pipe_blat(-fseq=>$f01, -dir=>$dir, -p=>$p);
+
+my $f_tgt = "$DIR_db/blat/".$p->{refdb}.".2bit";
+pipe_blat(-qry=>$f01, -tgt=>$f_tgt, -dir=>$dir, -p=>$p);
+
 #pipe_gmap(-fseq=>$f01, -dir=>$dir, -p=>$p);
 
 #pipe_manual($dir);

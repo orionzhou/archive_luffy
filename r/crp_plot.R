@@ -27,12 +27,13 @@ fami = data.frame(cat=fams, ids=famstrs)
 diro = file.path(DIR_Drop, "Docs/research/MS_SPADA/supplement")
 
 org = "Mtruncatula_4.0"
-orgs = c("Athaliana", "Mtruncatula_3.5", "Osativa")
+orgs = c("Athaliana", "Mtruncatula_3.5")
+pres = c("crp", "defl")
 
 dc=c()
 for (i in 1:length(orgs)) {
   org = orgs[i]
-  fg = sprintf("%s/spada.crp.%s.simple/31_model_evaluation/61_final.tbl", DIR_Misc4, org)
+  fg = sprintf("%s/spada.%s.%s/31_model_evaluation/61_final.tbl", DIR_Misc4, pres[i],  org)
   tg = read.table(fg, header=TRUE, sep="\t", quote="", as.is=T)[,c("id","family")]
   tg2 = merge(tg, tf, by.x='family', by.y='id')
   tg3 = ddply(tg2, .(cat), "nrow")
@@ -49,6 +50,8 @@ colnames(dc)[1] = c('family')
 dc = dc[order(dc$ids),]
 apply(dc[,orgs], 2, sum)
 write.table(dc, file.path(diro, 'crp.family.number.tbl'), col.names=T, row.names=F, quote=F, sep='\t')
+
+
 
 org = orgs[2]
 fg = sprintf("%s/spada.crp.%s.simple/31_model_evaluation/61_final.tbl", DIR_Misc4, org)

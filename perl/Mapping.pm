@@ -1,6 +1,9 @@
 package Mapping;
 use strict;
-use Init;
+use FindBin;
+use lib $FindBin::Bin;
+use File::Path qw/make_path remove_tree/;
+use InitPath;
 use Common;
 use Data::Dumper;
 use Mtb;
@@ -14,19 +17,18 @@ require Exporter;
 @EXPORT_OK = qw//;
 
 sub run_blat {
-    my ($fi, $db, $fo, $qryType, $dbType) = 
-        rearrange(["in", "db", "out", 'qrytype', 'dbtype'], @_);
-    die "$fi is not there\n" unless -s $fi;
+    my ($fq, $ft, $fo, $qryType, $dbType) = 
+        rearrange([qw/qry tgt out qrytype dbtype/], @_);
+    die "$fq is not there\n" unless -s $fq;
+    die "$ft is not there\n" unless -s $ft;
+    my $fOoc = "$ft.ooc";
     $qryType ||= "dna";
     $dbType  ||= "dna";
-    my $fDb = "$DIR_Db/blat/$db.2bit";
-    die "$fDb is not there\n" unless -s $fDb;
-    my $fOoc = "$DIR_Db/blat/$db\_11.ooc";
     unless( -s $fOoc ) {
         print "Ooc-file not exist -> making one\n";
-        runCmd("blat $fDb $fi $fo -makeOoc=$fOoc", 1);
+        runCmd("blat $ft $fq $fo -makeOoc=$fOoc", 1);
     }
-    runCmd("blat $fDb $fi $fo -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA", 1);
+    runCmd("blat $ft $fq $fo -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA", 1);
 }
 sub run_gmap {
     my ($fi, $fo, $p) = @_;
@@ -88,7 +90,7 @@ sub g2L {
 sub gmapCoordConv {
     my ($fi, $fo, $p) = @_;
     my $db = $p->{refdb};
-    my $fC = "$DIR_Data/db/gmap/coords.$db";
+    my $fC = "$DIR_db/gmap/coords.$db";
     my $cHash = getGmapCoord($fC);
     my $t = readTable(-in=>$fi, -header=>1);
     my @rowsD;
@@ -143,9 +145,9 @@ sub mappingStat {
 }
 
 sub pipe_blat {
-    my ($f01, $dir, $p) = rearrange(['fseq', 'dir', 'p'], @_);
+    my ($fq, $ft, $dir, $p) = rearrange([qw/qry tgt dir p/], @_);
     my $f02 = "$dir/02.psl";
-    run_blat(-in=>$f01, -db=>$p->{refdb}, -out=>$f02, -qrytype=>'dna');
+    run_blat(-qry=>$fq, -tgt=>$ft, -out=>$f02, -qrytype=>'dna');
     my $f03 = "$dir/03.mtb";
     psl2Mtb($f02, $f03);
     my $f05 = "$dir/05_filtered.mtb";
@@ -153,7 +155,7 @@ sub pipe_blat {
     my $f06 = "$dir/06_rmdup.mtb";
     mtbRmDup($f05, $f06);
     my $f07 = "$dir/07_all.mtb";
-    mtbExpand(-fi=>$f06, -fs=>$f01, -fo=>$f07);
+    mtbExpand(-fi=>$f06, -fs=>$fq, -fo=>$f07);
     mappingStat($f07);
     my $f08 = "$dir/08.gtb";
     mtb2Gtb($f07, $f08, 1);

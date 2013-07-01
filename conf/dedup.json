@@ -1,0 +1,11 @@
+{
+	"filters": [
+		{
+			"id" : "DupPairs",
+			"isDuplicate" : "true",
+			"isMapped" : "true",
+			"isMateMapped" : "true"
+		}
+	],
+	"rule" : "!DupPairs"
+}

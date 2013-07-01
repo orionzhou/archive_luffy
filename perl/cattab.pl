@@ -1,0 +1,66 @@
+#!/usr/bin/perl -w
+#
+# POD documentation
+#------------------------------------------------------------------------------
+=pod BEGIN
+  
+=head1 NAME
+  
+  cattab.pl - concatenate multiple tabular files (with header line) into one tabular file
+
+=head1 SYNOPSIS
+  
+  cattab.pl [-help] [-in input-file] [-out output-file]
+
+  Options:
+      -help   brief help message
+      -in     input file, can be specified multiple times
+      -out    output file
+
+=cut
+  
+#### END of POD documentation.
+#-----------------------------------------------------------------------------
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+
+#----------------------------------- MAIN -----------------------------------#
+my @fis;
+my $fo = '';
+my $help_flag;
+GetOptions(
+    "help|h"  => \$help_flag,
+    "in|i=s"  => \@fis,
+    "out|o=s" => \$fo,
+) or pod2usage(2);
+pod2usage(1) if $help_flag;
+pod2usage(2) if !@fis || !$fo;
+
+open(FHO, ">$fo") || die "cannot open $fo for writing";
+my $n_col;
+for my $i (0..$#fis) {
+    my $fi = $fis[$i];
+    
+    open(FHI, "<$fi") or die "cannot open $fi for reading\n";
+    my $header = <FHI>;
+    chomp $header;
+    my @colnames = split "\t", $header;
+
+    if($i == 0) {
+        print join(" ", @colnames)."\n";
+        print FHO join("\t", @colnames)."\n";
+        $n_col = @colnames;
+    } else {
+        die "inconsistent column number of $fi\n" if $n_col != @colnames;
+    }
+
+    while( <FHI> ) {
+        print FHO $_;
+    }
+    close FHI;
+}
+close FHO;
+
+exit 0;

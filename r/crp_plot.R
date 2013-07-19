@@ -29,6 +29,7 @@ diro = file.path(DIR_Drop, "Docs/research/MS_SPADA/supplement")
 org = "Mtruncatula_4.0"
 orgs = c("Athaliana", "Mtruncatula_3.5")
 pres = c("crp", "defl")
+pres = c("crp", "crp")
 
 dc=c()
 for (i in 1:length(orgs)) {

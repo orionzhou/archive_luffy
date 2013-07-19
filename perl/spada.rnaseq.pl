@@ -21,21 +21,21 @@ my $f03 = "$dir/03_info.tbl";
 #get_sra_info($f02, $f03);
 
 my $d05 = "$dir/05_models";
-my $f_gff = "$d05/15.gff";
 #gtb_compare.pl -q 03_crp_gs.gtb -t 01_gene.gtb -c 05_gene_gs.tbl -o 05_gene_gs.gtb
 #gtb_compare.pl -q 11_crp_spada.gtb -t 05_gene_gs.gtb -c 15.tbl -o 15.gtb
 #gtb_conv.pl -i 15.gtb -o 15.gff
 
+my $f_gff = "$d05/15.gff";
 my $d11 = "$dir/11_reads";
 #download_sra($f03, $d11);
 
 my $d21 = "$dir/21_tophat";
 my $f_bt2 = "$DIR_db/bowtie/$pre";
-#run_tophat($f03, $d11, $d21, $f_bt2, $f_gff);
+run_tophat($f03, $d11, $d21, $f_bt2, $f_gff);
 
 my $d23 = "$dir/23_cufflinks";
 my $f23 = "$d23/isoforms.fpkm_tracking";
-#run_cufflinks($d21, $f_gff, $d23);
+run_cufflinks($d21, $f_gff, $d23);
 
 my $d31 = "$dir/31_rnaseq";
 make_path($d31) unless -d $d31;

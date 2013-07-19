@@ -1,7 +1,5 @@
 # Compiled source #
 ###################
-bin/
-obj/
 *.com
 *.class
 *.dll

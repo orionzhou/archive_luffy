@@ -81,7 +81,9 @@ export dbox=$home/Dropbox
 export repo=$home/repos
 
 # repositories
-export code=$repo/pzcode
+export luffy=$repo/luffy
+export code=$luffy
+export robin=$repo/robin
 export spada=$repo/spada
 
 # Perl
@@ -95,7 +97,7 @@ export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 
 # Python
 export PYTHON_HOME=$prefix/soft/python
-export SCRIPT_HOME_PYTHON=$code/python
+export SCRIPT_HOME_PYTHON=$robin
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
 
 # C++

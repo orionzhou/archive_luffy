@@ -28,7 +28,7 @@ my $pVs = {
     62 => [qw/crp_at     Athaliana  1 3000 0.9/],
     64 => [qw/crp_os     Osativa  1 3000 0.9/],
 };
-my $opt = 43;
+my $opt = 62;
 my $p = { map { $pKs[$_] => $pVs->{$opt}->[$_] } 0..$#pKs };
 my $dir = "$DIR_misc2/mapping/$opt\_".$p->{fedb};
 make_path($dir) unless -d $dir;

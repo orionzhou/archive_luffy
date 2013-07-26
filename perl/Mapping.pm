@@ -13,7 +13,8 @@ use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwi
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter/;
-@EXPORT = qw/pipe_blat pipe_gmap pipe_manual/;
+@EXPORT = qw/pipe_blat pipe_gmap pipe_manual
+    run_blat/;
 @EXPORT_OK = qw//;
 
 sub run_blat {
@@ -28,7 +29,7 @@ sub run_blat {
         print "Ooc-file not exist -> making one\n";
         runCmd("blat $ft $fq $fo -makeOoc=$fOoc", 1);
     }
-    runCmd("blat $ft $fq $fo -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA", 1);
+    runCmd("blat $ft $fq $fo -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA -out=psl", 1);
 }
 sub run_gmap {
     my ($fi, $fo, $p) = @_;

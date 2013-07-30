@@ -49,11 +49,11 @@ my $f21_05 = "$d21/05_tiled.tbl";
 
 my $d23 = "$dir/23_blat";
 make_path($d23) unless -d $d23;
-my $f23_02 = "$d23/02_raw.tbl";
+my $f23_02 = "$d23/02_raw.psl";
 my $f_ref_2bit = "/home/youngn/zhoup/Data/db/blat/Mtruncatula_4.0.2bit";
-#run_blat(-qry=>$f_seq, -tgt=>$f_ref_2bit, -out=>$f23_02);
+run_blat(-qry=>$f_seq, -tgt=>$f_ref_2bit, -out=>$f23_02);
 my $f23_03 = "$d23/03.mtb";
-psl2Mtb($f23_02, $f23_03);
+#psl2Mtb($f23_02, $f23_03);
 
 # run R script assembly.R
 my $f21_21 = "$d21/21_scaffold_status.tbl";

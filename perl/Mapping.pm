@@ -149,6 +149,7 @@ sub pipe_blat {
     my ($fq, $ft, $dir, $p) = rearrange([qw/qry tgt dir p/], @_);
     my $f02 = "$dir/02.psl";
     run_blat(-qry=>$fq, -tgt=>$ft, -out=>$f02, -qrytype=>'dna');
+    die;
     my $f03 = "$dir/03.mtb";
     psl2Mtb($f02, $f03);
     my $f05 = "$dir/05_filtered.mtb";

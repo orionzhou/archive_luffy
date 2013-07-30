@@ -4,7 +4,7 @@ CONFIGDIR=`pwd`
 
 cd
 
-ln -sf $CONFIGDIR/bash_profile .bash_profile
+ln -sf $CONFIGDIR/bashrc .bashrc
 ln -sf $CONFIGDIR/git.conf .gitconfig
 ln -sf $CONFIGDIR/Rprofile .Rprofile
 ln -sf $CONFIGDIR/vimrc .vimrc

@@ -7,33 +7,18 @@ use Common;
 use Seq;
 use Align;
 use Blast;
+use Gal;
 use Mapping;
-use Eutils;
 use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-=begin
-my $dir = "/home/youngn/zhoup/Data/misc3/hm056/mummer";
-my $f_seq = "$dir/../hm056.fa";
-my $fl = "$dir/../hm056_seqlen.tbl";
-#$src/MUMmer3.23/nucmer -p chr1-4 ../mt4_chr1-4.fa ../HM056.ALLPATHSLG.Jan2013.fasta
-#$src/MUMmer3.23/nucmer -p chr5-8 ../mt4_chr5-8.fa ../HM056.ALLPATHSLG.Jan2013.fasta
-#$src/MUMmer3.23/show-coords chr1-4.delta > chr1-4.coords
-#$src/MUMmer3.23/show-coords chr5-8.delta > chr5-8.coords
-#cat chr1-4.coords chr5-8.coords > 01_mummer.coords
-my $f01 = "$dir/01_mummer.coords";
-my $f02 = "$dir/02_coords.tbl";
-#mummer_coords2tbl($f01, $f02);
-my $f05 = "$dir/05_tiled.tbl";
-#mummer_tiling($f02, $f05);
-=end
-=cut
+my $data = "/home/youngn/zhoup/Data";
 
-my $acc = "hm056";
-#my $acc = "hm340";
-my $dir = "/home/youngn/zhoup/Data/misc3/$acc";
+#my $acc = "hm056";
+my $acc = "hm340";
+my $dir = "$data/misc3/$acc";
 my $f_seq = "$dir/01_assembly.fa";
 my $f_len = "$dir/11_seqlen.tbl";
 my $f_gap = "$dir/12_gaploc.tbl";
@@ -48,12 +33,34 @@ my $f21_05 = "$d21/05_tiled.tbl";
 #runCmd("blastTiling -i $f21_02 -o $f21_05");
 
 my $d23 = "$dir/23_blat";
-make_path($d23) unless -d $d23;
-my $f23_02 = "$d23/02_raw.psl";
-my $f_ref_2bit = "/home/youngn/zhoup/Data/db/blat/Mtruncatula_4.0.2bit";
-run_blat(-qry=>$f_seq, -tgt=>$f_ref_2bit, -out=>$f23_02);
-my $f23_03 = "$d23/03.mtb";
-#psl2Mtb($f23_02, $f23_03);
+-d $d23 || make_path($d23);
+my $d23_01 = "$d23/01_seq";
+-d $d23_01 || make_path($d23_01);
+print "ln -sf ../../01_assembly.fa part.fa\n";
+print "pyfasta split -n 160 part.fa\n";
+my $d23_03 = "$d23/03_raw";
+-d $d23_03 || make_path($d23_03);
+my $f_ref = "$data/genome/Mtruncatula_4.0/11_genome.fa";
+my $f_ref_2bit = "$data/db/blat/Mtruncatula_4.0.2bit";
+#run comp.hm056
+
+print "pslSort dirs 04.psl tmp 03_raw\n";
+print "pslReps 04.psl 05.psl 05.psr\n";
+my $f23_05 = "$d23/05.psl";
+my $f23_11 = "$d23/11.gal";
+#psl2Gal($f23_05, $f23_11);
+my $f23_12 = "$d23/12_tiled.gal";
+#gal_tiling($f23_11, $f23_12);
+my $f23_13 = "$d23/13_checked.gal";
+#gal_rm_inv($f23_12, $f23_13);
+my $f23_15 = "$d23/15.gal";
+#gal_breakdown($f23_13, $f23_15, 100000);
+my $f23_17 = "$d23/17_chain.gal";
+my $f23_18 = "$d23/18_block.gal";
+#gal_filter($f23_15, $f23_17, $f23_18, 300, 0.05, 0.05);
+my $f23_21 = "$d23/21_indel.gal";
+#gal_indel($f23_13, $f23_21);
+#mtbValidate($f23_07, $f23_10, $f_seq, $f_ref);
 
 # run R script assembly.R
 my $f21_21 = "$d21/21_scaffold_status.tbl";

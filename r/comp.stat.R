@@ -1,4 +1,4 @@
-library(data.table)
+source("comp.plot.fun.R")
 
 #acc = "hm056"
 acc = "hm340"
@@ -9,6 +9,9 @@ t_len = read.table(f_len, header=TRUE, sep="\t", as.is=T)
 
 f_gap = file.path(dir, "12_gaploc.tbl")
 t_gap = read.table(f_gap, header=TRUE, sep="\t", as.is=T)
+
+f_aln = file.path(dir, "21_blastn/05_tiled.tbl")
+t_aln = read.table(f_aln, header=TRUE, sep="\t", as.is=T)
 
 #####calculate assembly statistics
 source("http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/My_R_Scripts/contigStats.R") 

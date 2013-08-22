@@ -1,9 +1,12 @@
 #!/usr/bin/perl
-use strict; use Init; use Common; use Readfile; use Localdb;
-use Bio::Seq; use WindowStat; use Medicago;
-use Time::HiRes qw/gettimeofday tv_interval/; use Data::Dumper; use Path::Class; 
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
-use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
+use strict;
+use InitPath;
+use Common;
+use WindowStat;
+use Medicago;
+use Data::Dumper;
+use Path::Class; 
+
 my $refDb = "mt_35";
 my $opt = "acc288";
 my $ids = get_acc_ids($opt);

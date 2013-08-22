@@ -1,5 +1,50 @@
 source("comp.plot.fun.R")
 
+dat1.name = "hm340"
+dat1.dir = file.path("/home/youngn/zhoup/Data/misc3", dat1.name)
+
+tc1 = read.table(file.path(dat1.dir, "23_blat/17_chain.gal"), header=TRUE, sep="\t", as.is=T)
+tb1 = read.table(file.path(dat1.dir, "23_blat/18_block.gal"), header=TRUE, sep="\t", as.is=T)
+
+tc=tc1
+tb=tb1
+
+ts = cbind(tc, lenlog=log(tc$aLen))
+p <- ggplot(ts) +
+  geom_point(mapping=aes(x=qCov, y=hCov, color=lenlog), size=1) +
+  scale_colour_gradient(low="white", high="red")
+
+id = "scaffold_10"
+tcs = tc[tc$qId==id,]
+tbs = tb[tb$qId==id,]
+
+	dat = data_preprocess(tcs, tbs, dat1, dat2)
+	subtitle = sprintf("%s", id)
+	fn = sprintf("%s/figs/%s.png", dat1.dir, id)
+	comp.plot(fn, dat, width=2000, height=1000, subtitle=subtitle)
+
+
+p <- ggplot(ta) +
+  geom_segment(mapping=aes(x=hBeg, xend=hEnd, y=qBeg, yend=qEnd, color=factor(idc)), size=0.6) +
+#  layer(data=dat2.coord, geom='rect', mapping=aes(xmin=hBeg.r, xmax=hEnd.r, ymin=-3000000, ymax=0, fill=hId), geom_params=list(size=0)) +
+#  layer(data=dat2.coord, geom='text', mapping=aes(x=(hBeg.r+hEnd.r)/2, y=-4000000, label=hId), geom_params=list(hjust=0.5, vjust=1, angle=0, size=3)) +
+  facet_grid(qId ~ hId, scales="free") +
+  scale_color_brewer(palette="Set1") +
+  scale_x_continuous(name='HM101 (Mt4.0)') +
+  scale_y_continuous(name=dat1.name) +
+  theme_bw()
+#  theme(legend.position="none")
+#  theme(axis.text.x=element_blank(), axis.text.y=element_blank())
+p
+ggsave(file.path(dat1.dir, "all.png"), p, width=8, height=8)
+
+
+
+f23_21 = file.path(dat1.dir, "23_blat/21_indel.gal")
+tid1 = read.table(f23_21, header=TRUE, sep="\t", as.is=T)
+tid2 = ddply(tid1, .(idc), summarise, qId=unique(qId), qBeg=min(qBeg), qEnd=max(qEnd), qSrd=unique(qSrd), qLen=sum(qLen), hId=unique(hId), hBeg=min(hBeg), hEnd=max(hEnd), hSrd=unique(hSrd), hLen=sum(hLen))
+tid3 = cbind(tid2, qCov=tid2$qLen/(tid2$qEnd-tid2$qBeg+1), hCov=tid2$hLen/(tid2$hEnd-tid2$hBeg+1))
+
 ##### identify insertion / deletions
 indel = data.frame()
 gap1 = t_gap

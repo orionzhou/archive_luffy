@@ -18,18 +18,19 @@ require Exporter;
 @EXPORT_OK = qw//;
 
 sub run_blat {
-    my ($fq, $ft, $fo, $qryType, $dbType) = 
-        rearrange([qw/qry tgt out qrytype dbtype/], @_);
-    die "$fq is not there\n" unless -s $fq;
-    die "$ft is not there\n" unless -s $ft;
-    my $fOoc = "$ft.ooc";
+    my ($fq, $ft, $fo, $qryType, $dbType, $tileSize) = 
+        rearrange([qw/qry tgt out qrytype dbtype tileSize/], @_);
+    -s $fq || die "$fq is not there\n";
+    -s $ft || die "$ft is not there\n";
     $qryType ||= "dna";
     $dbType  ||= "dna";
+    $tileSize ||= 11;
+    my $fOoc = "$ft.tile$tileSize.ooc";
     unless( -s $fOoc ) {
         print "Ooc-file not exist -> making one\n";
-        runCmd("blat $ft $fq $fo -makeOoc=$fOoc", 1);
+        runCmd("blat $ft $fq $fo -tileSize=$tileSize -makeOoc=$fOoc", 1);
     }
-    runCmd("blat $ft $fq $fo -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA -out=psl", 1);
+    runCmd("blat $ft $fq $fo -tileSize=$tileSize -ooc=$fOoc -t=$dbType -q=$qryType -noTrimA -out=psl -noHead", 1);
 }
 sub run_gmap {
     my ($fi, $fo, $p) = @_;
@@ -124,8 +125,8 @@ sub gmapCoordConv {
 
 sub mappingStat {
     my ($fi, $colId, $colLoc) = @_;
-    $colId ||= "idQ";
-    $colLoc ||= "locQ";
+    $colId ||= "qId";
+    $colLoc ||= "qLoc";
     my $t = readTable(-in=>$fi, -header=>1);
     $t->sort($colId, 1, 0);
     my $ref = group($t->colRef($colId));
@@ -146,14 +147,15 @@ sub mappingStat {
 }
 
 sub pipe_blat {
-    my ($fq, $ft, $dir, $p) = rearrange([qw/qry tgt dir p/], @_);
+    my ($fq, $ft, $dir, $tileSize, $lenCov, $pctCov, $pctIdty, $maxGap, $strand, $best) =
+        rearrange([qw/qry tgt dir tilesize lencov pctcov pctidty maxgap strand best/], @_);
+    -d $dir || make_path($dir);
     my $f02 = "$dir/02.psl";
     run_blat(-qry=>$fq, -tgt=>$ft, -out=>$f02, -qrytype=>'dna');
-    die;
     my $f03 = "$dir/03.mtb";
     psl2Mtb($f02, $f03);
     my $f05 = "$dir/05_filtered.mtb";
-    mtbFilter($f03, $f05, $p);
+    mtbFilter(-in=>$f03, -out=>$f05, -lencov=>$pctCov, -pctidty=>$pctIdty, -maxgap=>$maxGap, -strand=>$strand, -best=>$best);
     my $f06 = "$dir/06_rmdup.mtb";
     mtbRmDup($f05, $f06);
     my $f07 = "$dir/07_all.mtb";

@@ -1,8 +1,8 @@
 source("comp.plot.fun.R")
 
 ########## load genome1 datasets
-dat1.name = "hm056"
-#dat1.name = "hm340"
+#dat1.name = "hm056"
+dat1.name = "hm340"
 
 dat1.dir = file.path("/home/youngn/zhoup/Data/misc3", dat1.name)
 
@@ -57,8 +57,8 @@ f_crp = file.path(dat2.dir, "43_crp.gtb")
 dat2.crp = read.table(f_crp, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
 
 # mappability
-f_mapp = "/home/youngn/zhoup/Data/db/gem/Mtruncatula_4.0.bw"
-dat2.mapp = import(f_mapp)
+#f_mapp = "/home/youngn/zhoup/Data/db/gem/Mtruncatula_4.0_90mer.bw"
+dat2.mapp = NULL #import(f_mapp)
 
 # wrapping
 dat2 = list( name=dat2.name, dir=dat2.dir, seqlen=dat2.seqlen, gap=dat2.gap,
@@ -102,6 +102,8 @@ for (i in 1:nrow(regions)) {
 
 ########## comparison plot using a region in genome1
 id = "scaffold_119"
-
 tas = aln[aln$qId==id & aln$qLen >= 1000,]
-
+	dat = data_preprocess(tas, dat1, dat2)
+	subtitle = sprintf("%s", id)
+	fn = sprintf("%s/figs/%s.png", dat1.dir, id)
+	comp.plot(fn, dat, width=2000, height=1000, subtitle=subtitle)

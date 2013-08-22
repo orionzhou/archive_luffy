@@ -4,16 +4,16 @@ library(rtracklayer)
 library(hash)
 
 ## data processing functions
-assign_block <- function(dfi, gap_prop=0.4, gap_len=5000) {
+assign_panel <- function(dfi, gap_prop=0.4, gap_len=5000) {
 	if(ncol(dfi) == 3) { dfi = cbind(dfi, strand="+") }
 	colnames(dfi)[1:4] = c('id', 'beg', 'end', 'strand')
 	order.idx = order(dfi[,1], dfi[,2], dfi[,3])
 	df = dfi[order.idx,]
-	blocks = rep(0, nrow(df))
+	panels = rep(0, nrow(df))
 	cnt = 1
 	for (i in 1:nrow(df)) {
-		if( blocks[i] > 0 ) { next }
-		blocks[i] = cnt
+		if( panels[i] > 0 ) { next }
+		panels[i] = cnt
 		idP=df[i,1]; begP=df[i,2]; endP=df[i,3]
 		for (j in (i+1):nrow(df)) {
 			id=df[j,1]; beg=df[j,2]; end=df[j,3]
@@ -25,27 +25,26 @@ assign_block <- function(dfi, gap_prop=0.4, gap_len=5000) {
 			} else {
 				gap = 0
 			}
-			blockBeg = min(beg, begP)
-			blockEnd = max(end, endP)
-			blockLen = blockEnd - blockBeg + 1
-			if( gap/blockLen <= gap_prop | gap <= gap_len ) {
-				blocks[j] = cnt
-				idP=id; begP=blockBeg; endP=blockEnd
+			panelBeg = min(beg, begP)
+			panelEnd = max(end, endP)
+			panelLen = panelEnd - panelBeg + 1
+			if( gap/panelLen <= gap_prop | gap <= gap_len ) {
+				panels[j] = cnt
+				idP=id; begP=panelBeg; endP=panelEnd
 			} else {
 				break
 			}
 		}
 		cnt = cnt + 1
 	}
-	dfo = cbind(dfi, block_old=blocks[order(order.idx)])
-	block_unique = unique(dfo$block_old)
-	block_mapping = data.frame(block_old=block_unique, block=1:length(block_unique))
+	dfo = cbind(dfi, panel_old=panels[order(order.idx)])
+	panel_unique = unique(dfo$panel_old)
+	panel_mapping = data.frame(panel_old=panel_unique, panel=1:length(panel_unique))
 	dfo = cbind(dfo, idx=1:nrow(dfo))
-	dfo = merge(dfo, block_mapping, by='block_old')
+	dfo = merge(dfo, panel_mapping, by='panel_old')
 	dfo = dfo[order(dfo$idx),]
-	dfo = dfo[, !colnames(dfo) %in% c('idx','block_old')]
-	dfb = ddply(dfo, .(block), summarise, id=unique(id), beg=min(beg), end=max(end), strand=strand[which(end-beg == max(end-beg))[1]])
-	list('df'=dfo, 'dfb'=dfb)
+	dfo = dfo[, !colnames(dfo) %in% c('idx','panel_old')]
+	ddply(dfo, .(panel), summarise, id=unique(id), beg=min(beg), end=max(end), strand=strand[which(end-beg == max(end-beg))[1]])
 }
 
 assign_block_mapping <- function(dfi, gap_len_q=10000, gap_len_h=100000) {
@@ -80,8 +79,9 @@ assign_block_mapping <- function(dfi, gap_len_q=10000, gap_len_h=100000) {
 	list('df'=dfo, 'dfb'=dfb)
 }
 
-prepare_coord <- function(dfi) {
-	df = dfi[order(dfi$block),]
+prepare_coord <- function(dfi, seqlen) {
+	dfi = merge(dfi, seqlen, by='id')
+	df = dfi[order(dfi$panel),]
 	begr = as.integer( df$beg - 0.02 * (df$end - df$beg) )
 	endr = as.integer( df$end + 0.02 * (df$end - df$beg) )
 	df2 = cbind(df, begr=begr, endr=endr)
@@ -97,76 +97,76 @@ prepare_coord <- function(dfi) {
 			df5$beg.a[i] = df5$beg.a[i-1] + df5$len[i-1] + itv + 1
 		}
 	}
-	df6 = df5[,c('block','id','begr','endr','strand','len','beg.a')]
+	df6 = df5[,c('panel','id','begr','endr','strand','len','beg.a')]
 	colnames(df6)[3:4] = c('beg','end')
 	df7 = cbind(df6, end.a=df6$beg.a+df6$len-1)
 	df7
 }
 
-filter_assign_block <- function(dfi, dfb) {
+filter_assign_panel <- function(dfi, dfb) {
 	if(ncol(dfi) == 3) { dfi = cbind(dfi, strand="+") }
 	colnames(dfi)[1:4] = c('id','beg','end','strand')
 	idxs.raw = c()
-	blk.idxs = c()
+	panel.idxs = c()
 	for (i in 1:nrow(dfb)) {
-		id=dfb$id[i]; beg=dfb$beg[i]; end=dfb$end[i]; blk=dfb$block[i]
+		id=dfb$id[i]; beg=dfb$beg[i]; end=dfb$end[i]; blk=dfb$panel[i]
 		idxss = which( dfi$id==id & ( (beg<=dfi$beg & dfi$beg<=end) | (beg<=dfi$end & dfi$end<=end) ) )
 		if(length(idxss) > 0) {
 			idxs.raw = c(idxs.raw, idxss)
-			blk.idxs = c(blk.idxs, rep(i, length(idxss)))
+			panel.idxs = c(panel.idxs, rep(i, length(idxss)))
 		}
 	}
 	
 	if(length(idxs.raw) == 0) {idxs=NULL} else {idxs=sort(unique(idxs.raw))}
-	blks = c()
+	panels = c()
 	begs.a = c()
 	ends.a = c()
 	strands.a = c()
 	for (i in idxs) {
 		id=dfi[i,1]; beg=dfi[i,2]; end=dfi[i,3]; strand=dfi[i,4]
 		
-		blk.idxss = blk.idxs[ which(idxs.raw == i) ]
-		blk.idx = blk.idxss[1]
-		if( length(blk.idxss) > 1 ) {
+		panel.idxss = panel.idxs[ which(idxs.raw == i) ]
+		panel.idx = panel.idxss[1]
+		if( length(panel.idxss) > 1 ) {
 			lens_ovlp = c()
-			for (i in 1:length(blk.idxss) ) {
-				len_ovlp = min(dfb$end[blk.idxss[i]], end) - max(dfb$beg[blk.idxss[i]], beg) + 1
+			for (i in 1:length(panel.idxss) ) {
+				len_ovlp = min(dfb$end[panel.idxss[i]], end) - max(dfb$beg[panel.idxss[i]], beg) + 1
 				lens_ovlp = c(lens_ovlp, len_ovlp)
 			}
-			blk.idx = blk.idxss[ which(lens_ovlp == max(lens_ovlp))[1] ]
+			panel.idx = panel.idxss[ which(lens_ovlp == max(lens_ovlp))[1] ]
 		}
 		
-		blk = dfb$block[blk.idx]
-		blk.beg = dfb$beg[blk.idx]
-		blk.end = dfb$end[blk.idx]
-		blk.strand = dfb$strand[blk.idx]
-		blk.beg.a = dfb$beg.a[blk.idx]
-		blk.end.a = dfb$end.a[blk.idx]
+		panel = dfb$panel[panel.idx]
+		panel.beg = dfb$beg[panel.idx]
+		panel.end = dfb$end[panel.idx]
+		panel.strand = dfb$strand[panel.idx]
+		panel.beg.a = dfb$beg.a[panel.idx]
+		panel.end.a = dfb$end.a[panel.idx]
 		
-		beg = max(beg, blk.beg)
-		end = min(blk.end, end)
-		beg.a = ifelse( blk.strand == "-", blk.end.a - (end - blk.beg), blk.beg.a + (beg - blk.beg) );
-		end.a = ifelse( blk.strand == "-", blk.end.a - (beg - blk.beg), blk.beg.a + (end - blk.beg) );
-		strand.a = ifelse(blk.strand == strand, "+", "-")
+		beg = max(beg, panel.beg)
+		end = min(panel.end, end)
+		beg.a = ifelse( panel.strand == "-", panel.end.a - (end - panel.beg), panel.beg.a + (beg - panel.beg) );
+		end.a = ifelse( panel.strand == "-", panel.end.a - (beg - panel.beg), panel.beg.a + (end - panel.beg) );
+		strand.a = ifelse(panel.strand == strand, "+", "-")
 		
-		blks = c(blks, blk)
+		panels = c(panels, panel)
 		begs.a = c(begs.a, beg.a)
 		ends.a = c(ends.a, end.a)
 		strands.a = c(strands.a, strand.a)
 	}
-	cbind(dfi[idxs,], block=blks, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
+	cbind(dfi[idxs,], panel=panels, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
 }
 
-get_ticks <- function(dfb, tick_itv) {
-	dft = data.frame(block=c(),pos=c())	
-	for (i in 1:nrow(dfb)) {
-		tick_beg = pretty(c(dfb$beg[i], dfb$end[i]))[1]
-		ticks = seq(tick_beg, dfb$end[i], by=tick_itv)
+get_ticks <- function(dfi, tick_itv) {
+	dft = data.frame(panel=c(),pos=c())	
+	for (i in 1:nrow(dfi)) {
+		tick_beg = pretty(c(dfi$beg[i], dfi$end[i]))[1]
+		ticks = seq(tick_beg, dfi$end[i], by=tick_itv)
 		if(length(ticks)==0) { ticks = tick_beg }
-		dft = rbind(dft, data.frame(block=rep(dfb$block[i], length(ticks)), pos=ticks))
+		dft = rbind(dft, data.frame(panel=rep(dfi$panel[i], length(ticks)), pos=ticks))
 	}
 	
-	dft = merge(dft, dfb, by='block')
+	dft = merge(dft, dfi, by='panel')
 	dft = cbind(dft, pos.a=0)
 	for (i in 1:nrow(dft)) {
 		if(dft$strand[i] == "-") {
@@ -175,8 +175,8 @@ get_ticks <- function(dfb, tick_itv) {
 			dft$pos.a[i] = dft$beg.a[i] + (dft$pos[i] - dft$beg[i])
 		}
 	}
-	dft = dft[dft$pos.a > 0, c('block','pos','strand','pos.a')]
-	dfl = ddply(dft, .(block), summarise, beg.a=min(pos.a), end.a=max(pos.a))
+	dft = dft[dft$pos.a > 0, c('panel','pos','strand','pos.a')]
+	dfl = ddply(dft, .(panel), summarise, beg.a=min(pos.a), end.a=max(pos.a))
 	list(tick=dft, line=dfl)
 }
 
@@ -218,7 +218,54 @@ filter_assign_block_wig <- function(bw, dfb) {
 	cbind(dfi, block=blks, beg.a=begs.a, end.a=ends.a, stringsAsFactors=F)
 }
 
-data_preprocess <- function(tas, dat1, dat2) {
+data_preprocess <- function(tcs, tbs, dat1, dat2) {
+	qPanel.1 = assign_panel(tcs[,c('qId', 'qBeg', 'qEnd', 'qSrd')])
+	hPanel.1 = assign_panel(tcs[,c('hId', 'hBeg', 'hEnd', 'hSrd')])
+
+	qPanel.2 = prepare_coord(qPanel.1, dat1$seqlen)
+	hPanel.2 = prepare_coord(hPanel.1, dat2$seqlen)
+	
+	qPanel = qPanel.2
+	hPanel = hPanel.2
+	
+	max_len = max(qPanel$end.a+qPanel$beg.a[1]-1, hPanel$end.a+hPanel$beg.a[1]-1)
+	tick_itv = diff( pretty(c(1,max(qPanel$len, hPanel$len)))[1:2] )
+	xaxis1 = get_ticks(qPanel, tick_itv)
+	xaxis2 = get_ticks(hPanel, tick_itv)
+
+	max_len = max(qPanel$end.a+qPanel$beg.a[1]-1, hPanel$end.a+hPanel$beg.a[1]-1)
+	dfm.a = filter_assign_panel(tbs[,c('qId','qBeg','qEnd','qSrd')], qPanel)
+	dfm.b = filter_assign_panel(tbs[,c('hId','hBeg','hEnd','hSrd')], hPanel)
+	stopifnot(rownames(dfm.a) == rownames(tbs), rownames(dfm.b) == rownames(tbs))
+	comp = cbind(tbs, qPanel=dfm.a$panel, qPanel.beg=dfm.a$beg.a, qPanel.end=dfm.a$end.a, qPanel.strand=dfm.a$strand.a, hPanel=dfm.b$panel, hPanel.beg=dfm.b$beg.a, hPanel.end=dfm.b$end.a, hPanel.strand=dfm.b$strand.a, stringsAsFactors=F)
+
+	name1 = dat1.name; name2 = dat2.name
+	
+	if(empty(dat1$gap)) {gap1=NULL} else {gap1=filter_assign_panel(dat1$gap, qPanel)}
+	if(empty(dat2$gap)) {gap2=NULL} else {gap2=filter_assign_panel(dat2$gap, hPanel)}
+
+	if(empty(dat1$gene)) {gene1=NULL} else {gene1=filter_assign_panel(dat1$gene, qPanel)}
+	if(empty(dat2$gene)) {gene2=NULL} else {gene2=filter_assign_panel(dat2$gene, hPanel)}
+	
+	if(empty(dat1$te)) {te1=NULL} else {te1=filter_assign_panel(dat1$te, qPanel)}
+	if(empty(dat2$te)) {te2=NULL} else {te2=filter_assign_panel(dat2$te, hPanel)}
+
+	if(empty(dat1$nbs)) {nbs1=NULL} else {nbs1=filter_assign_panel(dat1$nbs, qPanel)}
+	if(empty(dat2$nbs)) {nbs2=NULL} else {nbs2=filter_assign_panel(dat2$nbs, hPanel)}
+
+	if(empty(dat1$crp)) {crp1=NULL} else {crp1=filter_assign_panel(dat1$crp, qPanel)}
+	if(empty(dat2$crp)) {crp2=NULL} else {crp2=filter_assign_panel(dat2$crp, hPanel)}
+	
+	if(empty(dat1$mapp)) {mapp1=NULL} else {mapp1=filter_assign_block_wig(dat1$mapp, qPanel)}
+	if(empty(dat2$mapp)) {mapp2=NULL} else {mapp2=filter_assign_block_wig(dat2$mapp, hPanel)}
+	
+	list(name1=name1, name2=name2, seg1=dfb1, seg2=dfb2, xaxis1=xaxis1, xaxis2=xaxis2, comp=comp, 
+		gap1=gap1, gap2=gap2, mapp1=mapp1, mapp2=mapp2,
+		gene1=gene1, gene2=gene2, te1=te1, te2=te2, nbs1=nbs1, nbs2=nbs2, crp1=crp1, crp2=crp2,
+		max_len=max_len)
+}
+
+data_preprocess_old <- function(tas, dat1, dat2) {
 	dfm = assign_block_mapping(tas, 10000, 10000)$df
 	dfm = dfm[order(dfm$hId, dfm$hBeg, dfm$hEnd), !colnames(dfm) %in% c('block')]
 
@@ -386,12 +433,12 @@ plot_comparison <- function(comp, y1=unit(0.95, 'npc'), y2=unit(0.05, 'npc'), fi
 	comp.fills = c()
 	comp.ids = c()
 	for (i in 1:nrow(comp) ) {
-		if( comp$blk1.strand.a[i] == comp$blk2.strand.a[i] ) {
-			comp.x = c(comp$blk1.beg.a[i], comp$blk1.end.a[i], comp$blk2.end.a[i], comp$blk2.beg.a[i])
+		if( comp$qPanel.strand[i] == comp$hPanel.strand[i] ) {
+			comp.x = c(comp$qPanel.beg[i], comp$qPanel.end[i], comp$hPanel.end[i], comp$hPanel.beg[i])
 			comp.fill = fill.p
 			comp.id = rep(i, 4)
 		} else {
-			comp.x = c(comp$blk1.beg.a[i], comp$blk1.end.a[i], comp$blk2.beg.a[i], comp$blk2.end.a[i])
+			comp.x = c(comp$qPanel.beg[i], comp$qPanel.end[i], comp$hPanel.beg[i], comp$hPanel.end[i])
 			comp.fill = fill.n
 			comp.id = rep(i, 4)
 		}

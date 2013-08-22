@@ -35,7 +35,7 @@ p = ggplot(ta3, aes(x=cat, y=pctC, fill=cat)) +
   labs(fill="Gene Family") +
   scale_y_continuous(name='% alignability') +
   scale_x_discrete(name='') +
-  opts(axis.text.x=theme_text(size=8, colour="blue", angle=10))
+  theme(axis.text.x=theme_text(size=8, colour="blue", angle=10))
 ggsave(p, filename = file.path(dir, "52_alignability.png"), width=8, height=6)
 
 

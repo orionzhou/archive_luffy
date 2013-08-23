@@ -22,7 +22,7 @@ elif [ "$system" = "Darwin" ]; then
     alias ls="ls -G"
 fi
 
-echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
+#echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
     export repo=$home/repos
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then

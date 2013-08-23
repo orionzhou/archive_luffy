@@ -28,7 +28,7 @@ my $f_sm = "$DIR_misc3/ncgr_fastq/21_sample.tbl";
 my $dir = "$DIR_misc3/hapmap_mt40/11_pipe_mapping";
 
 my $d03 = "$dir/03_aln";
-my $d06 = "$dir/06_fixmate_sort";
+my $d04 = "$dir/04_fixmate_sort";
 
 my $d12 = "$dir/12_dedup";
 my $d19 = "$dir/19_remap_dedup";
@@ -46,10 +46,10 @@ my $f62 = "$dir/62_isd.tbl";
 
 if($opt eq "run") {
     pipe_run($dir, $f_rn, $f_bwa, $rn, $beg, $end);
+} elsif($opt eq "rerun") {
+    pipe_rerun($dir, $f_rn, $f_bwa, $rn);
 } elsif($opt eq "lib") {
     pipe_lib($dir, $f_lb, $lb);
-} elsif($opt eq "lib.remap") {
-    pipe_lib_remap($dir, $f_lb, $lb, $f_bwa);
 } elsif($opt eq "sample") {
     pipe_sample($dir, $f_sm, $f_ref, $sm);
 } elsif($opt eq "vnt") {
@@ -66,8 +66,8 @@ sub pipe_run {
     my ($dir, $f_rn, $f_bwa, $rni, $beg, $end) = @_;
     my $d03 = "$dir/03_aln";
     make_path($d03) unless -d $d03;
-    my $d06 = "$dir/06_fixmate_sort";
-    make_path($d06) unless -d $d06;
+    my $d04 = "$dir/04_fixmate_sort";
+    make_path($d04) unless -d $d04;
     
     my $dir_abs = dirname($f_rn);
     my $t = readTable(-in=>$f_rn, -header=>1);
@@ -81,22 +81,24 @@ sub pipe_run {
         die "$f1b is not there\n" unless -s $f1b;
 
         my $tag = ($encoding < 1.8 & $encoding >= 1.3) ? "-I" : "";
-#        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1a > $d03/$rn.1.sai", 1);
-#        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1b > $d03/$rn.2.sai", 1);
+        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1a > $d03/$rn.1.sai", 1);
+        runCmd("bwa aln -t 4 -n 0.01 $tag $f_bwa $f1b > $d03/$rn.2.sai", 1);
 
         my $tag_is = ($pi == 6500) ? "-a 10000" : ($pi == 3000) ? "-a 6000" : "";
-#        runCmd("bwa sampe $f_bwa \\
-#            -r '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
-#            $d03/$rn.1.sai $d03/$rn.2.sai $f1a $f1b \\
-#            | samtools view -Sb - > $d03/$rn.bam", 1);
+        runCmd("bwa sampe $f_bwa \\
+            -P -r '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:$pl\\tPU:lane' \\
+            $d03/$rn.1.sai $d03/$rn.2.sai $f1a $f1b \\
+            | samtools view -Sb - > $d03/$rn.bam", 1);
         runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
             TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
-            INPUT=$d03/$rn.bam OUTPUT=$d06/$rn.bam SORT_ORDER=coordinate", 1);
+            INPUT=$d03/$rn.bam OUTPUT=$d04/$rn.bam SORT_ORDER=coordinate", 1);
+        runCmd("samtools index $d04/$rn.bam", 1);
+        runCmd("bamStat -i $d04/$rn.bam -o $d04/$rn", 1);
     }
 }
 sub pipe_lib {
     my ($dir, $f_lb, $lb) = @_;
-    my $dirI = "$dir/06_fixmate_sort";
+    my $dirI = "$dir/04_fixmate_sort";
 
     my $t = readTable(-in=>$f_lb, -header=>1);
     my $h;
@@ -130,11 +132,10 @@ sub pipe_lib {
     runCmd("bamStat -i $d12/$lb.bam -o $d12/$lb", 1);
     runCmd("samtools index $d12/$lb.bam", 1);
 }
-sub pipe_lib_remap {
-    my ($dir, $f_lb, $lb, $f_bwa) = @_;
-    die "not a LIPE: $lb\n" unless $lb =~ /lipe/i;
+sub pipe_rerun {
+    my ($dir, $f_rn, $f_bwa, $rni) = @_;
 
-    my $t = readTable(-in=>$f_lb, -header=>1);
+    my $t = readTable(-in=>$f_rn, -header=>1);
     my $h;
     for my $i (0..$t->nofRow-1) {
         my ($sm, $lb, $rns, $idxs) = $t->row($i);

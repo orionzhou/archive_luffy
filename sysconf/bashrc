@@ -6,7 +6,7 @@ alias ll='ls -l'
 alias la='ls -al'
 alias du='du -BM --max-depth=1'
 alias ssh='ssh -Y'
-umask 027
+umask 022
 
 system=`uname -s`
 arch=`uname -m | tr ' ' '-'`

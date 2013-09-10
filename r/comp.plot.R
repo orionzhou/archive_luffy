@@ -1,8 +1,8 @@
 source("comp.plot.fun.R")
 
 ########## load genome1 datasets
-#dat1.name = "hm056"
-dat1.name = "hm340"
+dat1.name = "hm056"
+#dat1.name = "hm340"
 
 dat1.dir = file.path("/home/youngn/zhoup/Data/misc3", dat1.name)
 
@@ -57,17 +57,18 @@ f_crp = file.path(dat2.dir, "43_crp.gtb")
 dat2.crp = read.table(f_crp, header=TRUE, sep="\t", as.is=T, quote=NULL)[,c(3:6,18)]
 
 # mappability
-#f_mapp = "/home/youngn/zhoup/Data/db/gem/Mtruncatula_4.0_90mer.bw"
-dat2.mapp = NULL #import(f_mapp)
+dat2.mapp = NULL #import("/home/youngn/zhoup/Data/db/gem/Mtruncatula_4.0_90mer.bw")
 
 # wrapping
 dat2 = list( name=dat2.name, dir=dat2.dir, seqlen=dat2.seqlen, gap=dat2.gap,
 	gene=dat2.gene, te=dat2.te, nbs=dat2.nbs, crp=dat2.crp, mapp=dat2.mapp )
 
 ########## load (blast) comparison dataset
-f_aln = file.path(dat1.dir, '21_blastn/05_tiled.tbl')
-aln = read.table(f_aln, header=TRUE, sep="\t", as.is=T)
+tc1 = read.table(file.path(dat1.dir, "23_blat/17_chain.gal"), header=TRUE, sep="\t", as.is=T)
+tb1 = read.table(file.path(dat1.dir, "23_blat/18_block.gal"), header=TRUE, sep="\t", as.is=T)
 
+tc=tc1
+tb=tb1
 
 ########## comparison plot using a region in genome2
 regions = read.table(file.path(dat2.dir, "81_regions.tbl"), header=T, sep="\t", as.is=T)
@@ -101,9 +102,47 @@ for (i in 1:nrow(regions)) {
 }
 
 ########## comparison plot using a region in genome1
-id = "scaffold_119"
-tas = aln[aln$qId==id & aln$qLen >= 1000,]
-	dat = data_preprocess(tas, dat1, dat2)
+id = "scaffold_314"
+tcs = tc[tc$qId==id,]
+tbs = tb[tb$qId==id,]
+
+	dat = data_preprocess(tcs, tbs, dat1, dat2)
 	subtitle = sprintf("%s", id)
 	fn = sprintf("%s/figs/%s.png", dat1.dir, id)
 	comp.plot(fn, dat, width=2000, height=1000, subtitle=subtitle)
+
+fcn = file.path(dat1.dir, "23_blat/62_chain.gal")
+tcn = read.table(fcn, header=TRUE, sep="\t", as.is=T, quote=NULL)
+fbn = file.path(dat1.dir, "23_blat/63_block.gal")
+tbn = read.table(fbn, header=TRUE, sep="\t", as.is=T, quote=NULL)
+tcs = tcn[tcn$qId == id,]
+tbs = tbn[tbn$qId == id,]
+
+########## dotplot
+xb = c(); xe = c(); yb = c(); ye = c()
+for (i in 1:nrow(tbs)) {
+	xb = c(xb, tbs$hBeg[i])
+	xe = c(xe, tbs$hEnd[i])
+	if(tbs$qSrd[i] == '-') {
+		yb = c(yb, tbs$qEnd[i])
+		ye = c(ye, tbs$qBeg[i])
+	} else {
+		yb = c(yb, tbs$qBeg[i])
+		ye = c(ye, tbs$qEnd[i])
+	}
+}
+tt = cbind(tbs, xb=xb, xe=xe, yb=yb, ye=ye)
+p <- ggplot(tt) +
+  geom_segment(mapping=aes(x=xb, xend=xe, y=yb, yend=ye), size=0.6) +
+#  geom_segment(mapping=aes(x=xb, xend=xe, y=yb, yend=ye, color=factor(idc)), size=0.6) +
+#  layer(data=dat2.coord, geom='rect', mapping=aes(xmin=hBeg.r, xmax=hEnd.r, ymin=-3000000, ymax=0, fill=hId), geom_params=list(size=0)) +
+#  layer(data=dat2.coord, geom='text', mapping=aes(x=(hBeg.r+hEnd.r)/2, y=-4000000, label=hId), geom_params=list(hjust=0.5, vjust=1, angle=0, size=3)) +
+  facet_grid(qId ~ hId, scales="free") +
+#  scale_color_brewer(palette="Set1") +
+  scale_x_continuous(name='HM101 (Mt4.0)') +
+  scale_y_continuous(name=dat1.name) +
+  theme_bw()
+#  theme(legend.position="none")
+#  theme(axis.text.x=element_blank(), axis.text.y=element_blank())
+p
+ggsave(sprintf("%s/figs/%s.d.png", dat1.dir, id), p, width=8, height=8)

@@ -68,6 +68,10 @@ sub pipe_run {
     make_path($d03) unless -d $d03;
     my $d04 = "$dir/04_fixmate_sort";
     make_path($d04) unless -d $d04;
+    my $d06 = "$dir/06_markdup";
+    -d $d06 || make_path($d06);
+    my $d07 = "$dir/07_dedup";
+    -d $d07 || make_path($d07);
     
     my $dir_abs = dirname($f_rn);
     my $t = readTable(-in=>$f_rn, -header=>1);
@@ -92,13 +96,75 @@ sub pipe_run {
         runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
             TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
             INPUT=$d03/$rn.bam OUTPUT=$d04/$rn.bam SORT_ORDER=coordinate", 1);
-        runCmd("samtools index $d04/$rn.bam", 1);
-        runCmd("bamStat -i $d04/$rn.bam -o $d04/$rn", 1);
+        runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
+            VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+            INPUT=$d04/$rn.bam OUTPUT=$d06/$rn.bam METRICS_FILE=$d06/$rn.dup.txt", 1);
+        runCmd("bamDeDup -i $d06/$rn.bam -o $d07/tmp.bam", 1);
+        runCmd("samtools view -h $d07/tmp.bam | samtools view -bhS - > $d07/$rn.bam", 1);
+        runCmd("rm $d07/tmp.bam", 1);
+        runCmd("samtools index $d07/$rn.bam", 1);
+        runCmd("bamStat -i $d07/$rn.bam -o $d07/$rn", 1);
     }
 }
+sub pipe_rerun {
+    my ($dir, $f_rn, $f_bwa, $rn) = @_;
+
+    my $t = readTable(-in=>$f_rn, -header=>1);
+    my ($lb, $sm);
+    for my $i (0..$t->nofRow-1) {
+        my ($idx, $sm2, $lb2, $rn2, $pl, $rl, $pi, $dir_rel, $n_seq, $encoding) = $t->row($i);
+        if($rn eq $rn2) {
+            $lb = $lb2;
+            $sm = $sm2;
+            last;
+        }
+    }
+    
+    my $d07 = "$dir/07_dedup";
+    my $d11 = "$dir/11_rerun_fq";
+    -d $d11 || make_path($d11);
+    runCmd("bamtools filter -in $d07/$rn.bam -script \\
+        $DIR_code/conf/filter_lipe.json -out $d11/$rn.bam", 1);
+    runCmd("samtools sort -n $d11/$rn.bam $d11/$rn.namesorted", 1);
+    runCmd("$DIR_src/git/bamUtil/bin/bam bam2FastQ --in $d11/$rn.namesorted.bam \\
+        --readname --firstOut $d11/$rn.1.fq --secondOut $d11/$rn.2.fq \\
+        --unpairedOut $d11/$rn.fq", 1);
+    
+    my $d13 = "$dir/13_rerun_aln";
+    -d $d13 || make_path($d13);
+    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d11/$rn.1.fq > $d13/$rn.1.sai", 1);
+    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d11/$rn.2.fq > $d13/$rn.2.sai", 1);
+    runCmd("bwa sampe $f_bwa -r \\
+        '\@RG\\tID:$rn\\tSM:$sm\\tLB:$lb\\tPL:ILLUMINA\\tPU:lane' \\
+        $d13/$rn.1.sai $d13/$rn.2.sai $d11/$rn.1.fq $d11/$rn.2.fq \\
+        | samtools view -Sb - > $d13/$rn.bam", 1);
+    
+    my $d14 = "$dir/14_rerun_sort";
+    -d $d14 || make_path($d14);
+    runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
+        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
+        INPUT=$d13/$rn.bam  OUTPUT=$d14/$rn.bam SORT_ORDER=coordinate", 1);
+    
+    my $d16 = "$dir/16_rerun_markdup";
+    -d $d16 || make_path($d16);
+    runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
+        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
+        REMOVE_DUPLICATES=true \\
+        INPUT=$d14/$rn.bam OUTPUT=$d16/$rn.bam METRICS_FILE=$d16/$rn.dup.txt", 1);
+    
+    my $d17 = "$dir/17_rerun_dedup";
+    -d $d17 || make_path($d17);
+    runCmd("bamDeDup -i $d16/$rn.bam -o $d17/$rn.tmp.bam", 1);
+    runCmd("samtools view -h $d17/$rn.tmp.bam | samtools view -bhS - > $d17/$rn.bam", 1);
+    runCmd("rm $d17/$rn.tmp.bam", 1);
+    runCmd("samtools index $d17/$rn.bam", 1);
+    runCmd("bamStat -i $d17/$rn.bam -o $d17/$rn", 1);
+}
+
 sub pipe_lib {
     my ($dir, $f_lb, $lb) = @_;
-    my $dirI = "$dir/04_fixmate_sort";
+    my $di1 = "$dir/07_dedup";
+    my $di2 = "$dir/17_rerun_dedup";
 
     my $t = readTable(-in=>$f_lb, -header=>1);
     my $h;
@@ -113,80 +179,36 @@ sub pipe_lib {
     print join("\n", @rns)."\n";
     my @fis;
     for my $rn (@rns) {
-        my $fi = "$dirI/$rn.bam";
-        die "$rn [$fi] is not there\n" unless -s $fi;
+        my $fi1 = "$di1/$rn.bam";
+        my $fi2 = "$di2/$rn.bam";
+        my $fi = $fi1; # -s $fi2 ? $fi2 : $fi1;
+        -s $fi || die "$rn [$fi] is not there\n";
         push @fis, $fi;
     }
 
-    my $d11 = "$dir/11_markdup";
-    make_path($d11) unless -d $d11;
-    my $input_str = join(" ", map {"INPUT=$_"} @fis);
-    runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
-        VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
-        $input_str OUTPUT=$d11/$lb.bam METRICS_FILE=$d11/$lb.dup.txt", 1);
-    
-    my $d12 = "$dir/12_dedup";
-    make_path($d12) unless -d $d12;
-    runCmd("bamtools filter -in $d11/$lb.bam -script \\
-        $DIR_code/conf/dedup.json -out $d12/$lb.bam", 1);
-    runCmd("bamStat -i $d12/$lb.bam -o $d12/$lb", 1);
-    runCmd("samtools index $d12/$lb.bam", 1);
-}
-sub pipe_rerun {
-    my ($dir, $f_rn, $f_bwa, $rni) = @_;
-
-    my $t = readTable(-in=>$f_rn, -header=>1);
-    my $h;
-    for my $i (0..$t->nofRow-1) {
-        my ($sm, $lb, $rns, $idxs) = $t->row($i);
-        $h->{$lb} = $sm;
+    my $d21 = "$dir/21_markdup";
+    -d $d21 || make_path($d21);
+    my $d22 = "$dir/22_dedup";
+    -d $d22 || make_path($d22);
+    if( @rns == 1 ) {
+        my $fi = $fis[0];
+        runCmd("ln -sf $fi $d22/$lb.bam", 1);
+    } else {
+        my $input_str = join(" ", map {"INPUT=$_"} @fis);
+        runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
+            VALIDATION_STRINGENCY=LENIENT TMP_DIR=$DIR_tmp \\
+            $input_str OUTPUT=$d21/$lb.bam METRICS_FILE=$d21/$lb.dup.txt", 1);
+        
+        runCmd("bamDeDup -i $d21/$lb.bam -o $d22/tmp.bam", 1);
+        runCmd("samtools view -h $d22/tmp.bam | samtools view -bhS - > $d22/$lb.bam", 1);
+        runCmd("rm $d22/tmp.bam", 1);
     }
-    die "no library named '$lb'\n" unless exists $h->{$lb};
-    my $sm = $h->{$lb};
- 
-    my $d12 = "$dir/12_dedup";
-    my $d15 = "$dir/15_remap_reads";
-    make_path($d15) unless -d $d15;
-    runCmd("bamtools filter -in $d12/$lb.bam -script \\
-        $DIR_code/conf/filter_lipe.json -out $d15/$lb.bam", 1);
-    runCmd("samtools sort -n $d15/$lb.bam $d15/$lb.namesorted", 1);
-    runCmd("$DIR_src/bamUtil/bin/bam bam2FastQ --in $d15/$lb.namesorted.bam \\
-        --readname --firstOut $d15/$lb.1.fq --secondOut $d15/$lb.2.fq \\
-        --unpairedOut $d15/$lb.fq", 1);
-    
-    my $d16 = "$dir/16_remap_aln";
-    make_path($d16) unless -d $d16;
-    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d15/$lb.1.fq > $d16/$lb.1.sai", 1);
-    runCmd("bwa aln -t 4 -n 0.01 $f_bwa $d15/$lb.2.fq > $d16/$lb.2.sai", 1);
-    runCmd("bwa sampe $f_bwa -r \\
-        '\@RG\\tID:$lb\\tSM:$sm\\tLB:$lb\\tPL:ILLUMINA\\tPU:lane' \\
-        $d16/$lb.1.sai $d16/$lb.2.sai $d15/$lb.1.fq $d15/$lb.2.fq \\
-        | samtools view -Sb - > $d16/$lb.bam", 1);
-    
-    my $d17 = "$dir/17_remap_sorted";
-    make_path($d17) unless -d $d17;
-    runCmd("java -Xmx8g -jar $picard/FixMateInformation.jar \\
-        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
-        INPUT=$d16/$lb.bam  OUTPUT=$d17/$lb.bam SORT_ORDER=coordinate", 1);
-    
-    my $d18 = "$dir/18_remap_markdup";
-    make_path($d18) unless -d $d18;
-    runCmd("java -Xmx10g -jar $picard/MarkDuplicates.jar \\
-        TMP_DIR=$DIR_tmp VALIDATION_STRINGENCY=LENIENT \\
-        REMOVE_DUPLICATES=true \\
-        INPUT=$d17/$lb.bam OUTPUT=$d18/$lb.bam METRICS_FILE=$d18/$lb.dup.txt", 1);
-    
-    my $d19 = "$dir/19_remap_dedup";
-    make_path($d19) unless -d $d19;
-    runCmd("bamtools filter -in $d18/$lb.bam -script \\
-        $DIR_code/conf/dedup.json -out $d19/$lb.bam", 1);
-    runCmd("samtools index $d19/$lb.bam", 1);
-    runCmd("bamStat -i $d19/$lb.bam -o $d19/$lb", 1);
+    runCmd("samtools index $d22/$lb.bam", 1);
+    runCmd("bamStat -i $d22/$lb.bam -o $d22/$lb", 1);
 }
 sub pipe_sample {
     my ($dir, $f_sm, $f_ref, $sm) = @_;
-    my $dirI1 = "$dir/12_dedup";
-    my $dirI2 = "$dir/19_remap_dedup";
+    my $di = "$dir/22_dedup";
 
     my $t = readTable(-in=>$f_sm, -header=>1);
     my $h;
@@ -201,35 +223,51 @@ sub pipe_sample {
     print join("\n", @lbs)."\n";
     my @fis;
     for my $lb (@lbs) {
-        my $fi = ($lb =~ /lipe/i) ? "$dirI2/$lb.bam" : "$dirI1/$lb.bam";
-        die "$lb [$fi] is not there\n" unless -s $fi;
+        my $fi = "$di/$lb.bam";
+        -s $fi || die "$lb [$fi] is not there\n";
         push @fis, $fi;
     }
 
-    my $d21 = "$dir/21_realigned";
-    make_path($d21) unless -d $d21;
+    my $d31 = "$dir/31_realigned";
+    -d $d31 || make_path($d31);
     my $input_str = join(" ", map {"-I $_"} @fis);
     runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
         -T RealignerTargetCreator -R $f_ref $input_str \\
-        -o $d21/$sm.intervals", 1);
+        -o $d31/$sm.intervals", 1);
     runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
         -T IndelRealigner -R $f_ref $input_str \\
-        -targetIntervals $d21/$sm.intervals -o $d21/$sm.bam \\
+        -targetIntervals $d31/$sm.intervals -o $d31/$sm.bam \\
         -LOD 0.4 --maxReadsForRealignment 20000 --maxReadsInMemory 200000", 1);
-    runCmd("bamStat -i $d21/$sm.bam -o $d21/$sm", 1);
+#    runCmd("samtools view -h $d31/$sm.tmp.bam | samtools view -bhS - > $d31/$sm.bam", 1);
+#    runCmd("rm $d31/$sm.tmp.bam", 1);
+    runCmd("samtools index $d31/$sm.bam", 1);
+    -s "$d31/$sm.bai" && runCmd("rm $d31/$sm.bai", 1);
+    runCmd("bamStat -i $d31/$sm.bam -o $d31/$sm", 1);
+    
+#    my $d33 = "$dir/33_recal";
+#    -d $d33 || make_path($d33);
+#    runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+#        -T BaseRecalibrator -R $f_ref \\
+#        -I $d31/$sm.bam -o $d33/$sm.recal", 1);
+#    runCmd("java -Xmx10g -Djava.io.tmpdir=$DIR_tmp -jar $gatk/GenomeAnalysisTK.jar \\
+#        -T BaseRecalibrator -R $f_ref \\
+#        -I $d31/$sm.bam -BQSR $d33/$sm.recal \\
+#        -o $d33/$sm.bam", 1);
+#    runCmd("samtools index $d33/$sm.bam", 1);
+#    runCmd("bamStat -i $d33/$sm.bam -o $d33/$sm", 1);
 }
 sub pipe_vnt {
     my ($dir, $f_sm, $f_ref, $sm) = @_;
-    my $d21 = "$dir/21_realigned";
+    my $d31 = "$dir/31_realigned";
 
-    my $d31 = "$dir/31_bcf_raw";
-    make_path($d31) unless -d $d31;
-    runCmd("samtools mpileup -gD -f $f_ref $d21/$sm.bam -q 10 > $d31/$sm.bcf", 1);
+    my $d41 = "$dir/41_bcf_raw";
+    -d $d41 || make_path($d41);
+    runCmd("samtools mpileup -gD -f $f_ref $d31/$sm.bam -q 10 > $d41/$sm.bcf", 1);
 }
  
 sub stats {
     my ($dir, $f_sm, $fo1, $fo2) = @_;
-    my $dirI = "$dir/21_realigned";
+    my $dirI = "$dir/31_realigned";
     my $t = readTable(-in=>$f_sm, -header=>1);
     my $to1 = Data::Table->new([], [qw/rg total unmapped unpaired unpaired_dedup unpaired_uniq  paired paired_dedup paired_uniq paired_proper/]);
     my $to2 = Data::Table->new([], [qw/rg is cnt/]);

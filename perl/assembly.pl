@@ -16,8 +16,8 @@ use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwis
 
 my $data = "/home/youngn/zhoup/Data";
 
-#my $acc = "hm056";
-my $acc = "hm340";
+my $acc = "hm056";
+#my $acc = "hm340";
 my $dir = "$data/misc3/$acc";
 my $f_seq = "$dir/01_assembly.fa";
 my $f_len = "$dir/11_seqlen.tbl";
@@ -45,7 +45,14 @@ my $f_ref_2bit = "$data/db/blat/Mtruncatula_4.0.2bit";
 #run comp.hm056
 
 print "pslSort dirs 04.psl tmp 03_raw\n";
-print "pslReps 04.psl 05.psl 05.psr\n";
+print "axtChain -linearGap=loose -psl 04.psl $data/db/blat/Mtruncatula_4.0.2bit $data/db/blat/HM056.2bit 53.chain\n";
+print "chainMergeSort 53.chain > 55_mergesort.chain\n";
+print "chainPreNet 55_mergesort.chain ../hm101.sizes ../$acc.sizes 57_pre.chain\n";
+chain2Gal("$d23/57_pre.chain", "$d23/61.gal");
+gal_filter("$d23/61.gal", "$d23/62_chain.gal", "$d23/63_block.gal", 300, 0.05, 0.05);
+
+
+#print "pslReps 04.psl 05.psl 05.psr\n";
 my $f23_05 = "$d23/05.psl";
 my $f23_11 = "$d23/11.gal";
 #psl2Gal($f23_05, $f23_11);
@@ -58,9 +65,44 @@ my $f23_15 = "$d23/15.gal";
 my $f23_17 = "$d23/17_chain.gal";
 my $f23_18 = "$d23/18_block.gal";
 #gal_filter($f23_15, $f23_17, $f23_18, 300, 0.05, 0.05);
+my $f23_19 = "$d23/19_block.gal";
+#gal_validate($f23_18, $f23_19, $f_seq, $f_ref);
 my $f23_21 = "$d23/21_indel.gal";
-#gal_indel($f23_13, $f23_21);
-#mtbValidate($f23_07, $f23_10, $f_seq, $f_ref);
+#gal_indel($f23_18, $f23_21);
+my $f23_23a = "$d23/23_qnov.tbl";
+my $f23_23b = "$d23/23_hnov.tbl";
+#get_new_loc($f23_17, $f_len, $f23_23a, $f23_23b);
+sub get_new_loc {
+    my ($fi, $fl, $fo1, $fo2) = @_;
+    my $t = readTable(-in=>$fi, -header=>1);
+    my $tl = readTable(-in=>$fl, -header=>1);
+    my $hl = { map {$tl->elm($_, "id") => $tl->elm($_, "length")} (0..$tl->nofRow-1) };
+   
+    open(FHO, ">$fo1") or die "cannot write $fo1\n";
+    print FHO join("\t", qw/id beg end length/)."\n";
+    my $hq;
+    my $hh;
+    for my $i (0..$t->nofRow-1) {
+        my ($idc, $qId, $qBeg, $qEnd, $qSrd, $qLen,
+            $hId, $hBeg, $hEnd, $hSrd, $hLen) = $t->row($i);
+        $hq->{$qId} ||= [];
+        push @{$hq->{$qId}}, [$qBeg, $qEnd];
+        $hh->{$hId} ||= [];
+        push @{$hh->{$hId}}, [$hBeg, $hEnd];
+    }
+    for my $id (keys(%$hl)) {
+        my $locA = [[1, $hl->{$id}]];
+        my $loc = $locA;
+        if(exists $hq->{$id}) {
+            ($loc) = posDiff($locA, posMerge($hq->{$id}));
+        }
+        for (@$loc) {
+            my ($beg, $end) = @$_;
+            print FHO join("\t", $id, $beg, $end, $end-$beg+1)."\n";
+        }
+    }
+    close FHO; 
+}
 
 # run R script assembly.R
 my $f21_21 = "$d21/21_scaffold_status.tbl";

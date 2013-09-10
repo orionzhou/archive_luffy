@@ -157,6 +157,44 @@ filter_assign_panel <- function(dfi, dfb) {
 	cbind(dfi[idxs,], panel=panels, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
 }
 
+filter_assign_panel_wig <- function(bw, dfb) {
+	h = hash()
+	for (i in 1:nrow(dfb)) {	
+		id=dfb$id[i]; beg=dfb$beg[i]; end=dfb$end[i]; panel=dfb$panel[i]
+		idxs = which( seqnames(bw)==id & ( (beg<=start(bw) & start(bw)<=end) | (beg<=end(bw) & end(bw)<=end) ) )
+		h[idxs] = i
+	}
+	
+	idxs = as.numeric(keys(h)); panel.idxs = values(h)
+	bws = bw[idxs, ]
+	dfi = data.frame(id=seqnames(bws), beg=start(bws), end=end(bws), strand="+", score=score(bws), stringsAsFactors=F)
+	
+	panels=c(); begs.a = c(); ends.a = c(); strands.a = c()
+	for (i in 1:nrow(dfi)) {
+		id=dfi[i,1]; beg=dfi[i,2]; end=dfi[i,3]; strand=dfi[i,4]
+		panel.idx = panel.idxs[i]
+		
+		panel = dfb$panel[panel.idx]
+		panel.beg = dfb$beg[panel.idx]
+		panel.end = dfb$end[panel.idx]
+		panel.strand = dfb$strand[panel.idx]
+		panel.beg.a = dfb$beg.a[panel.idx]
+		panel.end.a = dfb$end.a[panel.idx]
+		
+		beg = max(beg, panel.beg)
+		end = min(panel.end, end)
+		beg.a = ifelse( panel.strand == "-", panel.end.a - (end - panel.beg), panel.beg.a + (beg - panel.beg) )
+		end.a = ifelse( panel.strand == "-", panel.end.a - (beg - panel.beg), panel.beg.a + (end - panel.beg) )
+		strand.a = panel.strand
+		
+		panels = c(panels, panel)
+		begs.a = c(begs.a, beg.a)
+		ends.a = c(ends.a, end.a)
+		strands.a = c(strands.a, strand.a)
+	}
+	cbind(dfi, panel=panels, beg.a=begs.a, end.a=ends.a, stringsAsFactors=F)
+}
+
 get_ticks <- function(dfi, tick_itv) {
 	dft = data.frame(panel=c(),pos=c())	
 	for (i in 1:nrow(dfi)) {
@@ -180,43 +218,7 @@ get_ticks <- function(dfi, tick_itv) {
 	list(tick=dft, line=dfl)
 }
 
-filter_assign_block_wig <- function(bw, dfb) {
-	h = hash()
-	for (i in 1:nrow(dfb)) {	
-		id=dfb$id[i]; beg=dfb$beg[i]; end=dfb$end[i]; blk=dfb$block[i]
-		idxs = which( seqnames(bw)==id & ( (beg<=start(bw) & start(bw)<=end) | (beg<=end(bw) & end(bw)<=end) ) )
-		h[idxs] = i
-	}
-	
-	idxs = as.numeric(keys(h)); blk.idxs = values(h)
-	bws = bw[idxs, ]
-	dfi = data.frame(id=seqnames(bws), beg=start(bws), end=end(bws), strand="+", score=score(bws), stringsAsFactors=F)
-	
-	blks=c(); begs.a = c(); ends.a = c(); strands.a = c()
-	for (i in 1:nrow(dfi)) {
-		id=dfi[i,1]; beg=dfi[i,2]; end=dfi[i,3]; strand=dfi[i,4]
-		blk.idx = blk.idxs[i]
-		
-		blk = dfb$block[blk.idx]
-		blk.beg = dfb$beg[blk.idx]
-		blk.end = dfb$end[blk.idx]
-		blk.strand = dfb$strand[blk.idx]
-		blk.beg.a = dfb$beg.a[blk.idx]
-		blk.end.a = dfb$end.a[blk.idx]
-		
-		beg = max(beg, blk.beg)
-		end = min(blk.end, end)
-		beg.a = ifelse( blk.strand == "-", blk.end.a - (end - blk.beg), blk.beg.a + (beg - blk.beg) )
-		end.a = ifelse( blk.strand == "-", blk.end.a - (beg - blk.beg), blk.beg.a + (end - blk.beg) )
-		strand.a = blk.strand
-		
-		blks = c(blks, blk)
-		begs.a = c(begs.a, beg.a)
-		ends.a = c(ends.a, end.a)
-		strands.a = c(strands.a, strand.a)
-	}
-	cbind(dfi, block=blks, beg.a=begs.a, end.a=ends.a, stringsAsFactors=F)
-}
+
 
 data_preprocess <- function(tcs, tbs, dat1, dat2) {
 	qPanel.1 = assign_panel(tcs[,c('qId', 'qBeg', 'qEnd', 'qSrd')])
@@ -256,10 +258,11 @@ data_preprocess <- function(tcs, tbs, dat1, dat2) {
 	if(empty(dat1$crp)) {crp1=NULL} else {crp1=filter_assign_panel(dat1$crp, qPanel)}
 	if(empty(dat2$crp)) {crp2=NULL} else {crp2=filter_assign_panel(dat2$crp, hPanel)}
 	
-	if(empty(dat1$mapp)) {mapp1=NULL} else {mapp1=filter_assign_block_wig(dat1$mapp, qPanel)}
-	if(empty(dat2$mapp)) {mapp2=NULL} else {mapp2=filter_assign_block_wig(dat2$mapp, hPanel)}
+	if(empty(dat1$mapp)) {mapp1=NULL} else {mapp1=filter_assign_panel_wig(dat1$mapp, qPanel)}
+	if(empty(dat2$mapp)) {mapp2=NULL} else {mapp2=filter_assign_panel_wig(dat2$mapp, hPanel)}
 	
-	list(name1=name1, name2=name2, seg1=dfb1, seg2=dfb2, xaxis1=xaxis1, xaxis2=xaxis2, comp=comp, 
+	list(name1=name1, name2=name2, seg1=qPanel, seg2=hPanel, xaxis1=xaxis1, xaxis2=xaxis2, 
+		comp=comp, 
 		gap1=gap1, gap2=gap2, mapp1=mapp1, mapp2=mapp2,
 		gene1=gene1, gene2=gene2, te1=te1, te2=te2, nbs1=nbs1, nbs2=nbs2, crp1=crp1, crp2=crp2,
 		max_len=max_len)

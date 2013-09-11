@@ -10,6 +10,7 @@ ln -sf $CONFIGDIR/git.conf .gitconfig
 ln -sf $CONFIGDIR/Rprofile .Rprofile
 ln -sf $CONFIGDIR/vimrc .vimrc
 ln -sf $CONFIGDIR/dircolors .dircolors
+ln -sf $CONFIGDIR/hg.conf .hg.conf
 
 [[ -h .ssh ]] && rm .ssh
 [[ -d .ssh ]] || mkdir .ssh

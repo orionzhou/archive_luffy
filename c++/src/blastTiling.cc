@@ -22,15 +22,19 @@ struct BlastRecord {
     string qId;
     uint32_t qBeg;
     uint32_t qEnd;
-    string strand;
-    string hId;
-    uint32_t hBeg;
-    uint32_t hEnd;
-    float pct;
+    string qSrd;
+    
+    string tId;
+    uint32_t tBeg;
+    uint32_t tEnd;
+    string tSrd;
+    
+    float ident;
     double e;
     float score;
     uint32_t len;
-    uint32_t mismatch;
+    uint32_t match;
+    uint32_t misMatch;
     uint32_t gap;
 };
 typedef vector<BlastRecord> BlastRecords;
@@ -38,22 +42,23 @@ typedef vector<BlastRecord> BlastRecords;
 BlastRecord make_blast_record(const vector<string>& ss) {   
     BlastRecord br;
     br.qId = ss[0];
-    br.hId = ss[1];
-    br.pct = boost::lexical_cast<float>(ss[2]);
+    br.tId = ss[1];
+    br.ident = boost::lexical_cast<float>(ss[2]);
     br.len = boost::lexical_cast<uint32_t>(ss[3]);
-    br.mismatch = boost::lexical_cast<uint32_t>(ss[4]);
+    br.misMatch = boost::lexical_cast<uint32_t>(ss[4]);
     br.gap = boost::lexical_cast<uint32_t>(ss[5]);
     br.qBeg = boost::lexical_cast<uint32_t>(ss[6]);
     br.qEnd = boost::lexical_cast<uint32_t>(ss[7]);
-    br.hBeg = boost::lexical_cast<uint32_t>(ss[8]);
-    br.hEnd = boost::lexical_cast<uint32_t>(ss[9]);
-    br.strand = "+";
-    if(br.hBeg > br.hEnd) {
-        uint32_t tmp = br.hBeg;
-        br.hBeg = br.hEnd;
-        br.hEnd = tmp;
-        br.strand = "-";
+    br.tBeg = boost::lexical_cast<uint32_t>(ss[8]);
+    br.tEnd = boost::lexical_cast<uint32_t>(ss[9]);
+    br.qSrd = "+";
+    br.tSrd = "+";
+    if(br.tBeg > br.tEnd) {
+        swap(br.tBeg, br.tEnd);
+        br.qSrd = "-";
     }
+    if(br.qBeg > br.qEnd)
+        cerr << format("qBeg[%d] > qEnd[%d]\n") % br.qBeg % br.qEnd;
     br.e = boost::lexical_cast<double>(ss[10]);
     br.score = boost::lexical_cast<float>(ss[11]);
     return br;
@@ -79,15 +84,17 @@ void blast_tiling(const BlastRecords& brs, string& qId, ofstream& fho, const uns
         if(qLen < len_min) continue;
         int idx = loc.idx_ext;
         BlastRecord br = brs[idx];
-        string strand = br.strand;
-        float pct(br.pct), score(br.score);
+        string qSrd = br.qSrd;
+        string tSrd = br.tSrd;
+        float ident(br.ident), score(br.score);
         double e(br.e);
-        string hId = br.hId;
-        uint32_t hBeg = round( br.hBeg + (qBeg-br.qBeg)*(br.hEnd-br.hBeg)/(br.qEnd-br.qBeg) );
-        uint32_t hEnd = round( br.hBeg + (qEnd-br.qBeg)*(br.hEnd-br.hBeg)/(br.qEnd-br.qBeg) );
-        uint32_t hLen = hEnd - hBeg + 1;
-        fho << format("%s\t%d\t%d\t%s\t%s\t%d\t%d\t%d\t%d\t%g\t%g\t%g\n") 
-            % qId % qBeg % qEnd % strand % hId % hBeg % hEnd % qLen % hLen % pct % e % score;
+        string tId = br.tId;
+        uint32_t tBeg = round( br.tBeg + (qBeg-br.qBeg)*(br.tEnd-br.tBeg)/(br.qEnd-br.qBeg) );
+        uint32_t tEnd = round( br.tBeg + (qEnd-br.qBeg)*(br.tEnd-br.tBeg)/(br.qEnd-br.qBeg) );
+        uint32_t tLen = tEnd - tBeg + 1;
+        fho << format("%s\t%d\t%d\t%s\t%d\t%s\t%d\t%d\t%s\t%d\t%g\t%g\t%g\n") 
+            % qId % qBeg % qEnd % qSrd % qLen % tId % tBeg % tEnd % tSrd % tLen 
+            % ident % e % score;
     }
     cout << qId << endl;
 }
@@ -115,7 +122,9 @@ int main( int argc, char* argv[] ) {
     if(!fhi.is_open()) { cout << format("cannot read: %s\n") % fi; return false; }
     ofstream fho(fo.c_str());
     if(!fho.is_open()) { cout << format("cannot write: %s\n") % fo; return false; }
-    fho << "qId\tqBeg\tqEnd\tstrand\thId\thBeg\thEnd\tqLen\thLen\tpct\te\tscore" << endl;
+    fho << "qId\tqBeg\tqEnd\tqSrd\tqLen"
+        << "\ttId\ttBeg\ttEnd\ttSrd\ttLen"
+        << "\tident\te\tscore" << endl;
     
     BlastRecords brs;
     string qId_p = "";

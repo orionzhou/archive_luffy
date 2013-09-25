@@ -1,6 +1,7 @@
 package Blast;
 use strict; 
 use Common;
+use Seq;
 use Bio::SeqIO;
 use File::Basename;
 use Data::Dumper;
@@ -15,8 +16,148 @@ use HTTP::Request::Common qw/POST/;
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter AutoLoader/;
-@EXPORT = qw/split_blast_output blast_tiling blast_nr blast_nr_batch/;
+@EXPORT = qw/blast2Psl blast2Gal
+    split_blast_output blast_tiling blast_nr blast_nr_batch/;
 @EXPORT_OK = qw//;
+
+sub parse_aln_string {
+    my ($qSeq, $tSeq) = @_;
+    my (@qPos, @tPos, @qIns, @tIns);
+    my ($qLen, $tLen) = (length($qSeq), length($tSeq));
+    $qLen == $tLen || die "unequal seqlen: $qLen <> $tLen\n$qSeq\n";
+
+    my ($qPos, $tPos) = (1, 1);
+    for my $i (1..$qLen) {
+        my ($chQ, $chT) = (substr($qSeq, $i-1, 1), substr($tSeq, $i-1, 1));
+        push @qPos, $qPos;
+        push @tPos, $tPos;
+        if($chQ =~ /[\-\_\s]/) {
+            push @tIns, [$i, $i];
+        } else {
+            $qPos ++;
+        }
+        if($chT =~ /[\-\_\s]/) {
+            push @qIns, [$i, $i];
+        } else {
+            $tPos ++;
+        }
+    }
+    my ($qIns, $tIns) = (scalar(@qIns), scalar(@tIns));
+    my ($qInsL, $tInsL) = (posMerge(\@qIns), posMerge(\@tIns));
+    my $qNumIns = $qInsL ? scalar(@$qInsL) : 0;
+    my $tNumIns = $tInsL ? scalar(@$tInsL) : 0;
+    my ($uLoc) = posDiff([[1, $qLen]], [@qIns, @tIns]);
+
+    my (@qLoc, @tLoc, @stats);
+    for (@$uLoc) {
+        my ($idxB, $idxE) = @$_;
+        push @qLoc, [$qPos[$idxB-1], $qPos[$idxE-1]];
+        push @tLoc, [$tPos[$idxB-1], $tPos[$idxE-1]];
+        my $qSeq1 = substr($qSeq, $idxB-1, $idxE-$idxB+1);
+        my $tSeq1 = substr($tSeq, $idxB-1, $idxE-$idxB+1);
+        die "$qSeq1\n" if $qSeq1 =~ /[\-\_]/;
+        die "$tSeq1\n" if $tSeq1 =~ /[\-\_]/;
+        push @stats, [seqCompare($qSeq1, $tSeq1)];
+    }
+    return (\@qLoc, \@tLoc, \@stats, $qNumIns, $qIns, $tNumIns, $tIns);
+}
+sub blast2Psl {
+    my ($fhi, $fho) = @_;
+    while(<$fhi>) {
+        chomp;
+        my @ps = split " ";
+        next unless @ps == 16;
+        my ($qId, $qBeg, $qEnd, $qSize, $tId, $tBeg, $tEnd, $tSize, $alnLen, 
+            $match, $misMatch, $gaps, $e, $score, $qSeq, $tSeq) = @ps;
+        $qBeg <= $qEnd || die "$qId $qBeg > $qEnd\n";
+        $alnLen == $match+$misMatch+$gaps || die "len error\n".join("\t", @ps)."\n";
+        my ($qSrd, $tSrd) = ("+") x 2;
+        if($tBeg > $tEnd) {
+            ($tBeg, $tEnd) = ($tEnd, $tBeg);
+            $qSrd = "-";
+        }
+
+        my ($qLoc, $tLoc, $stat, $qNumIns, $qIns, $tNumIns, $tIns) = parse_aln_string($qSeq, $tSeq);
+#        print join("\t", $qId, $qBeg, $qEnd, $qSize, $tId, $tBeg, $tEnd, $tSize)."\n";
+        my $nBlock = @$qLoc;
+        my (@qBegs, @tBegs, @blockLens);
+        for my $i (0..$nBlock-1) {
+            my ($qb, $qe) = @{$qLoc->[$i]};
+            my ($tb, $te) = @{$tLoc->[$i]};
+            my $qLen = $qe - $qb + 1;
+            my $tLen = $te - $tb + 1;
+            $qLen == $tLen || die "len error: $qb-$qe $tb-$te\n";
+
+            my ($tBegF, $qBegF);
+            if($qSrd eq "-") {
+                $tBegF = $tEnd - $te + 1;
+                $qBegF = $qSize-($qBeg+$qe-1)+1;
+            } else {
+                $tBegF = $tBeg + $tb - 1;
+                $qBegF = $qBeg + $qb - 1;
+            }
+            push @blockLens, $qLen;
+            push @tBegs, $tBegF - 1;
+            push @qBegs, $qBegF - 1;
+#            print join("\t", $qb, $qe, $tb, $te, $qLen)."\n";
+#            print join("\t", $qBegF, $tBegF)."\n";
+#            die if $i == 2;
+        }
+        my $qBegStr = join(",", @qBegs);
+        my $tBegStr = join(",", @tBegs);
+        my $blockLenStr = join(",", @blockLens);
+        
+        print $fho join("\t", $match, $misMatch, 0, 0,
+            $qNumIns, $qIns, $tNumIns, $tIns, $qSrd,
+            $qId, $qSize, $qBeg-1, $qEnd, $tId, $tSize, $tBeg-1, $tEnd, 
+            $nBlock, $blockLenStr, $qBegStr, $tBegStr)."\n";
+    }
+    close $fhi;
+    close $fho;
+}
+sub blast2Gal {
+    my ($fhi, $fho) = @_;
+    print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen 
+        tId tBeg tEnd tSrd tLen
+        match misMatch baseN ident e score/)."\n";
+    my $id = 0;
+    while(<$fhi>) {
+        chomp;
+        my @ps = split " ";
+        next unless @ps == 16;
+        my ($qId, $qBeg, $qEnd, $qSize, $tId, $tBeg, $tEnd, $tSize, $alnLen, 
+            $matcha, $misMatcha, $gaps, $e, $score, $qSeq, $tSeq) = @ps;
+        $qBeg <= $qEnd || die "$qId $qBeg > $qEnd\n";
+        $alnLen == $matcha+$misMatcha+$gaps || die "len error\n".join("\t", @ps)."\n";
+        my ($qSrd, $tSrd) = ("+") x 2;
+        if($tBeg > $tEnd) {
+            ($tBeg, $tEnd) = ($tEnd, $tBeg);
+            $qSrd = "-";
+        }
+
+        my ($qLoc, $tLoc, $stat, $qNumIns, $qIns, $tNumIns, $tIns) = parse_aln_string($qSeq, $tSeq);
+        my $nBlock = @$qLoc;
+        $id ++;
+        for my $i (0..$nBlock-1) {
+            my ($qbr, $qer) = @{$qLoc->[$i]};
+            my ($tbr, $ter) = @{$tLoc->[$i]};
+            my ($match, $misMatch, $baseN) = @{$stat->[$i]};
+            my $qLen = $qer - $qbr + 1;
+            my $tLen = $ter - $tbr + 1;
+            $qLen == $tLen || die "len error: $qbr-$qer $tbr-$ter\n";
+
+            my $tb = $qSrd eq "-" ? $tEnd-$ter+1 :$tBeg+$tbr-1;
+            my $te = $qSrd eq "-" ? $tEnd-$tbr+1 :$tBeg+$ter-1;
+            my $qb = $qBeg + $qbr - 1;
+            my $qe = $qBeg + $qer - 1;
+            print $fho join("\t", $id, $qId, $qb, $qe, $qSrd, $qLen,
+                $tId, $tb, $te, $tSrd, $tLen,
+                $match, $misMatch, $baseN, '', $e, $score)."\n";
+        }
+    }
+    close $fhi;
+    close $fho;
+}
 
 sub write_blast {
     my ($id, $rows, $fo) = @_;

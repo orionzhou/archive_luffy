@@ -6,11 +6,12 @@
   
 =head1 NAME
   
-  seqlen.pl - report sequence lengths in an input sequence file 
+  blastToGal.pl - convert a BLAST tabular output to GAL format
 
 =head1 SYNOPSIS
   
-  seqlen.pl [-help] [-in input-file] [-out output-file]
+  blastToGal.pl [-help] [-in input-file] [-out output-file]
+    -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq'
 
   Options:
       -help   brief help message
@@ -19,18 +20,21 @@
 
 =head1 DESCRIPTION
 
-  This program reports lengths of each sequence record in the input file
+  This program converts an input BLAST tabular file to a GAL file
 
 =cut
   
 #### END of POD documentation.
 #-----------------------------------------------------------------------------
 
+
 use strict;
+use FindBin;
+use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Bio::Seq;
-use Bio::SeqIO;
+use Common;
+use Blast;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -38,12 +42,13 @@ my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
+    "help|h"   => \$help_flag,
+    "in|i=s"   => \$fi,
+    "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
+
 if ($fi eq "stdin") {
     $fhi = \*STDIN;
 } else {
@@ -56,12 +61,7 @@ if ($fo eq "stdout") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id length/)."\n";
-my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
-while(my $seqO = $seqHI->next_seq()) {
-    my ($id, $len) = ($seqO->id, $seqO->length);
-    print $fho join("\t", $id, $len)."\n";
-}
-$seqHI->close();
+blast2Gal($fhi, $fho);
 
-exit 0;
+
+__END__

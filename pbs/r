@@ -1,7 +1,11 @@
-#PBS -l nodes=1:ppn=2,mem=5GB,walltime=10:00:00
+#PBS -l nodes=1:ppn=4,mem=5GB,walltime=10:00:00
 #PBS -m ae
 #PBS -q lab 
 
-cd /home/youngn/zhoup/repos/code/pbs
-./test.pl
+cd $code/pbs
+#./test.pl
 #R CMD BATCH cnv.R
+
+cd $data/misc3/HM340_HM101/23_blat
+axtChain -linearGap=medium -psl 21.psl $data/db/blat/HM340.2bit $data/db/blat/Mtruncatula_4.0.2bit 23.chain
+

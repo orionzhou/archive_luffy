@@ -157,8 +157,8 @@ LocVec tiling(const LocVec& lvi, const bool& flag_max) {
             numeric_limits<double>::min() : numeric_limits<double>::max();
         for (set<int>::iterator it = idxs.begin(); it != idxs.end(); it ++) {
             int idx = *it;
-            Location loc = lvi[idx];
-            double score = loc.score;
+            Location locO = lvi[idx];
+            double score = locO.score;
             if( (flag_max && score>score_ext) || (!flag_max && score<score_ext) ) {
                 idx_ext = idx;
                 score_ext = score;
@@ -166,6 +166,8 @@ LocVec tiling(const LocVec& lvi, const bool& flag_max) {
         }
         loc.idx_ext = idx_ext;
         loc.score = score_ext;
+        if(idx_ext == -1)
+            cerr<<"error idx_ext\t"<<lvi[idx_ext].beg<<"\t"<<lvi[idx_ext].end<<endl;
 
         if( loc.beg == end_p + 1 && loc.idx_ext == idx_ext_p ) {
             lvo.back().end = loc.end;

@@ -2,79 +2,19 @@ package Gal;
 use strict;
 use Data::Dumper;
 use Common;
+use Location;
 use Seq;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter/;
-@EXPORT = qw/psl2Gal chain2Gal net2Gal
-    gal_tiling gal_rm_inv gal_breakdown gal_filter
-    gal_validate gal_indel/;
+@EXPORT = qw/gal2Psl chain2Gal net2Gal
+    gal_tiling gal_check_fix
+    gal_breakdown gal_filter
+    gal_complete gal_indel/;
 @EXPORT_OK = qw//;
 
-sub psl2Gal {
-    my ($fhi, $fho, $fq, $ft) = @_;
-    print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen 
-        tId tBeg tEnd tSrd tLen
-        match misMatch baseN ident e score/)."\n";
-    my $id = 0;
-    while(<$fhi>) {
-        chomp;
-        my @ps = split " ";
-        next unless @ps == 21;
-        next if /^(psLayout)|(match)/;
-        $id ++;
-        my ($match, $misMatch, $repMatch, $baseN, 
-            $qNumIns, $qBaseIns, $tNumIns, $tBaseIns, $qSrd, 
-            $qId, $qSize, $qBeg, $qEnd, $tId, $tSize, $tBeg, $tEnd, 
-            $blockNum, $blockSizes, $qBegs, $tBegs) = @ps;
-        my $tSrd = "+";
-        my @qBegs = split(",", $qBegs);
-        my @tBegs = split(",", $tBegs);
-        my @blockSizes = split(",", $blockSizes);
-        
-        $blockNum == @qBegs || die "unequal pieces\n";
-        $blockNum == @tBegs || die "unequal pieces\n";
-        $blockNum == @blockSizes || die "unequal pieces\n";
-        my $alnLen = $match + $misMatch + $repMatch + $baseN;
-        
-        my $seqT = seqRet([[$tBeg+1, $tEnd]], $tId, $tSrd, $ft);
-        my $seqQ = seqRet([[$qBeg+1, $qEnd]], $qId, $qSrd, $fq);
-        my $score = $match;
-
-        for my $i (0..$blockNum-1) {
-            my $len = $blockSizes[$i];
-            my $tb = $tBegs[$i] + 1;
-            my $te = $tb + $len - 1;
-            
-            my ($qb, $qe);
-            if($qSrd eq "+") {
-                $qb = $qBegs[$i] + 1;
-                $qe = $qb + $len - 1;
-            } else {
-                $qSrd eq "-" || die "unknown strand $qSrd\n";
-                $qe = $qSize - $qBegs[$i];
-                $qb = $qe - $len + 1;
-            }
-            
-            my $rtb = $tBegs[$i] - $tBeg;
-            my $tSeq = substr($seqT, $rtb, $len);
-            my $rqb = $qSrd eq "-" ? $qBegs[$i]-($qSize-$qEnd) : $qBegs[$i]-$qBeg;
-            my $qSeq = substr($seqQ, $rqb, $len);
-            my ($match, $misMatch, $baseN) = seqCompare($qSeq, $tSeq);
-            
-            print $fho join("\t", $id, $qId, $qb, $qe, $qSrd, $len,
-                $tId, $tb, $te, $tSrd, $len,
-                $match, $misMatch, $baseN, '', '', $score)."\n";
-        }
-        $alnLen == sum(@blockSizes) || die "block size error:$alnLen/".sum(@blockSizes)."\n";
-        $alnLen + $qBaseIns == $qEnd-$qBeg || die "qLen error: $alnLen + $qBaseIns <> $qEnd-$qBeg\n";
-        $alnLen + $tBaseIns == $tEnd-$tBeg || die "hLen error\n";
-    }
-    close $fhi;
-    close $fho;
-}
 sub chain2Gal {
     my ($fhi, $fho, $fq, $ft) = @_;
     print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen 
@@ -229,7 +169,100 @@ sub parse_net {
     return \@af;
 }
 
+sub gal2Psl {
+    my ($fhi, $fho, $hq, $ht) = @_;
+    while(<$fhi>) {
+        chomp;
+        next if /(^id)|(^\#)|(^\s*$)/;
+        my ($id, $qId, $qBeg, $qEnd, $qSrd, $qLen, $tId, $tBeg, $tEnd, $tSrd, $tLen,
+            $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = split "\t";
+        die join("\t", $id, $qId, $qBeg, $qEnd, $qSrd, $qLen, $tId, $tBeg, $tEnd, $tSrd, $tLen,
+            $match, $misMatch, $baseN, $ident, $e, $score)."\n";
+        die "size unknown for $qId\n" unless exists $hq->{$qId};
+        die "size unknown for $tId\n" unless exists $ht->{$tId};
+        my ($qSize, $tSize) = ($hq->{$qId}, $ht->{$tId});
+        my $srd = ($qSrd eq $tSrd) ? "+" : "-";
+
+        my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+        @$qLoc == @$tLoc || die "unequal pieces\n";
+        my $nBlock = @$qLoc;
+        
+        my (@blockSizes, @qBegs, @tBegs);
+        my (@qIns, @tIns);
+        my ($rqe_p, $rte_p);
+        for my $i (0..$nBlock-1) {
+            my ($rqb, $rqe) = @{$qLoc->[$i]};
+            my ($rtb, $rte) = @{$tLoc->[$i]};
+            my ($len, $len2) = ($rqe-$rqb+1, $rte-$rtb+1);
+            die "block size unequal: $qId-$tId $rqb-$rqe : $rtb-$rte\n" if $len != $len2;
+            my $tb = $tBeg + $rtb - 1;
+            my $qb = $srd eq "-" ? $qSize-$qEnd+1 + $rqb-1 : $qBeg + $rqb - 1;
+            
+            push @blockSizes, $len;
+            push @tBegs, $tb-1;
+            push @qBegs, $qb-1;
+            if($i > 0) {
+                my $tIns = $rtb - $rte_p - 1;
+                my $qIns = $rqb - $rqe_p - 1;
+                push @tIns, $tIns if $tIns > 0;
+                push @qIns, $qIns if $qIns > 0;
+            }
+            ($rqe_p, $rte_p) = ($rqe, $rte);
+        }
+        my $repMatch = 0;
+        my ($qNumIns, $tNumIns) = (scalar(@qIns), scalar(@tIns));
+        my ($qBaseIns, $tBaseIns) = (0, 0);
+        $qBaseIns = sum(@qIns) if $qNumIns > 0;
+        $tBaseIns = sum(@tIns) if $tNumIns > 0;
+        my $blockSizes = join(",", @blockSizes).",";
+        my $qBegs = join(",", @qBegs).",";
+        my $tBegs = join(",", @tBegs).",";
+        print $fho join("\t", $match, $misMatch, $repMatch, $baseN, 
+            $qNumIns, $qBaseIns, $tNumIns, $tBaseIns, $srd, 
+            $qId, $qSize, $qBeg-1, $qEnd, $tId, $tSize, $tBeg-1, $tEnd, 
+            $nBlock, $blockSizes, $qBegs, $tBegs)."\n";
+    }
+    close $fhi;
+    close $fho;
+}
+
 sub gal_tiling {
+#id qId qBeg qEnd qSrd qLen tId tBeg tEnd tSrd tLen match misMatch baseN ident e score qLoc tLoc
+    my ($rows, $fho) = @_;
+    my $loc1 = [ map {[$_->[2], $_->[3]]} @$rows ];
+    my $scores = [ map {$_->[-3]} @$rows ];
+    my $ref = tiling($loc1, $scores, 2);
+    my $qId = $rows->[0]->[1];
+    
+    for (@$ref) {
+        my ($qBeg, $qEnd, $i) = @$_;
+        my $row = $rows->[$i];
+        my ($id, $tId, $score) = @$row[0,6,16];
+        my ($qb, $qe, $qSrd) = @$row[2..4];
+        my ($tb, $te, $tSrd) = @$row[7..9];
+        my $srd = $qSrd eq $tSrd ? "+" : "-";
+       
+        my ($rqloc, $rtloc) = @$row[17..18];
+        my ($rqb, $rqe) = ($qBeg-$qb+1, $qEnd-$qb+1);
+        my $nrqloc = trimLoc($rqloc, $rqb, $rqe);
+        ($rqb, $rqe) = ($nrqloc->[0]->[0], $nrqloc->[-1]->[1]);
+        ($qBeg, $qEnd) = ($qb+$rqb-1, $qb+$rqe-1);
+    
+        my ($rtb, $rte) = map {coordTransform($_, $rqloc, "+", $rtloc, "+")} ($rqb, $rqe);
+        my $nrtloc = trimLoc($rtloc, $rtb, $rte);
+        my $tBeg = $srd eq "-" ? $te-$rte+1 : $tb+$rtb-1;
+        my $tEnd = $srd eq "-" ? $te-$rtb+1 : $tb+$rte-1;
+        
+        my $qLen = $qEnd - $qBeg + 1;
+        my $nrqlocS = locAry2Str( [map {[$_->[0]-$rqb+1, $_->[1]-$rqb+1]} @$nrqloc] );
+        my $tLen = $tEnd - $tBeg + 1;
+        my $nrtlocS = locAry2Str( [map {[$_->[0]-$rtb+1, $_->[1]-$rtb+1]} @$nrtloc] );
+        print $fho join("\t", $id, $qId, $qBeg, $qEnd, "+", $qLen,
+            $tId, $tBeg, $tEnd, $srd, $tLen, 
+            ('') x 5, $score, $nrqlocS, $nrtlocS)."\n";
+    }
+}
+sub gal_tiling_o {
     my ($fi, $fo) = @_;
     my $t = readTable(-in=>$fi, -header=>1);
     
@@ -261,50 +294,58 @@ sub gal_tiling {
     }
     close FHO;
 }
-sub gal_rm_inv {
-    my ($fi, $fo) = @_;
-    my $t = readTable(-in=>$fi, -header=>1);
 
-    my @idxs;
-    my ($idc_p, $qId_p, $qBeg_p, $qEnd_p, $qSrd_p, $qLen_p, $hId_p, $hBeg_p, $hEnd_p, $hSrd_p)
-        = map {$t->elm(0, $_)} qw/idc qId qBeg qEnd qSrd qLen hId hBeg hEnd hSrd/;
-    for my $i (1..$t->nofRow-1) {
-        my ($idc, $idb, $type, $qId, $qBeg, $qEnd, $qSrd, $qLen,
-            $hId, $hBeg, $hEnd, $hSrd, $hLen,
-            $match, $misMatch, $baseN, $ident, $e, $score, $qSeq, $hSeq) = $t->row($i);
-        if($idc == $idc_p) {
-            ($qId eq $qId_p && $qSrd eq $qSrd_p) || die "qId error: $idc-$idb\n";
-            ($hId eq $hId_p && $hSrd eq $hSrd_p) || die "hId error: $idc-$idb\n";
-            my ($flag, $idx) = (0, $i);
-            if($qSrd eq "+") {
-                if($qEnd_p >= $qBeg || $hEnd_p >= $hBeg) {
-                    $flag = 1;
-                }
-            } else {
-                $qSrd eq "-" || die "unknown strand $qSrd\n";
-                if($qEnd >= $qBeg_p || $hEnd_p >= $hBeg) {
-                    $flag = 1;
-                }
-            }
-            if($flag == 1) {
-                $idx = $i-1 if ($qLen_p < $qLen);
-                push @idxs, $idx;
-            }
-            if($flag == 0 || ($flag && $idx == $i-1)) {
-                ($idc_p, $qId_p, $qBeg_p, $qEnd_p, $qSrd_p, $qLen_p, $hId_p, $hBeg_p, $hEnd_p, $hSrd_p) = 
-                ($idc, $qId, $qBeg, $qEnd, $qSrd, $qLen, $hId, $hBeg, $hEnd, $hSrd); 
+sub gal_check_fix {
+    my ($ps) = @_;
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qLen, $tId, $tBeg, $tEnd, $tSrd, $tLen,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    my $srd = ($qSrd eq $tSrd) ? "+" : "-";
+
+    my @rqloc = $qLoc->[0];
+    my @rtloc = $tLoc->[0];
+    for my $i (0..@$qLoc-1) {
+        next if $i == 0;
+        my ($prqb, $prqe) = @{$rqloc[-1]};
+        my ($prtb, $prte) = @{$rtloc[-1]};
+
+        my ($rqb, $rqe) = @{$qLoc->[$i]};
+        my ($rtb, $rte) = @{$tLoc->[$i]};
+        my ($rql, $rtl) = ([$rqb, $rqe], [$rtb, $rte]);
+        if($rqb <= $prqe || $rtb <= $prte) {
+            my $plen = $prqe - $prqb + 1;
+            my $len = $rqe - $rqb + 1;
+            if($plen < $len) {
+                $rqloc[-1] = $rql;
+                $rtloc[-1] = $rtl;
             }
         } else {
-            ($idc_p, $qId_p, $qBeg_p, $qEnd_p, $qSrd_p, $qLen_p, $hId_p, $hBeg_p, $hEnd_p, $hSrd_p) = 
-            ($idc, $qId, $qBeg, $qEnd, $qSrd, $qLen, $hId, $hBeg, $hEnd, $hSrd); 
+            push @rqloc, $rql;
+            push @rtloc, $rtl;
         }
     }
-    $t->delRows(\@idxs);
-    printf "removed %d lines\n", $#idxs+1;
-    open(FHO, ">$fo") or die "cannot write to $fo\n";
-    print FHO $t->tsv(1);
-    close FHO;
+    $ps->[17] = locAry2Str(\@rqloc);
+    $ps->[18] = locAry2Str(\@rtloc);
+    return $ps;
 }
+
+sub gal_complete {
+    my ($ps, $fq, $ft) = @_;
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qLen, $tId, $tBeg, $tEnd, $tSrd, $tLen,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    @$qLoc == @$tLoc || die "unequal pieces\n";
+    my $nBlock = @$qLoc;
+
+    my $seqT = seqRet([[$tBeg, $tEnd]], $tId, $tSrd, $ft);
+    my $seqQ = seqRet([[$qBeg, $qEnd]], $qId, $qSrd, $fq);
+    my $tSeq = getSubSeq($seqT, $tLoc);
+    my $qSeq = getSubSeq($seqQ, $qLoc);
+    ($match, $misMatch, $baseN) = seqCompare($qSeq, $tSeq);
+    @$ps[11..13] = ($match, $misMatch, $baseN);
+    return $ps;
+}
+
 sub gal_breakdown {
     my ($fi, $fo, $co_gap) = @_;
     $co_gap ||= 1_000_000;
@@ -407,36 +448,7 @@ sub gal_indel {
     close FHO;
 }
 
-sub mtb_expand {
-    my ($fi, $fo, $fq, $ft) = @_;
-    my $t = readTable(-in=>$fi, -header=>1);
-    open(FHO, ">$fo") or die "cannot write to $fo\n";
-    print FHO join("\t", qw/qId qBeg qEnd qSrd/)."\n";
-    for my $i (0..$t->nofRow-1) {
-        my ($id, $qId, $qBeg, $qEnd, $qSrd, $qLen, $qNumIns, $qBaseIns,
-            $hId, $hBeg, $hEnd, $hSrd, $hLen, $hNumIns, $hBaseIns, 
-            $match, $misMatch, $repMatch, $baseN, 
-            $qLocS, $hLocS, $qIndelS, $hIndelS) = $t->row($i);
-        my ($qLoc, $hLoc) = map {locStr2Ary($_)} ($qLocS, $hLocS);
-        my ($match2, $misMatch2, $baseN2) = (0, 0, 0);
-        my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
-        my $hSeq = seqRet($hLoc, $hId, $hSrd, $ft);
-        for my $j (0..length($qSeq)-1) {
-            my $qCh = uc(substr($qSeq, $j, 1));
-            my $hCh = uc(substr($hSeq, $j, 1));
-            if($qCh !~ /[ATCG]/ || $hCh !~ /[ATCG]/) {
-                $baseN2 ++;
-            } elsif($qCh eq $hCh) {
-                $match2 ++;
-            } else {
-                $misMatch2 ++;
-            }
-        }
-        if( $match != $match2 || $misMatch != $misMatch2 || $baseN != $baseN2 ) {
-            print join("\t", $id, $qId, $hId, $match, $match2, $repMatch, $misMatch, $misMatch2, $baseN, $baseN2)."\n";
-        }
-    } 
-}
+
 
 1;
 __END__

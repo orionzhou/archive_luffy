@@ -1,6 +1,7 @@
 package Blast;
 use strict; 
 use Common;
+use Location;
 use Seq;
 use Bio::SeqIO;
 use File::Basename;
@@ -119,7 +120,7 @@ sub blast2Gal {
     my ($fhi, $fho) = @_;
     print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen 
         tId tBeg tEnd tSrd tLen
-        match misMatch baseN ident e score/)."\n";
+        match misMatch baseN ident e score qLoc tLoc/)."\n";
     my $id = 0;
     while(<$fhi>) {
         chomp;
@@ -136,8 +137,10 @@ sub blast2Gal {
         }
 
         my ($qLoc, $tLoc, $stat, $qNumIns, $qIns, $tNumIns, $tIns) = parse_aln_string($qSeq, $tSeq);
+        my $match = sum( map {$_->[0]} @$stat );
+        my $misMatch = sum( map {$_->[1]} @$stat );
+        my $baseN = sum( map {$_->[2]} @$stat );
         my $nBlock = @$qLoc;
-        $id ++;
         for my $i (0..$nBlock-1) {
             my ($qbr, $qer) = @{$qLoc->[$i]};
             my ($tbr, $ter) = @{$tLoc->[$i]};
@@ -150,10 +153,11 @@ sub blast2Gal {
             my $te = $qSrd eq "-" ? $tEnd-$tbr+1 :$tBeg+$ter-1;
             my $qb = $qBeg + $qbr - 1;
             my $qe = $qBeg + $qer - 1;
-            print $fho join("\t", $id, $qId, $qb, $qe, $qSrd, $qLen,
-                $tId, $tb, $te, $tSrd, $tLen,
-                $match, $misMatch, $baseN, '', $e, $score)."\n";
         }
+        my ($tLocS, $qLocS) = (locAry2Str($tLoc), locAry2Str($qLoc));
+        print $fho join("\t", ++$id, $qId, $qBeg, $qEnd, $qSrd, $qEnd-$qBeg+1,
+            $tId, $tBeg, $tEnd, $tSrd, $tEnd-$tBeg+1,
+            $match, $misMatch, $baseN, '', $e, $score, $qLocS, $tLocS)."\n";
     }
     close $fhi;
     close $fho;

@@ -35,7 +35,7 @@ elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
         export soft_msi=/soft
     fi
     
-    for subpath in ncbi_blast+/2.2.25 blat/34 \
+    for subpath in blat/34 \
       exonerate/2.2.0 structure/2.3.1 clustalw/2.1
     do
         if [[ -d $soft_msi/$subpath/bin ]]; then
@@ -53,7 +53,7 @@ export PATH=$PATH:$prefix/bin
 export soft=$prefix/soft
 if [[ -d $soft ]]; then
     for subpath in zlib gcc boost libsequence \
-        bamtools bedtools bowtie2 bwa sra \
+        bamtools bedtools bowtie2 bwa sra blast \
         parallel blast CAP3 clustalo cmake cufflinks \
         emboss gd geco genometools gmap hmmer mysql \
         R root samtools tophat trimAl wise2 GEM kent

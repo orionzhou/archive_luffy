@@ -6,17 +6,16 @@
   
 =head1 NAME
   
-  gal.pl - transform the coordinates of a Gal file
+  galFix.pl - Check and fix a GAL file
 
 =head1 SYNOPSIS
   
-  gal.pl [-help] [-in input-file] [-opt option] [-out output-file]
+  galFix.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message
-      -in     input file
+      -in     input file - needs to be sorted by qId
       -out    output file
-      -opt    option (coordq / coordt)
 
 =cut
   
@@ -29,10 +28,10 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Common;
-use Seq;
+use Location;
+use Gal;
 
-my ($fi, $fo, $opt) = ('') x 3;
+my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
 my $help_flag;
 
@@ -41,10 +40,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "opt|p=s"  => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo || !$opt;
+pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin") {
     $fhi = \*STDIN;
@@ -61,30 +59,12 @@ if ($fo eq "stdout") {
 print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen tId tBeg tEnd tSrd tLen
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
-while(<$fhi>) {
+while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
-    my @ps = split "\t";
-    if($opt =~ /^coordq$/i) {
-        my ($qId, $qBeg, $qEnd) = @ps[1..3];
-        if($qId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
-            my ($qi, $beg, $end) = ($1, $2, $3);
-            $ps[1] = $qi;
-            $ps[2] = $beg + $qBeg - 1;
-            $ps[3] = $beg + $qEnd - 1;
-        }
-    } elsif($opt =~ /^coordt$/i) {
-        my ($tId, $tBeg, $tEnd) = @ps[6..8];
-        if($tId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
-            my ($ti, $beg, $end) = ($1, $2, $3);
-            $ps[6] = $ti;
-            $ps[7] = $beg + $tBeg - 1;
-            $ps[8] = $beg + $tEnd - 1;
-        }
-    } else {
-        die "unknown opt: $opt\n";
-    }
-    print $fho join("\t", @ps)."\n";
+    my $ps = [ split "\t" ];
+    $ps = gal_check_fix($ps);
+    print $fho join("\t", @$ps)."\n";
 }
 close $fhi;
 close $fho;

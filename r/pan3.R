@@ -1,4 +1,5 @@
 library("GenomicRanges")
+library("plyr")
 
 # load query stats
 org.q = "HM056"
@@ -127,3 +128,12 @@ grv3.2 = reduce(grv3.1)
 sum(width(grv3.2))
 tv3 = read.table(file.path(dir, '41_novelseq/94.gal'), sep='\t', header=T, as.is=T)
 
+
+
+# blastn NT
+dir = file.path("/home/youngn/zhoup/Data/misc3/pan3", org.q)
+tg = read.table(file.path(dir, "15.gal"), header=T, sep="\t")
+tc = read.table(file.path(dir, "16_cat.tbl"), header=T, sep="\t", as.is=T)
+tg.1 = merge(tg, tc, by.x='tId', by.y='id')
+
+tg.2 = ddply(tg.1, .(kingdom), summarise, len=sum(tLen))

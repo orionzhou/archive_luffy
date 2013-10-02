@@ -14,6 +14,43 @@
 #include "location.h"
 using namespace std;
 using boost::format;
+using boost::lexical_cast;
+
+uint32_t locVecLen (const LocVec& locv) {
+    uint32_t len = 0;
+    for(vector<Location>::const_iterator it = locv.begin(); it != locv.end(); it++) {
+        Location loc = *it;
+        if(loc.beg > loc.end)
+            cerr << format("error: beg[%d] > end[%d]\n") % loc.beg % loc.end;
+        len += loc.end - loc.beg + 1;
+    }
+    return len;
+}
+LocVec locStr2Vec (const string& locS) {
+    LocVec locV;
+    vector<string> ss, ss1;
+    boost::split(ss, locS, boost::is_any_of(","));
+    for(vector<string>::const_iterator it = ss.begin(); it != ss.end(); it++) {
+        string locS1 = *it;
+        boost::split(ss1, locS1, boost::is_any_of("-_"));
+        if(ss1.size() != 2)
+            cerr << format("locstr not 2 parts: %s\n") % locS1;
+        Location loc;
+        loc.beg = lexical_cast<uint32_t>(ss1[0]);
+        loc.end = lexical_cast<uint32_t>(ss1[1]);
+        locV.push_back( loc );
+    }
+    return locV;
+}
+string locVec2Str (const LocVec& locV) {
+    vector<string> ss;
+    for(LocVec::const_iterator it = locV.begin(); it != locV.end(); it++) {
+        Location loc = *it;
+        string ss1 = str( format("%d-%d") % loc.beg % loc.end );
+        ss.push_back(ss1);
+    }
+    return boost::algorithm::join(ss, ",");
+}
 
 bool compare_loc (const Location& l1, const Location& l2) {
     if(l1.beg < l2.beg) return true;
@@ -49,6 +86,8 @@ void print_locv (const vector<Location>& locv) {
     }
     cout << "----------" << endl;
 }
+
+
 void insert_loc (const Location& loc, set<uint32_t>& begs, map<uint32_t, Location>& locm) {
     uint32_t beg(loc.beg), end(loc.end);
     set<uint32_t>::iterator its;
@@ -133,9 +172,33 @@ void insert_loc (const Location& loc, set<uint32_t>& begs, map<uint32_t, Locatio
         }
     }
 }
+LocVec loc_disjoin(const LocVec& lv) {
+    LocMap lm;
+    set<uint32_t> begs;
+    for(LocVec::const_iterator it = lv.begin(); it != lv.end(); it++) {
+        Location loc = *it;
+        insert_loc(loc, begs, lm);
+    }
+    LocVec lvo;
+    return lvo;
+}
+LocVec loc_reduce(const LocVec& lv) {
+    LocVec lvo;
+    return lvo;
+}
+LocVec loc_intersect(const LocVec& lv1, const LocVec& lv2) {
+    LocVec lv;
+    return lv;
+}
+LocVec loc_union(const LocVec& lv1, const LocVec& lv2) {
+    LocVec lv;
+    return lv;
+}
+
+
 LocVec tiling(const LocVec& lvi, const bool& flag_max) {
     LocVec lv = lvi;
-//    sort(lv.begin(), lv.end(), compare_loc);
+    //sort(lv.begin(), lv.end(), compare_loc);
     
     set<uint32_t> begs;
     set<uint32_t>::iterator its;
@@ -178,7 +241,7 @@ LocVec tiling(const LocVec& lvi, const bool& flag_max) {
         idx_ext_p = loc.idx_ext;
         end_p = loc.end;
     }
-//    print_locv(lvo);
+    //print_locv(lvo);
     return lvo;
 }
 

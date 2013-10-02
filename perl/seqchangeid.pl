@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  changeSeqID.pl - replace IDs in a fasta file
+  seqchangeid.pl - replace IDs in a fasta file
 
 =head1 SYNOPSIS
   
-  seqlen.pl [-help] [-opt convert-option] [-in input-file] [-out output-file]
+  seqchangeid.pl [-help] [-opt convert-option] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message

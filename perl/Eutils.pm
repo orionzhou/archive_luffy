@@ -44,7 +44,7 @@ sub gi2Taxid {
     }
     return $h;
 }
-sub gi2Taxon_entrez {
+sub gi2Taxid_entrez {
     my @gis = @_;
     my $db = Bio::DB::Taxonomy->new(-source=>'entrez');
     my $h1 = { map {$_=>''} @gis };
@@ -93,19 +93,33 @@ sub annotate_taxid {
     my $db = Bio::DB::Taxonomy->new(-source=>'flatfile', -nodesfile=>$fnodes, -namesfile=>$fnames, -directory=>$dir);
     for my $i (0..$#ids) {
         my $id = $ids[$i];
+        my @cats = ('') x 4;
         my $node = $db->get_taxon(-taxonid=>$id);
-        my %l;
         my @ary;
-        for my $j (1..30) {
-            my $pa = $node->ancestor();
-            last if(!$pa);
-            if($pa->rank eq "no rank") {
-                push @ary, $pa->scientific_name;
-            } else {
-                $l{$pa->rank} = $pa->scientific_name;
+        while($node) {
+            if($node->rank eq "no rank") {
+                push @ary, $node->scientific_name;
             }
-            $node = $pa;
+            $cats[0] = $node->scientific_name if $node->rank eq "superkingdom";
+            $cats[1] = $node->scientific_name if $node->rank eq "kingdom";
+            $cats[2] = $node->scientific_name if $node->rank eq "family";
+            $cats[3] = $node->scientific_name if $node->rank eq "species";
+            
+            $node = $node->ancestor();
         }
+        if($cats[1] eq "") {
+            $cats[1] = "Bacteria" if $cats[0] eq "Bacteria";
+        }
+        $h->{$id} = \@cats;
+    }
+    return $h;
+}
+
+
+
+
+1;
+__END__
         my $cat1;
         if(!exists($l{'kingdom'}) && !exists($l{'superkingdom'})) {
             $cat1 = $ary[-1];
@@ -117,15 +131,4 @@ sub annotate_taxid {
         } elsif(exists($l{'superkingdom'})) {
             $cat1 = $l{'superkingdom'};
         }
-        $h->{$id} = [$node->scientific_name, $cat1];
-        printf "%4d | %4d\r", $i+1, scalar(@ids) if ($i+1) % 10 == 0;
-    }
-    return $h;
-}
-
-
-
-
-1;
-__END__
 

@@ -6,17 +6,16 @@
   
 =head1 NAME
   
-  gal.pl - transform the coordinates of a Gal file
+  galTiling.pl - coordinate tiling of a Gal file
 
 =head1 SYNOPSIS
   
-  gal.pl [-help] [-in input-file] [-opt option] [-out output-file]
+  galTiling.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message
-      -in     input file
+      -in     input file - needs to be sorted by qId
       -out    output file
-      -opt    option (coordq / coordt)
 
 =cut
   
@@ -29,10 +28,10 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Common;
-use Seq;
+use Location;
+use Gal;
 
-my ($fi, $fo, $opt) = ('') x 3;
+my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
 my $help_flag;
 
@@ -41,10 +40,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "opt|p=s"  => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo || !$opt;
+pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin") {
     $fhi = \*STDIN;
@@ -61,31 +59,22 @@ if ($fo eq "stdout") {
 print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen tId tBeg tEnd tSrd tLen
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
+my @rows;
+my $tag = '';
 while(<$fhi>) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my @ps = split "\t";
-    if($opt =~ /^coordq$/i) {
-        my ($qId, $qBeg, $qEnd) = @ps[1..3];
-        if($qId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
-            my ($qi, $beg, $end) = ($1, $2, $3);
-            $ps[1] = $qi;
-            $ps[2] = $beg + $qBeg - 1;
-            $ps[3] = $beg + $qEnd - 1;
-        }
-    } elsif($opt =~ /^coordt$/i) {
-        my ($tId, $tBeg, $tEnd) = @ps[6..8];
-        if($tId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
-            my ($ti, $beg, $end) = ($1, $2, $3);
-            $ps[6] = $ti;
-            $ps[7] = $beg + $tBeg - 1;
-            $ps[8] = $beg + $tEnd - 1;
-        }
-    } else {
-        die "unknown opt: $opt\n";
+    $ps[-2] = locStr2Ary($ps[-2]);
+    $ps[-1] = locStr2Ary($ps[-1]);
+    if($ps[1] ne $tag && $tag ne "") {
+        gal_tiling(\@rows, $fho);
+        @rows = ();
     }
-    print $fho join("\t", @ps)."\n";
+    push @rows, \@ps;
+    $tag = $ps[1];
 }
+gal_tiling(\@rows, $fho) if @rows > 0;
 close $fhi;
 close $fho;
 

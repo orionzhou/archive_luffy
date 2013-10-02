@@ -12,12 +12,12 @@ use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwis
 
 my $data = "/home/youngn/zhoup/Data";
 my $dir = "$data/misc3/pan3";
-my $org = "HM056";
+my $org = "HM340";
 #make_chr("$dir/$org/01.tbl", "$data/genome/$org/11_genome.fa", $org, "$dir/$org");
 
 # blastn -db /project/db/blast/current/nt -outfmt '6 qseqid qstart qend sseqid sstart send length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 01.fa -out 11_blast.tbl
 
-annotate_blast_nr("$dir/$org/11_blast.tbl", "$dir/$org/15");
+annotate_blast_nr("$dir/$org/14.gal", "$dir/$org/15.gal", "$dir/$org/16_cat.tbl");
 
 sub make_chr {
     my ($fi, $fs, $tag, $fop) = @_;
@@ -46,30 +46,28 @@ sub make_chr {
     $seqH->close();
 }
 sub annotate_blast_nr {
-    my ($fi, $fo) = @_;
+    my ($fi, $fo1, $fo2) = @_;
 
-    my $t = readTable(-in=>$fi, -header=>0);
+    my $t = readTable(-in=>$fi, -header=>1);
     my @gis;
     for my $i (0..$t->nofRow-1) {
-        my $id = $t->elm($i, "col5");
+        my $id = $t->elm($i, "tId");
         if($id =~ /gi\|(\d+)\|/) {
             push @gis, $1;
-            $t->setElm($i, "col5", $1);
+            $t->setElm($i, "tId", $1);
         } else {
-            die "unknown hId: $id\n";
+            die "unknown tId: $id\n";
         }
     }
     my $h1 = gi2Taxid(@gis);
     my $h2 = annotate_taxid(values(%$h1));
     
-    my $fo1 = "$fo\_blast.tbl";
     open(FH1, ">$fo1") or die "cannot write to $fo1\n";
     print FH1 $t->tsv(1);
     close FH1;
     
-    my $fo2 = "$fo\_cat.tbl";
     open(FH2, ">$fo2") or die "cannot write to $fo2\n";
-    print FH2 join("\t", qw/id cat species/)."\n";
+    print FH2 join("\t", qw/id superkingdom kingdom family species/)."\n";
     for my $id (sort(keys(%$h1))) { 
         my $taxid = $h1->{$id};
         my @cats = @{$h2->{$taxid}};

@@ -1,16 +1,16 @@
 #!/usr/bin/perl
 use strict;
-use lib ($ENV{"SCRIPT_HOME_PERL"});
-use InitPath;
+use Getopt::Long;
+use Pod::Usage;
 use Common; 
 use Seq;
 use Medicago;
 use Data::Dumper;
 
-my $dir = "$DIR_Misc1/seq06";
+my $dir = "/home/youngn/zhoup/Data/misc1/seq06";
 my $f01 = "$dir/01_id.tbl";
 
-my $f00 = "$DIR_Genome/mt_35/10_model/66_final.gtb";
+my $f00 = "/home/youngn/zhoup/Data/genome/Mtruncatula_3.5/21_gene.gtb";
 #awk 'BEGIN{FS="\t"; print "id"} {if($3 ~ /chr[1-8]/ && $11 !~ /transposable_element_gene/) {print $2}}' $f00 > $f01
 
 #seqRec -i 01_id.tbl -o 13_seq -t acc84 -c 1

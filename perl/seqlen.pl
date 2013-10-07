@@ -33,7 +33,6 @@ use Bio::Seq;
 use Bio::SeqIO;
 
 my ($fi, $fo) = ('') x 2;
-my ($fhi, $fho);
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
@@ -44,13 +43,15 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
-if ($fi eq "stdin") {
+
+my ($fhi, $fho);
+if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
 } else {
     open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout") {
+if ($fo eq "stdout" || $fo eq "-") {
     $fho = \*STDOUT;
 } else {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";

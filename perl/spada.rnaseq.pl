@@ -4,15 +4,14 @@ use FindBin;
 use lib $FindBin::Bin;
 use File::Path qw/make_path remove_tree/;
 use Eutils;
-use InitPath;
 use Common;
 use Data::Dumper;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-my $pre = "Athaliana";
-$pre = "Mtruncatula_3.5";
-my $dir = "$DIR_misc2/spada.rnaseq/$pre";
+my $org = "Athaliana";
+$org = "Mtruncatula_3.5";
+my $dir = "/home/youngn/zhoup/Data/misc2/spada.rnaseq/$org";
 
 my $f01 = "$dir/01_acc.txt";
 my $f02 = "$dir/02_uid.tbl";

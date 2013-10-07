@@ -46,8 +46,18 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
-open(my $fhi, "<$fi") || die "Can't open file $fi for reading";
-open(my $fho, ">$fo") || die "Can't open file $fo for writing";
+my ($fhi, $fho);
+if ($fi eq "stdin" || $fi eq "-") {
+    $fhi = \*STDIN;
+} else {
+    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+}
+
+if ($fo eq "stdout" || $fo eq "-") {
+    $fho = \*STDOUT;
+} else {
+    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+}
 
 my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
 my $seqHO = Bio::SeqIO->new(-fh=>$fho, -format=>'fasta');

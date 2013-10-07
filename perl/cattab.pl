@@ -38,7 +38,12 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !@fis || !$fo;
 
-open(FHO, ">$fo") || die "cannot open $fo for writing";
+if ($fo eq "stdout" || $fo eq "-") {
+    $fho = \*STDOUT;
+} else {
+    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+}
+
 my $n_col;
 for my $i (0..$#fis) {
     my $fi = $fis[$i];
@@ -50,17 +55,17 @@ for my $i (0..$#fis) {
 
     if($i == 0) {
         print join(" ", @colnames)."\n";
-        print FHO join("\t", @colnames)."\n";
+        print $fho join("\t", @colnames)."\n";
         $n_col = @colnames;
     } else {
         die "inconsistent column number of $fi\n" if $n_col != @colnames;
     }
 
     while( <FHI> ) {
-        print FHO $_;
+        print $fho $_;
     }
     close FHI;
 }
-close FHO;
+close $fho;
 
 exit 0;

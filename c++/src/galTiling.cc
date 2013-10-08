@@ -123,23 +123,32 @@ void gal_tiling(const GalRecords& grs, string& qId, ofstream& fho, const unsigne
        
         string tId = gr.tId;
         uint32_t rqb(qBeg-gr.qBeg+1), rqe(qEnd-gr.qEnd+1);
-        LocVec rqloc = (rqloc = Location(), rqloc.beg = rqb, rqloc.end = rqe, rqloc);
-        LocVec qLoc = locOvlp(gr.qLoc, rqLoc);
+        Location rqloc;
+        rqloc.beg = rqb;
+        rqloc.end = rqe;
+        LocVec rqLoc;
+        rqLoc.push_back(rqloc);
+        
+        LocVec qLoc = loc_intersect(gr.qLoc, rqLoc);
         rqb = qLoc.begin()->beg;
         rqe = qLoc.rbegin()->end;
         qBeg = gr.qBeg + rqb - 1;
         qEnd = gr.qEnd + rqe - 1;
         
-        uint32_t rtb = coordTransform(rqb, gr.qLoc, "+", gr.tLoc, "+");
+        uint32_t rtb = coordTransform(rqb, gr.qLoc, "+", gr.tLoc, "+"); //need fill
         uint32_t rte = coordTransform(rqe, gr.qLoc, "+", gr.tLoc, "+");
-        LocVec rtloc = (rtloc = Location(), rtloc.beg = rtb, rtloc.end = rte, rtloc);
-        LocVec tLoc = locOvlp(gr.tLoc, rtLoc);
+        Location rtloc;
+        rtloc.beg = rtb;
+        rtloc.end = rte;
+        LocVec rtLoc;
+        rtLoc.push_back(rtloc);
 
+        LocVec tLoc = loc_intersect(gr.qLoc, rtLoc);
         uint32_t tBeg = tSrd=="+" ? gr.tBeg+rtb-1 : gr.tEnd-rte+1;
         uint32_t tEnd = tSrd=="+" ? gr.tBeg+rte-1 : gr.tEnd-rtb+1;
         uint32_t tLen = tEnd - tBeg + 1;
-        fho << format("%s\t%s\t%d\t%d\t%s\t%d\t%s\t%d\t%d\t%s\t%d".
-            "\t\t\t\t%g\t%g\t%g\t%s\t%s\n") 
+        fho << format("%s\t%s\t%d\t%d\t%s\t%d\t%s\t%d\t%d\t%s\t%d \
+            \t\t\t\t%g\t%g\t%g\t%s\t%s\n") 
             % id % qId % qBeg % qEnd % qSrd % qLen % tId % tBeg % tEnd % tSrd % tLen 
             % ident % e % score % locVec2Str(qLoc) % locVec2Str(tLoc);
     }

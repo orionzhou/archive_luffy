@@ -195,6 +195,9 @@ LocVec loc_union(const LocVec& lv1, const LocVec& lv2) {
     return lv;
 }
 
+uint32_t coordTransform(uint32_t& pos, const LocVec& lvi, const string& srdi, const LocVec& lvo, const string& srdo) {
+    return pos;
+}
 
 LocVec tiling(const LocVec& lvi, const bool& flag_max) {
     LocVec lv = lvi;

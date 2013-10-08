@@ -30,7 +30,7 @@ my $d11 = "$dir/11_reads";
 
 my $d21 = "$dir/21_tophat";
 my $f_bt2 = "$DIR_db/bowtie/$pre";
-run_tophat($f03, $d11, $d21, $f_bt2, $f_gff);
+#run_tophat($f03, $d11, $d21, $f_bt2, $f_gff);
 
 my $d23 = "$dir/23_cufflinks";
 my $f23 = "$d23/isoforms.fpkm_tracking";

@@ -19,35 +19,35 @@ namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 set<string> read_selected_ids(const string& fi) {
-  ifstream fhi(fi.c_str());
-  if(!fhi.is_open()) {
-    cout << format("cannot open file: %s") % fi;
-    exit(1);
-  }
-  set<string> ids;
-  string line;
-  int idx_tag = -1, idx_id = -1;
-  vector<string> ss;
-  
-  getline(fhi, line);
-  boost::split(ss, line, boost::is_any_of("\t"));
-  for(uint32_t j = 0; j < ss.size(); j ++) {
-    if(ss[j] == "id") idx_id = j;
-    if(ss[j] == "select") idx_tag = j;
-  }
-  if(idx_tag < 0 || idx_id < 0) {
-    cout << format("cannot find columns: id, select\n");
-    exit(1);
-  }
+    ifstream fhi(fi.c_str());
+    if(!fhi.is_open()) {
+        cout << format("cannot open file: %s") % fi;
+        exit(1);
+    }
+    set<string> ids;
+    string line;
+    int idx_tag = -1, idx_id = -1;
+    vector<string> ss;
 
-  while(fhi.good()) {
     getline(fhi, line);
-    if(line.length() == 0) continue;
     boost::split(ss, line, boost::is_any_of("\t"));
-    if(ss[idx_tag] == "1") ids.insert(ss[idx_id]);
-  }
-  cout << format("%d ids read from %s\n") % ids.size() % fi;
-  return ids;
+    for(uint32_t j = 0; j < ss.size(); j ++) {
+        if(ss[j] == "id") idx_id = j;
+        if(ss[j] == "select") idx_tag = j;
+    }
+    if(idx_tag < 0 || idx_id < 0) {
+        cout << format("cannot find columns: id, select\n");
+        exit(1);
+    }
+
+    while(fhi.good()) {
+        getline(fhi, line);
+        if(line.length() == 0) continue;
+        boost::split(ss, line, boost::is_any_of("\t"));
+        if(ss[idx_tag] == "1") ids.insert(ss[idx_id]);
+    }
+    cout << format("%d ids read from %s\n") % ids.size() % fi;
+    return ids;
 }
 
 int main( int argc, char* argv[] ) {
@@ -57,7 +57,7 @@ int main( int argc, char* argv[] ) {
   po::options_description cmdOpts("Allowed options");
   cmdOpts.add_options()
     ("help,h", "produce help message")
-    ("f_acc,a", po::value<string>(&f_acc)->default_value("/home/youngn/zhoup/repos/code/conf/acc_ids.tbl"), "acc option file")
+    ("f_acc,a", po::value<string>(&f_acc)->default_value("/home/youngn/zhoup/repos/luffy/conf/acc_ids.tbl"), "acc option file")
     ("opt_ind,t", po::value<string>(&opt_ind), "ind option")
     ("opt_conf,c", po::value<int>(&opt_conf)->default_value(1), "id_all tion")
     ("f_in,i", po::value<string>(&f_in), "input sequence file")

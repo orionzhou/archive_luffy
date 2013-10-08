@@ -21,7 +21,7 @@ my $f00 = "/home/youngn/zhoup/Data/genome/Mtruncatula_3.5/21_gene.gtb";
 
 #cut -f1-6 13_seq.tbl > 32_info.tbl
 
-my $opt_ind = "opt02";
+my $opt_ind = "acc31";
 my ($accs, $opt_conf) = get_mt_ids($opt_ind);
 print "seqSplit -i 13_seq.tbl -t $opt_ind -c $opt_conf -d $opt_ind/01_stat.tbl -o $opt_ind\n"; 
 

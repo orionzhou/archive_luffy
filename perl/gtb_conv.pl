@@ -49,7 +49,6 @@ GetOptions(
     "out|o=s"  => \$fo,
     "fmt|f=s"  => \$fmt,
     "ref|r=s"  => \$fr,
-    "size|s=s" => \$fs
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;

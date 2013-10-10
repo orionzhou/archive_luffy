@@ -48,7 +48,7 @@ GetOptions(
     "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fq || !$ft || !$ft;
+pod2usage(2) if !$fq || !$ft || !$fc;
 
 my $f_tmp = "$fc.tmp";
 compare_models($fq, $ft, $f_tmp);

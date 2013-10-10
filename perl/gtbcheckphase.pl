@@ -6,48 +6,44 @@
   
 =head1 NAME
   
-  gal2psl.pl - convert GAL file to PSL format
+  gtbcheckphase.pl - check and fix a Gtb file
 
 =head1 SYNOPSIS
   
-  gal2psl.pl [-help] [-in input-file] [-out output-file]
+  gtbcheckphase.pl [-help] [-in input-file] [-seq refseq-file] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-
-=head1 DESCRIPTION
-
-  This program converts a GAL file to an output PSL file
+      -seq    refseq file
 
 =cut
   
 #### END of POD documentation.
 #-----------------------------------------------------------------------------
-
-
 use strict;
 use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
-use Gal;
+use Gtb;
 
-my ($fi, $fo) = ('', '');
-my ($fhi, $fho);
+my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"   => \$help_flag,
-    "in|i=s"   => \$fi,
-    "out|o=s"  => \$fo,
+    "help|h"  => \$help_flag,
+    "in|i=s"  => \$fi,
+    "out|o=s" => \$fo,
+    "seq|s=s" => \$fs,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi || !$fo || !$fs;
 
+my ($fhi, $fho);
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
 } else {
@@ -60,14 +56,21 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
+print $fho join("\t", qw/id parent chr beg end strand locE locI locC loc5 loc3 phase source conf cat1 cat2 cat3 note/)."\n";
+my $n_fixed = 0;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
-    next unless @$ps == 19;
-    $ps = gal2psl($ps);
+    next unless @$ps >= 18;
+    my @phases = gtbcheckphase($ps, $fs);
+    if(@phases) {
+        $n_fixed ++;
+        $ps->[11] = join(",", @phases);
+    }
     print $fho join("\t", @$ps)."\n";
 }
+print "  $n_fixed non-0 frames fixed\n";
 close $fhi;
 close $fho;
 

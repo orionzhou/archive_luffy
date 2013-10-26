@@ -15,8 +15,9 @@ ln -sf $CONFIGDIR/hg.conf .hg.conf
 [[ -h .ssh ]] && rm .ssh
 [[ -d .ssh ]] || mkdir .ssh
 ln -sf $CONFIGDIR/ssh.conf .ssh/config
-cp -f $CONFIGDIR/authorized_keys .ssh/authorized_keys
 chmod 600 $CONFIGDIR/ssh.conf
+[[ -h .ssh/authorized_keys ]] && rm .ssh/authorized_keys
+cp -f $CONFIGDIR/authorized_keys .ssh/authorized_keys
 
 [[ -h .vim ]] && rm .vim
 [[ -d .vim ]] || mkdir .vim

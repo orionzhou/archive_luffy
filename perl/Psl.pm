@@ -9,7 +9,7 @@ use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwi
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter/;
-@EXPORT = qw/psl2gal chain2gal net2gal/;
+@EXPORT = qw/psl2gal net2gal/;
 @EXPORT_OK = qw//;
 
 sub psl2gal {
@@ -58,51 +58,6 @@ sub psl2gal {
         $match, $misMatch, $baseN, '', '', $score, $qLocS, $tLocS];
 }
 
-sub chain2gal {
-    my ($fhi, $fho, $fq, $ft) = @_;
-    print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen 
-        tId tBeg tEnd tSrd tLen
-        match misMatch baseN ident e score/)."\n";
-    while( <$fhi> ) {
-        chomp;
-        my @ps = split /\s/;
-        if($ps[0] eq "chain") {
-            my ($score, $tId, $tSize, $tSrd, $tBeg, $tEnd, 
-                $qId, $qSize, $qSrd, $qBeg, $qEnd, $id) = @ps[1..$#ps];
-            $tSrd eq "+" || die "$id: tSrd -\n";
-            
-            my $seqT = seqRet([[$tBeg+1, $tEnd]], $tId, $tSrd, $ft);
-            my $seqQ = $qSrd eq "-" ? 
-                  seqRet([[$qSize-$qEnd+1, $qSize-$qBeg]], $qId, $qSrd, $fq)
-                : seqRet([[$qBeg+1, $qEnd]], $qId, $qSrd, $fq);
-
-            my ($td, $qd) = (0, 0); 
-            while( <$fhi> ) {
-                last if /^\s*\n$/;
-                my @pps = split /\s/;
-                my $len = $pps[0];
-                my ($dt, $dq) = (0, 0);
-                ($dt, $dq) = @pps[1..2] if @pps >= 3;
-
-                my ($tb, $te) = ($tBeg+$td+1, $tBeg+$td+$len);
-                my ($qb, $qe) = ($qBeg+$qd+1, $qBeg+$qd+$len);
-                ($qb, $qe) = ($qSize-$qe+1, $qSize-$qb+1) if $qSrd eq "-";
-
-                my $tSeq = substr($seqT, $td, $len);
-                my $qSeq = substr($seqQ, $qd, $len);
-                my ($match, $misMatch, $baseN) = seqCompare($qSeq, $tSeq);
-                
-                my $sco = "";
-                print $fho join("\t", $id, $qId, $qb, $qe, $qSrd, $len,
-                    $tId, $tb, $te, $tSrd, $len, $match, $misMatch, $baseN, ('')x3)."\n";
-                $td += $len + $dt;
-                $qd += $len + $dq;
-            }
-        }
-    }
-    close $fhi;
-    close $fho;
-}
 sub net2gal {
     my ($fhi, $fho) = @_;
     print $fho join("\t", qw/level id type qId qBeg qEnd qSrd qLen 

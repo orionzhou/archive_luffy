@@ -6,17 +6,17 @@
   
 =head1 NAME
   
-  gal.pl - transform the coordinates of a Gal file
+  galcoord.pl - transform the coordinates of a Gal file
 
 =head1 SYNOPSIS
   
-  gal.pl [-help] [-in input-file] [-opt option] [-out output-file]
+  galcoord.pl [-help] [-in input-file] [-opt option] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-      -opt    option (coordq / coordt)
+      -opt    option (qry / tgt)
 
 =cut
   
@@ -65,7 +65,7 @@ while(<$fhi>) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my @ps = split "\t";
-    if($opt =~ /^coordq$/i) {
+    if($opt =~ /^qry$/i) {
         my ($qId, $qBeg, $qEnd) = @ps[1..3];
         if($qId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
             my ($qi, $beg, $end) = ($1, $2, $3);
@@ -73,7 +73,7 @@ while(<$fhi>) {
             $ps[2] = $beg + $qBeg - 1;
             $ps[3] = $beg + $qEnd - 1;
         }
-    } elsif($opt =~ /^coordt$/i) {
+    } elsif($opt =~ /^tgt$/i) {
         my ($tId, $tBeg, $tEnd) = @ps[6..8];
         if($tId =~ /^(\w+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
             my ($ti, $beg, $end) = ($1, $2, $3);

@@ -6,17 +6,26 @@ org = "Athaliana"
 org = "Mtruncatula_3.5"
 
 dir = file.path(DIR_Misc2, "spada.rnaseq", org, "31_rnaseq")
-tg = read.table(file.path(dir, "05_gs.tbl"), sep="\t", header=T, as.is=T)
-ts = read.table(file.path(dir, "15_spada.tbl"), sep="\t", header=T, as.is=T)
 
+fi1 = file.path(dir, "05_gs.tbl")
+fi2 = file.path(DIR_Misc2, "spada.affy", org, "25.tbl")
+fo = file.path(dir, "06_gs.tbl")
 
-t = ts
-cutoff_fpkm = 1 
-sum(t$fpkm>cutoff_fpkm, na.rm=T)
-sum(t$fpkm>cutoff_fpkm, na.rm=T)/nrow(t)
+fi1 = file.path(dir, "15_spada.tbl")
+fi2 = file.path(DIR_Misc2, "spada.affy", org, "35.tbl")
+fo = file.path(dir, "16_spada.tbl")
 
-cutoff_cov = 2
-sum(t$cov>cutoff_cov, na.rm=T)
-sum(t$cov>cutoff_cov, na.rm=T)/nrow(t)
+tr = read.table(fi1, sep="\t", header=T, as.is=T)[,-4]
+tr$fpkm[is.na(tr$fpkm)] = 0
+tr$cov[is.na(tr$cov)] = 0
+#tr = cbind(tr, call.rna=tr$fpkm>=1)
+tr = cbind(tr, call.rna=tr$cov>=2)
 
+ta = read.table(fi2, sep="\t", header=T, as.is=T)
+identical(tr$id, ta$id)
+t = cbind(tr, ta[-1])
+t = cbind(t, call=t$call.rna | t$call.affy)
+sum(t$call, na.rm=T)
+sum(t$call, na.rm=T)/nrow(t)
 
+write.table(t, fo, row.names=F, col.names=T, sep="\t", quote=F)

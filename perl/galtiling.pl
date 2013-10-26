@@ -56,7 +56,7 @@ if ($fo eq "stdout") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen tId tBeg tEnd tSrd tLen
+print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
 my @rows;

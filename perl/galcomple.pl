@@ -10,7 +10,7 @@
 
 =head1 SYNOPSIS
   
-  galcomple.pl [-help] [-in input-file] [-out output-file]
+  galcomple.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
 
   Options:
       -help   brief help message

@@ -6,18 +6,16 @@
   
 =head1 NAME
   
-  galfix.pl - Check and fix a GAL file
+  galexpand.pl - expand a file of Gal[wide] format to Gal[long] format
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  galexpand.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
 
 =cut
   
@@ -31,10 +29,8 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Location;
-use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my ($fq, $ft) = ('') x 2; 
 my ($fhi, $fho);
 my $help_flag;
 
@@ -43,12 +39,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
-pod2usage(2) if !$fq || !$ft;
 
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
@@ -62,21 +55,26 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
+print $fho join("\t", qw/id qId qBeg qEnd qSrd tId tBeg tEnd tSrd/)."\n";
 
-my $cnt = 0;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
     next unless @$ps == 19;
-
-    my ($flag, $nps) = gal_fix($ps, $fq, $ft);
-    print $fho join("\t", @$nps)."\n";
-    $cnt += $flag;
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($rqloc, $rtloc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    for my $i (0..@$rqloc-1) {
+        my ($rqb, $rqe) = @{$rqloc->[$i]};
+        my ($rtb, $rte) = @{$rtloc->[$i]};
+        my ($qb, $qe) = $qSrd eq "-" ? ($qEnd-$rqe+1, $qEnd-$rqb+1)
+            : ($qBeg+$rqb-1, $qBeg+$rqe-1);
+        my ($tb, $te) = $tSrd eq "-" ? ($tEnd-$rte+1, $tEnd-$rtb+1)
+            : ($tBeg+$rtb-1, $tBeg+$rte-1);
+        print $fho join("\t", $id, $qId, $qb, $qe, $qSrd, $tId, $tb, $te, $tSrd)."\n";
+    }
 }
-print STDERR "$cnt rows fixed\n";
 close $fhi;
 close $fho;
 

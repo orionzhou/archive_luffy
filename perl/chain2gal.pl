@@ -6,18 +6,16 @@
   
 =head1 NAME
   
-  galfix.pl - Check and fix a GAL file
+  chain2gal.pl - convert a Chain file to Gal format
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  chain2gal.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
 
 =cut
   
@@ -30,11 +28,10 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Common;
 use Location;
-use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my ($fq, $ft) = ('') x 2; 
 my ($fhi, $fho);
 my $help_flag;
 
@@ -43,12 +40,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
-pod2usage(2) if !$fq || !$ft;
 
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
@@ -65,18 +59,36 @@ if ($fo eq "stdout" || $fo eq "-") {
 print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
-my $cnt = 0;
 while( <$fhi> ) {
     chomp;
-    next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    next unless @$ps == 19;
-
-    my ($flag, $nps) = gal_fix($ps, $fq, $ft);
-    print $fho join("\t", @$nps)."\n";
-    $cnt += $flag;
+    my @ps = split /\s/;
+    if($ps[0] eq "chain") {
+        my ($score, $tId, $tSize, $tSrd, $tBeg, $tEnd, 
+            $qId, $qSize, $qSrd, $qBeg, $qEnd, $id) = @ps[1..$#ps];
+        $tSrd eq "+" || die "$id: tSrd -\n";
+        $tBeg += 1;
+        $qBeg += 1;
+        ($qBeg, $qEnd) = ($qSize-$qEnd+1, $qSize-$qBeg+1) if $qSrd eq "-";
+        
+        my ($td, $qd) = (0, 0);
+        my ($rtloc, $rqloc) = ([], []);
+        while( <$fhi> ) {
+            last if /^\s*\n$/;
+            my @pps = split /\s/;
+            my $len = $pps[0];
+            my ($dt, $dq) = (0, 0);
+            ($dt, $dq) = @pps[1..2] if @pps >= 3;
+            push @$rtloc, [$td+1, $td+$len];
+            push @$rqloc, [$qd+1, $qd+$len];
+            
+            $td += $len + $dt;
+            $qd += $len + $dq;
+        }
+        my ($rtlocs, $rqlocs) = (locAry2Str($rtloc), locAry2Str($rqloc));
+        print $fho join("\t", $id, $qId, $qBeg, $qEnd, $qSrd, $qSize,
+            $tId, $tBeg, $tEnd, $tSrd, $tSize, ('')x5, $score, $rqlocs, $rtlocs)."\n";
+    }
 }
-print STDERR "$cnt rows fixed\n";
 close $fhi;
 close $fho;
 

@@ -6,6 +6,7 @@ use lib $FindBin::Bin;
 use File::Path qw/make_path remove_tree/;
 use Data::Dumper;
 use List::Util qw/min max sum/;
+use Common;
 
 my $org = "Athaliana";
 #$org = "Mtruncatula_3.5";
@@ -15,6 +16,37 @@ my $f01 = "$dir/01_probe.tbl";
 my $f02 = "$dir/02_probe.fa";
 #get_probe_seq("$dir/00.tbl", $f01, $f02);
 
+my $f13 = "$dir/13.gal";
+#probe_to_gene($f13, "$dir/21_crp_gs.gtb", "$dir/23.tbl");
+#probe_to_gene($f13, "$dir/31_crp_spada.gtb", "$dir/33.tbl");
+
+sub probe_to_gene {
+    my ($fp, $fg, $fo) = @_;
+    my $tp = readTable(-in=>$fp, -header=>1);
+    my $tg = readTable(-in=>$fg, -header=>1);
+
+    open(FH, ">$fo") or die "cannot write to $fo\n";
+    print FH join("\t", qw/id set num probes/)."\n";
+    for my $i (0..$tg->nofRow-1) {
+        my ($id, $chr, $beg, $end) = map {$tg->elm($i, $_)} qw/id chr beg end/;
+        my $tps = $tp->match_pattern("\$_->[6] eq '$chr' && \$_->[7] >= $beg && \$_->[8] <= $end");
+        my @probes = $tps->col('qId');
+        my ($set, $num) = ('', 0);
+        if(@probes > 0) {
+            my $h;
+            for my $probe (@probes) {
+                my ($pset, $cnt) = split(/\./, $probe);
+                $h->{$pset} ||= 0;
+                $h->{$pset} ++;
+            }
+            my @sets = sort {$h->{$a} <=> $h->{$b}} keys(%$h);
+            $set = $sets[-1];
+            $num = $h->{$set};
+        }
+        print FH join("\t", $id, $set, $num, join(",", @probes))."\n";
+    }
+    close FH;
+}
 sub get_probe_seq {
     my ($fi, $fo1, $fo2) = @_;
     my ($fhi, $fho);

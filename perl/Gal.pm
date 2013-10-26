@@ -165,33 +165,6 @@ sub gal_check {
         }
     }
 }
-sub gal_fix {
-    my ($ps) = @_;
-    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
-    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
-    my $srd = ($qSrd eq $tSrd) ? "+" : "-";
-    
-    my @qlens = map {$_->[1]-$_->[0]+1} @$qLoc;
-    my $ref = tiling($qLoc, \@qlens, 2);
-    my (@rqloc, @rtloc);
-    for (@$ref) {
-        my ($rqb, $rqe, $idx) = @$_;
-
-        my ($qb, $qe) = @{$qLoc->[$idx]};
-        my ($tb, $te) = @{$tLoc->[$idx]};
-        my $rtb = $rqb - $qb + $tb;
-        my $rte = $rqe - $qb + $tb;
-
-        if(@rqloc == 0 || $rtb > $rtloc[-1]->[1]) { 
-            push @rqloc, [$rqb, $rqe];
-            push @rtloc, [$rtb, $rte];
-        }
-    }
-    $ps->[17] = locAry2Str(\@rqloc);
-    $ps->[18] = locAry2Str(\@rtloc);
-    return $ps;
-}
 
 sub gal_complete {
     my ($ps, $fq, $ft) = @_;
@@ -214,6 +187,39 @@ sub gal_complete {
     ($match, $misMatch, $baseN) = seqCompare($qSeq, $tSeq);
     @$ps[11..13] = ($match, $misMatch, $baseN);
     return $ps;
+}
+
+sub gal_fix {
+    my ($ps, $fq, $ft) = @_;
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    my $srd = ($qSrd eq $tSrd) ? "+" : "-";
+    
+    my @qlens = map {$_->[1]-$_->[0]+1} @$qLoc;
+    my $ref = tiling($qLoc, \@qlens, 2);
+    my (@rqloc, @rtloc);
+    for (@$ref) {
+        my ($rqb, $rqe, $idx) = @$_;
+
+        my ($qb, $qe) = @{$qLoc->[$idx]};
+        my ($tb, $te) = @{$tLoc->[$idx]};
+        my $rtb = $rqb - $qb + $tb;
+        my $rte = $rqe - $qb + $tb;
+
+        if(@rqloc == 0 || $rtb > $rtloc[-1]->[1]) { 
+            push @rqloc, [$rqb, $rqe];
+            push @rtloc, [$rtb, $rte];
+        }
+    }
+    my ($nqLocS, $ntLocS) = (locAry2Str(\@rqloc), locAry2Str(\@rtloc));
+    my $flag = 0;
+    if($nqLocS ne $qLocS) {
+        $flag = 1;
+        @$ps[17,18] = ($nqLocS, $ntLocS);
+    }
+    $ps = gal_complete($ps, $fq, $ft);
+    return ($flag, $ps);
 }
 
 sub gal_break {
@@ -256,7 +262,7 @@ sub gal_break {
         my $tlen = $rte - $rtb + 1;
         my ($qls, $tls) = (locAry2Str(\@nrql), locAry2Str(\@nrtl));
         print $fho join("\t", $id.".".($cnt++), $qId, $qb, $qe, $qSrd, $qSize, 
-            $tId, $tb, $te, $tSrd, $tSize, ('')x6, $qls, $tls);
+            $tId, $tb, $te, $tSrd, $tSize, ('')x6, $qls, $tls)."\n";
     }
 }
 

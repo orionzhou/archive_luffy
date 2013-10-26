@@ -1,0 +1,16 @@
+#PBS -l nodes=1:ppn=2,mem=8GB,walltime=48:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q lab
+
+K=${K:-75}
+ORG=${ORG:-Mtruncatula_4.0}
+
+echo $ORG ${K}mer
+
+cd $data/db/gem
+pre=$ORG\_${k}mer
+gem-mappability -I $ORG.gem -l $k -o $pre
+gem-2-wig -I $ORG.gem -i $pre.mappability -o $pre
+wigToBigWig $pre.wig $pre.sizes $pre.bw 
+

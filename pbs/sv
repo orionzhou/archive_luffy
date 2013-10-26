@@ -1,0 +1,7 @@
+#PBS -l nodes=1:ppn=4,mem=12GB,walltime=72:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q lab
+
+: ${SAMPLE? not defined}
+pipe_sv.pl -s $SAMPLE

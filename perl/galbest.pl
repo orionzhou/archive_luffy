@@ -6,18 +6,16 @@
   
 =head1 NAME
   
-  galfix.pl - Check and fix a GAL file
+  galbest.pl - Filter a GAL file keeping only best hit(s)
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  galbest.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
 
 =cut
   
@@ -31,10 +29,8 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Location;
-use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my ($fq, $ft) = ('') x 2; 
 my ($fhi, $fho);
 my $help_flag;
 
@@ -43,12 +39,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
-pod2usage(2) if !$fq || !$ft;
 
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
@@ -65,18 +58,28 @@ if ($fo eq "stdout" || $fo eq "-") {
 print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
-my $cnt = 0;
+my $h;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
     next unless @$ps == 19;
-
-    my ($flag, $nps) = gal_fix($ps, $fq, $ft);
-    print $fho join("\t", @$nps)."\n";
-    $cnt += $flag;
+    my ($qId, $score) = @$ps[1,16];
+    if(!exists $h->{$qId}) {
+        $h->{$qId} = [$score, $ps];
+    } elsif($score > $h->{$qId}->[0]) {
+        $h->{$qId} = [$score, $ps];
+    } elsif($score == $h->{$qId}->[0]) {
+        push @{$h->{$qId}}, $ps;
+    }
 }
-print STDERR "$cnt rows fixed\n";
+
+for my $qId (sort(keys(%$h))) {
+    my ($score, @pss) = @{$h->{$qId}};
+    for my $ps (@pss) {
+        print $fho join("\t", @$ps)."\n";
+    }
+}
 close $fhi;
 close $fho;
 

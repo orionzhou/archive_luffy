@@ -6,18 +6,15 @@
   
 =head1 NAME
   
-  galfix.pl - Check and fix a GAL file
+  galstat.pl - Print a brief summary of a GAL file
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  galstat.pl [-help] [-in input-file]
 
   Options:
       -help   brief help message
       -in     input file
-      -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
 
 =cut
   
@@ -31,10 +28,10 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Location;
-use Gal;
+use List::Util qw/min max sum/;
+use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 
 my ($fi, $fo) = ('') x 2;
-my ($fq, $ft) = ('') x 2; 
 my ($fhi, $fho);
 my $help_flag;
 
@@ -42,13 +39,9 @@ my $help_flag;
 GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
-    "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
-pod2usage(2) if !$fq || !$ft;
+pod2usage(2) if !$fi;
 
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
@@ -56,29 +49,26 @@ if ($fi eq "stdin" || $fi eq "-") {
     open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
-} else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
-}
-
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
-
-my $cnt = 0;
+my $h;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
     next unless @$ps == 19;
-
-    my ($flag, $nps) = gal_fix($ps, $fq, $ft);
-    print $fho join("\t", @$nps)."\n";
-    $cnt += $flag;
+    my ($qId) = @$ps[1];
+    $h->{$qId} ||= 0;
+    $h->{$qId} ++;
 }
-print STDERR "$cnt rows fixed\n";
 close $fhi;
-close $fho;
+
+my $cntQ = scalar(keys %$h);
+my $cntT = sum(values(%$h));
+printf "%8d queries -> %8d targets\n", $cntQ, $cntT;
+my @dups = grep {$h->{$_} > 1} keys %$h;
+my $cntDupHits = @dups ? sum( map {$h->{$_}} @dups ) : 0;
+my $cntU = $cntQ - @dups;
+printf "    %8d uniquely mapped\n", $cntU;
+printf "    %8d non-uniquely mapped to %8d targets\n", scalar(@dups), $cntDupHits;
 
 
 __END__

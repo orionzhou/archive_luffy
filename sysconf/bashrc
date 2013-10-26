@@ -1,5 +1,5 @@
 #!/bin/bash
-shopt -s nocasematch
+#shopt -s nocasematch
 export PS1="\[$(tput setaf 7)\]\u@\h:\W $ \[$(tput sgr0)\]"
 alias vi='vim'
 alias ll='ls -l'
@@ -59,7 +59,7 @@ if [[ -d $soft ]]; then
         R root samtools tophat trimAl wise2 GEM kent
     do
         if [[ -d $soft/$subpath/bin ]]; then
-            export PATH=$soft/$subpath/bin:$PATH
+            export PATH=$PATH:$soft/$subpath/bin
         fi
         if [[ -d $soft/$subpath/bin64 ]]; then
             export PATH=$soft/$subpath/bin64:$PATH
@@ -115,4 +115,13 @@ export PATH=$prefix/soft/tex/bin/x86_64-linux:$PATH
 
 # ROOT
 export ROOTSYS=$prefix/soft/root
+
+# print the header (the first line of input)
+# and then run the specified command on the body (the rest of the input)
+# use it in a pipeline, e.g. ps -o pid,comm | body sort -k2
+body() {
+    IFS= read -r header
+    printf '%s\n' "$header"
+    "$@"
+}
 

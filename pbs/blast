@@ -1,0 +1,12 @@
+#PBS -l nodes=1:ppn=4,mem=20GB,walltime=20:00:00
+#PBS -m ae
+#PBS -q lab 
+
+QRY=${QRY:-HM056}
+TGT=${TGT:-HM101}
+
+cd $data/misc3/pan3/$QRY
+blastn -db $data/db/blast/nt -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 01.fa -out 11_blast.tbl
+
+cd $data/misc3/$QRY\_$TGT/23_blat
+#blat $data/db/blat/$TGT.2bit 52_novel.fa 71_blat.psl -noTrimA -noHead

@@ -1,5 +1,5 @@
 #!/bin/bash
-#shopt -s nocasematch
+shopt -s nocasematch
 export PS1="\[$(tput setaf 7)\]\u@\h:\W $ \[$(tput sgr0)\]"
 alias vi='vim'
 alias ll='ls -l'
@@ -8,8 +8,8 @@ alias du='du -BM --max-depth=1'
 alias ssh='ssh -Y'
 umask 022
 
-system=`uname -s`
-arch=`uname -m | tr ' ' '-'`
+system=$(uname -s)
+arch=$(uname -m | tr ' ' '-')
 
 #color scheme for "ls" command
 if [ "$system" = "Linux" ]; then
@@ -25,18 +25,15 @@ fi
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
     export repo=$home/repos
-elif [[ $HOSTNAME =~ ^login|^tern|^noddy ]]; then
-    if [[ $HOSTNAME =~ ^noddy|^tern && "`dropbox.py status`" = 'Dropbox isn'"'"'t running!' ]] ; then
-        dropbox.py start ;
-    fi 
+elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
+    export repo=$home/repos
 elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     export soft_msi=/nfs/soft-sle11
     if [[ $HOSTNAME =~ ^node ]]; then
         export soft_msi=/soft
     fi
     
-    for subpath in blat/34 \
-      exonerate/2.2.0 structure/2.3.1 clustalw/2.1
+    for subpath in blat/34 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
     do
         if [[ -d $soft_msi/$subpath/bin ]]; then
             export PATH=$soft_msi/$subpath/bin:$PATH
@@ -116,12 +113,4 @@ export PATH=$prefix/soft/tex/bin/x86_64-linux:$PATH
 # ROOT
 export ROOTSYS=$prefix/soft/root
 
-# print the header (the first line of input)
-# and then run the specified command on the body (the rest of the input)
-# use it in a pipeline, e.g. ps -o pid,comm | body sort -k2
-body() {
-    IFS= read -r header
-    printf '%s\n' "$header"
-    "$@"
-}
 

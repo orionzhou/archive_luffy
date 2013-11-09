@@ -184,7 +184,7 @@ sub gal_complete {
         : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ]; 
     my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
     my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
-    ($match, $misMatch, $baseN) = seqCompare($qSeq, $tSeq);
+    ($match, $misMatch, $baseN) = seqCompare($tSeq, $qSeq);
     @$ps[11..13] = ($match, $misMatch, $baseN);
     return $ps;
 }

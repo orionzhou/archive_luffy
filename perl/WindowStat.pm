@@ -6,7 +6,6 @@ use Seq;
 use Readfile;
 use Path::Class;
 use Data::Dumper;
-use Writefile;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;

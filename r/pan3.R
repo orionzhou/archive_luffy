@@ -35,108 +35,102 @@ grg.t = GRanges(seqnames=Rle(tg.t$id), ranges=IRanges(tg.t$beg, end=tg.t$end), s
 sum(width(gra.t))
 sum(width(grg.t))
 
-# load comparison
+# working dir
 dir = sprintf('/home/youngn/zhoup/Data/misc3/%s_%s', org.q, org.t)
-# round 1 - generating novel sequences
-# galexpand.pl -i 35.gal -o 35.gall
-t1w = read.table(file.path(dir, '23_blat/35.gal'), sep='\t', header=T, as.is=T)[,1:17]
-sum(t1w$match) / (sum(t1w$match) + sum(t1w$misMatch))
-t1 = read.table(file.path(dir, '23_blat/35.gall'), sep='\t', header=T, as.is=T)
 
-gr1.1 = GRanges(seqnames=Rle(t1$tId), ranges=IRanges(t1$tBeg, end=t1$tEnd), seqinfo=si.q)
-gr1.2 = reduce(gr1.1)
-sum(width(gr1.2))
+# generating novel sequences
+pre="nov3"
+fw = sprintf("%s/41_novelseq/%s.pre.gal", dir, pre)
+tw = read.table(fw, sep='\t', header=T, as.is=T)[,1:17]
+sum(tw$match) / (sum(tw$match) + sum(tw$misMatch))
+fl = sprintf("%s/41_novelseq/%s.pre.gall", dir, pre)
+tl = read.table(fl, sep='\t', header=T, as.is=T)
 
-grn1 = setdiff(gra.q, union(gr1.2, grg.q))
+grm1 = GRanges(seqnames=Rle(tl$tId), ranges=IRanges(tl$tBeg, end=tl$tEnd), seqinfo=si.q)
+grm2 = reduce(grm1)
+sum(width(grm2))
+
+grn1 = setdiff(gra.q, union(grm2, grg.q))
 sum(width(grn1))
 
-tn1.1 = data.frame(id=as.character(seqnames(grn1)), beg=as.numeric(start(grn1)), end=as.numeric(end(grn1)), len=as.numeric(width(grn1)))
-tn1.2 = tn1.1[tn1.1$len>=1000,]
-sum(tn1.2$len)
-write.table(tn1.2, file.path(dir, '41_novelseq/10_novel.tbl'), col.names=T, row.names=F, sep='\t', quote=F)
+tn1 = data.frame(id=as.character(seqnames(grn1)), beg=as.numeric(start(grn1)), end=as.numeric(end(grn1)), len=as.numeric(width(grn1)))
+tn2 = tn1[tn1$len>=1000,]
+sum(tn2$len)
+
+fn = sprintf("%s/41_novelseq/%s.tbl", dir, pre)
+# write.table(tn2, fn, col.names=T, row.names=F, sep='\t', quote=F)
+# seqextract.pl -i $data/genome/$org_q/11_genome.fa -o $pre.fa -n $pre.tbl
 
 
-# round 2
-# seqextract.pl -i $data/genome/$org_q/11_genome.fa -o 11_novel.fa -n 10_novel.tbl
-# blat $data/db/blat/Mtruncatula_4.0.2bit -ooc=$data/db/blat/Mtruncatula_4.0.2bit.tile11.ooc 11_novel.fa 12.psl -noHead -noTrimA
-# psl2gal.pl -i 12.psl -o - | galcoord.pl -i - -p qry -o - | galfix.pl -i - -q $data/genome/$org_q/11_genome.fa -t $data/genome/HM101/11_genome.fa -o 13.gal
-# galexpand.pl -i 13.gal -o 13.gall
-t2w = read.table(file.path(dir, '41_novelseq/13.gal'), sep='\t', header=T, as.is=T)[,1:17]
-sum(t2w$match) / (sum(t2w$match) + sum(t2w$misMatch))
-t2 = read.table(file.path(dir, '41_novelseq/13.gall'), sep='\t', header=T, as.is=T)
+# plot substitution rates
+intvs = c(0,100,1000,10000,100000,Inf)
+labels = c("1-100", "100-1000", "1k-10k", "10k-100k", "100k+")
+tw.1 = cbind(tw, alnlen=tw$match+tw$misMatch)
+tw.1 = tw.1[tw.1$alnlen > 0,]
+tw.2 = cbind(tw.1, sub=tw.1$misMatch/tw.1$alnlen, intv=cut(tw.1$alnlen, breaks=intvs, labels=labels))
+tws = ddply(tw.2, .(intv), summarise, cnt=length(sub), misMatch=sum(misMatch), alnlen=sum(alnlen), sub.mean=sum(misMatch)/(sum(match)+sum(misMatch)), sub.median=median(sub))
 
-gr2.1 = GRanges(seqnames=Rle(t2$qId), ranges=IRanges(t2$qBeg, end=t2$qEnd), seqinfo=si.q)
-gr2.2 = reduce(gr2.1)
-sum(width(gr2.2))
 
-grn2 = setdiff(grn1, gr2.2)
-sum(width(grn2))
-
-tn2.1 = data.frame(id=as.character(seqnames(grn2)), beg=as.numeric(start(grn2)), end=as.numeric(end(grn2)), len=as.numeric(width(grn2)))
-tn2.2 = tn2.1[tn2.1$len>=1000,]
-sum(tn2.2$len)
-# write.table(tn2.2, file.path(dir, '41_novelseq/20_novel.tbl'), col.names=T, row.names=F, sep='\t', quote=F)
-
-# round 3
-# seqextract.pl -i $data/genome/$org_q/11_genome.fa -o 21_novel.fa -n 20_novel.tbl
-# blat $data/db/blat/Mtruncatula_4.0.2bit 21_novel.fa -ooc=$data/db/blat/Mtruncatula_4.0.2bit.tile11.ooc 22.psl -noHead -noTrimA
-# psl2gal.pl -i 22.psl -o - | galcoord.pl -i - -p qry -o - | galfix.pl -i - -q $data/genome/$org_q/11_genome.fa -t $data/genome/HM101/11_genome.fa -o 23.gal
-# galexpand.pl -i 23.gal -o 23.gall
-t3w = read.table(file.path(dir, '41_novelseq/23.gal'), sep='\t', header=T, as.is=T)[,1:17]
-sum(t3w$match) / (sum(t3w$match) + sum(t3w$misMatch))
-t3 = read.table(file.path(dir, '41_novelseq/23.gall'), sep='\t', header=T, as.is=T)
-
-gr3.1 = GRanges(seqnames=Rle(t3$qId), ranges=IRanges(t3$qBeg, end=t3$qEnd), seqinfo=si.q)
-gr3.2 = reduce(gr3.1)
-sum(width(gr3.2))
-
-grn3 = setdiff(grn2, gr3.2)
-sum(width(grn3))
-
-tn3.1 = data.frame(id=as.character(seqnames(grn3)), beg=as.numeric(start(grn3)), end=as.numeric(end(grn3)), len=as.numeric(width(grn3)))
-tn3.2 = tn3.1[tn3.1$len>=1000,]
-sum(tn3.2$len)
-# write.table(tn3.2, file.path(dir, '41_novelseq/30_novel.tbl'), col.names=T, row.names=F, sep='\t', quote=F)
-
-# seqextract.pl -i $data/genome/$org_q/11_genome.fa -o 31_novel.fa -n 30_novel.tbl
-
+# plot novel segments length distribution
+tmp1 = table(tn1$len)
+tp.1 = data.frame(len=as.numeric(names(tmp1)), cnt=c(tmp1))
+tp.2 = cbind(tp.1, sum=tp.1$len * tp.1$cnt)
+tp.3 = tp.2[order(tp.2$len, decreasing=T),]
+tp = cbind(tp.3, cumsum=cumsum(tp.3$sum))
+plot(tp$len, tp$cumsum, type='l', xlim=c(0, 8000), main=org.q, xlab='segment length', ylab='cumsum of segments')
+x=c(100,1000)
+y=c(tp$cumsum[tp$len==100], tp$cumsum[tp$len==1000])
+segments(0, y, x, y, col='blue')
+segments(x, y, x, 0, col='blue')
 
 
 # blastn validation
-# blastn -db $data/db/blast/Mtruncatula_4.0 -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 11_novel.fa -out 71_blastn.tbl
-# blast2gal.pl -i 71_blastn.tbl -o - | galcoord.pl -i - -p qry -o - | galexpand.pl -i - -o 72.gall
-# gal.pl -i 72.gal -o 73.gal -opt coordq
-tv1 = read.table(file.path(dir, '41_novelseq/73.gal'), sep='\t', header=T, as.is=T)
-sum(tv1$match)/sum(tv1$match/(tv1$ident/100))
-grv1.1 = GRanges(seqnames=Rle(tv1$qId), ranges=IRanges(tv1$qBeg, end=tv1$qEnd), seqinfo=si.q)
-grv1.2 = reduce(grv1.1)
-sum(width(grv1.2))
+pre="nov1"
+dirb=sprintf("%s/41_novelseq/%s.blast", dir, pre)
+tvw = read.table(file.path(dirb, '12.gal'), sep='\t', header=T, as.is=T)
+sum(tvw$match)/sum(tvw$match+tvw$misMatch)
+tv = read.table(file.path(dirb, '12.gall'), sep='\t', header=T, as.is=T)
+grv.1 = GRanges(seqnames=Rle(tv$qId), ranges=IRanges(tv$qBeg, end=tv$qEnd), seqinfo=si.q)
+grv.2 = reduce(grv.1)
+sum(width(grv.2))
 
-# blastn -db $data/db/blast/Mtruncatula_4.0 -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 21_novel.fa -out 81_blastn.tbl
-# blastToGal.pl -i 81_blastn.tbl -o 82.gal
-# gal.pl -i 82.gal -o 83.gal -opt coordq
-tv2 = read.table(file.path(dir, '41_novelseq/83.gal'), sep='\t', header=T, as.is=T)
-sum(tv2$match)/sum(tv2$match/(tv2$ident/100))
-grv2.1 = GRanges(seqnames=Rle(tv2$qId), ranges=IRanges(tv2$qBeg, end=tv2$qEnd), seqinfo=si.q)
-grv2.2 = reduce(grv2.1)
-sum(width(grv2.2))
+# construct pseudo-chrs
+# get scaffold order
+tm = read.table(file.path(dir, "25_blat_final/35.gal"), header=T, sep="\t", as.is=T)[,1:17]
+get_row_max_score <- function(df) { df[which.max(df[,'score']),] }
+tm.s = ddply(tm, .(tId), get_row_max_score)
+to.1 = data.frame(id=tm.s$tId, chr=tm.s$qId, pos=(tm.s$qBeg+tm.s$qEnd)/2, srd=tm.s$qSrd, idx=0, stringsAsFactors=F)
+to = merge(to.1, ts.q, by='id', all=T)[,-6]
+to = to[order(to$chr, to$pos, to$id),]
+to$idx = 1:nrow(to)
 
-# blastn -db $data/db/blast/Mtruncatula_4.0 -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 31_novel.fa -out 91_blastn.tbl
-# blastToGal.pl -i 91_blastn.tbl -o 92.gal
-# gal.pl -i 92.gal -o 93.gal -opt coordq
-tv3 = read.table(file.path(dir, '41_novelseq/93.gal'), sep='\t', header=T, as.is=T)
-sum(tv3$match)/sum(tv3$match/(tv3$ident/100))
-grv3.1 = GRanges(seqnames=Rle(tv3$qId), ranges=IRanges(tv3$qBeg, end=tv3$qEnd), seqinfo=si.q)
-grv3.2 = reduce(grv3.1)
-sum(width(grv3.2))
-tv3 = read.table(file.path(dir, '41_novelseq/94.gal'), sep='\t', header=T, as.is=T)
+tt = data.frame(id=to$id, cat_blat='mt', idx=to$idx, stringsAsFactors=F)
+tt$cat_blat[is.na(to$chr)] = rep('unc', sum(is.na(to$chr)))
 
+# blast NT
+tb = read.table(file.path(dir, "51_pan3/15.tbl"), header=T, sep="\t")[,-c(18,19)]
+tb.1 = ddply(tb, .(qId, cat), summarise, score=sum(score))
+tb.2 = ddply(tb.1, .(qId), get_row_max_score)
+tb = data.frame(id=tb.2$qId, cat_nt=as.character(tb.2$cat), stringsAsFactors=F)
 
+# classify novelseq
+ti = read.table(file.path(dir, "51_pan3/01.tbl"), header=T, sep="\t")[,-c(18,19)]
+colnames(ti)[1] = 'chr'
+makelocid <- function(x) sprintf("%s-%d-%d", x['chr'], as.numeric(x['beg']), as.numeric(x['end']))
+ti = cbind(id=apply(ti, 1, makelocid), ti)
 
-# blastn NT
-dir = file.path("/home/youngn/zhoup/Data/misc3/pan3", org.q)
-tg = read.table(file.path(dir, "15.gal"), header=T, sep="\t")
-tc = read.table(file.path(dir, "16_cat.tbl"), header=T, sep="\t", as.is=T)
-tg.1 = merge(tg, tc, by.x='tId', by.y='id')
+ti.1 = merge(ti, tb, by="id", all=T)
+ti.2 = merge(ti.1, tt, by.x='chr', by.y='id', all.x=T)
+ti.2$cat_nt[which(is.na(ti.2$cat_nt))] <- 'unc'
+table(ti.2[,c('cat_nt', 'cat_blat')])
+ti.3 = cbind(ti.2, cat='plant', stringsAsFactors=F)
+ti.3$cat[which(ti.2$cat_blat=='unc' & ti.2$cat_nt=='foreign')] = 'unc'
 
-tg.2 = ddply(tg.1, .(kingdom), summarise, len=sum(tLen))
+tf1 = ti.3[ti.3$cat=='plant',]
+tf1 = tf1[order(tf1$idx), c(1,3,4,5)]
+cat(org.q, "specific:", nrow(tf1), "segments,", sum(tf1$len), "bp\n")
+write.table(tf1, file.path(dir, "51_pan3/21_plant.tbl"), col.names=T, row.names=F, sep='\t', quote=F)
+tf2 = ti.3[ti.3$cat=='unc',]
+tf2 = tf2[order(tf2$idx), c(1,3,4,5)]
+cat(org.q, "unc:", nrow(tf2), "segments,", sum(tf2$len), "bp\n")
+write.table(tf2, file.path(dir, "51_pan3/22_unc.tbl"), col.names=T, row.names=F, sep='\t', quote=F)

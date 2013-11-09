@@ -17,6 +17,8 @@
       -in     input file
       -out    output file
       -opt    option (qry / tgt)
+      -qry    query-size  file [required if opt='qry']
+      -tgt    target-size file [required if opt='tgt']
 
 =cut
   
@@ -33,6 +35,7 @@ use Common;
 use Seq;
 
 my ($fi, $fo, $opt) = ('') x 3;
+my ($fq, $ft) = ('') x 2;
 my ($fhi, $fho);
 my $help_flag;
 
@@ -42,6 +45,8 @@ GetOptions(
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
     "opt|p=s"  => \$opt,
+    "qry|q=s"  => \$fq,
+    "tgt|t=s"  => \$ft
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo || !$opt;
@@ -58,7 +63,17 @@ if ($fo eq "stdout") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qLen tId tBeg tEnd tSrd tLen
+my ($hq, $ht);
+if( -s $fq ) {
+    my $t = readTable(-in=>$fq, -header=>1);
+    $hq = { map {$t->elm($_, "id") => $t->elm($_, "length")} (0..$t->nofRow-1) };
+}
+if( -s $ft ) {
+    my $t = readTable(-in=>$ft, -header=>1);
+    $ht = { map {$t->elm($_, "id") => $t->elm($_, "length")} (0..$t->nofRow-1) };
+}
+
+print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
     match misMatch baseN ident e score qLoc tLoc/)."\n";
 
 while(<$fhi>) {
@@ -72,6 +87,8 @@ while(<$fhi>) {
             $ps[1] = $qi;
             $ps[2] = $beg + $qBeg - 1;
             $ps[3] = $beg + $qEnd - 1;
+            die "no size for $qi\n" unless exists $hq->{$qi};
+            $ps[5] = $hq->{$qi};
         }
     } elsif($opt =~ /^tgt$/i) {
         my ($tId, $tBeg, $tEnd) = @ps[6..8];
@@ -80,6 +97,8 @@ while(<$fhi>) {
             $ps[6] = $ti;
             $ps[7] = $beg + $tBeg - 1;
             $ps[8] = $beg + $tEnd - 1;
+            die "no size for $ti\n" unless exists $ht->{$ti};
+            $ps[10] = $ht->{$ti};
         }
     } else {
         die "unknown opt: $opt\n";

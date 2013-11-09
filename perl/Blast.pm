@@ -118,7 +118,7 @@ sub blast2gal {
     my ($qSrd, $tSrd) = ("+") x 2;
     if($tBeg > $tEnd) {
         ($tBeg, $tEnd) = ($tEnd, $tBeg);
-        $qSrd = "-";
+        $tSrd = "-";
     }
 
     my ($qLoc, $tLoc, $stat, $qNumIns, $qIns, $tNumIns, $tIns) = parse_aln_string($qSeq, $tSeq);

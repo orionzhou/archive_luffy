@@ -5,8 +5,8 @@
 QRY=${QRY:-HM056}
 TGT=${TGT:-HM101}
 
-cd $data/misc3/pan3/$QRY
-blastn -db $data/db/blast/nt -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 01.fa -out 11_blast.tbl
-
-cd $data/misc3/$QRY\_$TGT/23_blat
-#blat $data/db/blat/$TGT.2bit 52_novel.fa 71_blat.psl -noTrimA -noHead
+cd $data/misc3/$QRY\_$TGT/51_pan3
+blastn -db $data/db/blast/current/nt -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 01.fa -out 11_blast.tbl
+blast2gal.pl -i 11_blast.tbl -o 12.gal
+galtiling.pl -i 12.gal -o - | galfilter.pl -i - -l 100 -o 13.gal
+annoblast.pl -i 13.gal -o 15.tbl

@@ -24,9 +24,9 @@ fi
 
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
-    export repo=$home/repos
+    export git=$home/git
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
-    export repo=$home/repos
+    export git=$home/git
 elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     export soft_msi=/nfs/soft-sle11
     if [[ $HOSTNAME =~ ^node ]]; then
@@ -75,13 +75,13 @@ export home=$HOME
 export src=$home/Source
 export data=$home/Data
 export dbox=$home/Dropbox
-export repo=$home/repos
+export git=$home/git
 
 # repositories
-export luffy=$repo/luffy
+export luffy=$git/luffy
 export code=$luffy
-export robin=$repo/robin
-export spada=$repo/spada
+export robin=$git/robin
+export spada=$git/spada
 
 # Perl
 export PERL_HOME=$prefix/soft/perl

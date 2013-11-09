@@ -1,12 +1,10 @@
 #!/usr/bin/perl
 use strict;
-use Init;
 use Common; 
 use Seq;
 use Data::Dumper;
 
 my $dir = "$DIR_Misc1/stats_gene";
-mkdir($dir) unless -d $dir;
 my $f_seq = "$DIR_Genome/mt_35/41_genome.fa";
 my $f_gtb = "$DIR_Genome/mt_35/10_model_Mt3.5v5/62_phase_fixed.gtb";
 my $f01 = "$dir/01_gc.tbl";
@@ -45,4 +43,6 @@ sub get_gene_gc {
     close FH;
 }
 
+
+__END__
 

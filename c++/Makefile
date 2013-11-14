@@ -24,7 +24,7 @@ SRCDIR   = src
 OBJDIR   = obj
 BINDIR   = bin
 
-BINNAMES = test msConvert readGz cov_window blastTiling galTiling \
+BINNAMES = test msConvert readGz blastTiling galTiling \
   sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSelectInds sspConvert ssp2Vcf\
   bamViewRead bamPreprocess bamCheck  \
   bamPickStretched bamPickOrphan bamPickBpReads \

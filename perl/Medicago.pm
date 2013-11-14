@@ -17,15 +17,10 @@ sub get_mt_ids {
         $idx = first_index {$_ eq $opt} $t->header;
     } 
     
-    if($idx == -1) {
-        print "unknown opt [$opt]\n";
-        return -1;
-    } else {
-        $t = $t->match_pattern("\$_->[$idx] eq 1");
-        my $ids = $t->colRef("id");
-        my $opt_conf = ($opt =~ /^(acc288|acc289|opt21)$/) ? 2 : 1;
-        return ($ids, $opt_conf);
-    }
+    $idx == -1 || die "unknown opt $opt\n";
+    $t = $t->match_pattern("\$_->[$idx] eq 1");
+    my $ids = $t->colRef("id");
+    return $ids;
 }
 
 

@@ -29,54 +29,17 @@ struct next {
         return seed++;
     }
 };
-StrVec get_acc_ids(const string& f_id, const string& opt) {
-    ifstream fhi(f_id.c_str());
-    if(!fhi.is_open()) {
-        cout << format("cannot read file: %s\n") % f_id; exit(1);
-    }
-    int idx = -1;
-    string line;
-
-    getline(fhi, line);
-    vector<string> ss;
-    boost::split(ss, line, boost::is_any_of("\t"));
-    for(uint32_t i = 0; i < ss.size(); i ++)
-        if(ss[i] == opt) idx = i;
-    if(idx == -1) {
-        cout << "unknown opt: " << opt << endl;
-        exit(1);
-    }
-
-    StrVec ids;
-    while(fhi.good()) {
-        getline(fhi, line);
-        boost::split(ss, line, boost::is_any_of("\t"));
-        if(ss[idx] == "1") ids.push_back(ss[0]);
-    }
-    return ids;
-}
-IntVec get_acc_idx(const string& f_id, const string& opt_s, StrVec& ids_s, const int& opt) {
-    StrVec ids;
-    if( opt == 1 ) {
-        ids = get_acc_ids(f_id, "acc85"); 
-    } else if ( opt == 2 ) {
-        ids = get_acc_ids(f_id, "acc289"); 
-    } else {
-        cout << "unknown ind opt: " << opt << endl;
-        exit(1);
-    }
-    ids_s = get_acc_ids(f_id, opt_s);
-    cout << format("  selecting ids: %s\n") % boost::join(ids_s, " ");
-
+IntVec get_idx(StrVec& svi, StrVec& sva) {
+    cout << format("  selecting ids: %s\n") % boost::join(svi, " ");
     map<string, int> tmp;
-    for(uint32_t i = 0; i < ids.size(); i ++) tmp[ids[i]] = i;
+    for(uint32_t i = 0; i < sva.size(); i ++) tmp[sva[i]] = i;
 
     IntVec idxs;
-    for(uint32_t i = 0; i < ids_s.size(); i ++) {
-        string id = ids_s[i];
+    for(uint32_t i = 0; i < svi.size(); i ++) {
+        string id = svi[i];
         map<string, int>::iterator it = tmp.find(id);
         if(it == tmp.end()) {
-            cout << format("  ind[%s] not found in opt[%d]\n") % id % opt;
+            cout << format("  %s not found\n") % id;
             exit(1);
         }
         idxs.push_back( it->second );

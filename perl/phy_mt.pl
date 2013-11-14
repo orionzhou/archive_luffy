@@ -1,24 +1,25 @@
 #!/usr/bin/perl
 use strict;
-use Init;
+use FindBin;
+use lib "$FindBin::Bin";
+use File::Path qw/make_path remove_tree/;
 use Common;
-use Seq;
-use File::Basename;
 use Ssp;
 use Medicago;
 use Data::Dumper;
 
-my $opt_ind = "acc26";
-my ($accs, $opt_conf) = get_mt_ids($opt_ind);
+my $opti = "deepseq1";
+my $optc = "acc288";
+my $accs = get_mt_ids($opti);
+
 my $chrs = [ map {"chr".$_} (1..8) ];
 
-my $pre = ($opt_conf == 1) ? "acc84" : "acc288";
-my $d00 = "$DIR_Repo/mt_35/30_vnt_$pre/11_snps/01_ssp";
-my $dir = "$DIR_Repo/mt_35/31_phylogeny/$opt_ind";
+my $dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt35/31_phylogeny/$opti";
+my $d00 = "$dir/../../30_vnt_$optc/11_snps/01_ssp";
 my $d01 = "$dir/01_ssp";
 my $d08 = "$dir/08_stat";
 my $d11 = "$dir/11_ssp";
-#ssp_pipe($d00, $d01, $d08, $d11, $opt_ind, $opt_conf);
+ssp_pipe($d00, $d01, $d08, $d11, $opti);
 
 my $d15 = "$dir/15_phy";
 my $d16 = "$dir/16_aln";
@@ -37,10 +38,10 @@ my $d22 = "$dir/22_phyml";
 #run_phyml($d15, $d22, $chrs);
 
 sub ssp_pipe {
-    my ($d00, $d01, $d08, $d11, $opt_ind, $opt_conf) = @_;
-    system("mkdir -p $d01") unless -p $d01;
-    system("mkdir -p $d08") unless -p $d08;
-    system("mkdir -p $d11") unless -p $d11;
+    my ($d00, $d01, $d08, $d11, $opti) = @_;
+    make_path($d01) unless -p $d01;
+    make_path($d08) unless -p $d08;
+    make_path($d11) unless -p $d11;
     for my $chr (@$chrs) {
 #    next unless $chr eq "chr1";
         runCmd("sspSelectInds -i $d00/$chr.txt -o $d01/$chr.ssp -t $opt_ind -c $opt_conf", 1);

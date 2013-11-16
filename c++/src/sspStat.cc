@@ -1,20 +1,16 @@
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <stdio.h>
-#include <vector>
 #include <time.h>
-#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/progress.hpp>
 #include <Sequence/stateCounter.hpp>
-#include "ssp.h"
+#include "ssp.h" 
 using namespace std;
 using boost::format;
 using namespace Sequence;
-using namespace Sequence::Alignment;
-namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 int main(int argc, char *argv[]) {
@@ -22,42 +18,37 @@ int main(int argc, char *argv[]) {
     po::options_description cmdOpts("Allowed options");
     cmdOpts.add_options()
         ("help,h", "produce help message")
-        ("in,i", po::value<string>(&fi), "input (simpleSNP) file")
-        ("out,o", po::value<string>(&fo), "output file")
+        ("in,i", po::value<string>(&fi)->implicit_value(""), "input (SimpleSNP format)")
+        ("out,o", po::value<string>(&fo)->implicit_value(""), "output")
     ;
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, cmdOpts), vm);
     po::notify(vm);
 
-    if(vm.count("help") || !vm.count("in")) {
+    if(vm.count("help")) {
         cout << cmdOpts << endl;
         return 1;
     }
     
-    SimpleSNP ssp;
-    ifstream fh01( fi.c_str() );
-    ssp.read( fh01 );
-    fh01.close();
-
-    std::streambuf * buf;
-    std::ofstream of;
-    if(!vm.count("out") || fo == "-" || fo == "stdout") {
-        buf = std::cout.rdbuf();
-    } else {
-        of.open( fo.c_str() );
-        buf = of.rdbuf();
-    }
-    std::ostream out(buf);
-
+    istream* in = (!vm.count("in") || fi == "" || fi == "-" || fi == "stdin") ?
+        &cin : new ifstream( fi.c_str() );
+    ostream* out = (!vm.count("out") || fo == "" || fo == "-" || fo == "stdout") ?
+        &cout : new ofstream( fo.c_str() );
+   
+    SSP ssp;
+    ssp.read( *in );
+    
     vector<string> data = ssp.GetData();
     vector<double> poss = ssp.GetPositions();
     bool hasOG = ssp.outgroup();
-
-    out << "pos\tn_states\tanc\tder\tn_N\tn_anc\tn_der\n";
-    for(unsigned j = 0; j < poss.size(); ++j) {
+    unsigned nind = ssp.size();
+    unsigned npos = poss.size();
+    
+    *out << "pos\tn_states\tanc\tder\tn_N\tn_anc\tn_der" << endl;
+    for(unsigned j = 0; j < npos; ++j) {
         stateCounter Counts;
-        for(unsigned i = 0; i < data.size(); ++i) Counts( data[i][j] );
+        for(unsigned i = 0; i < nind; ++i) Counts( data[i][j] );
         
         int n_states = Counts.nStates();
         int n_N = Counts.n;
@@ -106,7 +97,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-        out << format("%d\t%d\t%s\t%s\t%d\t%d\t%d\n") % poss[j] % n_states % anc % der % n_N % n_anc % n_der;
+        *out << format("%d\t%d\t%s\t%s\t%d\t%d\t%d") % poss[j] % n_states % anc % der % n_N % n_anc % n_der << endl;
     }
     return EXIT_SUCCESS;
 }

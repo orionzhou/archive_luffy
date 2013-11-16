@@ -25,7 +25,7 @@ OBJDIR   = obj
 BINDIR   = bin
 
 BINNAMES = test msConvert readGz blastTiling galTiling \
-  sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSelectInds sspConvert ssp2Vcf\
+  sspSum sspStat sspDiff sspSetOG sspFilter sspSample sspSlide sspSubset sspConvert ssp2Vcf\
   bamViewRead bamPreprocess bamCheck  \
   bamPickStretched bamPickOrphan bamPickBpReads \
   bam2Fastq bamStat bamOrphanStat bamDeDup \
@@ -46,7 +46,7 @@ $(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.h
 $(BINS): | $(BINDIR)
 $(BINS): $(BINDIR)/%: $(SRCDIR)/%.$(SRCEXT)
 
-BIN_SSP = sspFilter sspSelectInds sspSetOG sspSample sspConvert ssp2Vcf seqSplit
+BIN_SSP = sspSum sspStat sspDiff sspFilter sspSubset sspSetOG sspSample sspConvert ssp2Vcf seqSplit
 $(addprefix $(BINDIR)/, $(BIN_SSP)): $(OBJDIR)/ssp.o
 
 BIN_BAM = bamCheck bamViewRead bamPickStretched bamPickOrphan bamPickBpReads bam2Fastq bamStat bamDeDup

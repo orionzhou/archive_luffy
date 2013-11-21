@@ -25,30 +25,30 @@ typedef vector< vector<uint32_t> > IntVecVec;
 
 template< class T >
 struct next {
-  T seed;
-  next( T seed ) : seed(seed) { }
-  T operator()() {
-    return seed++;
-  }
+    T seed;
+    next( T seed ) : seed(seed) { }
+    T operator()() {
+        return seed++;
+    }
 };
 struct Loc {
-  string id, chr;
-  uint32_t beg, end, length;
-  bool forward;
-  string type, note;
+    string id, chr;
+    uint32_t beg, end, length;
+    bool forward;
+    string type, note;
 };
 struct LocMap {
-  string name1, name2;
-  uint32_t id1, start1, end1, id2, start2, end2;
+    string name1, name2;
+    uint32_t id1, start1, end1, id2, start2, end2;
 };
 struct Transcript {
-  string id, id_gene, chr;
-  bool forward;
-  int frame, beg, end, cdsBeg, cdsEnd;
-  LocPairVec locG_cds, locG_exon, locG_utr5, locG_utr3, locG_intron;
-  LocPairVec locL_cds, locL_exon, locL_utr5, locL_utr3, locL_intron;
-  map<string, LocPairVec> locLs;
-  string source, type, conf, note, seq;
+    string id, id_gene, chr;
+    bool forward;
+    int frame, beg, end, cdsBeg, cdsEnd;
+    LocPairVec locG_cds, locG_exon, locG_utr5, locG_utr3, locG_intron;
+    LocPairVec locL_cds, locL_exon, locL_utr5, locL_utr3, locL_intron;
+    map<string, LocPairVec> locLs;
+    string source, type, conf, note, seq;
 };
 
 bool read_refmap(const string& fi, map<string, LocMap>& refMap);

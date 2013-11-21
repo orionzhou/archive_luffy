@@ -4,10 +4,10 @@ plot_mt_tree <- function(fi, fo, ann) {
 
   label_id = tree$tip.label
   idx_HM101 = which(label_id == 'HM101')
-  idx_acc26 = which(label_id %in% get_mt_ids('acc26'))
+#  idx_acc26 = which(label_id %in% get_mt_ids('acc26'))
 
   tip.color = rep('black', length(tree$tip.label))
-  tip.color[idx_acc26] = 'royalblue'
+#  tip.color[idx_acc26] = 'royalblue'
   tip.color[idx_HM101] = 'red'
   
   df1 = data.frame(id=tree$tip.label)
@@ -71,12 +71,12 @@ plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   dev.off()
 }
 
-f_ann = file.path(DIR_Data, "repo/mt_35/31_phylogeny/mt_label.tbl")
+f_ann = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny/mt_label.tbl")
 ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
 
-opt = 'acc26'
-dir = file.path(DIR_Data, "repo/mt_35/31_phylogeny", opt)
-for(i in 1:8) {
+opt = 'deepseq'
+dir = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny", opt)
+for(i in 5) {
   fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
   fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
   plot_mt_tree(fi, fo, ann)

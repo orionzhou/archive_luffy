@@ -1,12 +1,12 @@
-package Ssp;
+package Snp;
 use strict; 
+use Path::Class;
 use Data::Dumper;
-use File::Basename;
 use Common; 
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter AutoLoader/;
-@EXPORT = qw/ssp_read ssp_write ssp_sample/;
+@EXPORT = qw//;
 @EXPORT_OK = qw//;
 
 sub ssp_read {

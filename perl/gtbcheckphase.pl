@@ -1,0 +1,1 @@
+../../spada/gtbcheckphase.pl

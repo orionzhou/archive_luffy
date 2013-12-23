@@ -6,20 +6,17 @@
   
 =head1 NAME
   
-  seqlen.pl - report sequence lengths in an input sequence file 
+  unafoldo.pl - process unafold(hybrid-ss-min) output
 
 =head1 SYNOPSIS
   
-  seqlen.pl [-help] [-in input-file] [-out output-file]
+  unafoldo.pl [-help] [-in input-file (*.dG)] [-seq fasta-file] [-out output]
 
   Options:
       -help   brief help message
-      -in     input file
-      -out    output file
-
-=head1 DESCRIPTION
-
-  This program reports lengths of each sequence record in the input file
+      -in     input file (*.dG)
+      -seq    fasta file
+      -out    output
 
 =cut
   
@@ -32,16 +29,18 @@ use Pod::Usage;
 use Bio::Seq;
 use Bio::SeqIO;
 
-my ($fi, $fo) = ('') x 2;
+my ($fi, $fs, $fo) = ('') x 3;
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
     "help|h"  => \$help_flag,
     "in|i=s"  => \$fi,
+    "seq|s=s" => \$fs,
     "out|o=s" => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
+pod2usage(2) if !$fs;
 
 my ($fhi, $fho);
 if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
@@ -56,12 +55,17 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
-while(my $seqO = $seqHI->next_seq()) {
-    my ($id, $len) = ($seqO->id, $seqO->length);
-    print $fho join("\t", $id, $len)."\n";
+my $seqHI = Bio::SeqIO->new(-file=>"<$fs", -format=>'fasta');
+while(<$fhi>) {
+    chomp;
+    next if /^\#/;
+    my @ps = split "\t";
+    $ps[0] == 37 || die "error content: ".join("\t", @ps)."\n";
+    my $id = $seqHI->next_seq()->id;
+    print $fho join("\t", $id, $ps[1])."\n";
 }
 $seqHI->close();
+close $fhi;
 close $fho;
 
 exit 0;

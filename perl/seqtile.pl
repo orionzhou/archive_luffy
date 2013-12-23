@@ -6,50 +6,55 @@
   
 =head1 NAME
   
-  winslide.pl - create sliding windows for given intervals
+  seqtile.pl - generate sequcne tile-ups for an input fasta file
 
 =head1 SYNOPSIS
   
-  winslide.pl [-help] [-in input] [-step win-step] [-size win-size] [-out output]
+  seqtile.pl [-help] [-in input] [-step win-step] [-size win-size] [-out output]
 
   Options:
       -help   brief help message
-      -in     input file
-      -out    output file
+      -in     input (can be 'stdin')
+      -out    output (can be 'stdout')
       -step   sliding window step (default: 5)
       -size   sliding window size (default: 60)
-      -opt    option(1 - strict, 2 - loose; default: 1)
 
+=head1 BUGS
+  
+=head1 REFERENCES
+  
+=head1 VERSION
+  
+  0.1
+  
 =cut
   
 #### END of POD documentation.
 #-----------------------------------------------------------------------------
 
 use strict;
-use FindBin;
-use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Bio::Seq;
+use Bio::SeqIO;
 use POSIX qw/ceil floor/;
 use List::Util qw/min max sum/;
 
 my ($fi, $fo) = ('') x 2;
-my $opt = 1;
 my ($size, $step) = (60, 5);
+my ($fhi, $fho);
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
+    "help|h"   => \$help_flag,
+    "in|i=s"   => \$fi,
+    "out|o=s"  => \$fo,
     "step|t=i" => \$step,
     "size|z=i" => \$size,
-    "opt|p=i"  => \$opt
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my ($fhi, $fho);
 if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
 } else {
@@ -62,40 +67,32 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-#print $fho join("\t", qw/chr beg end/)."\n";
-while(<$fhi>) {
-    chomp;
-    next if /(^#)|(^id\s)|(^chr\s)/;
-    my @ps = split "\t";
-    my ($chr, $beg, $end);
-    next unless @ps >= 2;
-    if(@ps >= 3) {
-        ($chr, $beg, $end) = @ps;
-    } else {
-        ($chr, $beg, $end) = ($ps[0], 1, $ps[1]);
+my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
+my $cnt = 0;
+while(my $seqO = $seqHI->next_seq()) {
+    my ($id, $len, $seq) = ($seqO->id, $seqO->length, $seqO->seq);
+    my ($beg, $end) = (1, $len);
+    if($id =~ /^(\w+)\:(\d+)\-(\d+)$/) {
+        ($id, $beg, $end) = ($1, $2, $3);
     }
-    my $wins = sliding_windows($beg, $end, $step, $size);
-    for (@$wins) {
-        print $fho join("\t", $chr, $_->[0], $_->[1])."\n";
-    }
-}
-close $fhi;
-close $fho;
-
-sub sliding_windows {
-    my ($beg, $end, $step, $size, $opt) = @_;
+    
     my $n_win = int(($end-$beg+1-$size)/$step) + 1;
-    return [] if $n_win < 1;
+    next if $n_win < 1;
 
     my @wins;
     for my $i (0..$n_win-1) {
         my $beg1 = $beg + $step * $i;
         my $end1 = $beg + $step * $i + $size - 1;
         $end1 <= $end || die "$id:[$beg-$end] range error: [$beg1-$end1]\n";
-#        $end1 = min($end1, $end);
-        push @wins, [$beg1, $end1];
+        my $seq1 = substr($seq, $step*$i, $size);
+        print $fho ">$id:$beg1-$end1\n";
+        print $fho "$seq1\n";
     }
-    return \@wins;
 }
+$seqHI->close();
+close $fho;
 
 exit 0;
+
+
+

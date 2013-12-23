@@ -13,6 +13,7 @@ require Exporter;
     gal_tiling 
     gal_check gal_fix
     gal_break gal_filter
+    gal_get_mismatch
     gal_complete gal_indel/;
 @EXPORT_OK = qw//;
 
@@ -187,6 +188,44 @@ sub gal_complete {
     ($match, $misMatch, $baseN) = seqCompare($tSeq, $qSeq);
     @$ps[11..13] = ($match, $misMatch, $baseN);
     return $ps;
+}
+sub gal_get_mismatch {
+    my ($ps, $fq, $ft) = @_;
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    @$rqLoc == @$rtLoc || die "unequal pieces\n";
+    my $nBlock = @$rqLoc;
+    my @lens = map {$_->[1] - $_->[0] + 1} @$rqLoc;
+
+    my $tLoc = $tSrd eq "-" ? [ map {[$tEnd-$_->[1]+1, $tEnd-$_->[0]+1]} @$rtLoc ]
+        : [ map {[$tBeg+$_->[0]-1, $tBeg+$_->[1]-1]} @$rtLoc ]; 
+    my $qLoc = $qSrd eq "-" ? [ map {[$qEnd-$_->[1]+1, $qEnd-$_->[0]+1]} @$rqLoc ]
+        : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ]; 
+    my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
+    my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
+
+    my $len = 0;
+    my (@tNts, @qNts, @tPoss, @qPoss);
+    for my $i (0..$nBlock-1) {
+        my ($rtb, $rte) = @{$rtLoc->[$i]};
+        my ($rqb, $rqe) = @{$rqLoc->[$i]};
+        for my $j (0..$lens[$i]-1) {
+            my $tNt = uc(substr($tSeq, $len+$j, 1));
+            my $qNt = uc(substr($qSeq, $len+$j, 1));
+            my $tPos = $tSrd eq "-" ? $tEnd-($rtb+$j)+1 : $tBeg+($rtb+$j)-1;
+            my $qPos = $qSrd eq "-" ? $qEnd-($rqb+$j)+1 : $qBeg+($rtb+$j)-1;
+            if($tNt ne "N" && $qNt ne "N" && $tNt ne $qNt) {
+                push @tNts, $tNt;
+                push @qNts, $qNt;
+                push @tPoss, $tPos;
+                push @qPoss, $qPos;
+            }
+        }
+        $len += $lens[$i];
+    }
+    @tPoss == $misMatch || die "$id not $misMatch SNPs: ".scalar(@tPoss)."\n";
+    return (\@qPoss, \@tPoss, \@qNts, \@tNts);
 }
 
 sub gal_fix {

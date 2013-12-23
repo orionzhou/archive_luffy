@@ -13,12 +13,14 @@ cat 03.chrs.fa 03.scaffolds.concat.fa > ../11_genome.fa
 
 gff_jcvi.pl -i 11.gff -o 12_jcvi_fixed.gff
 gff_convert_loc.pl -i 12_jcvi_fixed.gff -p 03.scaffolds.concat.tbl -o 15_global_loc.gff
-gff_to_gtb.pl -i 15_global_loc.gff -o ../21_gene.gtb -s ../11_genome.fa
+gffcheckphase.pl -i 15_global_loc.gff -s ../11_genome.fa -o 17_phase_fixed.gff
+gff2gtb.pl -i 17_phase_fixed.gff -o ../21_gene.gtb
 
 cd ..
-gtb_conv.pl -i 21_gene.gtb -o 21_gene.gff
-gtb_conv.pl -i 21_gene.gtb -o 21_gene.fas -f seq2 -s 11_genome.fa
-gtb_conv.pl -i 21_gene.gtb -o 21_gene.tbl -f tbl
+gtb2gff.pl -i 21_gene.gtb -o 21_gene.gff
+gtb2fas.pl -i 21_gene.gtb -o 21_gene.fas -s 11_genome.fa
+gtb2bigbed.pl -i 21_gene.gtb -o 21_gene.bb
+gtb2tbl.pl -i 21_gene.gtb -o 21_gene.tbl
 
 grep -P "\\ttransposable_element_gene" 21_gene.gtb > 41_te.gtb
 grep -i "nbs-lrr" 21_gene.gtb > 42_nbs.gtb

@@ -6,20 +6,16 @@
   
 =head1 NAME
   
-  seqlen.pl - report sequence lengths in an input sequence file 
+  fa2fq.pl - convert a Fasta file to Fastq file
 
 =head1 SYNOPSIS
   
-  seqlen.pl [-help] [-in input-file] [-out output-file]
+  fa2fq.pl [-help] [-in input] [-out output]
 
   Options:
       -help   brief help message
-      -in     input file
-      -out    output file
-
-=head1 DESCRIPTION
-
-  This program reports lengths of each sequence record in the input file
+      -in     input
+      -out    output
 
 =cut
   
@@ -29,8 +25,6 @@
 use strict;
 use Getopt::Long;
 use Pod::Usage;
-use Bio::Seq;
-use Bio::SeqIO;
 
 my ($fi, $fo) = ('') x 2;
 my $help_flag;
@@ -56,12 +50,32 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
-while(my $seqO = $seqHI->next_seq()) {
-    my ($id, $len) = ($seqO->id, $seqO->length);
-    print $fho join("\t", $id, $len)."\n";
+my ($id, $seq, $len) = ("", "", 0);
+while(<$fhi>) {
+    chomp;
+    if( /^\>(.+)/) {
+        if($id ne "") {
+            print $fho "\@$id\n";
+            print $fho $seq."\n";
+            print $fho "+\n";
+            print $fho ("I" x $len) . "\n";
+        }
+        $id = $1;
+        $seq = "";
+        $len = 0;
+    } else {
+        $seq .= $_;
+        $len += length($_);
+    }
 }
-$seqHI->close();
+print $fho "\@$id\n";
+print $fho $seq."\n";
+print $fho "+\n";
+print $fho ("I" x $len) . "\n";
+
+close $fhi;
 close $fho;
+
+
 
 exit 0;

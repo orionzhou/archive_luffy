@@ -18,29 +18,6 @@
       -out    output file (can be 'stdout')
       -name   a file containing sequence names (and/or ranges)
 
-=head1 DESCRIPTION
-
-  This program extracts sequences with specified ranges from the input fasta file
-
-=head1 OPTIONS
-
-=over 6
-  
-=item B<-help>
-  
-  Print a usage summary.
-
-=item B<IDs>
-  
-  Fasta IDs
-
-=item B<output-file>
-
-  To write to stdout, the user could either specify 'stdout' or simply leave this
-  augument empty.
-
-=back
-  
 =head1 BUGS
   
 =head1 REFERENCES
@@ -72,16 +49,12 @@ GetOptions(
     "name|n=s" => \$fn,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi;
 
 my @ids = @ARGV;
-if ($fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
-} else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
-}
+open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
     $fho = \*STDOUT;
 } else {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";

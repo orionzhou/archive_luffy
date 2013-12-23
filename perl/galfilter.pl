@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  galfix.pl - filter records in a GAL file
+  galfilter.pl - filter records in a GAL file
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-out output-file]
+  galfilter.pl [-help] [-in input-file] [-out output-file]
 
   Options:
       -help   brief help message

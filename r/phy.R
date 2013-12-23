@@ -70,17 +70,53 @@ plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   add.scale.bar()
   dev.off()
 }
+plot_mt_tree_3 <- function(fi, fo, ann) {
+  tree = read.tree(fi)
+
+  group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
+  group2 = c("HM340", "HM324", "HM018", "HM022-I", "HM017-I")
+  group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
+  
+  label_id = tree$tip.label
+  idx_HM101 = which(label_id == 'HM101')
+#  idx_acc26 = which(label_id %in% get_mt_ids('acc26'))
+
+  tip.color = rep('black', length(tree$tip.label))
+  tip.color[which(label_id %in% group1)] = 'royalblue'
+  tip.color[which(label_id %in% group2)] = 'red'
+  tip.color[which(label_id %in% group3)] = 'purple'
+
+  df1 = data.frame(id=tree$tip.label)
+  df2 = merge(df1, ann, by="id", all.x=TRUE)
+  label_origin = paste(df2$country, df2$category, sep=" | ")
+
+  scores = as.numeric(tree$node.label)
+  if(mean(scores, na.rm=TRUE) > 1) { scores = scores / 1000 }
+  node.labels.bg = rep('white', tree$Nnode)
+  node.labels.bg[scores >= 0.95] = 'black'
+  node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+#  png(filename=fo, width=600, height=600, units='px')
+  postscript(file=fo, width=600, height=600)
+  plot(tree, show.node.label=FALSE, show.tip.label=TRUE, tip.color=tip.color, 
+    font=4, no.margin=TRUE, cex=1.2)
+  nodelabels(pch=22, bg=node.labels.bg)
+  add.scale.bar(x=530)
+  dev.off()
+}
 
 f_ann = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny/mt_label.tbl")
 ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
 
 opt = 'deepseq'
+reg = "chr5"
 dir = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny", opt)
-for(i in 5) {
-  fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
-  fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
-  plot_mt_tree(fi, fo, ann)
-}
+fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
+fo = sprintf("%s/22_phyml/%s.png", dir, reg)
+fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
+fo = sprintf("%s/21_phynj/%s.png", dir, reg)
+plot_mt_tree_3(fi, fo, ann)
+
 
 opt = 'acc31'
 dir = file.path(DIR_Data, "repo/mt_35/31_phylogeny", opt)

@@ -28,7 +28,7 @@ for my $reg (@$regions) {
     my $f01 = "$d01/$reg.snp";
     runCmd("bcftools subset -R -U -M -c 2 -o u -v snps -s $fc $fv $reg | 
       bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - |
-      snpfilter.pl -n 8 -m 1 -o $f01");
+      snpfilter.pl -n 5 -m 1 -o $f01");
 
     my $f11 = "$d11/$reg.snp";
     runCmd("samplelines.pl -i $f01 -o $f11 -n 10000");

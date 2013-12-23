@@ -6,41 +6,42 @@
   
 =head1 NAME
   
-  gtb2bed.pl - convert a Gtb file to BED format
+  gffcheckphase.pl - check and fix the phases in a Gff file
 
 =head1 SYNOPSIS
   
-  gtb2bed.pl [-help] [-in input-file] [-out output-file]
+  gffcheckphase.pl [-help] [-in input-Gff] [-seq refseq-fasta] [-out output-Gff]
 
   Options:
       -help   brief help message
-      -in     input file
-      -out    output file
+      -in     input file (Gff)
+      -out    output file (Gff)
+      -seq    sequence-fasta
 
 =cut
   
 #### END of POD documentation.
 #-----------------------------------------------------------------------------
-
-
 use strict;
 use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
-use Gtb;
+use Gff;
 
-my ($fi, $fo) = ('') x 2;
+my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;
 
 #----------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"   => \$help_flag,
-    "in|i=s"   => \$fi,
-    "out|o=s"  => \$fo,
+    "help|h"  => \$help_flag,
+    "in|i=s"  => \$fi,
+    "out|o=s" => \$fo,
+    "seq|s=s" => \$fs,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
+pod2usage(2) if !$fs;
 
 my ($fhi, $fho);
 if ($fi eq '' || $fi eq "stdin" || $fi eq "-") {
@@ -55,10 +56,21 @@ if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho "#track name=gene_models useScore=0\n";
-gtb2bed($fhi, $fho);
+print $fho "##gff-version 3\n";
+my ($cntR, $cntG, $cntF) = (1, 1, 0);
+my $it = parse_gff($fhi);
+while(my $gene = $it->()) {
+    print $fho $gene->to_gff()."\n";
+    for my $rna ($gene->get_rna()) {
+        $cntF += $rna->check_phase($fs);
+        print $fho $rna->to_gff()."\n";
+        printf "%5d RNA | %5d gene: %5d non-0 phase fixed\n", $cntR, $cntG, $cntF if $cntR % 1000 == 0;
+        $cntR ++;
+    }
+    $cntG ++;
+}
+
+close $fhi;
 close $fho;
-
-
 
 __END__

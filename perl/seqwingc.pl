@@ -6,29 +6,30 @@
   
 =head1 NAME
   
-  gtbcheckphase.pl - check and fix a Gtb file
+  seqwingc.pl - calculate GC percentage for a tabular window file
 
 =head1 SYNOPSIS
   
-  gtbcheckphase.pl [-help] [-in input-file] [-seq refseq-file] [-out output-file]
+  seqwingc.pl [-help] [-in input-tbl] [-seq seq-fasta] [-out output-tbl]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
-      -seq    refseq file
+      -seq    sequence file (fasta)
 
 =cut
   
 #### END of POD documentation.
 #-----------------------------------------------------------------------------
+
 use strict;
 use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Common;
-use Gtb;
+use Bio::DB::Fasta;
+use Time::HiRes qw/gettimeofday tv_interval/;
 
 my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;
@@ -56,22 +57,40 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id parent chr beg end strand locE locI locC loc5 loc3 phase source conf cat1 cat2 cat3 note/)."\n";
-my $n_fixed = 0;
-while( <$fhi> ) {
+my $db = Bio::DB::Fasta->new($fs);
+my $t0 = [gettimeofday];
+my $cnt = 0;
+
+#print $fho join("\t", qw/chr beg end gc/)."\n";
+while(<$fhi>) {
     chomp;
-    next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    next unless @$ps >= 18;
-    my @phases = gtbcheckphase($ps, $fs);
-    if(@phases) {
-        $n_fixed ++;
-        $ps->[11] = join(",", @phases);
-    }
-    print $fho join("\t", @$ps)."\n";
+    next if /(^#)|(^id\s)|(^chr\s)/;
+    my @ps = split "\t";
+    next unless @ps >= 3;
+    my ($seqid, $beg, $end) = @ps;
+    my $seq = $db->seq($seqid, $beg, $end);
+    print $fho join("\t", calc_gc($seq))."\n";
+    $cnt ++;
+    printf "%d: %.01f min\n", $cnt, tv_interval($t0, [gettimeofday]) / 60 if $cnt % 100000 == 0;
 }
-print "  $n_fixed non-0 frames fixed\n";
 close $fhi;
 close $fho;
 
-__END__
+sub calc_gc {
+    my ($str) = @_;
+    my ($cntGC, $cntN) = (0, 0);
+    while($str =~ /([GCN])/ig) {
+        if($1 eq "N") {
+            $cntN ++;
+        } else {
+            $cntGC ++;
+        }
+    }
+    my $len = length($str) - $cntN;
+    return 0 if $len == 0;
+    return sprintf "%.03f", $cntGC / $len;
+}
+
+
+
+exit 0;

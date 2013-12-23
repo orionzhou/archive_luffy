@@ -34,7 +34,8 @@ elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     fi
     
     for subpath in \
-        boost/1.54.0 blat/34 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
+        blat/34 \
+        boost/1.54.0 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
     do
         if [[ -d $soft_msi/$subpath/bin ]]; then
             export PATH=$soft_msi/$subpath/bin:$PATH
@@ -51,10 +52,10 @@ export PATH=$PATH:$prefix/bin
 export soft=$prefix/soft
 if [[ -d $soft ]]; then
     for subpath in zlib gcc boost libsequence \
-        samtools bamtools tabix bedtools bowtie2 bwa sra blast \
+        samtools bamtools tabix bedtools bwa bowtie2 sra blast \
         parallel blast CAP3 clustalo cmake cufflinks \
         emboss gd geco genometools gmap hmmer mysql \
-        R root tophat trimAl wise2 GEM kent
+        R root tophat trimAl wise2 GEM kent unafold imagemagick
     do
         if [[ -d $soft/$subpath/bin ]]; then
             export PATH=$soft/$subpath/bin:$PATH
@@ -95,6 +96,7 @@ export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 
 # Python
 export PYTHON_HOME=$prefix/soft/python
+export PYTHONUSERBASE=$prefix/soft/python
 export PYTHONPATH=${PYTHON_HOME}/lib/python2.6/site-packages:${PYTHON_HOME}/lib64/python2.6/site-packages
 export SCRIPT_HOME_PYTHON=$robin
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH

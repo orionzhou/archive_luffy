@@ -22,5 +22,8 @@ gtb2fas.pl -i 21_gene.gtb -o 21_gene.fas -s 11_genome.fa
 gtb2bigbed.pl -i 21_gene.gtb -o 21_gene.bb
 gtb2tbl.pl -i 21_gene.gtb -o 21_gene.tbl
 
-grep -P "\\ttransposable_element_gene" 21_gene.gtb > 41_te.gtb
-grep -i "nbs-lrr" 21_gene.gtb > 42_nbs.gtb
+awk 'BEGIN {FS="\t"} {if(NR==1 || $15 == "gene") print}' 21_gene.gtb > 40_gene.gtb
+awk 'BEGIN {FS="\t"} {if(NR==1 || $15 == "transposable_element_gene") print}' 21_gene.gtb > 41_te.gtb
+awk 'BEGIN {FS="\t"} {if(tolower($18) ~ /nbs-lrr/) print}' 21_gene.gtb > 42_nbs.gtb
+
+grep -i "" 21_gene.gtb > 42_nbs.gtb

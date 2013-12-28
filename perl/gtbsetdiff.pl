@@ -28,6 +28,7 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
+use Location;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 
 my ($fhq, $fht, $fho);
@@ -55,14 +56,22 @@ close $fht;
 
 my $hq;
 for my $i (0..$tq->nofRow-1) {
-    my $str = join("#", map {$tq->elm($i, $_)} qw/chr srd locC/);
+    my ($chr, $beg, $end, $srd, $locC)  = map {$tq->elm($i, $_)} qw/chr beg end srd locC/;
+    my $rloc = [sort {$a->[0] <=> $b->[0]} @{locStr2Ary($locC)}];
+    my $loc = $srd eq "-" ? [map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$rloc] : 
+        [map {[$beg+$_->[0]-1, $beg+$_->[1]-1]} @$rloc];
+    my $str = join("|", $chr, locAry2Str($loc));
     $hq->{$str} = $i;
 }
 
 my $ht;
 my @idxs_rm;
 for my $i (0..$tt->nofRow-1) {
-    my $str = join("#", map {$tt->elm($i, $_)} qw/chr srd locC/);
+    my ($chr, $beg, $end, $srd, $locC)  = map {$tt->elm($i, $_)} qw/chr beg end srd locC/;
+    my $rloc = [sort {$a->[0] <=> $b->[0]} @{locStr2Ary($locC)}];
+    my $loc = $srd eq "-" ? [map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$rloc] : 
+        [map {[$beg+$_->[0]-1, $beg+$_->[1]-1]} @$rloc];
+    my $str = join("|", $chr, locAry2Str($loc));
     if(exists($ht->{$str})) {
         push @idxs_rm, $ht->{$str};
     }
@@ -72,12 +81,11 @@ for my $i (0..$tt->nofRow-1) {
     }
 }
 
-my $no = $tt->nofRow;
+printf STDOUT "%5d | %5d substracted\n", scalar(@idxs_rm), $tt->nofRow;
+
 $tt->delRows(\@idxs_rm);
 print $fho $tt->tsv(1);
 close $fho;
-
-printf STDOUT "%5d / %5d substracted\n", scalar(@idxs_rm), $no;
 
 
 __END__

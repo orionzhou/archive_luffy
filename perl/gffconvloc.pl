@@ -6,21 +6,17 @@
   
 =head1 NAME
   
-  gff_conv_loc.pl - transform coordinates in the input GFF using existing path file 
+  gffconvloc.pl - transform coordinates in the input GFF using existing path file 
 
 =head1 SYNOPSIS
   
-  gff_conv_loc.pl [-help] [-in input-file] [-path path-file] [-out output-file]
+  gffconvloc.pl [-help] [-in input-file] [-path path-file] [-out output-file]
 
   Options:
       -help   brief help message
       -in     input file
       -out    output file
       -path   path file
-
-=head1 DESCRIPTION
-
-  This program transforms coordinates in the input GFF using existing path file 
 
 =cut
   
@@ -34,6 +30,7 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
+use Location;
 
 my ($fi, $fo, $fp) = ('') x 3;
 my $help_flag;

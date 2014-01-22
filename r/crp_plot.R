@@ -70,14 +70,14 @@ td = merge(tlo, tf, by.x="family", by.y="id")
 
 pal <- colorRampPalette(brewer.pal(9,"Set1"))
 p <- ggplot(data=td) +
-	geom_point(mapping=aes(x=(beg+end)/2/1000000, y=cluster_y, colour=factor(cat, levels=fams)), shape=18, size=0.8) +
-	scale_colour_manual(values=pal(length(unique(td$cat)))) +
-	scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
-	scale_y_continuous(name='', expand=c(0.04, 0)) +
-	facet_grid(chr ~ .) + 
-	theme(legend.position='right', legend.title=element_blank()) +
-	theme(axis.text.x=element_text(size=8, angle=0)) +
-	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
+  geom_point(mapping=aes(x=(beg+end)/2/1000000, y=cluster_y, colour=factor(cat, levels=fams)), shape=18, size=0.8) +
+  scale_colour_manual(values=pal(length(unique(td$cat)))) +
+  scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
+  scale_y_continuous(name='', expand=c(0.04, 0)) +
+  facet_grid(chr ~ .) + 
+  theme(legend.position='right', legend.title=element_blank()) +
+  theme(axis.text.x=element_text(size=8, angle=0)) +
+  theme(axis.text.y=element_blank(), axis.ticks=element_blank())
 ggsave(p, filename=sprintf("%s/%s.pdf", diro, org), width=8, heigh=5)
 
 #write.table(g21[order(g21$pos),], file.path(dir, "02_cluster.tbl"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
@@ -100,3 +100,12 @@ org = "Osativa"
 fi = sprintf("%s/spada.crp.%s.simple/33_stat_spa.tbl", DIR_Misc4, org)
 ti = read.table(fi, sep="\t", header=T, as.is=T)
 table(ti$tag)
+
+orgs = c("Mtruncatula_4.0", "HM056", "HM340")
+for (org in orgs) {
+  fi = sprintf("%s/spada.crp.%s/31_model_evaluation/61_final.tbl", DIR_Misc4, org)
+  ti = read.table(fi, sep="\t", header=T, as.is=T)[,1:6]
+  n_crp = nrow(ti)
+  n_ncr = sum(ti$family >= "CRP1130" & ti$family <= "CRP1530")
+  cat(org, "CRP:", n_crp, "NCR:", n_ncr, "\n", sep=" ")
+}

@@ -20,28 +20,28 @@ t62 = read.table(f62, header=T, sep="\t", as.is=T)
 
 rglb = data.frame(rg=t61$rg, lb=t61$rg, stringsAsFactors=F)
 for (i in 1:nrow(rglb)) {
-	idxs1 = which(t_rn$rn == rglb$rg[i])
-	if(length(idxs1) == 1) {
-		rglb$lb[i] = t_rn$lb[idxs1[1]]
-	}
+  idxs1 = which(t_rn$rn == rglb$rg[i])
+  if(length(idxs1) == 1) {
+    rglb$lb[i] = t_rn$lb[idxs1[1]]
+  }
 }
 
 t61.1 = merge(rglb, t61, by='rg')
 
 ts.1 = ddply(t61.1, .(lb), summarise, 
-	total=sum(total), unmapped=sum(unmapped), unpaired=sum(unpaired), unpaired_dedup=sum(unpaired_dedup), unpaired_uniq=sum(unpaired_uniq), 
-	paired=sum(paired), paired_dedup=sum(paired_dedup), 
-	paired_uniq=sum(paired_uniq), paired_proper=sum(paired_proper))
+  total=sum(total), unmapped=sum(unmapped), unpaired=sum(unpaired), unpaired_dedup=sum(unpaired_dedup), unpaired_uniq=sum(unpaired_uniq), 
+  paired=sum(paired), paired_dedup=sum(paired_dedup), 
+  paired_uniq=sum(paired_uniq), paired_proper=sum(paired_proper))
 
 ts.2 = merge(t_lb, ts.1, by='lb')
 ts.2$rl = as.numeric(ts.2$rl)
 ts = ts.2
 ts.3 = cbind(ts, 
-	pct_dedup=(ts$paired_dedup * 2 + ts$unpaired_dedup) / (ts$paired * 2 + ts$unpaired), 
-	cov_total=ts$total * ts$rl * 2 / len_assembly, 
-	cov_dedup=((ts$paired_dedup)*2 + (ts$unpaired_dedup)) * ts$rl / len_bases,
-	cov_uniq=(ts$paired_uniq * 2 + ts$unpaired_uniq) * ts$rl / len_alignable,
-	is_mean=NA, is_median=NA, is_sd=NA, is_mad=NA, is_mld=NA, is_mno=NA) 
+  pct_dedup=(ts$paired_dedup * 2 + ts$unpaired_dedup) / (ts$paired * 2 + ts$unpaired), 
+  cov_total=ts$total * ts$rl * 2 / len_assembly, 
+  cov_dedup=((ts$paired_dedup)*2 + (ts$unpaired_dedup)) * ts$rl / len_bases,
+  cov_uniq=(ts$paired_uniq * 2 + ts$unpaired_uniq) * ts$rl / len_alignable,
+  is_mean=NA, is_median=NA, is_sd=NA, is_mad=NA, is_mld=NA, is_mno=NA) 
 
 
 t62.1 = merge(rglb, t62, by='rg')
@@ -50,17 +50,17 @@ t62.2 = ddply(t62.1, .(lb, is), summarise, cnt=sum(cnt))
 ts = ts.3
 ti = t62.2
 for (i in 1:nrow(ts)) {
-	if(is.na(ts$total[i])) next
-	lb = ts$lb[i]
-	
-	d1 = ti[ti$lb==lb, c('is','cnt')]
-	d2 = with(d1, rep(is, cnt))
-	ts$is_mean[i] = mean(d2)
-	ts$is_sd[i] = sd(d2)
-	ts$is_median[i] = median(d2)
-	tmp = quantile(d2, c(0.159, 0.841))
-	ts$is_rsd[i] = (tmp[2] - tmp[1]) / 2
-	ts$is_mad[i] = mad(d2)
+  if(is.na(ts$total[i])) next
+  lb = ts$lb[i]
+  
+  d1 = ti[ti$lb==lb, c('is','cnt')]
+  d2 = with(d1, rep(is, cnt))
+  ts$is_mean[i] = mean(d2)
+  ts$is_sd[i] = sd(d2)
+  ts$is_median[i] = median(d2)
+  tmp = quantile(d2, c(0.159, 0.841))
+  ts$is_rsd[i] = (tmp[2] - tmp[1]) / 2
+  ts$is_mad[i] = mad(d2)
 }
 ts$is_mld = 10 * ts$is_mad
 ts$is_mno = ts$is_median + 20 * ts$is_mad
@@ -109,19 +109,19 @@ dir = file.path(DIR_Repo, "mt_35/40_sv/03_hydra")
 dirO = file.path(DIR_Repo, "mt_35/40_sv/04_hydra_filtered")
 
 for (i in 1:30) {
-	id = sprintf("HM%03d", i)
-	
-	f01 = file.path(dir, paste(id, ".all", sep=""))
-	if(file.info(f01)$size == 0) next
-	f02 = file.path(dir, paste(id, ".detail", sep=""))
-	d01 = read.table(f01, sep="\t", header=F, as.is=T)
-	d02 = read.table(f02, sep="\t", header=F, as.is=T, comment.char="&")
-	colnames(d01) = strsplit("chrom1 beg1 end1 chrom2 beg2 end2 breakpointId numDistinctPairs strand1 strand2 meanEditDist1 meanEditDist2 meanMappings1 meanMappings2 size numMappings allWeightedSupported finalSupport finalWeightedSupport numUniquePairs numAnchoredPairs numMultiplyMappedPairs blank", " ")[[1]]
-	colnames(d02) = strsplit("chrom1 beg1 end1 chrom2 beg2 end2 name mate1End strand1 strand2 editDist1 editDist2 numMappings1 numMappings2 mappingType includedInBreakpoint breakpointId", " ")[[1]]
-	d03 = aggregate(d02[,c('name','strand1')], by=list(factor(d02$breakpointId)), FUN=strjoin)
-	colnames(d03) = c('breakpointId', 'names', 'strand1s')
-	d05 = merge(d01[,1:22], d03[,c('breakpointId', 'readnames')], by=c('breakpointId'))
-	
-	write.table(d05, file.path(dirO, paste(id, ".tbl", sep="")), sep="\t", row.names=F, col.names=T, quote=F)
+  id = sprintf("HM%03d", i)
+  
+  f01 = file.path(dir, paste(id, ".all", sep=""))
+  if(file.info(f01)$size == 0) next
+  f02 = file.path(dir, paste(id, ".detail", sep=""))
+  d01 = read.table(f01, sep="\t", header=F, as.is=T)
+  d02 = read.table(f02, sep="\t", header=F, as.is=T, comment.char="&")
+  colnames(d01) = strsplit("chrom1 beg1 end1 chrom2 beg2 end2 breakpointId numDistinctPairs strand1 strand2 meanEditDist1 meanEditDist2 meanMappings1 meanMappings2 size numMappings allWeightedSupported finalSupport finalWeightedSupport numUniquePairs numAnchoredPairs numMultiplyMappedPairs blank", " ")[[1]]
+  colnames(d02) = strsplit("chrom1 beg1 end1 chrom2 beg2 end2 name mate1End strand1 strand2 editDist1 editDist2 numMappings1 numMappings2 mappingType includedInBreakpoint breakpointId", " ")[[1]]
+  d03 = aggregate(d02[,c('name','strand1')], by=list(factor(d02$breakpointId)), FUN=strjoin)
+  colnames(d03) = c('breakpointId', 'names', 'strand1s')
+  d05 = merge(d01[,1:22], d03[,c('breakpointId', 'readnames')], by=c('breakpointId'))
+  
+  write.table(d05, file.path(dirO, paste(id, ".tbl", sep="")), sep="\t", row.names=F, col.names=T, quote=F)
 }
 

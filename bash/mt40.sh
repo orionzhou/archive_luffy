@@ -13,17 +13,29 @@ cat 03.chrs.fa 03.scaffolds.concat.fa > ../11_genome.fa
 
 gff_jcvi.pl -i 11.gff -o 12_jcvi_fixed.gff
 gff_convert_loc.pl -i 12_jcvi_fixed.gff -p 03.scaffolds.concat.tbl -o 15_global_loc.gff
-gffcheckphase.pl -i 15_global_loc.gff -s ../11_genome.fa -o 17_phase_fixed.gff
-gff2gtb.pl -i 17_phase_fixed.gff -o ../21_gene.gtb
+gff2gtb.pl -i 15_global_loc.gff -o 15_global_loc.gtb
+gtbcheckphase.pl -i 15_global_loc.gtb -s ../11_genome.fa -o 17_phase_fixed.gtb
+gtbcatte.pl -i 17_phase_fixed.gtb -o 21.gtb
+gtbdedup.pl -i 21.gtb -o 25_dedup.gtb
 
 cd ..
-gtb2gff.pl -i 21_gene.gtb -o 21_gene.gff
-gtb2fas.pl -i 21_gene.gtb -o 21_gene.fas -s 11_genome.fa
-gtb2bigbed.pl -i 21_gene.gtb -o 21_gene.bb
-gtb2tbl.pl -i 21_gene.gtb -o 21_gene.tbl
 
-awk 'BEGIN {FS="\t"} {if(NR==1 || $15 == "gene") print}' 21_gene.gtb > 40_gene.gtb
-awk 'BEGIN {FS="\t"} {if(NR==1 || $15 == "transposable_element_gene") print}' 21_gene.gtb > 41_te.gtb
-awk 'BEGIN {FS="\t"} {if(tolower($18) ~ /nbs-lrr/) print}' 21_gene.gtb > 42_nbs.gtb
+seqlen.pl -i 11_genome.fa -o 15.sizes
+seqgap.pl -i 11_genome.fa -o 16_gap.tbl -m 100
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR>1) {$2=$2-1; print $1, $2, $3}}' 16_gap.tbl > 16_gap.bed
+bedToBigBed 16_gap.bed 15.sizes 16_gap.bb
 
-grep -i "" 21_gene.gtb > 42_nbs.gtb
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR==1 || $17 == "gene") print}' 21.gtb > 40_gene.gtb
+awk 'BEGIN {FS="\t"; OFS="\t"} {if($17 == "TE") print}' 21.gtb > 41_te.gtb
+
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(tolower($18) ~ /nbs-lrr)/) {$17="NBS"; print}}' 21.gtb > 42_nbs.gtb
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR!=1) {$18=$17; $17="CRP"; print}}' spada.crp.gtb | cut -f1-18 > 43_crp.gtb
+
+cat 4[0-3]*.gtb > 49.gtb
+gtbdedup.pl -i 49.gtb -o 51.gtb
+
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR==1 || tolower($17) != "te") print}' 51.gtb > 55_noTE.gtb
+
+gtb2gff.pl -i 51.gtb -o 51.gff
+gtb2fas.pl -i 51.gtb -o 51.fas -s 11_genome.fa
+gtb2bigbed.pl -i 51.gtb -s 15.sizes -o 51.bb

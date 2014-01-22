@@ -6,18 +6,18 @@
   
 =head1 NAME
   
-  gal2snp.pl - Call SNPs from a Gal file
+  galfillstat.pl - Fills the stat fields (match, misMatch, baseN) in a GAL file
 
 =head1 SYNOPSIS
   
-  gal2snp.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  galfillstat.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
+      -h (--help)   brief help message
+      -i (--in)     input Gal
+      -o (--out)    output Gal
+      -q (--qry)    query fasta
+      -t (--tgt)    target fasta
 
 =cut
   
@@ -30,8 +30,8 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Time::HiRes qw/gettimeofday tv_interval/;
 use Location;
-use Common;
 use Seq;
 use Gal;
 
@@ -49,21 +49,24 @@ GetOptions(
     "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
 pod2usage(2) if !$fq || !$ft;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
 } else {
     open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
     $fho = \*STDOUT;
 } else {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
+my $t0 = [gettimeofday];
+print $fho join("\t", @HEAD_GAL)."\n";
+
+my $cnt = 1;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
@@ -71,44 +74,26 @@ while( <$fhi> ) {
     next unless @$ps == 19;
     my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
         $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
-    
     my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
     @$rqLoc == @$rtLoc || die "unequal pieces\n";
     my $nBlock = @$rqLoc;
-    my @lens = map {$_->[1] - $_->[0] + 1} @$rqLoc;
 
+#    my $seqT = seqRet([[$tBeg, $tEnd]], $tId, $tSrd, $ft);
+#    my $seqQ = seqRet([[$qBeg, $qEnd]], $qId, $qSrd, $fq);
+#    my $tSeq = getSubSeq($seqT, $rtLoc);
+#    my $qSeq = getSubSeq($seqQ, $rqLoc);
     my $tLoc = $tSrd eq "-" ? [ map {[$tEnd-$_->[1]+1, $tEnd-$_->[0]+1]} @$rtLoc ]
         : [ map {[$tBeg+$_->[0]-1, $tBeg+$_->[1]-1]} @$rtLoc ]; 
     my $qLoc = $qSrd eq "-" ? [ map {[$qEnd-$_->[1]+1, $qEnd-$_->[0]+1]} @$rqLoc ]
         : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ]; 
     my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
     my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
+    ($match, $misMatch, $baseN) = seqCompare($tSeq, $qSeq);
+    $ident = ($match+$misMatch==0) ? 0 : sprintf "%.03f", $match/($match+$misMatch);
+    @$ps[11..14] = ($match, $misMatch, $baseN, $ident);
+    print $fho join("\t", @$ps)."\n";
 
-    my $len = 0;
-    my (@tNts, @qNts, @tPoss, @qPoss);
-    for my $i (0..$nBlock-1) {
-        my ($rtb, $rte) = @{$rtLoc->[$i]};
-        my ($rqb, $rqe) = @{$rqLoc->[$i]};
-        for my $j (0..$lens[$i]-1) {
-            my $tNt = uc(substr($tSeq, $len+$j, 1));
-            my $qNt = uc(substr($qSeq, $len+$j, 1));
-            my $tPos = $tSrd eq "-" ? $tEnd-($rtb+$j)+1 : $tBeg+($rtb+$j)-1;
-            my $qPos = $qSrd eq "-" ? $qEnd-($rqb+$j)+1 : $qBeg+($rtb+$j)-1;
-            if($tNt ne "N" && $qNt ne "N" && $tNt ne $qNt) {
-                push @tNts, $tNt;
-                push @qNts, $qNt;
-                push @tPoss, $tPos;
-                push @qPoss, $qPos;
-            }
-        }
-        $len += $lens[$i];
-    }
-    @tPoss == $misMatch || die "$id not $misMatch SNPs: ".scalar(@tPoss)."\n";
-    
-    for my $i (0..@qPoss-1) {
-        my ($qPos, $tPos, $qNt, $tNt) = ($qPoss[$i], $tPoss[$i], $qNts[$i], $tNts[$i]);
-        print $fho join("\t", $qId, $qPos, $tId, $tPos, $qNt, $tNt)."\n";
-    }
+    printf "%5d: %.01f min\n", $cnt++, tv_interval($t0, [gettimeofday]) / 60 if $cnt % 1000 == 0;
 }
 close $fhi;
 close $fho;

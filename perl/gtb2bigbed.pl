@@ -34,7 +34,6 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
-use Gtb;
 
 my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;

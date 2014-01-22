@@ -16,12 +16,12 @@ d4$size = as.numeric(d4$size)
 d4$region = factor(d4$region, levels=c("bp_cds", "bp_intron", "bp_utr5", "bp_utr3", "bp_intergenic"))
 
 p = ggplot(d4) +
-	geom_bar(aes(x=cat, y=size, fill=region), stat='identity', position='fill') +
-	scale_fill_brewer(breaks=levels(d4$region), labels = c("CDS", "Intron", "UTR5", "UTR3", "Intergenic"), palette='Set1') +
-	scale_y_continuous(name="", formatter='percent') +
-	scale_x_discrete(name="") +
+  geom_bar(aes(x=cat, y=size, fill=region), stat='identity', position='fill') +
+  scale_fill_brewer(breaks=levels(d4$region), labels = c("CDS", "Intron", "UTR5", "UTR3", "Intergenic"), palette='Set1') +
+  scale_y_continuous(name="", formatter='percent') +
+  scale_x_discrete(name="") +
     opts(axis.text.x=theme_text(size=8), axis.text.y=theme_text(hjust=1, size=10, colour="blue")) +
-	coord_flip()
+  coord_flip()
 ggsave(p, filename = file.path(dirW, "deletion04.png"), width=5, height=2);
 
 a1 = readAssembly("mt_35")
@@ -106,10 +106,10 @@ write.table(sfs.2, file.path(dir, "74_sfs.tbl"), sep="\t", quote=F, row.names=F,
 tmp = cut(sfs.2$freq_alt, breaks=c(seq(0,1,0.1)))
 data = data.frame(DAF_bin=tmp)
 p = ggplot(data) +
-	geom_bar(aes(x=factor(DAF_bin)), width=0.4) + 
-	scale_x_discrete(name="Proportion of Accessions with the Deletion") +
-	scale_y_continuous(name="Number of Events") +
-	opts(axis.text.x = theme_text(angle=45, size=8))
+  geom_bar(aes(x=factor(DAF_bin)), width=0.4) + 
+  scale_x_discrete(name="Proportion of Accessions with the Deletion") +
+  scale_y_continuous(name="Number of Events") +
+  opts(axis.text.x = theme_text(angle=45, size=8))
 ggsave(file.path(dir, "74_sfs.png"), p, width=4, height=4)
 
 
@@ -136,21 +136,21 @@ data = merge(m2, s1, by.x='id_pindel', by.y='pos')
 
 tmp = cut(data$size_d/1000, breaks=c(seq(0,5,0.2)))
 p = ggplot(data.frame(size=tmp)) +
-	geom_bar(aes(x=factor(size)), width=0.8) + 
-	scale_x_discrete(name="Deletion Size (kb)") + 
-	scale_y_continuous(name="Number Events") +
-	opts(axis.text.x = theme_text(angle=45, size=8))
+  geom_bar(aes(x=factor(size)), width=0.8) + 
+  scale_x_discrete(name="Deletion Size (kb)") + 
+  scale_y_continuous(name="Number Events") +
+  opts(axis.text.x = theme_text(angle=45, size=8))
 ggsave(file.path(dir, "01_size.png"), p, width=5, height=4)
 
 tmp1 = cut(data$freq_der[data$bp_cds>0], breaks=c(seq(0,0.5,0.05)))
 tmp2 = cut(data$freq_der[data$bp_cds==0], breaks=c(seq(0,0.5,0.05)))
 tmp = rbind(data.frame(DAF_bin=tmp1, type='CDS'), data.frame(DAF_bin=tmp2, type='non-CDS'))
 p = ggplot(tmp) +
-	geom_bar(aes(x=factor(DAF_bin), fill=type), width=0.6, position='dodge') + 
-	scale_fill_brewer(palette='Set1') +
-	scale_x_discrete(name="Derived Alelle Frequency (folded)") +
-	scale_y_continuous(name="Number of Deletion Events") +
-	opts(axis.text.x = theme_text(angle=45, size=8))
+  geom_bar(aes(x=factor(DAF_bin), fill=type), width=0.6, position='dodge') + 
+  scale_fill_brewer(palette='Set1') +
+  scale_x_discrete(name="Derived Alelle Frequency (folded)") +
+  scale_y_continuous(name="Number of Deletion Events") +
+  opts(axis.text.x = theme_text(angle=45, size=8))
 ggsave(file.path(dir, "02_sfs.png"), p, width=5, height=4)
 
 

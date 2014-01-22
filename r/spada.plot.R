@@ -7,8 +7,8 @@ pres = c("crp", "defl")
 dirO = file.path(DIR_Misc4, "stat")
 
 for (i in 1:length(orgs)) {
-	org = orgs[i]
-	fi = sprintf("%s/misc4/spada.%s.%s/41_perf_eval/51_stat.tbl", DIR_Data, pres[i], org)
+  org = orgs[i]
+  fi = sprintf("%s/misc4/spada.%s.%s/41_perf_eval/51_stat.tbl", DIR_Data, pres[i], org)
     ti = read.table(fi, sep="\t", header=T, as.is=T)
     ti = cbind(org=org, ti)
     if(i == 1) {

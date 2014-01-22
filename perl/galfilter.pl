@@ -13,10 +13,11 @@
   galfilter.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
-      -len    minimum aln length (default: 1) 
+      -h (--help)   brief help message
+      -i (--in)     input file
+      -o (--out)    output file
+      -m (--match)  minimum matches (default: 1) 
+      -p (--ident)  minimum percent identity (default: 0.5) 
 
 =cut
   
@@ -30,9 +31,10 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Location;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my $len = 1;
+my ($min_match, $min_ident) = (1, 0.5);
 my ($fhi, $fho);
 my $help_flag;
 
@@ -41,7 +43,8 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "len|l=i"  => \$len,
+    "match|m=i"  => \$min_match,
+    "ident|p=f"  => \$min_ident,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
@@ -58,22 +61,19 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
+print $fho join("\t", @HEAD_GAL)."\n";
 
 my $cnt = 0;
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    next unless @$ps == 19;
+    my @ps = split "\t";
+    next unless @ps == 19;
     my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
-    my $qLoc = locStr2Ary($qLocS);
-    my $qLen = locAryLen($qLoc);
-    next if $qLen < $len;
-
-    print $fho join("\t", @$ps)."\n";
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @ps;
+    $match >= $min_match || next;
+    $ident >= $min_ident || next;
+    print $fho join("\t", @ps)."\n";
     $cnt ++;
 }
 print STDERR "$cnt rows passed filter\n";

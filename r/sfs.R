@@ -21,11 +21,11 @@ t01 = table(cut(s03$freq_der, breaks=intervals))
 
 df = data.frame(bin=names(t01), count=as.numeric(t01))
 p = ggplot(df) +
-	geom_bar(aes(x=bin, y=count, fill='all', width=0.6), stat='identity', position='dodge') + 
-	scale_fill_brewer(palette='Set3') +
-	scale_x_discrete(name="Minor Alelle Frequency") +
-	scale_y_continuous(name="Number SNPs", formatter="comma") +
-	opts(title=paste("MAF distribution of chr", chr, " SNPs", sep=""), axis.text.x = theme_text(angle=45, size=8))
+  geom_bar(aes(x=bin, y=count, fill='all', width=0.6), stat='identity', position='dodge') + 
+  scale_fill_brewer(palette='Set3') +
+  scale_x_discrete(name="Minor Alelle Frequency") +
+  scale_y_continuous(name="Number SNPs", formatter="comma") +
+  opts(title=paste("MAF distribution of chr", chr, " SNPs", sep=""), axis.text.x = theme_text(angle=45, size=8))
 fo = file.path(dirI, paste("chr", chr, "_sfs.png", sep=""))
 ggsave(fo, p, width=5, height=4)
 

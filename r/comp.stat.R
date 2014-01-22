@@ -25,22 +25,22 @@ stats[["Contig_Stats"]]
 ##### plot scaffold size distribution
 tmp = cut(t_len$length/1000, breaks=c(0,1,5,10,50,100,500,1000,5000))
 p = ggplot(data.frame(size=tmp)) +
-	geom_bar(aes(x=factor(size)), width=0.7) + 
-	scale_x_discrete(name="Scaffold Size (kb)") + 
-	scale_y_continuous(name="") +
-	theme(axis.text.x = element_text(angle=15, size=8))
+  geom_bar(aes(x=factor(size)), width=0.7) + 
+  scale_x_discrete(name="Scaffold Size (kb)") + 
+  scale_y_continuous(name="") +
+  theme(axis.text.x = element_text(angle=15, size=8))
 ggsave(file.path(dir, "figs/01_scaffold_size.png"), p, width=5, height=4)
 
 ##### plot genome distribution
 p <- ggplot(data=tw) +
-	geom_rect(mapping=aes(xmin=hBeg/1000000, xmax=hEnd/1000000, ymin=0, ymax=1, fill=hId)) +  
-	layer(data=tg, geom='rect', mapping=aes(xmin=hBeg/1000000, xmax=hEnd/1000000, ymin=-1, ymax=0), geom_params=list()) +
-	scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
-	scale_y_continuous(name='', expand=c(0.04, 0)) +
-	facet_grid(hId ~ .) + 
-	theme(legend.position='right', legend.title=element_blank()) +
-	theme(axis.text.x=element_text(size=8, angle=0)) +
-	theme(axis.text.y=element_blank(), axis.ticks=element_blank())
+  geom_rect(mapping=aes(xmin=hBeg/1000000, xmax=hEnd/1000000, ymin=0, ymax=1, fill=hId)) +  
+  layer(data=tg, geom='rect', mapping=aes(xmin=hBeg/1000000, xmax=hEnd/1000000, ymin=-1, ymax=0), geom_params=list()) +
+  scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
+  scale_y_continuous(name='', expand=c(0.04, 0)) +
+  facet_grid(hId ~ .) + 
+  theme(legend.position='right', legend.title=element_blank()) +
+  theme(axis.text.x=element_text(size=8, angle=0)) +
+  theme(axis.text.y=element_blank(), axis.ticks=element_blank())
 ggsave(p, filename=file.path(dir, "figs/03_coverage.png"), width=7, height=5)
 
 ##### assign alignment blocks
@@ -54,8 +54,8 @@ t13 = merge(t12, t_len, by='qId')
 t14 = cbind(t13, pct_cov=t13$qLen_aln/t13$len_scaf)
 
 sum_tw <- function(cutoff, df) {
-	df = df[df$pct_cov >= cutoff,]
-	c('num_qId'=length(unique(df$qId)), 'num_block'=nrow(df), 'qLen_aln'=sum(df$qLen_aln), 'hLen_aln'=sum(df$hLen_aln), 'qLen'=sum(df$qLen))
+  df = df[df$pct_cov >= cutoff,]
+  c('num_qId'=length(unique(df$qId)), 'num_block'=nrow(df), 'qLen_aln'=sum(df$qLen_aln), 'hLen_aln'=sum(df$hLen_aln), 'qLen'=sum(df$qLen))
 }
 ldply(seq(0,0.3,0.05), sum_tw, t14)
 
@@ -97,18 +97,18 @@ t37 = ddply(t36, .(qId), summarise, qLen=sum(qLen), hLen=sum(hLen), n_seg=length
 t41 = cbind(t21c, category='', stringsAsFactors=FALSE)
 t41$category[t21c$qLen>0] <- 'Medicago'
 for (i in 1:nrow(t37)) {
-	j = which(t41$qId == t37$qId[i])
-	if(t41$score[j] < t37$score[i]) {
-		t41[j, 2:7] = t37[i, 2:7]
-		t41$category[j] = t37$category[i]
-		t41$pct_cov[j] = t41$qLen[j] / t41$len_scaf[j]
-	}
+  j = which(t41$qId == t37$qId[i])
+  if(t41$score[j] < t37$score[i]) {
+    t41[j, 2:7] = t37[i, 2:7]
+    t41$category[j] = t37$category[i]
+    t41$pct_cov[j] = t41$qLen[j] / t41$len_scaf[j]
+  }
 }
 table(t41$category)
 
 scaffold_stat <- function(ids, df) {
-	dfs = df[df$qId %in% ids,]
-	c('n'=length(ids), 'len_scaf'=sum(dfs$len_scaf), 'qLen_aln'=sum(dfs$qLen), 'hLen_aln'=sum(dfs$hLen))
+  dfs = df[df$qId %in% ids,]
+  c('n'=length(ids), 'len_scaf'=sum(dfs$len_scaf), 'qLen_aln'=sum(dfs$qLen), 'hLen_aln'=sum(dfs$hLen))
 }
 id_all = t41$qId
 id_mt = t41$qId[t41$category == "Medicago"]

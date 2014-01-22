@@ -279,9 +279,9 @@ plotGeneStat <- function() {
     scale_x_discrete(name='', breaks=catM$familyId, labels=catM$catStr) +
     scale_y_continuous(name='', limits=c(0,0.03)) +
     scale_fill_manual(breaks=seq(1,4,1), labels = c('Gene Ontology','Domain Function', 'NBS-LRRs', 'CRPs'), values=c('yellow', 'orange', 'royalblue', 'red')) +
-  	coord_flip() +
-  	opts(legend.title = theme_blank()) +
-  	opts(axis.text.y = theme_text(size=8, hjust=1, colour='blue'));
+    coord_flip() +
+    opts(legend.title = theme_blank()) +
+    opts(axis.text.y = theme_text(size=8, hjust=1, colour='blue'));
   ggsave(p, filename=file.path(DIR_R, 'cat', paste(col, ".png", sep="")), width=10, height=7);
 }
 plotRsq <- function(fName) {

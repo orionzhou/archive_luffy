@@ -11,9 +11,9 @@ tt = table(tg$len)
 x1 = data.frame(gap_len=as.numeric(names(tt)), gap_cnt=as.numeric(tt))
 x2 = cbind(x1, gap_cumsum=cumsum(x1$gap_len*x1$gap_cnt))
 p <- ggplot(data=x2) +
-	geom_line(mapping=aes(x=gap_len, y=gap_cumsum/1000000), geom_params=list(col='blue')) +
-	scale_x_log10(name='Gap size (bp)', breaks = 10^(1:5), labels=sprintf("10^%d", (1:5))) +
-	scale_y_continuous(name='Cumulative sum of gap contribution (Mbp)') 
+  geom_line(mapping=aes(x=gap_len, y=gap_cumsum/1000000), geom_params=list(col='blue')) +
+  scale_x_log10(name='Gap size (bp)', breaks = 10^(1:5), labels=sprintf("10^%d", (1:5))) +
+  scale_y_continuous(name='Cumulative sum of gap contribution (Mbp)') 
 ggsave(p, filename = file.path(dirW, "gap_stat.png"), width=6, height=4)
 
 tg = tg[tg$len >= 1000,]

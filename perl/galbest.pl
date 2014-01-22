@@ -29,6 +29,7 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Location;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -55,9 +56,7 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
-
+print $fho join("\t", @HEAD_GAL)."\n";
 my $h;
 while( <$fhi> ) {
     chomp;

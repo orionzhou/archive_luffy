@@ -59,15 +59,54 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
+print $fho join("\t", @HEAD_GAL)."\n";
 
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
     next unless @$ps == 19;
-    gal_break($ps, $gap, $fho);
+    
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    @$qLoc == @$tLoc || die "unequal pieces\n";
+    my $nBlock = @$qLoc;
+    
+    my @idxs = [0, @$qLoc-1];
+    for my $i (0..@$qLoc-1) {
+        next if $i == 0;
+        my ($rqb, $rqe) = @{$qLoc->[$i]};
+        my ($rtb, $rte) = @{$tLoc->[$i]};
+        my ($prqb, $prqe) = @{$qLoc->[$i-1]};
+        my ($prtb, $prte) = @{$tLoc->[$i-1]};
+        ($prqe < $rqb && $prte < $rtb) ||
+            die "error: $id $qId\[$prqb-$prqe, $rqb-$rqe] $tId\[$prtb-$prte, $rtb-$rte]\n";
+        if($rqb - $prqe - 1 >= $gap) {
+            $idxs[-1]->[1] = $i-1;
+            push @idxs, [$i, @$qLoc-1];
+        }
+    }
+    my $cnt = 1;
+    
+    for (@idxs) {
+        my ($idxb, $idxe) = @$_;
+        my @rql = @$qLoc[$idxb..$idxe];
+        my @rtl = @$tLoc[$idxb..$idxe];
+        my ($rqb, $rqe) = ($rql[0]->[0], $rql[-1]->[1]);
+        my ($rtb, $rte) = ($rtl[0]->[0], $rtl[-1]->[1]);
+        my $qb = $qSrd eq "-" ? $qEnd-$rqe+1 : $qBeg+$rqb-1;
+        my $qe = $qSrd eq "-" ? $qEnd-$rqb+1 : $qBeg+$rqe-1;
+        my $tb = $tSrd eq "-" ? $tEnd-$rte+1 : $tBeg+$rtb-1;
+        my $te = $tSrd eq "-" ? $tEnd-$rtb+1 : $tBeg+$rte-1;
+        my @nrql = map {[$_->[0]-$rqb+1, $_->[1]-$rqb+1]} @rql;
+        my @nrtl = map {[$_->[0]-$rtb+1, $_->[1]-$rtb+1]} @rtl;
+        my $qlen = $rqe - $rqb + 1;
+        my $tlen = $rte - $rtb + 1;
+        my ($qls, $tls) = (locAry2Str(\@nrql), locAry2Str(\@nrtl));
+        print $fho join("\t", $id.".".($cnt++), $qId, $qb, $qe, $qSrd, $qSize, 
+            $tId, $tb, $te, $tSrd, $tSize, ('')x6, $qls, $tls)."\n";
+    }
 }
 close $fhi;
 close $fho;

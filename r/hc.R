@@ -40,9 +40,9 @@ rownames(e02) = rnames
 
 #for mtGEA fold change analysis
 foldchange <- function(exp, group1=c(1:14), group2=c(15:18)) {
-	a = max(exp[group2])
-	tmp = a >= exp[group1] * 2
-	sum(tmp) == length(group1)
+  a = max(exp[group2])
+  tmp = a >= exp[group1] * 2
+  sum(tmp) == length(group1)
 }
 i10 = apply(e02, 1, foldchange)
 
@@ -74,8 +74,8 @@ write.table(t+0, file.path(dirI, "21_ttest.txt"), sep="\t", row.names=TRUE, col.
 write.table(rnames[t[,7]], file.path(dirI, "22_nod_up.txt"), sep="\t", row.names=FALSE, col.names=FALSE, quote=FALSE)
 
 p <- ggplot(t03) +
-	geom_bar(aes(p, count, fill=adjust), position="dodge", stat="identity") +
-	opts(axis.text.x=theme_text(size=8, hjust=1, angle=45));
+  geom_bar(aes(p, count, fill=adjust), position="dodge", stat="identity") +
+  opts(axis.text.x=theme_text(size=8, hjust=1, angle=45));
 ggsave(p, filename="001.png", path=dirO, width=8, height=6);
 
 #scale data by row for hclust

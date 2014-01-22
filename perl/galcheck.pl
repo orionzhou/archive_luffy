@@ -53,7 +53,41 @@ while( <$fhi> ) {
     next if /(^id)|(^\#)|(^\s*$)/;
     my $ps = [ split "\t" ];
     next unless @$ps == 19;
-    gal_check($ps);
+    
+    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
+        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
+    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    my $srd = ($qSrd eq $tSrd) ? "+" : "-";
+
+    my ($rqb, $rqe) = ($qLoc->[0]->[0], $qLoc->[-1]->[1]);
+    my ($rtb, $rte) = ($tLoc->[0]->[0], $tLoc->[-1]->[1]);
+    print "qLen err: $id $qId($qBeg-$qEnd): $rqb-$rqe\n" unless $qEnd-$qBeg==$rqe-$rqb;
+    print "tLen err: $id $tId($tBeg-$tEnd): $rtb-$rte\n" unless $tEnd-$tBeg==$rte-$rtb;
+
+    my @rqloc = $qLoc->[0];
+    my @rtloc = $tLoc->[0];
+    for my $i (0..@$qLoc-1) {
+        my ($rqb, $rqe) = @{$qLoc->[$i]};
+        my ($rtb, $rte) = @{$tLoc->[$i]};
+        my ($rql, $rtl) = ([$rqb, $rqe], [$rtb, $rte]);
+        print "blk err: $id $qId($rqb-$rqe) <> $tId($rtb-$rte)\n" unless $rqe-$rqb==$rte-$rtb;
+        
+        next if $i == 0;
+        my ($prqb, $prqe) = @{$rqloc[-1]};
+        my ($prtb, $prte) = @{$rtloc[-1]};
+        if($rqb <= $prqe || $rtb <= $prte) {
+            my $plen = $prqe - $prqb + 1;
+            my $len = $rqe - $rqb + 1;
+            if($plen < $len) {
+                $rqloc[-1] = $rql;
+                $rtloc[-1] = $rtl;
+            }
+            print "$id: $qId\[$prqb-$prqe, $rqb-$rqe] $tId\[$prtb-$prte, $rtb-$rte]\n", 
+        } else {
+            push @rqloc, $rql;
+            push @rtloc, $rtl;
+        }
+    }
 }
 close $fhi;
 

@@ -12,7 +12,7 @@ d04 = cbind(d03[,c(-3)], cov=1-d03$num_N/d03$length, snpDensity=d03$num_snp/(d03
 d05 = merge(d04, gf1[,c(1:3)], by="id")
 p = ggplot(d05, aes(x=type2, y=cov, fill=type2)) +
   geom_boxplot() + 
-  scale_fill_brewer(palette='Set1') +	
+  scale_fill_brewer(palette='Set1') +  
   labs(fill="Gene Family") +
   scale_y_continuous(name='% coverage') +
   scale_x_discrete(name='') +
@@ -21,7 +21,7 @@ p = ggplot(d05, aes(x=type2, y=cov, fill=type2)) +
 ggsave(p, filename = file.path(dir, pre, "31_cov.png"), width=12, height=9)
 p = ggplot(d05, aes(x=type2, y=snpDensity, fill=type2)) +
   geom_boxplot() + 
-  scale_fill_brewer(palette='Set1') +	
+  scale_fill_brewer(palette='Set1') +  
   labs(fill="Gene Family") +
   scale_y_continuous(name='SNP density', limits=c(0, 0.06)) +
   scale_x_discrete(name='') +

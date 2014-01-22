@@ -31,7 +31,7 @@ ddply(ta3, .(cat), ss)
 p = ggplot(ta3, aes(x=cat, y=pctC, fill=cat)) +
 #  stat_sum_df("mean_sdl", mult=1) + 
   geom_boxplot() + 
-  scale_fill_brewer(palette='Set1') +	
+  scale_fill_brewer(palette='Set1') +  
   labs(fill="Gene Family") +
   scale_y_continuous(name='% alignability') +
   scale_x_discrete(name='') +

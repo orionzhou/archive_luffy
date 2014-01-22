@@ -39,15 +39,15 @@ dat1.coord = merge(dat1.coord, dat1.seqlen, by='id')
 dat1.coord = dat1.coord[order(dat1.coord$order),-2]
 dat1.coord = cbind(dat1.coord, beg=1, end=dat1.coord$length)
 for (i in 2:nrow(dat1.coord)) {
-	dat1.coord$beg[i] = dat1.coord$end[i-1] + 1
-	dat1.coord$end[i] = dat1.coord$beg[i] + dat1.coord$length[i] - 1
+  dat1.coord$beg[i] = dat1.coord$end[i-1] + 1
+  dat1.coord$end[i] = dat1.coord$beg[i] + dat1.coord$length[i] - 1
 }
 
 
 dat2.coord = cbind(dat2.seqlen, beg=1, end=dat2.seqlen$length)
 for (i in 2:nrow(dat2.coord)) {
-	dat2.coord$beg[i] = dat2.coord$end[i-1] + 1
-	dat2.coord$end[i] = dat2.coord$beg[i] + dat2.coord$length[i] - 1
+  dat2.coord$beg[i] = dat2.coord$end[i-1] + 1
+  dat2.coord$end[i] = dat2.coord$beg[i] + dat2.coord$length[i] - 1
 }
 
 alnplot = tb

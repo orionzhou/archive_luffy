@@ -51,13 +51,13 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo || !$opt;
 
-if ($fi eq "stdin") {
+if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
 } else {
     open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout") {
+if ($fo eq "stdout" || $fo eq "-") {
     $fho = \*STDOUT;
 } else {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
@@ -73,8 +73,7 @@ if( -s $ft ) {
     $ht = { map {$t->elm($_, "id") => $t->elm($_, "length")} (0..$t->nofRow-1) };
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
+print $fho join("\t", @HEAD_GAL)."\n";
 
 while(<$fhi>) {
     chomp;

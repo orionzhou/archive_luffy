@@ -8,8 +8,8 @@ locCluster <- function(pos, wsize) {
         next
       }
       if(df$pos[j] - df$pos[i] <= wsize) {
-  	    df$cluster[j] = df$cluster[i]
-  	  }
+        df$cluster[j] = df$cluster[i]
+      }
     }
   }
   clusters = unique(df$cluster)

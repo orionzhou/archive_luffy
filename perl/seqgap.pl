@@ -18,36 +18,6 @@
       -out    output file
       -min    minimum length of gaps to report (default: 1)
 
-=head1 DESCRIPTION
-
-  This program report locations of all gaps ('N's) from the input fasta file
-
-=head1 OPTIONS
-
-=over 6
-  
-=item B<-help>
-  
-  Print a usage summary.
-
-=item B<input-file>
-  
-  To write to stdin, the user could specify 'stdin'.
-
-=item B<output-file>
-
-  To write to stdout, the user could specify 'stdout'.
-
-=back
-  
-=head1 BUGS
-  
-=head1 REFERENCES
-  
-=head1 VERSION
-  
-  0.1
-  
 =cut
   
 #### END of POD documentation.

@@ -30,6 +30,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Common;
 use Location;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -56,9 +57,8 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-print $fho join("\t", qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize
-    match misMatch baseN ident e score qLoc tLoc/)."\n";
-
+my $hi;
+print $fho join("\t", @HEAD_GAL)."\n";
 while( <$fhi> ) {
     chomp;
     my @ps = split /\s/;
@@ -69,6 +69,10 @@ while( <$fhi> ) {
         $tBeg += 1;
         $qBeg += 1;
         ($qBeg, $qEnd) = ($qSize-$qEnd+1, $qSize-$qBeg+1) if $qSrd eq "-";
+        
+        $hi->{$id} ||= 0;
+        $hi->{$id} ++;
+        $id .= ".".$hi->{$id} if $hi->{$id} > 1;
         
         my ($td, $qd) = (0, 0);
         my ($rtloc, $rqloc) = ([], []);

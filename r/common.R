@@ -44,12 +44,12 @@ lsos <- function(..., n=10) {
 
 lg <- function(a, b, name1, name2, f_png) {
   png(filename=f_png, width=500, height=500, units='px');
-	plot(a, b, type="p", xlab=name1, ylab=name2)
-	fit = lm(b~a)
-	abline(fit, col="blue")
-	fit.sum = summary(fit)
-	ann = paste("adjusted Rsquare = ", sprintf("%.04f", fit.sum$adj.r.squared), sep="")
-	text(0.8*min(a)+0.2*max(a), 0.8*min(b)+0.2*max(b), ann, col='red')
+  plot(a, b, type="p", xlab=name1, ylab=name2)
+  fit = lm(b~a)
+  abline(fit, col="blue")
+  fit.sum = summary(fit)
+  ann = paste("adjusted Rsquare = ", sprintf("%.04f", fit.sum$adj.r.squared), sep="")
+  text(0.8*min(a)+0.2*max(a), 0.8*min(b)+0.2*max(b), ann, col='red')
   dev.off();
 }
 

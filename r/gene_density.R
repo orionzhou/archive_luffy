@@ -35,7 +35,7 @@ p = ggplot(data = d1) +
   geom_rect(mapping=aes(xmin=beg, xmax=end, ymin=cnt_TIR, ymax=cnt_TIR+cnt_nonTIR, fill='nonTIR'), size=0) +
   geom_rect(mapping=aes(xmin=beg, xmax=end, ymin=cnt_TIR+cnt_nonTIR, ymax=cnt_TIR+cnt_nonTIR+cnt_CRP1040.1530, fill='NCR'), size=0) +
   geom_rect(mapping=aes(xmin=beg, xmax=end, ymin=cnt_TIR+cnt_nonTIR+cnt_CRP1040.1530, ymax=cnt_TIR+cnt_nonTIR+cnt_CRP1040.1530+cnt_CRP0000.1030, fill='nonNCR'), size=0) +
-  scale_fill_brewer(palette='Set1') +	
+  scale_fill_brewer(palette='Set1') +  
   labs(fill="Gene Family") +
   scale_x_continuous(name='chr position (bp)', formatter='comma') +
   scale_y_continuous(name='Gene Number') +

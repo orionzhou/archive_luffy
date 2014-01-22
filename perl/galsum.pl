@@ -6,15 +6,15 @@
   
 =head1 NAME
   
-  galstat.pl - Print a brief summary of a GAL file
+  galsum.pl - Print a brief summary of a GAL file
 
 =head1 SYNOPSIS
   
-  galstat.pl [-help] [-in input-file]
+  galsum.pl [-help] [-in input-file]
 
   Options:
-      -help   brief help message
-      -in     input file
+      -h (--help)   brief help message
+      -i (--in)     input file
 
 =cut
   

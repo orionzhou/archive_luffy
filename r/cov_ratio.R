@@ -36,23 +36,23 @@ plotCov <- function() {
 }
 
 plot_cov_info <- function(cov_info) {
-	#plot total coverage / unique coverage per accession
-	p = ggplot(data = cov_info) + 
-		geom_bar(mapping = aes(x=chr, y=cov1_sum/pos_sum, fill=chr), stat='identity', position='dodge') +
-		scale_fill_brewer(palette='Set1') +
-		facet_wrap( ~ acc, nrow = 6) +
-		scale_x_discrete(name="") +
-		scale_y_continuous(name="coverage") +
-		opts(axis.text.x = theme_blank());
-	ggsave(p, filename=file.path(DIR_Misc1, "r/cov", "01_cov.png"), width=12, height=12)
-	p = ggplot(data = cov_info) + 
-		geom_bar(mapping = aes(x=chr, y=cov2_sum/pos_sum, fill=chr), stat='identity', position='dodge') +
-		scale_fill_brewer(palette='Set1') +
-		facet_wrap( ~ acc, nrow = 6) +
-		scale_x_discrete(name="") +
-		scale_y_continuous(name="unique coverage") +
-		opts(axis.text.x = theme_blank());
-	ggsave(p, filename=file.path(DIR_Misc1, "r/cov", "02_cov_uniq.png"), width=12, height=12)
+  #plot total coverage / unique coverage per accession
+  p = ggplot(data = cov_info) + 
+    geom_bar(mapping = aes(x=chr, y=cov1_sum/pos_sum, fill=chr), stat='identity', position='dodge') +
+    scale_fill_brewer(palette='Set1') +
+    facet_wrap( ~ acc, nrow = 6) +
+    scale_x_discrete(name="") +
+    scale_y_continuous(name="coverage") +
+    opts(axis.text.x = theme_blank());
+  ggsave(p, filename=file.path(DIR_Misc1, "r/cov", "01_cov.png"), width=12, height=12)
+  p = ggplot(data = cov_info) + 
+    geom_bar(mapping = aes(x=chr, y=cov2_sum/pos_sum, fill=chr), stat='identity', position='dodge') +
+    scale_fill_brewer(palette='Set1') +
+    facet_wrap( ~ acc, nrow = 6) +
+    scale_x_discrete(name="") +
+    scale_y_continuous(name="unique coverage") +
+    opts(axis.text.x = theme_blank());
+  ggsave(p, filename=file.path(DIR_Misc1, "r/cov", "02_cov_uniq.png"), width=12, height=12)
 }
 
 fi = file.path(DIR_Repo, "mt_35", "30_vnt/21_coverage/11_info.tbl")
@@ -90,14 +90,14 @@ fname = paste(acc1, "_", acc2, ".tbl", sep='')
 write.table(covr2, file.path(DIR_R, "acgh", fname), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
 p = ggplot(data = covr2) + 
-	geom_point(aes(x=(beg+end)/2000000, y=cov2_ratio), size=0.3) + 
-	geom_hline(yintercept=c(0), color='purple', size=0.1) +
-	geom_hline(yintercept=c(-1,1), color='blue', size=0.1) +
-	geom_hline(yintercept=c(-2,2), color='red', size=0.1) +
-	scale_x_continuous(name="chr position (Mbp)") +
-	scale_y_continuous(name="log2(coverage ratio)", limits=c(-5,5)) +
-	opts(axis.text.y=theme_text(size=8)) + 
-	facet_grid(chr ~ .)
+  geom_point(aes(x=(beg+end)/2000000, y=cov2_ratio), size=0.3) + 
+  geom_hline(yintercept=c(0), color='purple', size=0.1) +
+  geom_hline(yintercept=c(-1,1), color='blue', size=0.1) +
+  geom_hline(yintercept=c(-2,2), color='red', size=0.1) +
+  scale_x_continuous(name="chr position (Mbp)") +
+  scale_y_continuous(name="log2(coverage ratio)", limits=c(-5,5)) +
+  opts(axis.text.y=theme_text(size=8)) + 
+  facet_grid(chr ~ .)
 fname = paste(acc1, "_", acc2, ".png", sep='')
 ggsave(p, filename=file.path(DIR_R, "acgh", fname), width=10, height=4)
 
@@ -126,33 +126,33 @@ plot_cov_dist(covr, winsize, dirW)
 cutoff_cov2 = 2
 for (i in 1:nrow(covr)) {
   if(covr$cov2_mean.x[i] < cutoff_cov2 || covr$cov2_mean.y[i] < cutoff_cov2) {
-  	covr$cov2_ratio[i] = NA
+    covr$cov2_ratio[i] = NA
   }
 }
 
 plot_cov_dist <- function(covr, winsize, dirW) {
-	p = ggplot(data = covr) + 
-		geom_point(aes(x=(beg+end)/2000000, y=cov2_ratio), size=0.5) + 
-		geom_hline(yintercept=c(0), color='purple', size=0.1) +
-		geom_hline(yintercept=c(-1,1), color='blue', size=0.1) +
-		geom_hline(yintercept=c(-2,2), color='red', size=0.1) +
-		scale_x_continuous(name="chr position (Mbp)") +
-		scale_y_continuous(name="log2(coverage ratio)", limits=c(-4,4)) +
-		opts(axis.text.y=theme_text(size=8)) + 
-		facet_grid(chr ~ .)
-	ggsave(p, filename=file.path(dirW, paste(winsize, ".png", sep='')), width=10, height=5)
+  p = ggplot(data = covr) + 
+    geom_point(aes(x=(beg+end)/2000000, y=cov2_ratio), size=0.5) + 
+    geom_hline(yintercept=c(0), color='purple', size=0.1) +
+    geom_hline(yintercept=c(-1,1), color='blue', size=0.1) +
+    geom_hline(yintercept=c(-2,2), color='red', size=0.1) +
+    scale_x_continuous(name="chr position (Mbp)") +
+    scale_y_continuous(name="log2(coverage ratio)", limits=c(-4,4)) +
+    opts(axis.text.y=theme_text(size=8)) + 
+    facet_grid(chr ~ .)
+  ggsave(p, filename=file.path(dirW, paste(winsize, ".png", sep='')), width=10, height=5)
 }
 
 plot_cov_lg <- function(a, b, name1, name2, winsize, dirW) {
-	fname = file.path(dirW, paste(winsize, "_lg.png", sep=''))
-	png(fname)
-	plot(a, b, type="p", xlab=name1, ylab=name2, xlim=c(0,80), ylim=c(0,80))
-	title(main=winsize)
-	fit = lm(b~a)
-	abline(fit, col="blue")
-	fit.sum = summary(fit)
-	ann = paste("adjusted Rsquare = ", sprintf("%.04f", fit.sum$adj.r.squared), sep="")
-	text(50, 0, ann, col='red')
-	dev.off()
+  fname = file.path(dirW, paste(winsize, "_lg.png", sep=''))
+  png(fname)
+  plot(a, b, type="p", xlab=name1, ylab=name2, xlim=c(0,80), ylim=c(0,80))
+  title(main=winsize)
+  fit = lm(b~a)
+  abline(fit, col="blue")
+  fit.sum = summary(fit)
+  ann = paste("adjusted Rsquare = ", sprintf("%.04f", fit.sum$adj.r.squared), sep="")
+  text(50, 0, ann, col='red')
+  dev.off()
 }
 

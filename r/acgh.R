@@ -34,11 +34,11 @@ n_called = sum(cov_s < quantile(cov_all, 0.05))
 d01 = data.frame(cov_s = cov_s)
 d02 = data.frame(cov_us = cov_us)
 p <- ggplot(data=d02) +
-	geom_histogram(mapping=aes(x=cov_us, fill='genes NOT in SV regions'), geom_params=list(alpha=0.5)) +
-	layer(data=d01, geom='histogram', mapping=aes(x=cov_s, fill='genes IN SV regions'), geom_params=list(alpha=1)) +
-	scale_fill_brewer(palette="Set1", name='') +
-	scale_x_continuous(name='log2(average_unique_coverage_ratio)') +
-	scale_y_continuous(name='gene count') 
+  geom_histogram(mapping=aes(x=cov_us, fill='genes NOT in SV regions'), geom_params=list(alpha=0.5)) +
+  layer(data=d01, geom='histogram', mapping=aes(x=cov_s, fill='genes IN SV regions'), geom_params=list(alpha=1)) +
+  scale_fill_brewer(palette="Set1", name='') +
+  scale_x_continuous(name='log2(average_unique_coverage_ratio)') +
+  scale_y_continuous(name='gene count') 
 ggsave(p, filename = sprintf("%s/52_%s.png", dirW, acc1), width=5, height=7)
 
 #check for correlation of nimblegen arrayCGH results and resequencing depth

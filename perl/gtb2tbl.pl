@@ -73,6 +73,9 @@ while( <$fhi> ) {
         push @rlocs, map {[@$_, 'utr3']} @{locStr2Ary($loc3S)} if $loc3S;
         for my $i (1..@rlocs) {
             my ($rb, $re, $type) = @{$rlocs[$i-1]};
+            if($loc5S && $type eq "utr3" && @rlocs==3) {
+                $rb += 1;
+            }
             my $idx = first_index {$_->[0] <= $rb && $re <= $_->[1]} @$reloc;
             $idx > -1 || die "$rb-$re($type) not in exon\n";
             my ($b, $e) = $srd eq "+" ? ($beg+$rb-1, $beg+$re-1) : ($end-$re+1, $end-$rb+1);

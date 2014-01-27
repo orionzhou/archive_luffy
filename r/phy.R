@@ -1,32 +1,4 @@
 require(ape)
-plot_mt_tree <- function(fi, fo, ann) {
-  tree = read.tree(fi)
-
-  label_id = tree$tip.label
-  idx_HM101 = which(label_id == 'HM101')
-#  idx_acc26 = which(label_id %in% get_mt_ids('acc26'))
-
-  tip.color = rep('black', length(tree$tip.label))
-#  tip.color[idx_acc26] = 'royalblue'
-  tip.color[idx_HM101] = 'red'
-  
-  df1 = data.frame(id=tree$tip.label)
-  df2 = merge(df1, ann, by="id", all.x=TRUE)
-  label_origin = paste(df2$country, df2$category, sep=" | ")
-
-  scores = as.numeric(tree$node.label)
-  if(mean(scores, na.rm=TRUE) > 1) { scores = scores / 1000 }
-  node.labels.bg = rep('white', tree$Nnode)
-  node.labels.bg[scores >= 0.95] = 'black'
-  node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
-
-  png(filename=fo, width=600, height=600, units='px')
-  plot(tree, show.node.label=FALSE, show.tip.label=TRUE, tip.color=tip.color, font=4, no.margin=TRUE, 
-    cex=1.2)
-  nodelabels(pch=22, bg=node.labels.bg)
-  add.scale.bar()
-  dev.off()
-}
 plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   tree = read.tree(fi)
 
@@ -66,7 +38,7 @@ plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   plot(tree, show.node.label=FALSE, show.tip.label=TRUE, tip.color=tip.color, font=3, no.margin=TRUE, 
     cex=cex1, label.offset=label.offset, x.lim=xmax)
   tiplabels(label_id, adj=0, bg=NA, font=2, frame='none', col=tip.color, cex=cex2)
-  nodelabels(pch=21, bg=node.labels.bg)
+  nodelabels(pch = 21, bg=node.labels.bg)
   add.scale.bar()
   dev.off()
 }
@@ -77,44 +49,42 @@ plot_mt_tree_3 <- function(fi, fo, ann) {
   group2 = c("HM340", "HM324", "HM018", "HM022-I", "HM017-I")
   group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
   
-  label_id = tree$tip.label
-  idx_HM101 = which(label_id == 'HM101')
-#  idx_acc26 = which(label_id %in% get_mt_ids('acc26'))
-
+  labels = tree$tip.label
   tip.color = rep('black', length(tree$tip.label))
-  tip.color[which(label_id %in% group1)] = 'royalblue'
-  tip.color[which(label_id %in% group2)] = 'red'
-  tip.color[which(label_id %in% group3)] = 'purple'
+  tip.color[which(labels %in% group1)] = 'red'
+  tip.color[which(labels %in% group2)] = 'forestgreen'
+  tip.color[which(labels %in% group3)] = 'dodgerblue'
 
-  df1 = data.frame(id=tree$tip.label)
-  df2 = merge(df1, ann, by="id", all.x=TRUE)
-  label_origin = paste(df2$country, df2$category, sep=" | ")
+  df1 = data.frame(idx = 1 : length(labels), id = labels)
+  df2 = merge(df1, ann, by = "id", all.x = T)
+  df3 = df2[order(df2$idx), ]
+  labelsn = paste(df3$id, df3$country, df3$category, sep = " | ")
+  tree$tip.label = labelsn
 
   scores = as.numeric(tree$node.label)
-  if(mean(scores, na.rm=TRUE) > 1) { scores = scores / 1000 }
+  if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
   node.labels.bg = rep('white', tree$Nnode)
   node.labels.bg[scores >= 0.95] = 'black'
   node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
 
-#  png(filename=fo, width=600, height=600, units='px')
-  postscript(file=fo, width=600, height=600)
-  plot(tree, show.node.label=FALSE, show.tip.label=TRUE, tip.color=tip.color, 
-    font=4, no.margin=TRUE, cex=1.2)
-  nodelabels(pch=22, bg=node.labels.bg)
-  add.scale.bar(x=530)
+  png(filename=fo, width=2000, height=5000, units='px')
+  plot(tree, show.node.label = F, show.tip.label = T, tip.color = tip.color, 
+    font = 2, no.margin = T, cex = 1.2)
+  nodelabels(pch = 22, bg = node.labels.bg)
+  add.scale.bar(x = 0.05, y = 20, lcol = 'black')
   dev.off()
 }
 
 f_ann = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny/mt_label.tbl")
 ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
 
-opt = 'deepseq'
+opt = 'all'
 reg = "chr5"
 dir = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny", opt)
 fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
 fo = sprintf("%s/22_phyml/%s.png", dir, reg)
-fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
-fo = sprintf("%s/21_phynj/%s.png", dir, reg)
+#fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
+#fo = sprintf("%s/21_phynj/%s.png", dir, reg)
 plot_mt_tree_3(fi, fo, ann)
 
 

@@ -64,6 +64,7 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
+print $fho join("\t", qw/qid qpos tid tpos id qbase tbase/)."\n";
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
@@ -107,7 +108,7 @@ while( <$fhi> ) {
     
     for my $i (0..@qPoss-1) {
         my ($qPos, $tPos, $qNt, $tNt) = ($qPoss[$i], $tPoss[$i], $qNts[$i], $tNts[$i]);
-        print $fho join("\t", $qId, $qPos, $tId, $tPos, $qNt, $tNt)."\n";
+        print $fho join("\t", $qId, $qPos, $tId, $tPos, $id, $qNt, $tNt)."\n";
     }
 }
 close $fhi;

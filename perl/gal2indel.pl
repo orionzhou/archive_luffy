@@ -6,17 +6,16 @@
   
 =head1 NAME
   
-  gal2indel.pl - Call InDels from a Gal file and a Neti file
+  gal2indel.pl - Call InDels from a Gal file
 
 =head1 SYNOPSIS
   
-  gal2indel.pl [-help] [-in input-file] [-neti neti-file] [-out output-file]
+  gal2indel.pl [-help] [-in input-Gal] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input-Gal
-      -out    output-Tbl
-      -neti   Neti-file
+      -h (--help)   brief help message
+      -i (--in)     input Gal
+      -o (--out)    output indel
 
 =cut
   
@@ -44,11 +43,9 @@ GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
     "out|o=s"  => \$fo,
-    "neti|q=s"  => \$fn,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
-pod2usage(2) if !$fn;
 
 if ($fi eq "stdin" || $fi eq "-") {
     $fhi = \*STDIN;
@@ -62,23 +59,7 @@ if ($fo eq "stdout" || $fo eq "-") {
     open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my $hf;
-my $hr;
-open (my $fhn, "<$fn") || die "Can't read $fn: $!\n";
-while(<$fhn>) {
-    chomp;
-    next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    my ($id, $par, $lev, $type) = @$ps;
-    if($lev == 1) {
-        $hf->{$id} = [];
-    } elsif(exists($hf->{$par})) {
-        $hr->{$id} = $par;
-    }
-}
-
-my @rows;
-my $hi;
+print $fho join("\t", qw/qid qbeg qend qins tid tbeg tend tins id/)."\n";
 while( <$fhi> ) {
     chomp;
     next if /(^id)|(^\#)|(^\s*$)/;
@@ -87,51 +68,27 @@ while( <$fhi> ) {
     my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
         $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
 
-    $hi->{$id} ||= 0;
-    $hi->{$id} ++;
-    $id .= ".".$hi->{$id} if $hi->{$id} > 1;
-
-    if(exists($hf->{$id})) {
-        $ps->[0] = $id;
-        push @rows, \@$ps;
-    } elsif(exists($hr->{$id})) {
-        my $par = $hr->{$id};
-        push @{$hf->{$par}}, [$tBeg, $tEnd, $tSrd] if exists $hf->{$par};
-    }
-}
-close $fhi;
-
-for (@rows) {
-    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$_;
-    
     my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    $rqLoc = [ sort {$a->[0] <=> $b->[0]} @$rqLoc ];
+    $rtLoc = [ sort {$a->[0] <=> $b->[0]} @$rtLoc ];
     @$rqLoc == @$rtLoc || die "unequal pieces\n";
     my $nBlock = @$rqLoc;
     my @lens = map {$_->[1] - $_->[0] + 1} @$rqLoc;
-
-    my $tLoc = $tSrd eq "-" ? [ map {[$tEnd-$_->[1]+1, $tEnd-$_->[0]+1]} @$rtLoc ]
-        : [ map {[$tBeg+$_->[0]-1, $tBeg+$_->[1]-1]} @$rtLoc ]; 
-    my $qLoc = $qSrd eq "-" ? [ map {[$qEnd-$_->[1]+1, $qEnd-$_->[0]+1]} @$rqLoc ]
-        : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ];
-    
-    my ($tgLoc) = posDiff([[$tBeg, $tEnd]], $tLoc);
-    
-    defined $hf->{$id} || die "$id\n";
-    my @cLoc = @{$hf->{$id}};
-    if(@cLoc == 0) {
-        for (@$tgLoc) {
-            my ($tb, $te) = @$_;
-            print $fho join("\t", $tId, $tb, $te, $te-$tb+1)."\n";
-        }
-    } else {
-        my ($dLoc) = posDiff($tgLoc, \@cLoc);
-        for (@$dLoc) {
-            my ($tb, $te) = @$_;
-            print $fho join("\t", $tId, $tb, $te, $te-$tb+1)."\n";
-        }
+   
+    $nBlock > 1 || next;
+    for my $i (1..$nBlock-1) {  
+        my ($rqb, $rqe) = ($rqLoc->[$i-1]->[1], $rqLoc->[$i]->[0]);
+        my ($rtb, $rte) = ($rtLoc->[$i-1]->[1], $rtLoc->[$i]->[0]);
+        my $qins = $rqe - $rqb - 1;
+        my $tins = $rte - $rtb - 1;
+        my ($qb, $qe) = $qSrd eq "-" ? ($qEnd - $rqe + 1, $qEnd - $rqb + 1) : 
+            ($qBeg + $rqb - 1, $qBeg + $rqe - 1);
+        my ($tb, $te) = $tSrd eq "-" ? ($tEnd - $rte + 1, $tEnd - $rtb + 1) : 
+            ($tBeg + $rtb - 1, $tBeg + $rte - 1);
+        print $fho join("\t", $qId, $qb, $qe, $qins, $tId, $tb, $te, $tins, $id)."\n";
     }
 }
+close $fhi;
 close $fho;
 
 

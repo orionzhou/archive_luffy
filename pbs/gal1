@@ -36,6 +36,8 @@ galexpand.pl -i 26.gal -o 26.gall
 gal2psl.pl -i 26.gal -o 26.psl
 pslToBed 26.psl 26.bed
 bedToBigBed -tab 26.bed $TGT_SIZE 26.bb
+gal2snp.pl -i 26.gal -o 26.snp -q $QRY_FAS -t $TGT_FAS
+gal2indel.pl -i 26.gal -o 26.indel
 
 #axtChain -linearGap=medium -psl 14.swap.psl $QRY_2BIT $TGT_2BIT 31.chain
 #chainPreNet 31.chain $QRY_SIZE $TGT_SIZE 33.chain

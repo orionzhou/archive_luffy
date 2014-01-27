@@ -11,8 +11,10 @@ tg = cbind(tg, crp=grepl('CRP', tg$cat3), nbs=grepl('NBS', tg$cat3))
 gg = GRanges(seqnames=Rle(tg$chr), ranges=IRanges(tg$beg, end=tg$end))
 ggr = reduce(gg)
 
-glg = with(tg, makeGRangesListFromFeatureFragments(seqnames=chr, fragmentStarts=sprintf("%d,",beg), fragmentWidths=sprintf("%d,",end-beg+1), strand=srd))
-
+glg = with(tg, makeGRangesListFromFeatureFragments(
+  seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
+  fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+  
 get_genome_stat <- function(gr) {
   dir = '/home/youngn/zhoup/Data/genome/pan3/18_stat_k60'
   bwg = import(file.path(dir, '11_gc.bw'), which=gr, asRangedData=T)

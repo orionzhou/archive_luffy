@@ -93,7 +93,7 @@ for my $r (0..ceil($npos/250)-1) {
     for my $i (0..$nind-1) {
         my $str = substr($data[$i], $r*250, 250);
         if($r == 0) {
-            printf $fho "%-10s%s\n", $names[$i], $str;
+            printf $fho "%-20s%s\n", $names[$i], $str;
         } else {
             printf $fho "%s\n", $str;
         }

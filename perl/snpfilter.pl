@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  snp.pl - read, filter and write Snp file
+  snpfilter.pl - read, filter and write Snp file
 
 =head1 SYNOPSIS
   
-  snp.pl [-help] [options] [-in input] [-out output] 
+  snpfilter.pl [-help] [options] [-in input] [-out output] 
 
   Options:
       -h, --help       brief help message

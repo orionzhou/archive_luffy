@@ -21,7 +21,7 @@ read_genome_stat <- function(name) {
   list( name=name, dir=dir, len=len, gap=gap, gene=gene )
 }
 
-build_ideogram <- function(tgap, tlen) {
+build_ideogram_track <- function(tgap, tlen, tname) {
   gg = GRanges(seqnames=Rle(tgap$id), ranges=IRanges(tgap$beg, end=tgap$end))
   gt = GRanges(seqnames=Rle(tlen$id), ranges=IRanges(1, end=tlen$size))
   gb = setdiff(gt, gg)
@@ -32,7 +32,28 @@ build_ideogram <- function(tgap, tlen) {
   tid$beg = tid$beg-1
   tid = tid[order(tid$id, tid$beg),]
   colnames(tid) = c('chrom', 'chromStart', 'chromEnd', 'gieStain')
-  cbind(tid,name=sprintf("band%d",1:nrow(tid)))
+  t = cbind(tid, name = sprintf("band%d", 1:nrow(tid)))
+  IdeogramTrack(genome = tname, bands = t, bevel = 0, 
+    showId = T, cex = 1.0)
+}
+
+read_var_stat <- function(qname) {
+  dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
+  
+  f_snp = sprintf("%s/30_vnt/%s.snp", dir, toupper(qname))
+  snp = read.table(f_snp, header=F, sep="\t", as.is=T)[,1:2]
+  colnames(snp) = c("chr", "pos")
+  snp = snp[snp$chr %in% sprintf("chr%d", 1:8),]
+  
+  f_indel = sprintf("%s/30_vnt/%s.indel", dir, toupper(qname))
+  indel = read.table(f_indel, header=F, sep="\t", as.is=T)[,1:2]
+  colnames(indel) = c("chr", "pos")
+  indel = indel[indel$chr %in% sprintf("chr%d", 1:8),]
+  
+  f_bam = sprintf("%s/11_pipe_mapping/31_realigned/%s.bam", 
+    dir, toupper(qname))
+  
+  list(dir = dir, snp = snp, indel = indel, fbam = f_bam)
 }
 
 read_comp_stat <- function(qname, tname) {
@@ -42,7 +63,45 @@ read_comp_stat <- function(qname, tname) {
     as.is=T)[,1:17]
   tl = read.table(file.path(dir, "23_blat/26.gall"), header=TRUE, sep="\t", 
     as.is=T)
-  list(dir=dir, tw=tw, tl=tl)
+  snp = read.table(file.path(dir, "23_blat/26.snp"), header=TRUE, sep="\t", 
+    as.is=T)[,1:5]
+  indel = read.table(file.path(dir, "23_blat/26.indel"), header=TRUE, sep="\t", 
+    as.is=T)
+  list(dir = dir, tw = tw, tl = tl, snp = snp, indel = indel)
+}
+
+build_var_tracks <- function(var, chr, beg, end, name, genome) {
+  snp = var$snp
+  indel = var$indel
+  ts = snp[snp$chr == chr & snp$pos >= beg & snp$pos <= end, ]
+  ti = indel[indel$chr == chr & indel$pos >= beg & indel$pos <= end, ]
+  
+  if(empty(ts)) {
+    snpTrack <- AnnotationTrack(genome = genome,
+      name = 'snp', stacking = 'dense',
+      background.title = "tomato")
+  } else {
+    snpTrack <- AnnotationTrack(genome = genome,
+      chromosome = chr, start = ts$pos, width = 1,
+      name = 'snp', stacking = 'dense',
+      background.title = 'tomato')
+  }
+  if(empty(ti)) {
+    indelTrack <- AnnotationTrack(genome = genome,
+      name = 'indel', stacking = 'dense',
+      background.title = 'tomato')
+  } else {
+    indelTrack <- AnnotationTrack(genome = genome,
+      chromosome = chr, start = ti$pos, width = 1,
+      name = 'indel', stacking = 'dense',
+      background.title = 'tomato')
+  }
+  
+  covTrack <- DataTrack(genome = genome,
+    range = var$fbam, window = -1, name = 'covg', 
+    type = 'h', showAxis = F, 
+    col.line = 'slategray2', background.title = 'tomato')
+  list(covTrack = covTrack, snpTrack = snpTrack, indelTrack = indelTrack)
 }
 
 get_ins <- function(t) {  
@@ -64,73 +123,91 @@ get_ins <- function(t) {
   }
 }
 
-comp_plot <- function(chr, beg, end, fo, q, t, c, tid, f_mapp) {
-  axisTrack <- GenomeAxisTrack(cex=1.0, exponent=3)
-  ideoTrack <- IdeogramTrack(genome = t$name, chromosome = chr, bands = tid, 
-    bevel = 0, showId = T, cex = 1.0)
-  mappTrack <- DataTrack(range=f_mapp, genome=t$name, type='horizon', 
-    chromosome = chr, name='mapp', background.title="tan1")
-  grTrack <- GeneRegionTrack(t$gene, genome = t$name, chromosome = chr, 
-    name = "genes", showId=T, cex=1.0, background.title="tan1")
-
-  tw = c$tw
-  tl = c$tl
+build_comp_tracks <- function(comp, chr, beg, end, name, genome) {
+  tw = comp$tw
+  tl = comp$tl
   #tws = tw[tw$tId==chr & ( beg<=tw$tEnd & tw$tBeg<=end ), ]
   #tls = tl[tl$id %in% tws$id,]
 
   tls = tl[tl$tId==chr & ( beg<=tl$tEnd & tl$tBeg<=end ), ]
 
   if(empty(tls)) {
-    cTrack <- GeneRegionTrack(genome=t$name, chromosome=chr, name=q$name, 
-      showId=F, fill='dodgerblue', background.title="brown")
+    compTrack <- AnnotationTrack(genome = genome, 
+      name = name, background.title = "brown")
   } else {
-    tx = data.frame(chromosome=tls$tId, start=tls$tBeg, end=tls$tEnd, 
-      width=tls$tEnd-tls$tBeg+1, strand=tls$tSrd, 
-      feature='protein_coding', gene=tls$id, 
-      exon=sprintf("%s.%d", tls$id, 1:nrow(tls)), 
-      transcript=tls$id, symbol=tls$qId)
-    cTrack <- GeneRegionTrack(tx, genome=t$name, chromosome=chr, 
-      name=q$name, howId=F, fill='dodgerblue', background.title="brown")
+    for (i in 1:nrow(tls)) {
+      if(tls$tBeg[i] < beg) {
+        if(tls$qSrd[i] == "+") {
+          tls$qBeg[i] = tls$qBeg[i] + (beg - tls$tBeg[i])
+        } else {
+          tls$qEnd[i] = tls$qEnd[i] - (beg - tls$tBeg[i])
+        }
+        tls$tBeg[i] = beg
+      }
+      if(end < tls$tEnd[i]) {
+        if(tls$qSrd[i] == "+") {
+          tls$qEnd[i] = tls$qEnd[i] - (tls$tEnd[i] - end)
+        } else {
+          tls$qBeg[i] = tls$qBeg[i] + (tls$tEnd[i] - end)
+        }
+        tls$tEnd[i] = end
+      }
+    }
+    compTrack <- AnnotationTrack(genome = genome, 
+      chromosome = chr, start = tls$tBeg, end = tls$tEnd, strand = tls$qSrd, 
+      group = tls$id, feature = tls$qId, groupAnnotation = 'feature',
+      just.group = 'below', shape = 'arrow', arrowHeadMaxWidth = 20,
+      name = name, showId = T, stackHeight = 0.5, cex.group = 0.8, 
+      fill = 'dodgerblue', background.title = "brown")
   }
 
-  tins = ddply(tls, .(id), get_ins)
+  snp = comp$snp
+  snp = snp[snp$tid == chr & snp$tpos >= beg & snp$tpos <= end, ]
+  if(empty(snp)) {
+    snpTrack <- AnnotationTrack(genome = genome,
+      name="mismatch", background.title="brown")
+  } else { 
+    snpTrack <- AnnotationTrack(genome = genome, 
+      chromosome = chr, start = snp$tpos, width = 1,
+      name = "mismatch", showId = F, 
+      group = snp$id, background.title = "brown")
+  }
+  
+  tins = comp$indel
+  tins = tins[tins$tid == chr & tins$tbeg >= beg & tins$tend <= end, ]
 
-  tis = tins[tins$qIns<100 & tins$tIns<100,]
-  til = tins[tins$qIns>=100 | tins$tIns>=100,]
+  tis = tins[tins$qins <  100 & tins$tins <  100, ]
+  til = tins[tins$qins >= 100 | tins$tins >= 100, ]
   if(empty(tins) | empty(tis)) {
-    siTrack <- GeneRegionTrack(genome=t$name, chromosome=chr, 
-      name="indel-s", showId=F, showExonId=T, fill='lightgreen', 
-      fontcolor='black', background.title="brown", cex=0.8, rotation=90)
+    siTrack <- AnnotationTrack(genome = genome,
+      name="indel-s", background.title="brown")
   } else {
-    tisz = data.frame(chromosome=tis$tId, start=tis$tPos, end=tis$tPos, 
-      feature='protein_coding', gene=tis$id, exon=tis$txt, 
-      transcript=tis$id, symbol=tis$id)
-    siTrack <- GeneRegionTrack(tisz, genome=t$name, chromosome=chr, 
-      name="indel-s", showId=F, showExonId=T, 
-      fill='lightgreen', fontcolor='black', background.title="brown", 
-      cex=0.8, rotation=90)
+    text = sprintf("%s^%s", tis$tins, tis$qins)
+    siTrack <- AnnotationTrack(genome = genome, 
+      chromosome = chr, start = tis$tbeg, end = tis$tend,
+      name = "indel-s", showId = F, showFeatureId = T, 
+      group = tis$id, feature = text, featureAnnotation = 'feature', 
+      shape = 'box', fontcolor.feature = 'black', 
+      col = 'lightblue1', col.line = 'snow', 
+      background.title = "brown", 
+      cex = 0.8, rotation.item = 90)
   }
   if(empty(tins) | empty(til)) {
-    liTrack <- GeneRegionTrack(genome=t$name, chromosome=chr, 
-      name="indel-l", showId=F, showExonId=T, 
-      fill='lightseagreen', fontcolor='black', 
-      background.title="brown", cex=0.8, rotation=0)
-  } else {
-    tilz = data.frame(chromosome=til$tId, start=til$tPos, end=til$tPos, 
-      feature='protein_coding', gene=til$id, exon=til$txt, transcript=til$id, 
-      symbol=til$id)
-    liTrack <- GeneRegionTrack(tilz, genome=t$name, chromosome=chr, 
-      name="indel-l", showId=F, showExonId=T, 
-      fill='lightseagreen', fontcolor='black', background.title="brown", 
-      cex=0.8, rotation=0)
+    liTrack <- AnnotationTrack(genome = genome, chromosome = chr, 
+      name="indel-l", background.title="brown")
+  } else {    
+    text = sprintf("%s^%s", til$tins, til$qins)
+    liTrack <- AnnotationTrack(genome = genome, 
+      chromosome = chr, start = til$tbeg, end = til$tend,
+      name = "indel-l", showId = F, showFeatureId = T, 
+      group = til$id, feature = text, featureAnnotation = 'feature', 
+      shape = 'box', fontcolor.feature = 'black', 
+      col = 'lightblue1', col.line = 'snow', 
+      background.title = "brown", 
+      cex = 0.8, rotation.item = 90)
   }
-  CairoPNG(filename = fo, width = 1000, height = 400)
-  plotTracks(
-    list(ideoTrack, axisTrack, mappTrack, grTrack, cTrack, 
-      siTrack, liTrack), 
-    extend.left=(end-beg)/20, extend.right=(end-beg)/20, 
-    from=beg, to=end, sizes=c(3,3,2,3,3,2,2))
-  dev.off()
+  list(compTrack = compTrack, 
+    snpTrack = snpTrack, siTrack = siTrack, liTrack = liTrack)
 }
 
 ##### OUTDATED STUFF

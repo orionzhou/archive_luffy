@@ -17,7 +17,7 @@ cq = read_comp_stat(qname, tname)
 cr = read_comp_stat(rname, tname)
 
 # build target-tracks
-axisTrack <- GenomeAxisTrack(cex=1.0, exponent=3)
+axisTrack <- GenomeAxisTrack(cex = 1.0, exponent = 3)
 ideoTrack <- build_ideogram_track(t$gap, t$len, tname)
 
 gapTrack <- AnnotationTrack(genome = tname, 
@@ -27,25 +27,27 @@ gapTrack <- AnnotationTrack(genome = tname,
 
 f_mapp = "/home/youngn/zhoup/Data/genome/pan3/18_stat_k60/15_mapp.bw"
 mappTrack <- DataTrack(range = f_mapp, genome = tname, type = 'h', 
-  showAxis = F, name = 'mapp', background.title = 'midnightblue')
+  showAxis = T, name = 'mapp', background.title = 'midnightblue')
 
 grTrack <- GeneRegionTrack(t$gene, genome = tname, 
-  name = "genes", showId = T, just.group = 'below', stackHeight = 0.5,
+  name = "genes", showId = T, just.group = 'below', stackHeight = 0.75,
   cex.group = 0.8, background.title = 'midnightblue')
 
 # plot
 fg = file.path(t$dir, "51.gtb")
-tg = read.table(fg, header=T, sep="\t", quote="", as.is=T)[,c(1,3:6,15:17)]
+tg = read.table(fg, header = T, sep = "\t", quote = "", as.is = T)[ , 
+    c(1,3:6,15:17)]
 tgs = tg[grepl('CRP', tg$cat3) | grepl('NBS', tg$cat3),]
 tgs = tgs[tgs$chr %in% sprintf("chr%d", 1:8),]
 tgs = tgs[order(tgs$id),]
 
-for (i in 1:100) {
+for (i in 1:20) {
   chr = tgs$chr[i]
   beg = tgs$beg[i]
   end = tgs$end[i]
   fo = sprintf("%s/figs/genes/%s.png", cq$dir, tgs$id[i])
 
+  source("comp.fun.R")
   qvar <- build_var_tracks(vq, chr, beg, end, qname, tname)
   rvar <- build_var_tracks(vr, chr, beg, end, rname, tname)
   qcomp <- build_comp_tracks(cq, chr, beg, end, qname, tname)
@@ -55,24 +57,58 @@ for (i in 1:100) {
   plotTracks(
     list(ideoTrack, axisTrack, gapTrack, mappTrack, grTrack, 
       qcomp$compTrack, qcomp$snpTrack, qcomp$siTrack, qcomp$liTrack, 
-      qvar$snpTrack, qvar$indelTrack, qvar$covTrack,
+      qvar$snpTrack, qvar$hetTrack, qvar$insTrack, qvar$delTrack, 
+      qvar$covTrack, qvar$abcovTrack,
       rcomp$compTrack, rcomp$snpTrack, rcomp$siTrack, rcomp$liTrack,
-      rvar$snpTrack, rvar$indelTrack, rvar$covTrack),
+      rvar$snpTrack, rvar$hetTrack, rvar$insTrack, rvar$delTrack,
+      rvar$covTrack, rvar$abcovTrack),
     chromosome = chr, from = beg, to = end, 
     extend.left = (end - beg) / 20, extend.right = (end - beg) / 20, 
-    sizes = c(1, 1, 1, 2, 2,  
+    sizes = c(1, 1, 1, 1, 2,  
       2, 2, 2, 2, 
-      1, 1, 1,  
+      1, 1, 1, 1, 1, 1,  
       2, 2, 2, 2, 
-      1, 1, 1))
+      1, 1, 1, 1, 1, 1))
   dev.off()
 }
 
 # comparison plot using a region
 f_reg = '/home/youngn/zhoup/Data/genome/HM101/81_regions.tbl'
 reg = read.table(f_reg, header=T, sep="\t", as.is=T)
-i = 5
-chr=reg$chr[i]; beg=reg$beg[i]; end=beg+30000
+i = 4
+chr = reg$chr[i]
+beg = reg$beg[i]
+end = reg$end[i]
+chr = 'chr5'
+beg = 11600000
+end = 11680000
+
+  fo = sprintf("%s/figs/%s_%d.png", cq$dir, chr, beg)
+
+  source("comp.fun.R")
+  chromosome(grTrack) <- chr
+  qvar <- build_var_tracks(vq, chr, beg, end, qname, tname)
+  rvar <- build_var_tracks(vr, chr, beg, end, rname, tname)
+  qcomp <- build_comp_tracks(cq, chr, beg, end, qname, tname)
+  rcomp <- build_comp_tracks(cr, chr, beg, end, rname, tname)
+
+  CairoPNG(filename = fo, width = 2000, height = 1200)
+  plotTracks(
+    list(ideoTrack, axisTrack, gapTrack, mappTrack, grTrack, 
+      qcomp$compTrack, qcomp$snpTrack, qcomp$siTrack, qcomp$liTrack, 
+      qvar$snpTrack, qvar$hetTrack, qvar$insTrack, qvar$delTrack, 
+      qvar$covTrack, qvar$abcovTrack,
+      rcomp$compTrack, rcomp$snpTrack, rcomp$siTrack, rcomp$liTrack,
+      rvar$snpTrack, rvar$hetTrack, rvar$insTrack, rvar$delTrack,
+      rvar$covTrack, rvar$abcovTrack),
+    chromosome = chr, from = beg, to = end, 
+    extend.left = (end - beg) / 20, extend.right = (end - beg) / 20, 
+    sizes = c(1, 1, 1, 1, 2,  
+      2, 2, 2, 2, 
+      1, 1, 1, 1, 1, 1,  
+      2, 2, 2, 2, 
+      1, 1, 1, 1, 1, 1))
+  dev.off()
 
 
 # dotplot (outdated)

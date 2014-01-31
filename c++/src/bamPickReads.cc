@@ -91,7 +91,8 @@ int main(int argc, char *argv[]) {
       bool strand1 = al1.IsReverseStrand(), strand2 = al2.IsReverseStrand();
       string chr1 = refs[al1.RefID].RefName, chr2 = refs[al2.RefID].RefName;
       vector<CigarOp> cigars1 = al1.CigarData, cigars2 = al2.CigarData;
-      string cigar1 = utils.getCigarString(cigars1), cigar2 = utils.getCigarString(cigars2);
+      string cigar1 = utils.getCigarString(cigars1);
+      string cigar2 = utils.getCigarString(cigars2);
       string seq1 = al1.QueryBases, seq2 = al2.QueryBases;
 //  type: 1(mapped), 2(soft-clipped), 3(unmapped)
       int type1 = (!al1.IsMapped() || al1.RefID != refId) ? 3 :
@@ -113,6 +114,7 @@ int main(int argc, char *argv[]) {
     }
   }
   reader.Close();
-  cout << right << setw(60) << format("(running time: %.01f minutes)\n") % ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
+  cerr << right << setw(60) << format("(running time: %.01f minutes)\n") % 
+    ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
   return EXIT_SUCCESS;
 }

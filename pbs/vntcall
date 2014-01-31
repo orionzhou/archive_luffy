@@ -8,3 +8,6 @@ SAM=${SAM:-HM056}
 cd $data/misc3/hapmap_mt40/30_vnt
 bcftools subset -R -U -c 1 -o u -v snps,indels -s $SAM acc319.vcf.gz | 
   bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%SAMPLE=%GT]\n' - > $SAM.tbl
+vcf2bed.pl -i $SAM.tbl -o $SAM.bed
+bgzip -cf $SAM.bed > $SAM.bed.gz
+tabix -f -p bed $SAM.bed.gz

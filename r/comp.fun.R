@@ -18,7 +18,7 @@ read_genome_stat <- function(name) {
   f_gen = file.path(dir, "51.tbl")
   gene = read.table(f_gen, header=T, sep="\t", quote="", as.is=T)
 
-  list( name=name, dir=dir, len=len, gap=gap, gene=gene )
+  list(name = name, dir = dir, len = len, gap = gap, gene = gene)
 }
 
 build_ideogram_track <- function(tgap, tlen, tname) {
@@ -39,21 +39,12 @@ build_ideogram_track <- function(tgap, tlen, tname) {
 
 read_var_stat <- function(qname) {
   dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
+  fvnt = sprintf("%s/30_vnt/%s.bed.gz", dir, toupper(qname))
+
+  fcov = sprintf("%s/11_pipe_mapping/35_cov/%s.bw", dir, toupper(qname))
+  fcovab = sprintf("%s/40_sv/01_ab/%s.bw", dir, toupper(qname))
   
-  f_snp = sprintf("%s/30_vnt/%s.snp", dir, toupper(qname))
-  snp = read.table(f_snp, header=F, sep="\t", as.is=T)[,1:2]
-  colnames(snp) = c("chr", "pos")
-  snp = snp[snp$chr %in% sprintf("chr%d", 1:8),]
-  
-  f_indel = sprintf("%s/30_vnt/%s.indel", dir, toupper(qname))
-  indel = read.table(f_indel, header=F, sep="\t", as.is=T)[,1:2]
-  colnames(indel) = c("chr", "pos")
-  indel = indel[indel$chr %in% sprintf("chr%d", 1:8),]
-  
-  f_bam = sprintf("%s/11_pipe_mapping/31_realigned/%s.bam", 
-    dir, toupper(qname))
-  
-  list(dir = dir, snp = snp, indel = indel, fbam = f_bam)
+  list(dir = dir, fvnt = fvnt, fcov = fcov, fcovab = fcovab)
 }
 
 read_comp_stat <- function(qname, tname) {
@@ -70,57 +61,72 @@ read_comp_stat <- function(qname, tname) {
   list(dir = dir, tw = tw, tl = tl, snp = snp, indel = indel)
 }
 
-build_var_tracks <- function(var, chr, beg, end, name, genome) {
-  snp = var$snp
-  indel = var$indel
-  ts = snp[snp$chr == chr & snp$pos >= beg & snp$pos <= end, ]
-  ti = indel[indel$chr == chr & indel$pos >= beg & indel$pos <= end, ]
-  
-  if(empty(ts)) {
-    snpTrack <- AnnotationTrack(genome = genome,
-      name = 'snp', stacking = 'dense',
+build_var_track_notxt <- function(ds, trackName='noname', genome='genome') {
+  if(empty(ds)) {
+    AnnotationTrack(genome = genome,
+      name = trackName, stacking = 'dense',
       background.title = "tomato")
   } else {
-    snpTrack <- AnnotationTrack(genome = genome,
-      chromosome = chr, start = ts$pos, width = 1,
-      name = 'snp', stacking = 'dense',
+    AnnotationTrack(genome = genome,
+      chromosome = ds$chr, start = ds$beg, end = ds$end,
+      name = trackName, stacking = 'dense',
       background.title = 'tomato')
   }
-  if(empty(ti)) {
-    indelTrack <- AnnotationTrack(genome = genome,
-      name = 'indel', stacking = 'dense',
-      background.title = 'tomato')
+}
+build_var_track_txt <- function(ds, trackName='noname', genome='genome') {
+  if(empty(ds)) {
+    AnnotationTrack(genome = genome,
+      name = trackName, stacking = 'dense',
+      background.title = "tomato")
   } else {
-    indelTrack <- AnnotationTrack(genome = genome,
-      chromosome = chr, start = ti$pos, width = 1,
-      name = 'indel', stacking = 'dense',
+    text = sprintf("%s^%s", ds$refl, ds$altl)
+    AnnotationTrack(genome = genome,
+      chromosome = ds$chr, start = ds$beg, end = ds$end,
+      name = trackName, stacking = 'dense',
+      showId = T, feature = text, featureAnnotation = 'feature',
+      shape = 'box', fontcolor.feature = 'black', 
+      col = 'lightblue1', 
+      cex = 0.8, rotation.item = 90, 
       background.title = 'tomato')
   }
+}
+build_var_tracks <- function(var, chr, beg, end, name, genome) {
+  x = import(var$fvnt, 
+    which = GRanges(seqnames = chr, ranges = IRanges(beg, end = end)), 
+    trackLine = F, 
+    colnames = c("chrom", "start", "end", "name"), 
+    extraCols = c('refl', 'altl', 'type'))
+  if(length(x) == 0) {
+    vnt = data.frame()
+  } else {
+    vnt = data.frame(chr = seqnames(x), beg = start(x), end = end(x), 
+      refl = mcols(x)[, 2], altl = mcols(x)[, 3], type = mcols(x)[, 4])
+  }
+    
+  snp = droplevels(vnt[vnt$type == 1, ])
+  het = droplevels(vnt[vnt$type == 0, ])
+  ins = droplevels(vnt[vnt$type == 11, ])
+  del = droplevels(vnt[vnt$type == 9, ])
+  snpTrack = build_var_track_notxt(snp, 'snp', genome) 
+  hetTrack = build_var_track_notxt(het, 'het', genome) 
+  insTrack = build_var_track_txt(ins, 'ins', genome) 
+  delTrack = build_var_track_txt(del, 'del', genome) 
+  chromosome(snpTrack) <- chr
+  chromosome(hetTrack) <- chr
+  chromosome(insTrack) <- chr
+  chromosome(delTrack) <- chr
   
   covTrack <- DataTrack(genome = genome,
-    range = var$fbam, window = -1, name = 'covg', 
-    type = 'h', showAxis = F, 
+    range = var$fcov, window = -1, name = 'covg', 
+    type = 'h', showAxis = T, 
     col.line = 'slategray2', background.title = 'tomato')
-  list(covTrack = covTrack, snpTrack = snpTrack, indelTrack = indelTrack)
-}
-
-get_ins <- function(t) {  
-  t = t[order(t$tId, t$tBeg),]
-  if(nrow(t) == 1) {
-    data.frame()
-  } else {
-    t1 = t[-nrow(t),]
-    t2 = t[-1,]
-    tIns = t2$tBeg - t1$tEnd - 1
-    if(t1$qSrd[1] != t1$tSrd[1]) {
-      qIns = t1$qEnd-t2$qBeg-1
-    } else {
-      qIns = t2$qBeg-t1$qEnd-1
-    }
-    data.frame(id=t1$id, qId=t1$qId, tId=t1$tId, 
-      tPos=ceiling(t1$tEnd+t2$tBeg)/2, 
-      tIns=tIns, qIns=qIns, txt=sprintf("%d^%d", tIns, qIns))
-  }
+  abcovTrack <- DataTrack(genome = genome,
+    range = var$fcovab, window = -1, name = 'abcovg', 
+    type = 'h', showAxis = T, 
+    col.line = 'slategray2', background.title = 'tomato')
+  list(snpTrack = snpTrack, hetTrack = hetTrack, 
+    insTrack = insTrack, delTrack = delTrack,
+    covTrack = covTrack, abcovTrack = abcovTrack)
 }
 
 build_comp_tracks <- function(comp, chr, beg, end, name, genome) {
@@ -157,7 +163,7 @@ build_comp_tracks <- function(comp, chr, beg, end, name, genome) {
       chromosome = chr, start = tls$tBeg, end = tls$tEnd, strand = tls$qSrd, 
       group = tls$id, feature = tls$qId, groupAnnotation = 'feature',
       just.group = 'below', shape = 'arrow', arrowHeadMaxWidth = 20,
-      name = name, showId = T, stackHeight = 0.5, cex.group = 0.8, 
+      name = name, showId = T, stackHeight = 0.75, cex.group = 0.8, 
       fill = 'dodgerblue', background.title = "brown")
   }
 

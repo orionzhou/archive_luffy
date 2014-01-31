@@ -89,7 +89,8 @@ int main(int argc, char *argv[]) {
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, cmdOpts), vm);
   po::notify(vm);
-  if(vm.count("help") || !vm.count("fi") || !vm.count("fo") || !vm.count("is_mno") || !vm.count("rgs")) {
+  if(vm.count("help") || !vm.count("fi") || !vm.count("fo") || 
+    !vm.count("is_mno") || !vm.count("rgs")) {
     cout << cmdOpts << endl;
     return 1;
   }
@@ -130,7 +131,8 @@ int main(int argc, char *argv[]) {
   string rg;
   int is, mm;
   while( reader.GetNextAlignment(al) ) {
-    if(!al.IsMapped() || !al.IsMateMapped() || al.RefID != al.MateRefID || al.IsDuplicate() || al.MapQuality==0) continue;
+    if(!al.IsMapped() || !al.IsMateMapped() || al.RefID != al.MateRefID 
+      || al.IsDuplicate() || al.MapQuality==0) continue;
     string strand1 = al.IsReverseStrand() ? "-" : "+";
     string strand2 = al.IsMateReverseStrand() ? "-" : "+";
     if(strand1 == strand2) continue;
@@ -154,6 +156,7 @@ int main(int argc, char *argv[]) {
   }
   reader.Close();
 
-  cout << right << setw(60) << format("(running time: %.01f minutes)\n") % ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
+  cerr << right << setw(60) << format("(running time: %.01f minutes)\n") % 
+    ( (double)(clock() - time1) / ((double)CLOCKS_PER_SEC * 60) );
   return EXIT_SUCCESS;
 }

@@ -45,15 +45,15 @@ pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 print $fho join("\t", qw/id par lev type/)."\n";
@@ -61,26 +61,26 @@ print $fho join("\t", qw/id par lev type/)."\n";
 my $hi = {};
 my $ph = {0=>""};
 while( <$fhi> ) {
-    chomp;
-    next if /(^\#)|(^\s*$)/;
-    if(/(^ +)(fill.*)$/) {
-        my $lev = (length($1)+1)/2;
-        my @ps = split(" ", $2);
-        my $n = (@ps-7) / 2;
-        my %h = map {$ps[7+$_*2] => $ps[7+$_*2+1]} (0..$n-1);
-        my $id = $h{"id"};
-        my $type = $h{"type"};
-        exists $ph->{$lev-1} || die "no level $lev-1\n";
-        my $pid = $ph->{$lev-1};
+  chomp;
+  next if /(^\#)|(^\s*$)/;
+  if(/(^ +)(fill.*)$/) {
+    my $lev = (length($1)+1)/2;
+    my @ps = split(" ", $2);
+    my $n = (@ps-7) / 2;
+    my %h = map {$ps[7+$_*2] => $ps[7+$_*2+1]} (0..$n-1);
+    my $id = $h{"id"};
+    my $type = $h{"type"};
+    exists $ph->{$lev-1} || die "no level $lev-1\n";
+    my $pid = $ph->{$lev-1};
 
-        $hi->{$id} ||= 0;
-        $hi->{$id} ++;
-        $id .= ".".$hi->{$id} if $hi->{$id} > 1;
+    $hi->{$id} ||= 0;
+    $hi->{$id} ++;
+    $id .= ".".$hi->{$id} if $hi->{$id} > 1;
 
-        print $fho join("\t", $id, $pid, $lev, $type)."\n";
+    print $fho join("\t", $id, $pid, $lev, $type)."\n";
 
-        $ph->{$lev} = $id;
-    }
+    $ph->{$lev} = $id;
+  }
 }
 close $fhi;
 close $fho;

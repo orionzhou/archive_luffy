@@ -1,19 +1,15 @@
-library(Rsamtools)
+require(rtracklayer)
 source("comp.fun.R")
 
 tname = "hm101"
-qname = "hm056"
-rname = "hm340"
+qname1 = "hm056"
+qname2 = "hm340"
+qname = qname1
 
 t = read_genome_stat(tname)
 q = read_genome_stat(qname)
-r = read_genome_stat(rname)
-
-vq = read_var_stat(qname)
-vr = read_var_stat(rname)
-
 cq = read_comp_stat(qname, tname)
-cr = read_comp_stat(rname, tname)
+vq = read_var_stat(qname)
 
 
 tg = read.table(file.path(t$dir, "51.gtb")
@@ -34,6 +30,56 @@ gg = GRanges(seqnames = Rle(tg$chr),
 glg = with(tg, makeGRangesListFromFeatureFragments(
   seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+
+# assess conserved proportion of genic regions
+grg = GRanges(seqnames = tgg$chr, ranges = IRanges(tgg$beg, end = tgg$end))
+grt = GRanges(seqnames = tgt$chr, ranges = IRanges(tgt$beg, end = tgt$end))
+grc = GRanges(seqnames = tgc$chr, ranges = IRanges(tgc$beg, end = tgc$end))
+grn = GRanges(seqnames = tgn$chr, ranges = IRanges(tgn$beg, end = tgn$end))
+
+tw = cr$tw
+tl = cr$tl
+tls = tl[tl$id %in% tw$id[tw$lev == 1], ]
+gc = GRanges(seqnames = tls$tId, ranges = IRanges(tls$tBeg, end = tls$tEnd))
+
+
+sum(width(intersect(grg, gc)))
+sum(width(intersect(grt, gc)))
+sum(width(intersect(grc, gc)))
+sum(width(intersect(grn, gc)))
+sum(width(intersect(grg, gc))) / sum(width(reduce(grg)))
+sum(width(intersect(grt, gc))) / sum(width(reduce(grt)))
+sum(width(intersect(grc, gc))) / sum(width(reduce(grc)))
+sum(width(intersect(grn, gc))) / sum(width(reduce(grn)))
+
+
+#
+grlg = with(tgg, makeGRangesListFromFeatureFragments(
+  seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
+  fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+grlt = with(tgt, makeGRangesListFromFeatureFragments(
+  seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
+  fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+grlc = with(tgc, makeGRangesListFromFeatureFragments(
+  seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
+  fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+grln = with(tgn, makeGRangesListFromFeatureFragments(
+  seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
+  fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+
+gr_idm_l = GRanges(seqnames = tml$tId, 
+  ranges = IRanges(tml$tBeg, end = tml$tEnd))
+
+tmp <- function(grl, gr) {
+  ma = as.matrix(findOverlaps(gr, grl))
+  didx1 = data.frame(sidx=ma[,2], qidx=ma[,1])
+  idxs_rm = unique(didx1$sidx)
+  cat(length(idxs_rm), length(idxs_rm) / length(grl), "\n", sep="\t")
+}
+tmp(grlg, gr_idm_l)
+tmp(grlt, gr_idm_l)
+tmp(grlc, gr_idm_l)
+tmp(grln, gr_idm_l)
 
 # compare SNP/indel density
 ds = vq
@@ -56,6 +102,13 @@ sum_by_col <- function(cname, cname.stat, df) {
     list(mean = mean(da), median = median(da), sd = sd(da))
 }
 sapply(c('gene', 'te', 'crp', 'nbs'), sum_by_col, 'snpdensity', tgn)
+
+# compare INS/DEL density
+tid = read.table(file.path(cq$dir, "23_blat/27.vnt/05.tbl"), 
+  header = F, sep = "\t", as.is = T)
+colnames(tid) = c('tid', 'tbeg', 'tend', 'id', 'qid', 'qbeg', 'qend', 
+  'qlen', 'tlen')
+gri = GRanges(seqnames = tid$tid, ranges = IRanges(tid$tbeg, end = tid$tend))
 
 # compare coverage
 ds = vq

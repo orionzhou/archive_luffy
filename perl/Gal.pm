@@ -13,9 +13,14 @@ require Exporter;
     /;
 @EXPORT_OK = qw//;
 
-our @HEAD_GAL = qw/id qId qBeg qEnd qSrd qSize tId tBeg tEnd tSrd tSize match misMatch baseN ident e score qLoc tLoc/;
-our @HEAD_GALL = qw/id qId qBeg qEnd qSrd tId tBeg tEnd tSrd/;
+our @HEAD_GAL = qw/id tId tBeg tEnd tSrd tSize
+  qId qBeg qEnd qSrd qSize
+  ali mat mis qN tN ident score tLoc qLoc/;
 
+  my $ps = [];
+  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
 
 
 1;

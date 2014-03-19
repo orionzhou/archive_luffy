@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -10,19 +10,17 @@
 
 =head1 SYNOPSIS
   
-  galfix.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  galfix.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
+    -help   brief help message
+    -in     input file
+    -out    output file
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 
 use strict;
@@ -39,64 +37,65 @@ my ($fq, $ft) = ('') x 2;
 my ($fhi, $fho);
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"   => \$help_flag,
-    "in|i=s"   => \$fi,
-    "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
+  "help|h"   => \$help_flag,
+  "in|i=s"   => \$fi,
+  "out|o=s"  => \$fo,
+  "qry|q=s"  => \$fq,
+  "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 print $fho join("\t", @HEAD_GAL)."\n";
 
 my $cnt = 0;
 while( <$fhi> ) {
-    chomp;
-    next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    next unless @$ps == 19;
-    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
-    my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
-    my $srd = ($qSrd eq $tSrd) ? "+" : "-";
-    
-    my @qlens = map {$_->[1]-$_->[0]+1} @$qLoc;
-    my $ref = tiling($qLoc, \@qlens, 2);
-    my (@rqloc, @rtloc);
-    for (@$ref) {
-        my ($rqb, $rqe, $idx) = @$_;
+  chomp;
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my $ps = [ split "\t" ];
+  next unless @$ps == 20;
+  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
+  $tSrd eq "+" || die "$id: tSrd -\n";
+  
+  my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+  my @qlens = map {$_->[1]-$_->[0]+1} @$qLoc;
+  my $ref = tiling($qLoc, \@qlens, 2);
+  my (@rqloc, @rtloc);
+  for (@$ref) {
+    my ($rqb, $rqe, $idx) = @$_;
 
-        my ($qb, $qe) = @{$qLoc->[$idx]};
-        my ($tb, $te) = @{$tLoc->[$idx]};
-        my $rtb = $rqb - $qb + $tb;
-        my $rte = $rqe - $qb + $tb;
+    my ($qb, $qe) = @{$qLoc->[$idx]};
+    my ($tb, $te) = @{$tLoc->[$idx]};
+    my $rtb = $rqb - $qb + $tb;
+    my $rte = $rqe - $qb + $tb;
 
-        if(@rqloc == 0 || $rtb > $rtloc[-1]->[1]) { 
-            push @rqloc, [$rqb, $rqe];
-            push @rtloc, [$rtb, $rte];
-        }
+    if(@rqloc == 0 || $rtb > $rtloc[-1]->[1]) { 
+        push @rqloc, [$rqb, $rqe];
+        push @rtloc, [$rtb, $rte];
     }
-    my ($nqLocS, $ntLocS) = (locAry2Str(\@rqloc), locAry2Str(\@rtloc));
-    if($nqLocS ne $qLocS) {
-        @$ps[17,18] = ($nqLocS, $ntLocS);
-        $cnt ++;
-    }
-    print $fho join("\t", @$ps)."\n";
+  }
+  my ($nqLocS, $ntLocS) = (locAry2Str(\@rqloc), locAry2Str(\@rtloc));
+  if($nqLocS ne $qLocS) {
+    @$ps[18,19] = ($ntLocS, $nqLocS);
+    $cnt ++;
+  }
+  print $fho join("\t", @$ps)."\n";
 }
 print STDERR "$cnt rows fixed\n";
 close $fhi;

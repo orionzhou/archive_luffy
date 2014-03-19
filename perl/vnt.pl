@@ -8,19 +8,19 @@ use Readfile; use Writefile; use VntRet; use VntEffect;
 use Bio::Seq; use Path::Class; use Data::Dumper;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 my $ps = {
-    01 => { accs => [1..16, 19..21, 23..28, 101, 17..18, 22, 29, 30], 
-        fedb => "mt_30", refdb => "mt_30", opt => {} },
-    02 => { accs => [1..16, 19..21, 23..28, 101], 
-        fedb => "mt_30", refdb => "mt_30", opt => {} },
-    03 => { accs => [5, 6, 101, 29], 
-        fedb => "mt_defl", refdb => "mt_30", opt => {} },
-    04 => { accs => [5, 6, 101, 29], 
-        fedb => "mt_30", refdb => "mt_30", opt => {} },
-    05 => { accs => [1..16, 19..21, 23..28, 101], #deletion candidates
-        fedb => "mt_35", refdb => "mt_35", opt => {} }, 
-    06 => { accs => [1..16, 19..21, 23..28, 30..60, 101, 102, 323, 334], 
-        fedb => "mt_35", refdb => "mt_35" },
-    11 => { accs => [18, 29, 101], fedb => "mt_35", refdb => "mt_35", opt => {} },
+  01 => { accs => [1..16, 19..21, 23..28, 101, 17..18, 22, 29, 30], 
+    fedb => "mt_30", refdb => "mt_30", opt => {} },
+  02 => { accs => [1..16, 19..21, 23..28, 101], 
+    fedb => "mt_30", refdb => "mt_30", opt => {} },
+  03 => { accs => [5, 6, 101, 29], 
+    fedb => "mt_defl", refdb => "mt_30", opt => {} },
+  04 => { accs => [5, 6, 101, 29], 
+    fedb => "mt_30", refdb => "mt_30", opt => {} },
+  05 => { accs => [1..16, 19..21, 23..28, 101], #deletion candidates
+    fedb => "mt_35", refdb => "mt_35", opt => {} }, 
+  06 => { accs => [1..16, 19..21, 23..28, 30..60, 101, 102, 323, 334], 
+    fedb => "mt_35", refdb => "mt_35" },
+  11 => { accs => [18, 29, 101], fedb => "mt_35", refdb => "mt_35", opt => {} },
 };
 my $opt = 06;
 my $p = $ps->{$opt};

@@ -95,8 +95,8 @@ export spada=$git/spada
 export PERL_HOME=$prefix/soft/perl
 #export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
 #export PERL_MB_OPT="--install_base $PERL_HOME"
-export CPANLIB=$PERL_HOME/lib/perl5
-export PERL5LIB=$PERL_HOME/lib/perl5
+export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
+export PERL5LIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
 export SCRIPT_HOME_PERL=$code/perl
 export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 

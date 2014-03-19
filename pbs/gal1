@@ -9,46 +9,5 @@ TGT=${TGT:-HM101}
 echo QRY=$QRY
 echo TGT=$TGT
 
-QRY_FAS=$data/genome/$QRY/11_genome.fa
-TGT_FAS=$data/genome/$TGT/11_genome.fa
-QRY_2BIT=$data/db/blat/$QRY.2bit
-TGT_2BIT=$data/db/blat/$TGT.2bit
-QRY_SIZE=$data/genome/$QRY/15.sizes
-TGT_SIZE=$data/genome/$TGT/15.sizes
-QRY_GAP=$data/genome/$QRY/16_gap.tbl
-TGT_GAP=$data/genome/$TGT/16_gap.tbl
-
-# BLAT
-cd $data/misc3/$QRY\_$TGT/23_blat
-#psl2gal.pl -i 11.psl -o 11.gal
-#galfix.pl -i 11.gal -o - | galrmgap.pl -i - -q $QRY_GAP -t $TGT_GAP -o - | galfillstat.pl -i - -q $QRY_FAS -t $TGT_FAS -o 12.fixed.gal
-#gal2psl.pl -i 12.fixed.gal -o 12.fixed.psl
-#pslSwap 12.fixed.psl 14.swap.psl
-
-#axtChain -linearGap=medium -psl 12.fixed.psl $TGT_2BIT $QRY_2BIT 21.chain
-#chainPreNet 21.chain $TGT_SIZE $QRY_SIZE 23.chain
-#chainNet 23.chain $TGT_SIZE $QRY_SIZE stdout /dev/null | netSyntenic stdin 25.net
-netinfo.pl -i 25.net -o 25.neti
-netChainSubset 25.net 23.chain 25.chain
-chain2gal.pl -i 25.chain -o - | galfillstat.pl -i - -q $QRY_FAS -t $TGT_FAS -o 25.gal
-galfilter.pl -i 25.gal -m 100 -p 0.6 -o 26.gal
-galexpand.pl -i 26.gal -o 26.gall
-gal2psl.pl -i 26.gal -o 26.psl
-pslToBed 26.psl 26.bed
-bedToBigBed -tab 26.bed $TGT_SIZE 26.bb
-gal2snp.pl -i 26.gal -o 26.snp -q $QRY_FAS -t $TGT_FAS
-gal2indel.pl -i 26.gal -o 26.indel
-
-#axtChain -linearGap=medium -psl 14.swap.psl $QRY_2BIT $TGT_2BIT 31.chain
-#chainPreNet 31.chain $QRY_SIZE $TGT_SIZE 33.chain
-#chainNet 33.chain $QRY_SIZE $TGT_SIZE stdout /dev/null | netSyntenic stdin 35.net
-netinfo.pl -i 35.net -o 35.neti
-netChainSubset 35.net 33.chain 35.chain
-chain2gal.pl -i 35.chain -o - | galfillstat.pl -i - -q $TGT_FAS -t $QRY_FAS -o 35.gal
-galfilter.pl -i 35.gal -m 100 -p 0.6 -o 36.gal
-galexpand.pl -i 36.gal -o 36.gall
-gal2psl.pl -i 36.gal -o 36.psl
-pslToBed 36.psl 36.bed
-bedToBigBed -tab 36.bed $QRY_SIZE 36.bb
-
+comp.pl -q $QRY -t $TGT
 

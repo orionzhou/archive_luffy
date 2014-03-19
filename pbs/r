@@ -1,9 +1,9 @@
-#PBS -l nodes=1:ppn=16,mem=10GB,walltime=10:00:00
-#PBS -q sb
+#PBS -l nodes=1:ppn=2,mem=10GB,walltime=10:00:00
+#PBS -q lab
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 
 cd $code/r
-R CMD BATCH --no-init-file --no-restore pan3probe.R ../pbs/r.Rout
+R CMD BATCH --no-init-file --no-restore comp.plot.R ../pbs/r.Rout
 
 

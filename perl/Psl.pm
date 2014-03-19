@@ -12,52 +12,6 @@ require Exporter;
 @EXPORT = qw/psl2gal net2gal/;
 @EXPORT_OK = qw//;
 
-sub psl2gal {
-    my ($ps) = @_;
-    my ($match, $misMatch, $repMatch, $baseN, 
-        $qNumIns, $qBaseIns, $tNumIns, $tBaseIns, $qSrd, 
-        $qId, $qSize, $qBeg, $qEnd, $tId, $tSize, $tBeg, $tEnd, 
-        $blockNum, $blockSizes, $qBegs, $tBegs) = @$ps;
-    my $tSrd = "+";
-    my @qBegs = split(",", $qBegs);
-    my @tBegs = split(",", $tBegs);
-    my @blockSizes = split(",", $blockSizes);
-    
-    $blockNum == @qBegs || die "unequal pieces\n";
-    $blockNum == @tBegs || die "unequal pieces\n";
-    $blockNum == @blockSizes || die "unequal pieces\n";
-    my $alnLen = $match + $misMatch + $repMatch + $baseN;
-    $alnLen == sum(@blockSizes) || die "block size error:$alnLen/".sum(@blockSizes)."\n";
-    $alnLen + $qBaseIns == $qEnd-$qBeg || die "qLen error\n";
-    $alnLen + $tBaseIns == $tEnd-$tBeg || die "hLen error\n";
-    
-    my (@qLoc, @tLoc);
-    for my $i (0..$blockNum-1) {
-        my $len = $blockSizes[$i];
-        my $tb = $tBegs[$i] + 1;
-        my $te = $tb + $len - 1;
-        
-        my ($qb, $qe);
-        if($qSrd eq "+") {
-            $qb = $qBegs[$i] + 1;
-            $qe = $qb + $len - 1;
-        } else {
-            $qSrd eq "-" || die "unknown strand $qSrd\n";
-            $qe = $qSize - $qBegs[$i];
-            $qb = $qe - $len + 1;
-        }
-        
-        my $rtb = $tBegs[$i] - $tBeg;
-        my $rqb = $qSrd eq "-" ? $qBegs[$i]-($qSize-$qEnd) : $qBegs[$i]-$qBeg;
-        push @tLoc, [$rtb+1, $rtb+$len];
-        push @qLoc, [$rqb+1, $rqb+$len];
-    }
-    my ($tLocS, $qLocS) = (locAry2Str(\@tLoc), locAry2Str(\@qLoc));
-    my $score = $match;
-    return [$qId, $qBeg+1, $qEnd, $qSrd, $qSize, $tId, $tBeg+1, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, '', '', $score, $qLocS, $tLocS];
-}
-
 sub net2gal {
     my ($fhi, $fho) = @_;
     print $fho join("\t", qw/level id type qId qBeg qEnd qSrd qLen 

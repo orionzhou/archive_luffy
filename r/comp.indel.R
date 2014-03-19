@@ -1,15 +1,94 @@
-source("comp.plot.fun.R")
+require(rtracklayer)
+source("comp.fun.R")
 
-dat1.name = "hm056"
-#dat1.name = "hm340"
-dat1.dir = file.path("/home/youngn/zhoup/Data/misc3", dat1.name)
+tname = "hm101"
+qname1 = "hm056"
+qname2 = "hm340"
+qname = qname1
 
-tc1 = read.table(file.path(dat1.dir, "23_blat/17_chain.gal"), header=TRUE, sep="\t", as.is=T)
-tb1 = read.table(file.path(dat1.dir, "23_blat/18_block.gal"), header=TRUE, sep="\t", as.is=T)
+t = read_genome_stat(tname)
+q = read_genome_stat(qname)
+cq = read_comp_stat(qname, tname)
 
-tc=tc1
-tb=tb1
+dir = sprintf("%s/%s", cq$dir, "23_blat")
 
+# filter SVs overlapping with qGap/tGap
+tidm = read.table(file.path(dir, "26.vnt/idm"), header = F, sep = "\t", as.is = T)
+colnames(tidm) = c('tId', 'tBeg', 'tEnd', 'id', 'qId', 'qBeg', 'qEnd')
+tidm = cbind(tidm, qlen = tidm$qEnd - tidm$qBeg - 1, 
+  tlen = tidm$tEnd - tidm$tBeg - 1)
+
+rm_ovlp_t <- function(ds, gr) {
+  grl = with(ds, makeGRangesListFromFeatureFragments(
+    seqnames = tId, fragmentStarts = sprintf("%d,", tBeg + 1), 
+    fragmentWidths = sprintf("%d,", tEnd - tBeg), 
+    strand = rep("+", nrow(ds))))
+  ma = as.matrix(findOverlaps(gr, grl))
+  didx1 = data.frame(sidx=ma[,2], qidx=ma[,1])
+  idxs_rm = unique(didx1$sidx)
+  ds[-idxs_rm, ]
+}
+rm_ovlp_q <- function(ds, gr) {
+  grl = with(ds, makeGRangesListFromFeatureFragments(
+    seqnames = qId, fragmentStarts = sprintf("%d,", qBeg + 1), 
+    fragmentWidths = sprintf("%d,", qEnd - qBeg), 
+    strand = rep("+", nrow(ds))))
+  ma = as.matrix(findOverlaps(gr, grl))
+  didx1 = data.frame(sidx=ma[,2], qidx=ma[,1])
+  idxs_rm = unique(didx1$sidx)
+  ds[-idxs_rm, ]
+}
+
+gr_tgap = GRanges(seqnames = t$gap$id, 
+  ranges = IRanges(t$gap$beg, end = t$gap$end))
+gr_qgap = GRanges(seqnames = q$gap$id, 
+  ranges = IRanges(q$gap$beg, end = q$gap$end))
+
+tm = rm_ovlp_q(rm_ovlp_t(tidm, gr_tgap), gr_qgap)
+#tm = tm[order(tm$tid, tm$tbeg, tm$tend), ]
+
+nrow(tidm)
+nrow(tm)
+
+# filter small indels
+tms = tm[tm$tlen < 100 & tm$qlen < 100, ]
+tml = tm[tm$tlen >= 100 | tm$qlen >= 100, ]
+nrow(tms)
+nrow(tml)
+
+write.table(tms, file.path(dir, "27.vnt/03.s.tbl"), sep = "\t",
+  quote = F, row.names = F, col.names = T)
+write.table(tml, file.path(dir, "27.vnt/03.l.tbl"), sep = "\t",
+  quote = F, row.names = F, col.names = T)
+
+# filter flanking regions & complex rearrangements
+tm = read.table(file.path(dir, "27.vnt/03.l.tbl"), header = T, sep = "\t")
+
+i = 1
+
+tid = tm$tId[i]
+tbeg = tm$tBeg[i]
+tend = tm$tEnd[i]
+qid = tm$qId[i]
+qbeg = tm$qBeg[i]
+qend = tm$qEnd[i]
+
+
+
+if(tend - tbeg - 1 > 0) {
+  tt = read_gax(cq$tgax, cq$tsnp, tid, tbeg, tend, 't')
+  qlb = qbeg - 500 + 1
+  qle = qbeg
+  qrb = qend
+  qre = qend + 500 - 1
+}
+if(qend - qbeg - 1 > 0) {
+  tq = read_gax(cq$qgax, cq$qsnp, qid, qbeg, qend, 'q')
+}
+
+
+
+# plot
 ts = cbind(tc, lenlog=log(tc$aLen))
 p <- ggplot(ts) +
   geom_point(mapping=aes(x=qCov, y=hCov, color=lenlog), size=1) +
@@ -32,8 +111,11 @@ alnplot = merge(alnplot, dat2.coord, by='hId')
 
 p <- ggplot(tc) +
   geom_segment(mapping=aes(x=hBeg, xend=hEnd, y=qBeg, yend=qEnd), size=0.6) +
-  layer(data=dat2.coord, geom='rect', mapping=aes(xmin=hBeg.r, xmax=hEnd.r, ymin=-3000000, ymax=0, fill=hId), geom_params=list(size=0)) +
-  layer(data=dat2.coord, geom='text', mapping=aes(x=(hBeg.r+hEnd.r)/2, y=-4000000, label=hId), geom_params=list(hjust=0.5, vjust=1, angle=0, size=3)) +
+  layer(data=dat2.coord, geom='rect', mapping=aes(xmin=hBeg.r, xmax=hEnd.r, 
+    ymin=-3000000, ymax=0, fill=hId), geom_params=list(size=0)) +
+  layer(data=dat2.coord, geom='text', mapping=aes(
+    x=(hBeg.r+hEnd.r)/2, y=-4000000, label=hId), 
+    geom_params=list(hjust=0.5, vjust=1, angle=0, size=3)) +
   facet_grid(qId ~ hId, scales="free") +
   scale_color_brewer(palette="Set1") +
   scale_x_continuous(name='HM101 (Mt4.0)') +

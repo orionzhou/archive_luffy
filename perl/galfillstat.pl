@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -13,16 +13,16 @@
   galfillstat.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
 
   Options:
-      -h (--help)   brief help message
-      -i (--in)     input Gal
-      -o (--out)    output Gal
-      -q (--qry)    query fasta
-      -t (--tgt)    target fasta
+    -h (--help)   brief help message
+    -i (--in)     input Gal
+    -o (--out)    output Gal
+    -q (--qry)    query fasta
+    -t (--tgt)    target fasta
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 
 use strict;
@@ -40,27 +40,27 @@ my ($fq, $ft) = ('') x 2;
 my ($fhi, $fho);
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"   => \$help_flag,
-    "in|i=s"   => \$fi,
-    "out|o=s"  => \$fo,
-    "qry|q=s"  => \$fq,
-    "tgt|t=s"  => \$ft,
+  "help|h"   => \$help_flag,
+  "in|i=s"   => \$fi,
+  "out|o=s"  => \$fo,
+  "qry|q=s"  => \$fq,
+  "tgt|t=s"  => \$ft,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fq || !$ft;
 
 if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 my $t0 = [gettimeofday];
@@ -68,32 +68,47 @@ print $fho join("\t", @HEAD_GAL)."\n";
 
 my $cnt = 1;
 while( <$fhi> ) {
-    chomp;
-    next if /(^id)|(^\#)|(^\s*$)/;
-    my $ps = [ split "\t" ];
-    next unless @$ps == 19;
-    my ($id, $qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, $ident, $e, $score, $qLocS, $tLocS) = @$ps;
-    my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
-    @$rqLoc == @$rtLoc || die "unequal pieces\n";
-    my $nBlock = @$rqLoc;
+  chomp;
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my $ps = [ split "\t" ];
+  next unless @$ps == 20;
+  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
+  my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+  @$rqLoc == @$rtLoc || die "unequal pieces\n";
+  my ($rqb, $rqe) = ($rqLoc->[0]->[0], $rqLoc->[-1]->[1]);
+  my ($rtb, $rte) = ($rtLoc->[0]->[0], $rtLoc->[-1]->[1]);
+  $qEnd - $qBeg == $rqe - $rqb ||
+    die "qLen err: $id $qId($qBeg-$qEnd): $rqb-$rqe\n"; 
+  $tEnd - $tBeg == $rte - $rtb ||
+    die "tLen err: $id $tId($tBeg-$tEnd): $rtb-$rte\n";
+  my ($qlen, $tlen) = (locAryLen($rqLoc), locAryLen($rtLoc));
+  $qlen == $tlen || die "unequal loclen: qry[$qlen] - tgt[$tlen]\n";
+  
+  my $nBlock = @$rqLoc;
 
 #    my $seqT = seqRet([[$tBeg, $tEnd]], $tId, $tSrd, $ft);
 #    my $seqQ = seqRet([[$qBeg, $qEnd]], $qId, $qSrd, $fq);
 #    my $tSeq = getSubSeq($seqT, $rtLoc);
 #    my $qSeq = getSubSeq($seqQ, $rqLoc);
-    my $tLoc = $tSrd eq "-" ? [ map {[$tEnd-$_->[1]+1, $tEnd-$_->[0]+1]} @$rtLoc ]
-        : [ map {[$tBeg+$_->[0]-1, $tBeg+$_->[1]-1]} @$rtLoc ]; 
-    my $qLoc = $qSrd eq "-" ? [ map {[$qEnd-$_->[1]+1, $qEnd-$_->[0]+1]} @$rqLoc ]
-        : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ]; 
-    my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
-    my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
-    ($match, $misMatch, $baseN) = seqCompare($tSeq, $qSeq);
-    $ident = ($match+$misMatch==0) ? 0 : sprintf "%.03f", $match/($match+$misMatch);
-    @$ps[11..14] = ($match, $misMatch, $baseN, $ident);
-    print $fho join("\t", @$ps)."\n";
+  my $tLoc = $tSrd eq "-" ? 
+    [ map {[$tEnd-$_->[1]+1, $tEnd-$_->[0]+1]} @$rtLoc ]
+    : [ map {[$tBeg+$_->[0]-1, $tBeg+$_->[1]-1]} @$rtLoc ]; 
+  my $qLoc = $qSrd eq "-" ? 
+    [ map {[$qEnd-$_->[1]+1, $qEnd-$_->[0]+1]} @$rqLoc ]
+    : [ map {[$qBeg+$_->[0]-1, $qBeg+$_->[1]-1]} @$rqLoc ];
+  
+  my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
+  my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
+  ($mat, $mis, $qN, $tN) = seqCompare($tSeq, $qSeq);
+  $ali = $mat + $mis + $qN + $tN;
+  $ident = ($mat+$mis==0) ? 0 : sprintf "%.03f", $mat/($mat+$mis);
+  @$ps[11..16] = ($ali, $mat, $mis, $qN, $tN, $ident);
+  print $fho join("\t", @$ps)."\n";
 
-    printf "%5d: %.01f min\n", $cnt++, tv_interval($t0, [gettimeofday]) / 60 if $cnt % 1000 == 0;
+  printf "%5d: %.01f min\n", $cnt++, 
+    tv_interval($t0, [gettimeofday]) / 60 if $cnt % 1000 == 0;
 }
 close $fhi;
 close $fho;

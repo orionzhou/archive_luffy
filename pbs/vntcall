@@ -1,13 +1,20 @@
-#PBS -l nodes=1:ppn=2,mem=8GB,walltime=20:00:00
+#PBS -l nodes=1:ppn=2,mem=8GB,walltime=10:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
-#PBS -q mirror
+#PBS -q lab
 
 SAM=${SAM:-HM056}
 
 cd $data/misc3/hapmap_mt40/30_vnt
 bcftools subset -R -U -c 1 -o u -v snps,indels -s $SAM acc319.vcf.gz | 
-  bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%SAMPLE=%GT]\n' - > $SAM.tbl
-vcf2bed.pl -i $SAM.tbl -o $SAM.bed
-bgzip -cf $SAM.bed > $SAM.bed.gz
-tabix -f -p bed $SAM.bed.gz
+  bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%SAMPLE=%GT]\n' - > $SAM.vch
+grep -P "^chr[1-8]" $SAM.vch | vch2bed.pl -i - -o $SAM
+cd $SAM
+for var in snp ins del het mnp
+do
+  bedSort $var.bed $var.bed
+  bedToBigBed -tab -type=bed4+4 $var.bed $genome/HM101/15.sizes $var.bb
+  bgzip -c $var.bed > $var.bed.gz
+  tabix -p bed $var.bed.gz
+done
+

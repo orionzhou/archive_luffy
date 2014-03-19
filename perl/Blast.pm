@@ -109,40 +109,7 @@ sub blast2psl {
         $qId, $qSize, $qBeg-1, $qEnd, $tId, $tSize, $tBeg-1, $tEnd, 
         $nBlock, $blockLenStr, $qBegStr, $tBegStr ];
 }
-sub blast2gal {
-    my ($ps) = @_;
-    my ($qId, $qBeg, $qEnd, $qSize, $tId, $tBeg, $tEnd, $tSize, $alnLen, 
-        $matcha, $misMatcha, $gaps, $e, $score, $qSeq, $tSeq) = @$ps;
-    $qBeg <= $qEnd || die "$qId $qBeg > $qEnd\n";
-    $alnLen == $matcha+$misMatcha+$gaps || die "len error\n".join("\t", @$ps)."\n";
-    my ($qSrd, $tSrd) = ("+") x 2;
-    if($tBeg > $tEnd) {
-        ($tBeg, $tEnd) = ($tEnd, $tBeg);
-        $tSrd = "-";
-    }
 
-    my ($qLoc, $tLoc, $stat, $qNumIns, $qIns, $tNumIns, $tIns) = parse_aln_string($qSeq, $tSeq);
-    my $match = sum( map {$_->[0]} @$stat );
-    my $misMatch = sum( map {$_->[1]} @$stat );
-    my $baseN = sum( map {$_->[2]} @$stat );
-    my $nBlock = @$qLoc;
-    for my $i (0..$nBlock-1) {
-        my ($qbr, $qer) = @{$qLoc->[$i]};
-        my ($tbr, $ter) = @{$tLoc->[$i]};
-        my ($match, $misMatch, $baseN) = @{$stat->[$i]};
-        my $qLen = $qer - $qbr + 1;
-        my $tLen = $ter - $tbr + 1;
-        $qLen == $tLen || die "len error: $qbr-$qer $tbr-$ter\n";
-
-        my $tb = $qSrd eq "-" ? $tEnd-$ter+1 :$tBeg+$tbr-1;
-        my $te = $qSrd eq "-" ? $tEnd-$tbr+1 :$tBeg+$ter-1;
-        my $qb = $qBeg + $qbr - 1;
-        my $qe = $qBeg + $qer - 1;
-    }
-    my ($tLocS, $qLocS) = (locAry2Str($tLoc), locAry2Str($qLoc));
-    return [$qId, $qBeg, $qEnd, $qSrd, $qSize, $tId, $tBeg, $tEnd, $tSrd, $tSize,
-        $match, $misMatch, $baseN, '', $e, $score, $qLocS, $tLocS];
-}
 
 sub write_blast {
     my ($id, $rows, $fo) = @_;

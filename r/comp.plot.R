@@ -25,7 +25,7 @@ gapTrack <- AnnotationTrack(genome = tname,
   name = 'gap', showId = F, 
   fill = 'maroon', background.title = "midnightblue")
 
-f_mapp = "/home/youngn/zhoup/Data/genome/pan3/18_stat_k60/15_mapp.bw"
+f_mapp = "/home/youngn/zhoup/Data/genome/HM101/18_stat_k60/15_mapp.bw"
 mappTrack <- DataTrack(range = f_mapp, genome = tname, type = 'h', 
   showAxis = T, name = 'mapp', background.title = 'midnightblue')
 
@@ -41,7 +41,7 @@ tgs = tg[grepl('CRP', tg$cat3) | grepl('NBS', tg$cat3),]
 tgs = tgs[tgs$chr %in% sprintf("chr%d", 1:8),]
 tgs = tgs[order(tgs$id),]
 
-for (i in 1:20) {
+for (i in 21:200) {
   chr = tgs$chr[i]
   beg = tgs$beg[i]
   end = tgs$end[i]
@@ -56,22 +56,27 @@ for (i in 1:20) {
   CairoPNG(filename = fo, width = 900, height = 1200)
   plotTracks(
     list(ideoTrack, axisTrack, gapTrack, mappTrack, grTrack, 
-      qcomp$compTrack, qcomp$snpTrack, qcomp$siTrack, qcomp$liTrack, 
+      qcomp$compTrack, 
+      qcomp$snpTrack, qcomp$insTrack, qcomp$delTrack, qcomp$mnpTrack,
       qvar$snpTrack, qvar$hetTrack, qvar$insTrack, qvar$delTrack, 
       qvar$covTrack, qvar$abcovTrack,
-      rcomp$compTrack, rcomp$snpTrack, rcomp$siTrack, rcomp$liTrack,
+      rcomp$compTrack, 
+      rcomp$snpTrack, rcomp$insTrack, rcomp$delTrack, rcomp$mnpTrack,
       rvar$snpTrack, rvar$hetTrack, rvar$insTrack, rvar$delTrack,
       rvar$covTrack, rvar$abcovTrack),
     chromosome = chr, from = beg, to = end, 
     extend.left = (end - beg) / 20, extend.right = (end - beg) / 20, 
-    sizes = c(1, 1, 1, 1, 2,  
-      2, 2, 2, 2, 
+    sizes = c(1, 1, 0.5, 1, 2,  
+      2, 
+      1, 1, 1, 1,
       1, 1, 1, 1, 1, 1,  
-      2, 2, 2, 2, 
+      2, 
+      1, 1, 1, 1,
       1, 1, 1, 1, 1, 1))
   dev.off()
 }
 
+"
 # comparison plot using a region
 f_reg = '/home/youngn/zhoup/Data/genome/HM101/81_regions.tbl'
 reg = read.table(f_reg, header=T, sep="\t", as.is=T)
@@ -83,9 +88,9 @@ chr = 'chr5'
 beg = 11600000
 end = 11680000
 
-  fo = sprintf("%s/figs/%s_%d.png", cq$dir, chr, beg)
+  fo = sprintf(\"%s/figs/%s_%d.png\", cq$dir, chr, beg)
 
-  source("comp.fun.R")
+  source('comp.fun.R')
   chromosome(grTrack) <- chr
   qvar <- build_var_tracks(vq, chr, beg, end, qname, tname)
   rvar <- build_var_tracks(vr, chr, beg, end, rname, tname)
@@ -137,11 +142,12 @@ p <- ggplot(tt) +
   layer(data = dat2.coord, geom = 'text', 
     mapping = aes(x = (hBeg.r + hEnd.r) / 2, y = -4000000, label = hId), 
     geom_params = list(hjust = 0.5, vjust = 1, angle = 0, size = 3)) +
-  facet_grid(qId ~ hId, scales = "free") +
-  scale_color_brewer(palette = "Set1") +
+  facet_grid(qId ~ hId, scales = 'free') +
+  scale_color_brewer(palette = 'Set1') +
   scale_x_continuous(name = 'HM101 (Mt4.0)') +
   scale_y_continuous(name = dat1.name) +
   theme_bw()
-  theme(legend.position = "none")
+  theme(legend.position = 'none')
   theme(axis.text.x = element_blank(), axis.text.y = element_blank())
-ggsave(sprintf("%s/figs/%s.d.png", dat1.dir, id), p, width = 8, height = 8)
+ggsave(sprintf(\"%s/figs/%s.d.png\", dat1.dir, id), p, width = 8, height = 8)
+"

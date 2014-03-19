@@ -13,12 +13,14 @@ read_genome_stat <- function(name) {
   # gap locations
   f_gap = file.path(dir, "16_gap.tbl")
   gap = read.table(f_gap, header=T, sep="\t", as.is=T)
+  gr_gap = GRanges(seqnames = gap$id, ranges = IRanges(gap$beg, end = gap$end))
 
   # gene annotation
   f_gen = file.path(dir, "51.tbl")
   gene = read.table(f_gen, header=T, sep="\t", quote="", as.is=T)
 
-  list(name = name, dir = dir, len = len, gap = gap, gene = gene)
+  list(name = name, dir = dir, len = len, gap = gap, gene = gene,
+    gr_gap = gr_gap)
 }
 
 build_ideogram_track <- function(tgap, tlen, tname) {
@@ -39,82 +41,76 @@ build_ideogram_track <- function(tgap, tlen, tname) {
 
 read_var_stat <- function(qname) {
   dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
-  fvnt = sprintf("%s/30_vnt/%s.bed.gz", dir, toupper(qname))
+  fsnp = sprintf("%s/30_vnt/%s/snp.bed.gz", dir, toupper(qname))
+  fins = sprintf("%s/30_vnt/%s/ins.bed.gz", dir, toupper(qname))
+  fdel = sprintf("%s/30_vnt/%s/del.bed.gz", dir, toupper(qname))
+  fhet = sprintf("%s/30_vnt/%s/het.bed.gz", dir, toupper(qname))
+  fmnp = sprintf("%s/30_vnt/%s/mnp.bed.gz", dir, toupper(qname))
 
   fcov = sprintf("%s/11_pipe_mapping/35_cov/%s.bw", dir, toupper(qname))
   fcovab = sprintf("%s/40_sv/01_ab/%s.bw", dir, toupper(qname))
   
-  list(dir = dir, fvnt = fvnt, fcov = fcov, fcovab = fcovab)
+  list(dir = dir, 
+    fsnp = fsnp, fins = fins, fdel = fdel, fhet = fhet, fmnp = fmnp,
+    fcov = fcov, fcovab = fcovab)
 }
 
 read_comp_stat <- function(qname, tname) {
   dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s", toupper(qname), 
     toupper(tname))
-  tw = read.table(file.path(dir, "23_blat/26.gal"), header=TRUE, sep="\t", 
-    as.is=T)[,1:17]
-  tl = read.table(file.path(dir, "23_blat/26.gall"), header=TRUE, sep="\t", 
-    as.is=T)
-  snp = read.table(file.path(dir, "23_blat/26.snp"), header=TRUE, sep="\t", 
-    as.is=T)[,1:5]
-  indel = read.table(file.path(dir, "23_blat/26.indel"), header=TRUE, sep="\t", 
-    as.is=T)
-  list(dir = dir, tw = tw, tl = tl, snp = snp, indel = indel)
+#  tw = read.table(file.path(dir, "23_blat/51.gal"), header=TRUE, sep="\t", 
+#    as.is=T)[,1:18]
+  
+  tgax = sprintf("%s/23_blat/51.gax.gz", dir)
+  tsnp = sprintf("%s/23_blat/51.vnt/snp.gz", dir)
+  tidm = sprintf("%s/23_blat/51.vnt/idm.gz", dir)
+  qgax = sprintf("%s/23_blat/56.gax.gz", dir)
+  qsnp = sprintf("%s/23_blat/56.vnt/snp.gz", dir)
+  qidm = sprintf("%s/23_blat/56.vnt/idm.gz", dir)
+
+  list(dir = dir, 
+    tgax = tgax, tsnp = tsnp, tidm = tidm,
+    qgax = qgax, qsnp = qsnp, qidm = qidm)
 }
 
-build_var_track_notxt <- function(ds, trackName='noname', genome='genome') {
-  if(empty(ds)) {
-    AnnotationTrack(genome = genome,
-      name = trackName, stacking = 'dense',
-      background.title = "tomato")
-  } else {
-    AnnotationTrack(genome = genome,
-      chromosome = ds$chr, start = ds$beg, end = ds$end,
-      name = trackName, stacking = 'dense',
-      background.title = 'tomato')
-  }
-}
-build_var_track_txt <- function(ds, trackName='noname', genome='genome') {
-  if(empty(ds)) {
-    AnnotationTrack(genome = genome,
-      name = trackName, stacking = 'dense',
-      background.title = "tomato")
-  } else {
-    text = sprintf("%s^%s", ds$refl, ds$altl)
-    AnnotationTrack(genome = genome,
-      chromosome = ds$chr, start = ds$beg, end = ds$end,
-      name = trackName, stacking = 'dense',
-      showId = T, feature = text, featureAnnotation = 'feature',
-      shape = 'box', fontcolor.feature = 'black', 
-      col = 'lightblue1', 
-      cex = 0.8, rotation.item = 90, 
-      background.title = 'tomato')
-  }
-}
-build_var_tracks <- function(var, chr, beg, end, name, genome) {
-  x = import(var$fvnt, 
+build_var_track <- function(filepath, chr, beg, end,
+  showTxt = F, trackName='noname', genome='genome') {
+  x = import(filepath, 
     which = GRanges(seqnames = chr, ranges = IRanges(beg, end = end)), 
     trackLine = F, 
     colnames = c("chrom", "start", "end", "name"), 
-    extraCols = c('refl', 'altl', 'type'))
+    extraCols = c('refl', 'altl'))
   if(length(x) == 0) {
-    vnt = data.frame()
+    aT <- AnnotationTrack(genome = genome, name = trackName, 
+      background.title = "tomato")
   } else {
-    vnt = data.frame(chr = seqnames(x), beg = start(x), end = end(x), 
-      refl = mcols(x)[, 2], altl = mcols(x)[, 3], type = mcols(x)[, 4])
+    ds = data.frame(chr = seqnames(x), beg = start(x), end = end(x), 
+      name = mcols(x)[, 1], refl = mcols(x)[, 2], altl = mcols(x)[, 3])
+    if(showTxt) {
+      text = sprintf("%s^%s", ds$refl, ds$altl)
+      aT <- AnnotationTrack(genome = genome,
+        chromosome = ds$chr, start = ds$beg, end = ds$end,
+        name = trackName, stacking = 'dense',
+        showId = T, feature = text, featureAnnotation = 'feature',
+        shape = 'box', fontcolor.feature = 'black', 
+        col = 'lightblue1', 
+        cex = 0.8, rotation.item = 90, 
+        background.title = 'tomato')
+    } else {
+      aT <- AnnotationTrack(genome = genome,
+        chromosome = ds$chr, start = ds$beg, end = ds$end,
+        name = trackName, stacking = 'dense',
+        background.title = 'tomato')
+    }
   }
-    
-  snp = droplevels(vnt[vnt$type == 1, ])
-  het = droplevels(vnt[vnt$type == 0, ])
-  ins = droplevels(vnt[vnt$type == 11, ])
-  del = droplevels(vnt[vnt$type == 9, ])
-  snpTrack = build_var_track_notxt(snp, 'snp', genome) 
-  hetTrack = build_var_track_notxt(het, 'het', genome) 
-  insTrack = build_var_track_txt(ins, 'ins', genome) 
-  delTrack = build_var_track_txt(del, 'del', genome) 
-  chromosome(snpTrack) <- chr
-  chromosome(hetTrack) <- chr
-  chromosome(insTrack) <- chr
-  chromosome(delTrack) <- chr
+  chromosome(aT) <- chr
+  aT
+}
+build_var_tracks <- function(var, chr, beg, end, name, genome) {
+  snpTrack = build_var_track(var$fsnp, chr, beg, end, F, 'snp', genome) 
+  hetTrack = build_var_track(var$fhet, chr, beg, end, F, 'het', genome) 
+  insTrack = build_var_track(var$fins, chr, beg, end, T, 'ins', genome) 
+  delTrack = build_var_track(var$fdel, chr, beg, end, T, 'del', genome) 
   
   covTrack <- DataTrack(genome = genome,
     range = var$fcov, window = -1, name = 'covg', 
@@ -129,6 +125,132 @@ build_var_tracks <- function(var, chr, beg, end, name, genome) {
     covTrack = covTrack, abcovTrack = abcovTrack)
 }
 
+build_comp_track <- function(filepath, chr, beg, end, 
+  showTxt = F, trackName='noname', genome='genome') {
+  x = import(filepath, 
+    which = GRanges(seqnames = chr, ranges = IRanges(beg, end = end)), 
+    trackLine = F, 
+    colnames = c("chrom", "start", "end", "name"), 
+    extraCols = c('qid', 'qbeg', 'qend', 'chain', 'refl', 'altl'))
+  
+  if(length(x) == 0) {
+    aT <- AnnotationTrack(genome = genome, name = trackName, 
+      background.title = "brown")
+  } else {
+    ds = data.frame(chr = seqnames(x), beg = start(x), end = end(x), 
+      name = mcols(x)[, 1], qid = mcols(x)[, 2], qbeg = mcols(x)[, 3], 
+      qend = mcols(x)[, 4], chain = mcols(x)[, 5], 
+      refl = mcols(x)[, 6], altl = mcols(x)[, 7])
+    if(showTxt) {
+      aT <- AnnotationTrack(genome = genome, name = trackName, 
+        chromosome = ds$chr, start = ds$beg, end = ds$end,
+        showId = F, showFeatureId = T,
+        feature =  ds$name, featureAnnotation = 'feature',
+        shape = 'box', fontcolor.feature = 'black', 
+        col = 'lightblue1', col.line = 'snow', 
+        cex = 0.8, rotation.item = 90, 
+        background.title = 'brown')
+    } else {
+      aT <- AnnotationTrack(genome = genome, name = trackName, 
+        chromosome = ds$chr, start = ds$beg, end = ds$end,
+        stacking = 'dense', showId = F, group = ds$chain, 
+        background.title = 'brown')
+    }
+  }
+  chromosome(aT) <- chr
+  aT
+}
+
+trim_mapping <- function(ds, beg, end, opt = 't') {
+  for (i in 1:nrow(ds)) {
+    if(opt == 't' & ds$tBeg[i] < beg) {
+      if(as.character(ds$tSrd[i]) == as.character(ds$qSrd[i])) {
+        ds$qBeg[i] = ds$qBeg[i] + (beg - ds$tBeg[i])
+      } else {
+        ds$qEnd[i] = ds$qEnd[i] - (beg - ds$tBeg[i])
+      }
+      ds$tBeg[i] = beg
+    }
+    if(opt == 'q' & ds$qBeg[i] < beg) {
+      if(as.character(ds$tSrd[i]) == as.character(ds$qSrd[i])) {
+        ds$tBeg[i] = ds$tBeg[i] + (beg - ds$qBeg[i])
+      } else {
+        ds$tEnd[i] = ds$tEnd[i] - (beg - ds$qBeg[i])
+      }
+      ds$qBeg[i] = beg
+    }
+    if(opt == 't' & end < ds$tEnd[i]) {
+      if(as.character(ds$tSrd[i]) == as.character(ds$qSrd[i])) {
+        ds$qEnd[i] = ds$qEnd[i] - (ds$tEnd[i] - end)
+      } else {
+        ds$qBeg[i] = ds$qBeg[i] + (ds$tEnd[i] - end)
+      }
+      ds$tEnd[i] = end
+    }
+    if(opt == 'q' & end < ds$qEnd[i]) {
+      if(as.character(ds$tSrd[i]) == as.character(ds$qSrd[i])) {
+        ds$tEnd[i] = ds$tEnd[i] - (ds$qEnd[i] - end)
+      } else {
+        ds$tBeg[i] = ds$tBeg[i] + (ds$qEnd[i] - end)
+      }
+      ds$qEnd[i] = end
+    }
+  }
+  ds
+}
+read_gax <- function(gax, snp, id, beg, end, opt = 't') {
+  gr = GRanges(seqnames = id, ranges = IRanges(beg, end = end))
+
+  x = import(gax, format = 'tabix', which = gr)
+  if(opt == 't') {
+    tg = data.frame(id = mcols(x)[, 2], 
+      tId = seqnames(x), tBeg = start(x), tEnd = end(x), tSrd = mcols(x)[, 1], 
+      qId = mcols(x)[, 3], qBeg = mcols(x)[, 4], qEnd = mcols(x)[, 5], 
+      qSrd = mcols(x)[, 6], stringsAsFactors = F)
+  } else {
+    tg = data.frame(id = mcols(x)[, 2], 
+      qId = seqnames(x), qBeg = start(x), qEnd = end(x), qSrd = mcols(x)[, 1], 
+      tId = mcols(x)[, 3], tBeg = mcols(x)[, 4], tEnd = mcols(x)[, 5], 
+      tSrd = mcols(x)[, 6], stringsAsFactors = F)
+  }
+  
+  x = import(snp, format = 'tabix', which = gr)
+  if(opt == 't') {
+    ts = data.frame(id = mcols(x)[, 1], tId = seqnames(x), tPos = start(x), 
+      qId = mcols(x)[, 2], qPos = mcols(x)[, 3], stringsAsFactors = F)
+  } else {
+    ts = data.frame(id = mcols(x)[, 1], qId = seqnames(x), qPos = start(x), 
+      tId = mcols(x)[, 2], tPos = mcols(x)[, 3], stringsAsFactors = F)
+  }
+  ts2 = ddply(ts, .(id), nrow)
+  colnames(ts2)[2] = 'mm'
+  
+  tg = trim_mapping(tg, beg, end, opt)
+  tg = cbind(tg, len = tg$qEnd - tg$qBeg + 1)
+  tc1 = ddply(tg, .(id), summarise, 
+    qId = unique(qId), qBeg = min(qBeg), qEnd = max(qEnd), qSrd = unique(qSrd),
+    tId = unique(tId), tBeg = min(tBeg), tEnd = max(tEnd), tSrd = unique(tSrd),
+    alnlen = sum(len), gapo = length(len))
+  tc2 = cbind(tc1, qgap = tc1$qEnd - tc1$qBeg + 1 - tc1$alnlen, 
+    tgap = tc1$tEnd - tc1$tBeg + 1 - tc1$alnlen)
+  
+  
+  tc = merge(tc2, ts2, by = 'id', all = T)
+  tc$mm[is.na(tc$mm)] <- 0
+  score = tc$alnlen * 1 + tc$mm * (-2) + tc$gapo * (-5) + 
+    (tc$qgap + tc$tgap - tc$gapo) * (-2)
+  cbind(tc, score = score)
+}
+
+myimport <- function(filepath, selection) {
+  x = import(filepath, which = selection, 
+    trackLine = F, 
+    colnames = c("chrom", "start", "end", "name"), 
+    extraCols = c('qid', 'qbeg', 'qend', 'chain', 'refl', 'altl'))
+  colnames(mcols(x)) = c('name', 'qid', 'qbeg', 'qend', 'feature', 
+    'refl', 'altl')
+  x
+}
 build_comp_tracks <- function(comp, chr, beg, end, name, genome) {
   tw = comp$tw
   tl = comp$tl
@@ -141,79 +263,29 @@ build_comp_tracks <- function(comp, chr, beg, end, name, genome) {
     compTrack <- AnnotationTrack(genome = genome, 
       name = name, background.title = "brown")
   } else {
-    for (i in 1:nrow(tls)) {
-      if(tls$tBeg[i] < beg) {
-        if(tls$qSrd[i] == "+") {
-          tls$qBeg[i] = tls$qBeg[i] + (beg - tls$tBeg[i])
-        } else {
-          tls$qEnd[i] = tls$qEnd[i] - (beg - tls$tBeg[i])
-        }
-        tls$tBeg[i] = beg
-      }
-      if(end < tls$tEnd[i]) {
-        if(tls$qSrd[i] == "+") {
-          tls$qEnd[i] = tls$qEnd[i] - (tls$tEnd[i] - end)
-        } else {
-          tls$qBeg[i] = tls$qBeg[i] + (tls$tEnd[i] - end)
-        }
-        tls$tEnd[i] = end
-      }
-    }
+    tls = trimMapping(tls, beg, end)
+    dfn = ddply(tls, .(id), summarise, name = sprintf("%s:%d-%d", unique(qId), 
+      min(qBeg), max(qEnd)))
+    tls = cbind(idx = 1:nrow(tls), tls)
+    tmp = merge(tls, dfn, by = "id")
+    ids = tmp[order(tmp$idx), ]$name
     compTrack <- AnnotationTrack(genome = genome, 
       chromosome = chr, start = tls$tBeg, end = tls$tEnd, strand = tls$qSrd, 
-      group = tls$id, feature = tls$qId, groupAnnotation = 'feature',
+      group = tls$id, feature = ids, groupAnnotation = 'feature',
       just.group = 'below', shape = 'arrow', arrowHeadMaxWidth = 20,
       name = name, showId = T, stackHeight = 0.75, cex.group = 0.8, 
       fill = 'dodgerblue', background.title = "brown")
   }
 
-  snp = comp$snp
-  snp = snp[snp$tid == chr & snp$tpos >= beg & snp$tpos <= end, ]
-  if(empty(snp)) {
-    snpTrack <- AnnotationTrack(genome = genome,
-      name="mismatch", background.title="brown")
-  } else { 
-    snpTrack <- AnnotationTrack(genome = genome, 
-      chromosome = chr, start = snp$tpos, width = 1,
-      name = "mismatch", showId = F, 
-      group = snp$id, background.title = "brown")
-  }
-  
-  tins = comp$indel
-  tins = tins[tins$tid == chr & tins$tbeg >= beg & tins$tend <= end, ]
+  snpTrack = build_comp_track(comp$fsnp, chr, beg, end, F, 'snp', genome) 
+  insTrack = build_comp_track(comp$fins, chr, beg, end, T, 'ins', genome) 
+  delTrack = build_comp_track(comp$fdel, chr, beg, end, T, 'del', genome) 
+  mnpTrack = build_comp_track(comp$fmnp, chr, beg, end, T, 'mnp', genome)
 
-  tis = tins[tins$qins <  100 & tins$tins <  100, ]
-  til = tins[tins$qins >= 100 | tins$tins >= 100, ]
-  if(empty(tins) | empty(tis)) {
-    siTrack <- AnnotationTrack(genome = genome,
-      name="indel-s", background.title="brown")
-  } else {
-    text = sprintf("%s^%s", tis$tins, tis$qins)
-    siTrack <- AnnotationTrack(genome = genome, 
-      chromosome = chr, start = tis$tbeg, end = tis$tend,
-      name = "indel-s", showId = F, showFeatureId = T, 
-      group = tis$id, feature = text, featureAnnotation = 'feature', 
-      shape = 'box', fontcolor.feature = 'black', 
-      col = 'lightblue1', col.line = 'snow', 
-      background.title = "brown", 
-      cex = 0.8, rotation.item = 90)
-  }
-  if(empty(tins) | empty(til)) {
-    liTrack <- AnnotationTrack(genome = genome, chromosome = chr, 
-      name="indel-l", background.title="brown")
-  } else {    
-    text = sprintf("%s^%s", til$tins, til$qins)
-    liTrack <- AnnotationTrack(genome = genome, 
-      chromosome = chr, start = til$tbeg, end = til$tend,
-      name = "indel-l", showId = F, showFeatureId = T, 
-      group = til$id, feature = text, featureAnnotation = 'feature', 
-      shape = 'box', fontcolor.feature = 'black', 
-      col = 'lightblue1', col.line = 'snow', 
-      background.title = "brown", 
-      cex = 0.8, rotation.item = 90)
-  }
-  list(compTrack = compTrack, 
-    snpTrack = snpTrack, siTrack = siTrack, liTrack = liTrack)
+#  gri = GRanges(seqnames = ins$qid, ranges=IRanges(ins$qbeg, end = ins$qend))
+
+  list(compTrack = compTrack, snpTrack = snpTrack, 
+    insTrack = insTrack, delTrack = delTrack, mnpTrack = mnpTrack)
 }
 
 ##### OUTDATED STUFF

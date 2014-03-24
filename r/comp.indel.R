@@ -86,7 +86,7 @@ if(qend - qbeg - 1 > 0) {
   tq = read_gax(cq$qgax, cq$qsnp, qid, qbeg, qend, 'q')
 }
 
-
+tm = read.table(file.path(dir, "27.vnt/05.tbl"), header = T, sep = "\t")
 
 # plot
 ts = cbind(tc, lenlog=log(tc$aLen))

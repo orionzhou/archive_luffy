@@ -13,36 +13,35 @@ arch=$(uname -m | tr ' ' '-')
 
 #color scheme for "ls" command
 if [ "$system" = "Linux" ]; then
-    [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
-    [ -e "$DIR_COLORS" ] || DIR_COLORS=""
-    eval "`dircolors -b $DIR_COLORS`"
+  [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
+  [ -e "$DIR_COLORS" ] || DIR_COLORS=""
+  eval "`dircolors -b $DIR_COLORS`"
 elif [ "$system" = "Darwin" ]; then
-    export CLICOLOR=1
-    export LSCOLORS=dxfxcxdxbxegedabagacad
-    alias ls="ls -G"
+  export CLICOLOR=1
+  export LSCOLORS=dxfxcxdxbxegedabagacad
+  alias ls="ls -G"
 fi
 
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
-    export git=$home/git
+  export git=$home/git
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
-    export git=$home/git
+  export git=$home/git
 elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
-    export soft_msi=/nfs/soft-sle11
-    if [[ $HOSTNAME =~ ^node ]]; then
-        export soft_msi=/soft
+  export soft_msi=/nfs/soft-sle11
+  if [[ $HOSTNAME =~ ^node ]]; then
+    export soft_msi=/soft
+  fi
+  
+  for subpath in blat/34 \
+    augustus/3.0.2 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
+  do
+    if [[ -d $soft_msi/$subpath/bin ]]; then
+      export PATH=$soft_msi/$subpath/bin:$PATH
     fi
-    
-    for subpath in \
-        blat/34 \
-        boost/1.54.0 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
-    do
-        if [[ -d $soft_msi/$subpath/bin ]]; then
-            export PATH=$soft_msi/$subpath/bin:$PATH
-        fi
-    done
+  done
 else
-    echo 'unknown host -> check your bash_profile'
+  echo 'unknown host -> check your bash_profile'
 fi
 
 # Add software paths
@@ -51,26 +50,25 @@ export PATH=$PATH:$prefix/bin
 #export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
 export soft=$prefix/soft
 if [[ -d $soft ]]; then
-    for subpath in zlib gcc boost libsequence \
-        samtools bamtools tabix bedtools bwa bowtie2 sra blast \
-        parallel blast CAP3 clustalo cmake cufflinks \
-        augustus \
-        emboss gd geco genometools gmap hmmer mysql \
-        R root tophat trimAl wise2 GEM kent unafold imagemagick
-    do
-        if [[ -d $soft/$subpath/bin ]]; then
-            export PATH=$soft/$subpath/bin:$PATH
-        fi
-        if [[ -d $soft/$subpath/bin64 ]]; then
-            export PATH=$soft/$subpath/bin64:$PATH
-        fi
-        if [[ -d $soft/$subpath/lib ]]; then
-            export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
-        fi
-        if [[ -d $soft/$subpath/lib64 ]]; then
-            export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
-        fi
-    done
+  for subpath in zlib gcc boost libsequence \
+    samtools bamtools tabix bedtools bwa bowtie2 sra blast \
+    parallel blast CAP3 clustalo cmake cufflinks \
+    emboss gd geco genometools gmap hmmer mysql \
+    R root tophat trimAl wise2 GEM kent unafold imagemagick
+  do
+    if [[ -d $soft/$subpath/bin ]]; then
+      export PATH=$soft/$subpath/bin:$PATH
+    fi
+    if [[ -d $soft/$subpath/bin64 ]]; then
+      export PATH=$soft/$subpath/bin64:$PATH
+    fi
+    if [[ -d $soft/$subpath/lib ]]; then
+      export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
+    fi
+    if [[ -d $soft/$subpath/lib64 ]]; then
+      export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
+    fi
+  done
 fi
 
 # generic locations

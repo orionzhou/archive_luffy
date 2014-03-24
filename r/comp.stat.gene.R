@@ -67,19 +67,33 @@ grln = with(tgn, makeGRangesListFromFeatureFragments(
   seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
 
-gr_idm_l = GRanges(seqnames = tml$tId, 
-  ranges = IRanges(tml$tBeg, end = tml$tEnd))
+gr_idm_l = GRanges(seqnames = tm$tId, 
+  ranges = IRanges(tm$tBeg, end = tm$tEnd))
 
-tmp <- function(grl, gr) {
+get_ovlp_idxs <- function(grl, gr) {
   ma = as.matrix(findOverlaps(gr, grl))
   didx1 = data.frame(sidx=ma[,2], qidx=ma[,1])
   idxs_rm = unique(didx1$sidx)
   cat(length(idxs_rm), length(idxs_rm) / length(grl), "\n", sep="\t")
+  idxs_rm
 }
-tmp(grlg, gr_idm_l)
-tmp(grlt, gr_idm_l)
-tmp(grlc, gr_idm_l)
-tmp(grln, gr_idm_l)
+idxg = get_ovlp_idxs(grlg, gr_idm_l)
+idxt = get_ovlp_idxs(grlt, gr_idm_l)
+idxc = get_ovlp_idxs(grlc, gr_idm_l)
+idxn = get_ovlp_idxs(grln, gr_idm_l)
+
+tmg = tgg[idxg,]
+tmt = tgt[idxt,]
+tmc = tgc[idxc,]
+tmn = tgn[idxn,]
+
+tgm = rbind(tmg, tmt, tmc, tmn)
+lent = tgm$end - tgm$beg + 1
+tgm = cbind(tgm, loc = sprintf("%s:%d-%d", tgm$chr, tgm$beg - lent/2, 
+  tgm$end + lent/2))
+write.table(tgm, file.path(dir, "81.gene.tbl"), sep = "\t",
+  quote = F, row.names = F, col.names = T)
+
 
 # compare SNP/indel density
 ds = vq

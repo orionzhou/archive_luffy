@@ -60,14 +60,15 @@ my $qidm = Tabix->new(-data=>"$pre2.vnt/idm.gz");
 
 open(my $fhi, "<$fi") or die "cannot read $fi\n";
 open(my $fho, ">$fo") or die "cannot write $fo\n";
+print $fho join("\t", qw/tId tBeg tEnd id qId qBeg qEnd qLen tLen/)."\n";
 my $cnt = 0;
 while(<$fhi>) {
   chomp;
   next if /^(\#)|(tId)/;
   $cnt ++;
-  next unless $cnt == 25306;
+#  next unless $cnt == 25306;
   my ($tid, $tb, $te, $id, $qid, $qb, $qe, $qlen, $tlen) = split "\t";
-  print join("\t", $tid, $tb, $te, $id, $qid, $qb, $qe, $qlen, $tlen)."\n";
+#  print join("\t", $tid, $tb, $te, $id, $qid, $qb, $qe, $qlen, $tlen)."\n";
   my ($tlb, $tle) = ($tb - 199, $tb);
   my ($trb, $tre) = ($te, $te + 199);
   my ($tsb, $tse) = ($tb + 1, $te - 1);
@@ -75,26 +76,30 @@ while(<$fhi>) {
   my ($qrb, $qre) = ($qe, $qe + 199);
   my ($qsb, $qse) = ($qb + 1, $qe - 1);
 
-  my ($ins, $del) = (0, 0);
+  my ($ins, $del) = (1, 1);
   if($tlen > 0) {
     my $h = read_comp($tid, $tsb, $tse, $tgax, $tsnp, $tidm, 't');
-    for my $id (keys(%$h)) {
-      my ($tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd,
-        $alen, $mm, $gapo, $gap, $score) = @{$h->{$id}};
-      print join(" ", "$tid:$tb-$te", "$qid:$qb-$qe", 
-        "m:$alen", "mm:$mm", "gapo:$gapo", "gap:$gap", $score)."\n";
-    }
+    my @ids_passed = grep {$h->{$_}->[8] > $tlen / 10} keys(%$h);
+    $del = 0 if @ids_passed > 0;
+#   print_comps($h);
   }
   if($qlen > 0) {
     my $h = read_comp($qid, $qsb, $qse, $qgax, $qsnp, $qidm, 'q');
-    for my $id (keys(%$h)) {
-      my ($tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd,
-        $alen, $mm, $gapo, $gap, $score) = @{$h->{$id}};
-      print join("  ", "$tid:$tb-$te", "$qid:$qb-$qe", $score)."\n";
-    }
+    my @ids_passed = grep {$h->{$_}->[8] > $qlen / 10} keys(%$h);
+    $ins = 0 if @ids_passed > 0;
+#   print_comps($h);
   }
   print $fho join("\t", $tid, $tb, $te, $id, $qid, $qb, $qe, 
-    $qlen, $tlen)."\n";
+    $qlen, $tlen)."\n" if $del == 1 && $ins == 1;
+}
+sub print_comps {
+  my ($h) = @_;
+  for my $id (keys(%$h)) {
+    my ($tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd,
+      $alen, $mm, $gapo, $gap, $score) = @{$h->{$id}};
+    print join(" ", "$tid:$tb-$te", "$qid:$qb-$qe", 
+      "m:$alen", "mm:$mm", "gapo:$gapo", "gap:$gap", $score)."\n";
+  }
 }
 
 sub read_comp {

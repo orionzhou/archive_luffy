@@ -17,6 +17,7 @@ gff2gtb.pl -i 15_global_loc.gff -o 15_global_loc.gtb
 gtbcheckphase.pl -i 15_global_loc.gtb -s ../11_genome.fa -o 17_phase_fixed.gtb
 gtbcatte.pl -i 17_phase_fixed.gtb -o 21.gtb
 gtbdedup.pl -i 21.gtb -o 25_dedup.gtb
+gtblongest.pl -i 25_dedup.gtb -o 26_longest.gtb
 
 cd ..
 
@@ -28,7 +29,7 @@ bedToBigBed 16_gap.bed 15.sizes 16_gap.bb
 awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR==1 || $17 == "gene") print}' 21.gtb > 40_gene.gtb
 awk 'BEGIN {FS="\t"; OFS="\t"} {if($17 == "TE") print}' 21.gtb > 41_te.gtb
 
-awk 'BEGIN {FS="\t"; OFS="\t"} {if(tolower($18) ~ /nbs-lrr)/) {$17="NBS"; print}}' 21.gtb > 42_nbs.gtb
+awk 'BEGIN {FS="\t"; OFS="\t"} {if(tolower($18) ~ /nbs-lrr/ || tolower($18) ~ /nb-arc/) {$17="NBS"; print}}' 21.gtb > 42_nbs.gtb
 awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR!=1) {$18=$17; $17="CRP"; print}}' spada.crp.gtb | cut -f1-18 > 43_crp.gtb
 
 cat 4[0-3]*.gtb > 49.gtb

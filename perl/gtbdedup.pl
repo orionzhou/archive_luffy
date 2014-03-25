@@ -1,13 +1,9 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
-=head1 NAME
-  
-  gtbdedup.pl - remove redundant gene models from a Gtb file (based on CDS locations)
-
 =head1 SYNOPSIS
   
   gtbdedup.pl [-help] [-in input-Gtb] [-out output-Gtb]
@@ -16,11 +12,12 @@
       -help   brief help message
       -in     input Gtb
       -out    output Gtb
+  remove redundant gene models from a Gtb file (based on CDS locations)
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 
 use strict;
@@ -35,7 +32,7 @@ use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwi
 my ($fi, $fo) = ('') x 2;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,

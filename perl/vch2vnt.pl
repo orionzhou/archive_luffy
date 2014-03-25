@@ -6,7 +6,7 @@
   
 =head1 NAME
   
-  vcf2bed.pl - convert a VCF (human readable) file to BED file
+  vcf2vnt.pl - convert a VCF (human readable) file to SNP/IDM file
 
 =head1 SYNOPSIS
   
@@ -51,11 +51,9 @@ unless ($fi eq "stdin" || $fi eq "-" || $fi eq "") {
 -d $do || make_path($do);
 
 my $hf = {
-  1  => "$do/snp.bed",
-  0  => "$do/het.bed", 
-  11 => "$do/ins.bed",
-  9  => "$do/del.bed",
-  10 => "$do/mnp.bed"
+  1  => "$do/snp",
+  0  => "$do/het", 
+  9  => "$do/idm",
 };
 for my $type (keys(%$hf)) {
   my $f = $hf->{$type};
@@ -74,33 +72,25 @@ while( <$fhi> ) {
   
   my @types;
   for my $alt (@alts) {
-    my $type;
-    if(length($ref) == 1 && length($alt) == 1) {
-      $type = 1;
-    } elsif(length($ref) > length($alt)) {
-      $type = ($ref =~ /^$alt/i) ? 9 : 10;
-    } elsif(length($ref) < length($alt)) {
-      $type = ($alt =~ /^$ref/i) ? 11 : 10; 
-    } else {
-      die "unknow type: $line\n";
-    }
+    my $type = (length($ref) == 1 && length($alt) == 1) ? 1 : 9;
     push @types, $type;
   }
   if($str =~ /([A-Za-z0-9\-_]+)\=([\d\.])\/([\d\.])/) {
     if($2 eq '.' || $3 eq '.') {
     } elsif($2 eq $3) {
       my ($alt, $type) = ($alts[$2-1], $types[$2-1]);
-      my ($lenr, $lena) = (length($ref), length($alt));
-      my $name = "$lenr^$lena";
       my $fho = $hf->{$type};
-      print $fho join("\t", $chr, $beg - 1, $end, $name, $ref, $alt, $lenr, $lena)."\n";
+
+      if($type == 1) {
+        print $fho join("\t", $chr, $beg, $ref, $alt)."\n";
+      } else {
+        print $fho join("\t", $chr, $beg, $end, $ref, $alt)."\n";
+      }
     } elsif($2 ne $3 && $2 == 0) {
       my ($alt, $type) = ($alts[$3-1], $types[$3-1]);
-      my ($lenr, $lena) = (length($ref), length($alt));
-      my $name = "$lenr^$lena";
       $type = 0;
       my $fho = $hf->{$type};
-      print $fho join("\t", $chr, $beg - 1, $end, $name, $ref, $alt, $lenr, $lena)."\n";
+      print $fho join("\t", $chr, $beg, $ref, $alt)."\n";
     }
   } else {
       die "unknown allele: $str\n";

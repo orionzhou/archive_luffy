@@ -61,7 +61,7 @@ my $d23 = "$dir/23_blat";
 chdir $d23 || die "cannot chdir to $d23\n";
 
 #pipe_blat();
-#pipe_prepare_idx();
+pipe_prepare_idx();
 
 sub pipe_blat {
   runCmd("psl2gal.pl -i 11.psl -o 11.gal");
@@ -74,70 +74,50 @@ sub pipe_blat {
   runCmd("axtChain -linearGap=medium -psl 12.fixed.psl \\
     $tgt_2bit $qry_2bit 21.chain");
   runCmd("chainPreNet 21.chain $tgt_size $qry_size 23.chain");
-  runCmd("chain2gal.pl -i 23.chain -o - | \\
-    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 23.gal");
   runCmd("chainNet 23.chain $tgt_size $qry_size stdout /dev/null | \\
     netSyntenic stdin 25.net");
   runCmd("netChainSubset 25.net 23.chain 25.chain");
-  runCmd("chain2gal.pl -i 25.chain -o - | \\
-    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 25.gal");
-  runCmd("galfilter.pl -i 25.gal -m 100 -p 0.6 -o 26.gal");
 
   runCmd("axtChain -linearGap=medium -psl 14.swap.psl \\
     $qry_2bit $tgt_2bit 31.chain");
-  runCmd("chainPreNet 31.chain $tgt_size $tgt_size 33.chain");
-  runCmd("chain2gal.pl -i 33.chain -o - | \\
-    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 33.gal");
+  runCmd("chainPreNet 31.chain $qry_size $tgt_size 33.chain");
   runCmd("chainNet 33.chain $qry_size $tgt_size stdout /dev/null | \\
     netSyntenic stdin 35.net");
   runCmd("netChainSubset 35.net 33.chain 35.chain");
-  runCmd("chain2gal.pl -i 35.chain -o - | \\
-    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 35.gal");
-  runCmd("galfilter.pl -i 35.gal -m 100 -p 0.6 -o 36.gal");
 }
 
 sub gal_callvnt {
   my ($fi, $qFas, $tFas, $qSize, $tSize) = @_;
   my $base = basename($fi, ".gal");
-  runCmd("galexpand.pl -i $fi -o $base.gax");
-  runCmd("sort -k1,1 -k2,2n -k3,3n $base.gax -o $base.gax");
-  runCmd("bgzip -c $base.gax > $base.gax.gz");
-  runCmd("tabix -s 1 -b 2 -e 3 $base.gax.gz");
+  runCmd("idxgal.pl -i $fi -s $tSize");
   
-  runCmd("gal2psl.pl -i $base.gal -o $base.psl");
-  runCmd("pslToBed $base.psl $base.bed");
-  runCmd("bedSort $base.bed $base.bed");
-  runCmd("bedToBigBed -tab $base.bed $tSize $base.bb");
-  runCmd("rm $base.bed $base.psl");
-
   -d "$base.vnt" || make_path("$base.vnt");
   chdir "$base.vnt" || die "cannod chdir to $base.vnt";
+  
   runCmd("gal2snp.pl -i ../$base.gal -o snp -q $qFas -t $tFas");
-  runCmd("sort -k1,1 -k2,2n snp -o snp");
-  runCmd("bgzip -c snp > snp.gz");
-  runCmd("tabix -s 1 -b 2 -e 2 snp.gz");
+  runCmd("idxsnp.pl -i snp -s $tSize");
 
-  runCmd("gal2indel.pl -i ../$base.gal -o idm");
-  runCmd("sort -k1,1 -k2,2n -k3,3n idm -o idm");
-  runCmd("bgzip -c idm > idm.gz");
-  runCmd("tabix -s 1 -b 2 -e 3 idm.gz");
+  runCmd("gal2idm.pl -i ../$base.gal -o idm");
+  runCmd("idxidm.pl -i idm -s $tSize");
   chdir "..";
 }
 sub pipe_prepare_idx {
-  runCmd("ln -sf 23.gal 51.gal");
-  gal_callvnt("$d23/51.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+#  runCmd("chain2gal.pl -i 23.chain -o - | \\
+#    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 23.gal");
+  gal_callvnt("$d23/23.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
 
-  runCmd("chain2gal.pl -i 25.chain -o - | \\
-    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 35.gal");
-  runCmd("galfilter.pl -i 25.gal -m 100 -p 0.6 -o 26.gal");
+#  runCmd("chain2gal.pl -i 25.chain -o - | \\
+#    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 25.gal");
+#  runCmd("galfilter.pl -i 25.gal -m 100 -p 0.6 -o 26.gal");
   gal_callvnt("$d23/26.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
 
-  runCmd("galswap.pl -i 51.gal -o 56.gal");
-  gal_callvnt("$d23/56.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+#  runCmd("chain2gal.pl -i 33.chain -o - | \\
+#    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 33.gal");
+  gal_callvnt("$d23/33.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
 
-  runCmd("chain2gal.pl -i 35.chain -o - | \\
-    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 35.gal");
-  runCmd("galfilter.pl -i 35.gal -m 100 -p 0.6 -o 36.gal");
+#  runCmd("chain2gal.pl -i 35.chain -o - | \\
+#    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 35.gal");
+#  runCmd("galfilter.pl -i 35.gal -m 100 -p 0.6 -o 36.gal");
   gal_callvnt("$d23/36.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
 }
 

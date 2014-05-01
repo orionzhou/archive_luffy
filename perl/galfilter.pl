@@ -13,11 +13,11 @@
   galfilter.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -h (--help)   brief help message
-      -i (--in)     input file
-      -o (--out)    output file
-      -m (--match)  minimum matches (default: 1) 
-      -p (--ident)  minimum percent identity (default: 0.5) 
+    -h (--help)   brief help message
+    -i (--in)     input file
+    -o (--out)    output file
+    -m (--match)  minimum matches (default: 1) 
+    -p (--ident)  minimum percent identity (default: 0.5) 
 
 =cut
   

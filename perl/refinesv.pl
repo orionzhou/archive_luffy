@@ -29,7 +29,6 @@ use Getopt::Long;
 use Pod::Usage;
 use FindBin;
 use lib "$FindBin::Bin";
-use Tabix;
 use Common;
 use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
@@ -123,78 +122,5 @@ sub read_comp {
   }
   return $hg;
 }
-sub read_gax {
-  my ($con, $id, $beg, $end, $opt) = @_;
-  my $iter = $con->query($id, $beg-1, $end);
-  my $h;
-  while (my $line = $con->read($iter)) {
-    my @ps = split("\t", $line);
-    my ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd);
-    if($opt eq 't') {
-      ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd) = @ps;
-    } else {
-      ($qid, $qb, $qe, $qsrd, $id, $tid, $tb, $te, $tsrd) = @ps;
-    }
-    
-    if($opt eq "t" && $tb < $beg) {
-      $qb += $beg - $tb if $tsrd eq $qsrd;
-      $qe -= $beg - $tb if $tsrd ne $qsrd;
-      $te = $beg;
-    } 
-    if($opt eq "q" && $qb < $beg) {
-      $tb += $beg - $qb if $tsrd eq $qsrd;
-      $te -= $beg - $qb if $tsrd ne $qsrd;
-      $qb = $beg;
-    }
-    if($opt eq "t" && $te > $end) {
-      $qe -= $te - $end if $tsrd eq $qsrd;
-      $qb += $te - $end if $tsrd ne $qsrd;
-      $te = $end;
-    }
-    if($opt eq "q" && $qe > $end) {
-      $te -= $qe - $end if $tsrd eq $qsrd;
-      $tb += $qe - $end if $tsrd ne $qsrd;
-      $qe = $end;
-    }
-#    print join("\t", $qid, $qb, $qe, $tid, $tb, $te)."\n";
-    my $alen = $te - $tb + 1;
-    $h->{$id} ||= [$tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd, 0];
-    $h->{$id}->[1] = $tb if $tb < $h->{$id}->[1];
-    $h->{$id}->[2] = $te if $te > $h->{$id}->[2];
-    $h->{$id}->[5] = $qb if $qb < $h->{$id}->[5];
-    $h->{$id}->[6] = $qe if $qe > $h->{$id}->[6];
-    $h->{$id}->[8] += $alen;
-  }
-  return $h;
-}
-sub read_snp_cnt {
-  my ($con, $id, $beg, $end) = @_;
-  my $iter = $con->query($id, $beg, $end);
-  my $h;
-  while (my $line = $con->read($iter)) {
-    my ($tid, $tpos, $id, $qid, $qpos, $qsrd, $tbase, $qbase) = 
-      split("\t", $line);
-    $h->{$id} ||= 0;
-    $h->{$id} ++;
-  }
-  return $h;
-}
-sub read_idm_cnt {
-  my ($con, $id, $beg, $end) = @_;
-  my $iter = $con->query($id, $beg, $end);
-  my $h;
-  while (my $line = $con->read($iter)) {
-    my ($tid, $tb, $te, $id, $qid, $qb, $qe) = split("\t", $line);
-    my ($tgap, $qgap) = ($te - $tb + 1, $qe - $qb + 1);
-    my $tgapo = $tgap > 0 ? 1 : 0;
-    my $qgapo = $qgap > 0 ? 1 : 0;
-    
-    $h->{$id} ||= [0, 0, 0, 0];
-    $h->{$id}->[0] += $tgapo;
-    $h->{$id}->[1] += $tgap;
-    $h->{$id}->[2] += $qgapo;
-    $h->{$id}->[3] += $qgap;
-  }
-  return $h;
-}
+
 

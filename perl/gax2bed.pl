@@ -6,39 +6,47 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  gax2bed.pl - convert a Gax (long) file to BED file
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  gax2bed.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
     -i (--in)     input file
     -o (--out)    output file
+    -p (--opt)    option ('qry' or 'tgt', default: 'tgt')
 
 =cut
   
 #### END of POD documentation.
 #---------------------------------------------------------------------------
 
+
 use strict;
+use FindBin;
+use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Location;
 
 my ($fi, $fo) = ('') x 2;
+my $opt = "tgt";
+my ($fhi, $fho);
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
 GetOptions(
-  "help|h"  => \$help_flag,
-  "in|i=s"  => \$fi,
-  "out|o=s" => \$fo,
+  "help|h"   => \$help_flag,
+  "in|i=s"   => \$fi,
+  "out|o=s"  => \$fo,
+  "opt|p=s"  => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
+pod2usage(2) if !$fi || !$opt;
 
-my ($fhi, $fho);
-if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
+if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
@@ -50,32 +58,21 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
-while(<$fhi>) {
+$opt = lc($opt);
+while( <$fhi> ) {
   chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd) = split "\t";
+  if($opt eq "qry") {
+    print $fho join("\t", $qid, $qb - 1, $qe)."\n";
+  } elsif($opt eq "tgt") {
+    print $fho join("\t", $tid, $tb - 1, $te)."\n";
   } else {
-    $seq .= $_;
-    $len += length($_);
+    die "unknow optiotn: $opt\n";
   }
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
 close $fhi;
 close $fho;
 
 
-
-exit 0;
+__END__

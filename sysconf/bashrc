@@ -33,7 +33,7 @@ elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     export soft_msi=/soft
   fi
   
-  for subpath in blat/34 \
+  for subpath in blat/34 usearch/7.0 \
     augustus/3.0.2 exonerate/2.2.0 structure/2.3.1 clustalw/2.1
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then
@@ -102,7 +102,8 @@ export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 # Python
 export PYTHON_HOME=$prefix/soft/python
 export PYTHONUSERBASE=$prefix/soft/python
-export PYTHONPATH=${PYTHON_HOME}/lib/python2.6/site-packages:${PYTHON_HOME}/lib64/python2.6/site-packages
+export PYTHONPATH=${PYTHON_HOME}/lib/python2.7/site-packages
+export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
 export SCRIPT_HOME_PYTHON=$robin
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
 

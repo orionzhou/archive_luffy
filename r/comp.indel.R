@@ -9,11 +9,11 @@ qname = qname1
 t = read_genome_stat(tname)
 q = read_genome_stat(qname)
 cq = read_comp_stat(qname, tname)
-
-dir = sprintf("%s/%s", cq$dir, "23_blat")
+dir = cq$dir
 
 # filter SVs overlapping with qGap/tGap
-tidm = read.table(file.path(dir, "26.vnt/idm"), header = F, sep = "\t", as.is = T)
+tidm = read.table(file.path(dir, "29.vnt/idm"), 
+  header = F, sep = "\t", as.is = T)[, c(1:3,6:9)]
 colnames(tidm) = c('tId', 'tBeg', 'tEnd', 'id', 'qId', 'qBeg', 'qEnd')
 tidm = cbind(tidm, qlen = tidm$qEnd - tidm$qBeg - 1, 
   tlen = tidm$tEnd - tidm$tBeg - 1)

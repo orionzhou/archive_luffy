@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  equalindel.pl
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  equalindel.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+      -help   brief help message
+      -in     input file
+      -out    output file
 
 =cut
   
@@ -25,6 +25,8 @@
 use strict;
 use Getopt::Long;
 use Pod::Usage;
+use Bio::Seq;
+use Bio::SeqIO;
 
 my ($fi, $fo) = ('') x 2;
 my $help_flag;
@@ -36,46 +38,30 @@ GetOptions(
   "out|o=s" => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
+pod2usage(2) if !$fi || !$fo;
 
 my ($fhi, $fho);
-if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
+if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
+if ($fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
-while(<$fhi>) {
-  chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
-  } else {
-    $seq .= $_;
-    $len += length($_);
-  }
+my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
+my $seqHO = Bio::SeqIO->new(-fh=>$fho, -format=>'fasta');
+while(my $seqO = $seqHI->next_seq()) {
+  my ($id, $len) = ($seqO->id, $seqO->length);
+  my $newid = sprintf("x:x:%s:%d:%d:x", $id, 1, $len);
+  $seqO->id($newid);
+  $seqHO->write_seq($seqO);
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
-close $fhi;
-close $fho;
-
-
+$seqHI->close();
+$seqHO->close();
 
 exit 0;

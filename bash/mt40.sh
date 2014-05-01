@@ -21,11 +21,6 @@ gtblongest.pl -i 25_dedup.gtb -o 26_longest.gtb
 
 cd ..
 
-seqlen.pl -i 11_genome.fa -o 15.sizes
-seqgap.pl -i 11_genome.fa -o 16_gap.tbl -m 100
-awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR>1) {$2=$2-1; print $1, $2, $3}}' 16_gap.tbl > 16_gap.bed
-bedToBigBed 16_gap.bed 15.sizes 16_gap.bb
-
 awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR==1 || $17 == "gene") print}' 21.gtb > 40_gene.gtb
 awk 'BEGIN {FS="\t"; OFS="\t"} {if($17 == "TE") print}' 21.gtb > 41_te.gtb
 
@@ -38,5 +33,6 @@ gtbdedup.pl -i 49.gtb -o 51.gtb
 awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR==1 || tolower($17) != "te") print}' 51.gtb > 55_noTE.gtb
 
 gtb2gff.pl -i 51.gtb -o 51.gff
-gtb2fas.pl -i 51.gtb -o 51.fas -s 11_genome.fa
+gtb2tbl.pl -i 51.gtb -o 51.tbl
 gtb2bigbed.pl -i 51.gtb -s 15.sizes -o 51.bb
+#gtb2fas.pl -i 51.gtb -o 51.fas -s 11_genome.fa

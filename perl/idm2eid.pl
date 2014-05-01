@@ -6,16 +6,17 @@
   
 =head1 NAME
   
-  galexpand.pl - expand a file of Gal[wide] format to Gal[long] format
+  idm2bed.pl - convert Idm file to EqualIndel file
 
 =head1 SYNOPSIS
   
-  galexpand.pl [-help] [-in input-file] [-out output-file]
+  idm2bed.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input file
-    -out    output file
+      -help   brief help message
+      -in     input (IDM) file
+      -out    output file
+      -pre    ID prefix
 
 =cut
   
@@ -28,10 +29,10 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Location;
-use Gal;
+use Common;
 
 my ($fi, $fo) = ('') x 2;
+my $pre = "pre";
 my ($fhi, $fho);
 my $help_flag;
 
@@ -40,6 +41,7 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
+  "pre|p=s"  => \$pre,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
@@ -55,26 +57,21 @@ if ($fo eq "stdout" || $fo eq "-") {
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
+print $fho join("\t", qw/name chromosome start end allele ref_allele/)."\n";
 
+my $i = 0;
 while( <$fhi> ) {
   chomp;
-  next if /(^id)|(^\#)|(^\s*$)/;
-  my $ps = [ split "\t" ];
-  next unless @$ps == 20;
-  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
-    $qId, $qBeg, $qEnd, $qSrd, $qSize,
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
-  my ($rqloc, $rtloc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
-  for my $i (0..@$rqloc-1) {
-    my ($rtb, $rte) = @{$rtloc->[$i]};
-    my ($rqb, $rqe) = @{$rqloc->[$i]};
-    my ($tb, $te) = $tSrd eq "-" ? ($tEnd-$rte+1, $tEnd-$rtb+1)
-      : ($tBeg+$rtb-1, $tBeg+$rte-1);
-    my ($qb, $qe) = $qSrd eq "-" ? ($qEnd-$rqe+1, $qEnd-$rqb+1)
-      : ($qBeg+$rqb-1, $qBeg+$rqe-1);
-    print $fho join("\t", $tId, $tb, $te, $tSrd, 
-      $id, $qId, $qb, $qe, $qSrd)."\n";
-  }
+  next if /(^\#)|(^\s*$)/;
+  my ($chr, $beg, $end, $tBase, $qBase) = split "\t";
+  my $tlen = length($tBase);
+  my $qlen = length($qBase);
+  $end - $beg - 1 == $tlen || die "len error: $chr:$beg-$end\[$tBase]\n";
+  my $id = $pre . ++$i;
+  $tBase = "-" if $tlen == 0;
+  $qBase = "-" if $qlen == 0;
+
+  print $fho join("\t", $id, $chr, $beg + 1, $end - 1, $qBase, $tBase)."\n";
 }
 close $fhi;
 close $fho;

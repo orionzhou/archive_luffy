@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -10,18 +10,18 @@
 
 =head1 SYNOPSIS
   
-  seqgap.pl [-help] [-min minimum-length] [-in input-file] [-out output-file] 
+  seqgap.pl [-help] [-min minimum-len] [-in input-file] [-out output-file] 
 
   Options:
-      -help   brief help message
-      -in     input fasta file
-      -out    output file
-      -min    minimum length of gaps to report (default: 1)
+    -h (--help)   brief help message
+    -i (--in)     input (Fasta) file
+    -o (--out)    output (BED) file
+    -m (--min)    minimum length of gaps to report (default: 10)
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 use strict;
 use Getopt::Long;
@@ -35,40 +35,40 @@ my $fho;
 my $len_min = 1;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
-    "min|m=i" => \$len_min,
+  "help|h"  => \$help_flag,
+  "in|i=s"  => \$fi,
+  "out|o=s" => \$fo,
+  "min|m=i" => \$len_min,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
 open($fho, ">$fo") or die "cannot open $fo for writing\n";
-print $fho join("\t", qw/id beg end len/)."\n";
+#print $fho join("\t", qw/id beg end len/)."\n";
 
 while(my $seqO = $seqHI->next_seq()) {
-    my ($id, $seq, $seqlen) = ($seqO->id, $seqO->seq, $seqO->length);
-    while($seq =~ /N+/ig) {
-        my ($beg, $end) = ($-[0]+1, $+[0]);
-        my $len = $end - $beg + 1;
-        next if $len < $len_min;
-        print $fho join("\t", $id, $beg, $end, $len)."\n";
-    }
+  my ($id, $seq, $seqlen) = ($seqO->id, $seqO->seq, $seqO->length);
+  while($seq =~ /N+/ig) {
+    my ($beg, $end) = ($-[0]+1, $+[0]);
+    my $len = $end - $beg + 1;
+    next if $len < $len_min;
+    print $fho join("\t", $id, $beg - 1, $end)."\n";
+  }
 }
 $seqHI->close();
 close $fho;

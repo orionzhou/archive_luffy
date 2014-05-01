@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  il2fq.pl - convert Fastq-Illumina file to Fastq-Sanger file
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  il2fq.pl [-help] [-in input] [-out output]
 
   Options:
-    -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+      -h (--help)   brief help message
+      -i (--in)     input file
+      -o (--out)    output file
 
 =cut
   
@@ -25,6 +25,7 @@
 use strict;
 use Getopt::Long;
 use Pod::Usage;
+use Bio::SeqIO;
 
 my ($fi, $fo) = ('') x 2;
 my $help_flag;
@@ -50,31 +51,14 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
-while(<$fhi>) {
-  chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
-  } else {
-    $seq .= $_;
-    $len += length($_);
-  }
-}
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
+my $in = Bio::SeqIO->new(-fh => $fhi, -format => 'fastq-illumina');
+my $ou = Bio::SeqIO->new(-fh => $fho, -format => 'fastq');
 
-close $fhi;
-close $fho;
+while (my $seq = $in->next_seq) {
+  $ou->write_seq($seq);
+}
+$in->close();
+$ou->close();
 
 
 

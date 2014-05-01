@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -25,7 +25,7 @@
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 
 use strict;
@@ -33,12 +33,13 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use File::Basename;
 use Common;
 
 my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
     "help|h"   => \$help_flag,
     "in|i=s"   => \$fi,
@@ -48,11 +49,11 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo || !$fs;
 
-my $ft = "$fo.tmp";
-runCmd("gtb2bed.pl -i $fi -o $ft", 1);
-runCmd("bedSort $ft $ft", 1);
-runCmd("bedToBigBed -tab $ft $fs $fo", 1);
-runCmd("rm $ft", 1);
+my $base = basename($fi, ".gtb");
+runCmd("gtb2bed.pl -i $fi -o $base.bed", 1);
+runCmd("bedSort $base.bed $base.bed", 1);
+runCmd("bedToBigBed -tab $base.bed $fs $fo", 1);
+#runCmd("rm $base.bed", 1);
 
 
 

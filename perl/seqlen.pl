@@ -13,9 +13,9 @@
   seqlen.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
+    -h (--help)   brief help message
+    -i (--in)     input (fasta) file
+    -o (--out)    output (tabular) file
 
 =head1 DESCRIPTION
 
@@ -37,29 +37,29 @@ my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
+  "help|h"  => \$help_flag,
+  "in|i=s"  => \$fi,
+  "out|o=s" => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
 my ($fhi, $fho);
 if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
 while(my $seqO = $seqHI->next_seq()) {
-    my ($id, $len) = ($seqO->id, $seqO->length);
-    print $fho join("\t", $id, $len)."\n";
+  my ($id, $len) = ($seqO->id, $seqO->length);
+  print $fho join("\t", $id, $len)."\n";
 }
 $seqHI->close();
 close $fho;

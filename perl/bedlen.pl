@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  bedlen.pl - report total lengths in an input BED file 
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  bedlen.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+    -i (--in)     input file (BED format)
+    -o (--out)    output file (default: stdout)
 
 =cut
   
@@ -50,32 +50,16 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
+my $sum = 0;
 while(<$fhi>) {
   chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
-  } else {
-    $seq .= $_;
-    $len += length($_);
-  }
+  next if /^\s*$/;
+  my ($id, $beg, $end) = split "\t";
+  $sum += $end - $beg;
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
 close $fhi;
+
+print $fho $sum."\n";
 close $fho;
-
-
 
 exit 0;

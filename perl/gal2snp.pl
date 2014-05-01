@@ -13,11 +13,11 @@
   gal2snp.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
-      -qry    query-seq file 
-      -tgt    target-seq file
+    -h (--help)   brief help message
+    -i (--in)     input file
+    -o (--out)    output file
+    -q (--qry)    query-seq file 
+    -t (--tgt)    target-seq file
 
 =cut
   
@@ -111,7 +111,7 @@ while( <$fhi> ) {
   for my $i (0..@qPoss-1) {
     my ($qPos, $tPos, $qNt, $tNt) = 
       ($qPoss[$i], $tPoss[$i], $qNts[$i], $tNts[$i]);
-    print $fho join("\t", $tId, $tPos, $id, $qId, $qPos, $tNt, $qNt)."\n";
+    print $fho join("\t", $tId, $tPos, $tNt, $qNt, $id, $qId, $qPos)."\n";
   }
 }
 close $fhi;

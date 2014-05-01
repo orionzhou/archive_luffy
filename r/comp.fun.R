@@ -16,10 +16,10 @@ read_genome_stat <- function(name) {
   gr_gap = GRanges(seqnames = gap$id, ranges = IRanges(gap$beg, end = gap$end))
 
   # gene annotation
-  f_gen = file.path(dir, "51.tbl")
-  gene = read.table(f_gen, header=T, sep="\t", quote="", as.is=T)
+#  f_gen = file.path(dir, "51.tbl")
+#  gene = read.table(f_gen, header=T, sep="\t", quote="", as.is=T)
 
-  list(name = name, dir = dir, len = len, gap = gap, gene = gene,
+  list(name = name, dir = dir, len = len, gap = gap, #gene = gene,
     gr_gap = gr_gap)
 }
 
@@ -40,37 +40,37 @@ build_ideogram_track <- function(tgap, tlen, tname) {
 }
 
 read_var_stat <- function(qname) {
-  dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
-  fsnp = sprintf("%s/30_vnt/%s/snp.bed.gz", dir, toupper(qname))
-  fins = sprintf("%s/30_vnt/%s/ins.bed.gz", dir, toupper(qname))
-  fdel = sprintf("%s/30_vnt/%s/del.bed.gz", dir, toupper(qname))
-  fhet = sprintf("%s/30_vnt/%s/het.bed.gz", dir, toupper(qname))
-  fmnp = sprintf("%s/30_vnt/%s/mnp.bed.gz", dir, toupper(qname))
+  dirp = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
+  dir = file.path(dirp, "30_vnt", toupper(qname))
+  fsnp = sprintf("%s/snp.gz", dir)
+  fidm = sprintf("%s/idm.gz", dir)
+  fhet = sprintf("%s/het.gz", dir)
 
-  fcov = sprintf("%s/11_pipe_mapping/35_cov/%s.bw", dir, toupper(qname))
-  fcovab = sprintf("%s/40_sv/01_ab/%s.bw", dir, toupper(qname))
+  fcov = sprintf("%s/11_pipe_mapping/35_cov/%s.bw", dirp, toupper(qname))
+  fcovab = sprintf("%s/40_sv/01_ab/%s.bw", dirp, toupper(qname))
   
   list(dir = dir, 
-    fsnp = fsnp, fins = fins, fdel = fdel, fhet = fhet, fmnp = fmnp,
+    fsnp = fsnp, fidm = fidm, fhet = fhet,
     fcov = fcov, fcovab = fcovab)
 }
 
 read_comp_stat <- function(qname, tname) {
-  dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s", toupper(qname), 
-    toupper(tname))
-#  tw = read.table(file.path(dir, "23_blat/51.gal"), header=TRUE, sep="\t", 
-#    as.is=T)[,1:18]
+  dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat", 
+    toupper(qname), toupper(tname))
+    
+  tgal = sprintf("%s/29.gal", dir)
+  tgax = sprintf("%s/29.gax.gz", dir)
+  tsnp = sprintf("%s/29.vnt/snp.gz", dir)
+  tidm = sprintf("%s/29.vnt/idm.gz", dir)    
   
-  tgax = sprintf("%s/23_blat/51.gax.gz", dir)
-  tsnp = sprintf("%s/23_blat/51.vnt/snp.gz", dir)
-  tidm = sprintf("%s/23_blat/51.vnt/idm.gz", dir)
-  qgax = sprintf("%s/23_blat/56.gax.gz", dir)
-  qsnp = sprintf("%s/23_blat/56.vnt/snp.gz", dir)
-  qidm = sprintf("%s/23_blat/56.vnt/idm.gz", dir)
+  qgal = sprintf("%s/39.gal", dir)
+  qgax = sprintf("%s/39.gax.gz", dir)
+  qsnp = sprintf("%s/39.vnt/snp.gz", dir)
+  qidm = sprintf("%s/39.vnt/idm.gz", dir)
 
   list(dir = dir, 
-    tgax = tgax, tsnp = tsnp, tidm = tidm,
-    qgax = qgax, qsnp = qsnp, qidm = qidm)
+    tgal = tgal, tgax = tgax, tsnp = tsnp, tidm = tidm,
+    qgal = qgal, qgax = qgax, qsnp = qsnp, qidm = qidm)
 }
 
 build_var_track <- function(filepath, chr, beg, end,

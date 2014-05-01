@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  fas2bed.pl - convert Fasta file to Bed file
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  fas2bed.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+    -i (--in)     input (fasta) file
+    -o (--out)    output (BED) file
 
 =cut
   
@@ -25,6 +25,8 @@
 use strict;
 use Getopt::Long;
 use Pod::Usage;
+use Bio::Seq;
+use Bio::SeqIO;
 
 my ($fi, $fo) = ('') x 2;
 my $help_flag;
@@ -50,32 +52,12 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
-while(<$fhi>) {
-  chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
-  } else {
-    $seq .= $_;
-    $len += length($_);
-  }
+my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
+while(my $seqO = $seqHI->next_seq()) {
+  my ($id, $len) = ($seqO->id, $seqO->length);
+  print $fho join("\t", $id, 0, $len)."\n";
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
-close $fhi;
+$seqHI->close();
 close $fho;
-
-
 
 exit 0;

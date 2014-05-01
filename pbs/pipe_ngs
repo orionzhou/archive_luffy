@@ -15,9 +15,19 @@
 #pipe_ngs.pl -p rerun -r HM340_LIPE_1_01
 
 #pipe_ngs.pl -p lib -l HM056_SIPE_1
-pipe_ngs.pl -p lib -l HM056_SIPE_2
-pipe_ngs.pl -p lib -l HM056_SIPE_3
-pipe_ngs.pl -p lib -l HM056_LIPE_1
-pipe_ngs.pl -p lib -l HM340_SIPE_1
-pipe_ngs.pl -p lib -l HM340_LIPE_1
+#pipe_ngs.pl -p lib -l HM056_SIPE_2
+#pipe_ngs.pl -p lib -l HM056_SIPE_3
+#pipe_ngs.pl -p lib -l HM056_LIPE_1
+#pipe_ngs.pl -p lib -l HM340_SIPE_1
+#pipe_ngs.pl -p lib -l HM340_LIPE_1
 
+pipe_ngs.pl -p run -r HM034_SIPE_1_01
+#pipe_ngs.pl -p run -r HM034_SIPE_2_01
+#pipe_ngs.pl -p run -r HM034_SIPE_2_02
+#pipe_ngs.pl -p run -r HM034_SIPE_2_03
+#pipe_ngs.pl -p run -r HM034_LIPE_1_01
+#pipe_ngs.pl -p run -r HM034_LIPE_1_02
+#pipe_ngs.pl -p lib -l HM034_SIPE_1
+#pipe_ngs.pl -p lib -l HM034_SIPE_2
+#pipe_ngs.pl -p lib -l HM034_LIPE_1
+#pipe_ngs.pl -p sample -s HM034

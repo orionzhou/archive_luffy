@@ -46,13 +46,14 @@ pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fs;
 
 my $base = basename($fi, ".gal");
-runCmd("galexpand.pl -i $fi -o $base.gax");
+runCmd("gal2gax.pl -i $fi -o $base.gax");
 runCmd("sort -k1,1 -k2,2n -k3,3n $base.gax -o $base.gax");
 runCmd("bgzip -c $base.gax > $base.gax.gz");
 runCmd("tabix -s 1 -b 2 -e 3 $base.gax.gz");
 
 runCmd("gal2psl.pl -i $base.gal -o $base.psl");
-runCmd("pslToBed $base.psl $base.bed");
+runCmd("pslToBed $base.psl stdout | \\
+  fixbedbygal.pl -i - -g $base.gal -o $base.bed");
 runCmd("bedSort $base.bed $base.bed");
 runCmd("bedToBigBed -tab $base.bed $fs $base.bb");
 runCmd("rm $base.bed $base.psl");

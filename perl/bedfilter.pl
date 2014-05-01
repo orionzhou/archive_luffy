@@ -6,16 +6,17 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  bedfilter.pl - filter a BED file
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  bedfilter.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+    -i (--in)     input file (BED format)
+    -o (--out)    output file (default: stdout)
+    -l (--len)    minimum length (default: 1) 
 
 =cut
   
@@ -27,6 +28,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 my ($fi, $fo) = ('') x 2;
+my $minlen = 1;
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -34,6 +36,7 @@ GetOptions(
   "help|h"  => \$help_flag,
   "in|i=s"  => \$fi,
   "out|o=s" => \$fo,
+  "len|l=i" => \$minlen,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
@@ -50,32 +53,14 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
+my $sum = 0;
 while(<$fhi>) {
   chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
-  } else {
-    $seq .= $_;
-    $len += length($_);
-  }
+  next if /^\s*$/;
+  my ($id, $beg, $end) = split "\t";
+  print $fho join("\t", $id, $beg, $end)."\n" if $end - $beg >= $minlen;
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
 close $fhi;
 close $fho;
-
-
 
 exit 0;

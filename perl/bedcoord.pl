@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  fa2fq.pl - convert a Fasta file to Fastq file
+  bedcoord.pl - transform the coordinates of a Bed file
 
 =head1 SYNOPSIS
   
-  fa2fq.pl [-help] [-in input] [-out output]
+  bedcoord.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
@@ -22,22 +22,26 @@
 #### END of POD documentation.
 #---------------------------------------------------------------------------
 
+
 use strict;
+use FindBin;
+use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Common;
 
 my ($fi, $fo) = ('') x 2;
+my ($fhi, $fho);
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
 GetOptions(
-  "help|h"  => \$help_flag,
-  "in|i=s"  => \$fi,
-  "out|o=s" => \$fo,
+  "help|h"   => \$help_flag,
+  "in|i=s"   => \$fi,
+  "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my ($fhi, $fho);
 if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
@@ -50,32 +54,16 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my ($id, $seq, $len) = ("", "", 0);
 while(<$fhi>) {
   chomp;
-  if( /^\>(.+)/) {
-    if($id ne "") {
-      print $fho "\@$id\n";
-      print $fho $seq."\n";
-      print $fho "+\n";
-      print $fho ("I" x $len) . "\n";
-    }
-    $id = $1;
-    $seq = "";
-    $len = 0;
+  my ($sid, $rb, $re) = split "\t";
+  if($sid =~ /^([\w\-\.]+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
+    my ($id, $b, $e) = ($1, $2, $3);
+    my ($beg, $end) = ($b + $rb, $b + $re - 1);
+    print $fho join("\t", $id, $beg - 1, $end)."\n";
   } else {
-    $seq .= $_;
-    $len += length($_);
+    die "unknown id: $sid\n";
   }
 }
-print $fho "\@$id\n";
-print $fho $seq."\n";
-print $fho "+\n";
-print $fho ("I" x $len) . "\n";
-
 close $fhi;
-close $fho;
-
-
-
-exit 0;
+close $fhi;

@@ -125,33 +125,33 @@ my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
 my $fi = "$dir/HM056_chr5_SI.vcf";
 my $fo = "$dir/HM056_chr5_SI.tbl";
 open(FHO, ">$fo") or die "cannot write $fo\n";
-    my $vcf = Vcf->new(file=>$fi);
-    $vcf->parse_header();
+  my $vcf = Vcf->new(file=>$fi);
+  $vcf->parse_header();
 
-    my $header_printed=0;
+  my $header_printed=0;
 
-    while (my $x=$vcf->next_data_hash()) {
-        if ( !$header_printed ) {
-            print FHO "chr\tpos\ttype\tend\tsvlen\tntlen\thomlen\thomseq\tref\talt";
-            for my $col (sort keys %{$$x{gtypes}}) {
-                print FHO "\t$col";
-            }
-            print FHO "\n";
+  while (my $x=$vcf->next_data_hash()) {
+      if ( !$header_printed ) {
+          print FHO "chr\tpos\ttype\tend\tsvlen\tntlen\thomlen\thomseq\tref\talt";
+          for my $col (sort keys %{$$x{gtypes}}) {
+              print FHO "\t$col";
+          }
+          print FHO "\n";
 
-            $header_printed = 1;
-        }
+          $header_printed = 1;
+      }
 
-        my $y = $$x{INFO};
-        my ($ntlen, $homseq) = (0, "");
-        $ntlen = $$y{NTLEN} if exists $$y{NTLEN};
-        $homseq = $$y{HOMSEQ} if exists $$y{HOMSEQ};
-        print FHO join("\t", $$x{CHROM}, $$x{POS}, $$y{SVTYPE}, $$y{END}, $$y{SVLEN}, 
-            $ntlen, $$y{HOMLEN}, $homseq, $$x{REF}, $$x{ALT}->[0]);
-        for my $col (sort keys %{$$x{gtypes}}) {
-            my ($al1,$sep,$al2) = exists($$x{gtypes}{$col}{GT}) ? $vcf->parse_alleles($x,$col) : ('.','/','.');
-            my $gt = $al1.'/'.$al2;
-            print FHO "\t".$gt;
-        }
-        print FHO "\n";
-    }
+      my $y = $$x{INFO};
+      my ($ntlen, $homseq) = (0, "");
+      $ntlen = $$y{NTLEN} if exists $$y{NTLEN};
+      $homseq = $$y{HOMSEQ} if exists $$y{HOMSEQ};
+      print FHO join("\t", $$x{CHROM}, $$x{POS}, $$y{SVTYPE}, $$y{END}, $$y{SVLEN}, 
+          $ntlen, $$y{HOMLEN}, $homseq, $$x{REF}, $$x{ALT}->[0]);
+      for my $col (sort keys %{$$x{gtypes}}) {
+          my ($al1,$sep,$al2) = exists($$x{gtypes}{$col}{GT}) ? $vcf->parse_alleles($x,$col) : ('.','/','.');
+          my $gt = $al1.'/'.$al2;
+          print FHO "\t".$gt;
+      }
+      print FHO "\n";
+  }
 

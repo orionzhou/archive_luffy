@@ -1,22 +1,13 @@
-#PBS -l nodes=1:ppn=16,walltime=6:00:00
+#PBS -l nodes=1:ppn=2,mem=8GB,walltime=40:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
-#PBS -q sb
+#PBS -q lab
 
 QRY=${QRY:-HM056}
-REP=${REP:-1}
+TGT=${TGT:-HM101}
 
-PROCS=16
-let BEG=($REP-1)*$PROCS
-let END=$REP*$PROCS-1
+echo QRY=$QRY
+echo TGT=$TGT
 
-REF=$data/db/blat/Mtruncatula_4.0.2bit
-cd $data/misc3/$QRY\_HM101/23_blat
-echo part.$BEG.fa - part.$END.fa
-
-seq $BEG $END | xargs -i printf "%03d\\n" {} | \
-    parallel -j $PROCS blat $REF 01_seq/part.{}.fa -ooc=$REF.tile11.ooc 03_raw/part.{}.psl -noTrimA -noHead
-#--sshloginfile $PBS_NODEFILE --workdir $PWD \
-
-echo part.$BEG.fa - part.$END.fa : done
+comp.pl -q $QRY -t $TGT
 

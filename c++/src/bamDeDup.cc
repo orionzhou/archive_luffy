@@ -57,30 +57,36 @@ int main(int argc, char *argv[]) {
   BamAlignment al, al2;
   uint32_t cnt1(0), cnt1d(0), cnt2(0), cnt2d(0), cnt3(0);
   while( reader.GetNextAlignment(al) ) {
-    if( al.IsMapped() && al.IsMateMapped() ) {
-      if( al.IsFirstMate() ) cnt1 ++;
-      if( al.IsDuplicate() ) {
-        if( al.IsFirstMate() ) cnt1d ++;
-      } else {
+    if( !al.IsPrimaryAlignment() ) {
+      if( !al.IsDuplicate() ) {
         writer.SaveAlignment(al);
       }
-    } else if ( !al.IsMapped() && !al.IsMateMapped() ) {
-      if( al.IsFirstMate() ) cnt3 ++;
-      writer.SaveAlignment(al);
     } else {
-      if( al.IsFirstMate() ) cnt2 ++;
-      it = als.find(al.Name);
-      if(it == als.end()) {
-        als.insert( pair<string, BamAlignment> (al.Name, al) );
-      } else {
-        al2 = it->second;
-        if( al.IsDuplicate() || al2.IsDuplicate() ) {
-          cnt2d ++;
+      if( al.IsMapped() && al.IsMateMapped() ) {
+        if( al.IsFirstMate() ) cnt1 ++;
+        if( al.IsDuplicate() ) {
+          if( al.IsFirstMate() ) cnt1d ++;
         } else {
-          writer.SaveAlignment(al2);
           writer.SaveAlignment(al);
         }
-        als.erase( it );
+      } else if ( !al.IsMapped() && !al.IsMateMapped() ) {
+        if( al.IsFirstMate() ) cnt3 ++;
+        writer.SaveAlignment(al);
+      } else {
+        if( al.IsFirstMate() ) cnt2 ++;
+        it = als.find(al.Name);
+        if(it == als.end()) {
+          als.insert( pair<string, BamAlignment> (al.Name, al) );
+        } else {
+          al2 = it->second;
+          if( al.IsDuplicate() || al2.IsDuplicate() ) {
+            cnt2d ++;
+          } else {
+            writer.SaveAlignment(al2);
+            writer.SaveAlignment(al);
+          }
+          als.erase( it );
+        }
       }
     }
   }

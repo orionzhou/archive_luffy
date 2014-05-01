@@ -9,7 +9,7 @@ qname = qname1
 t = read_genome_stat(tname)
 q = read_genome_stat(qname)
 cq = read_comp_stat(qname, tname)
-vq = read_var_stat(qname)
+#vq = read_var_stat(qname)
 
 
 tg = read.table(file.path(t$dir, "51.gtb")
@@ -31,29 +31,11 @@ glg = with(tg, makeGRangesListFromFeatureFragments(
   seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
 
-# assess conserved proportion of genic regions
 grg = GRanges(seqnames = tgg$chr, ranges = IRanges(tgg$beg, end = tgg$end))
 grt = GRanges(seqnames = tgt$chr, ranges = IRanges(tgt$beg, end = tgt$end))
 grc = GRanges(seqnames = tgc$chr, ranges = IRanges(tgc$beg, end = tgc$end))
 grn = GRanges(seqnames = tgn$chr, ranges = IRanges(tgn$beg, end = tgn$end))
 
-tw = cr$tw
-tl = cr$tl
-tls = tl[tl$id %in% tw$id[tw$lev == 1], ]
-gc = GRanges(seqnames = tls$tId, ranges = IRanges(tls$tBeg, end = tls$tEnd))
-
-
-sum(width(intersect(grg, gc)))
-sum(width(intersect(grt, gc)))
-sum(width(intersect(grc, gc)))
-sum(width(intersect(grn, gc)))
-sum(width(intersect(grg, gc))) / sum(width(reduce(grg)))
-sum(width(intersect(grt, gc))) / sum(width(reduce(grt)))
-sum(width(intersect(grc, gc))) / sum(width(reduce(grc)))
-sum(width(intersect(grn, gc))) / sum(width(reduce(grn)))
-
-
-#
 grlg = with(tgg, makeGRangesListFromFeatureFragments(
   seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
@@ -66,6 +48,43 @@ grlc = with(tgc, makeGRangesListFromFeatureFragments(
 grln = with(tgn, makeGRangesListFromFeatureFragments(
   seqnames = chr, fragmentStarts = sprintf("%d,", beg), 
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
+
+# assess conserved proportion of genic regions
+fgax = file.path(cq$dir, "29.gax")
+tgax = read.table(fgax, sep = "\t", header = F, as.is = T)
+colnames(tgax) = c("tId", "tBeg", "tEnd", "tSrd", "id", "qId", "qBeg", "qEnd",
+  "qSrd")
+gr = GRanges(seqnames = tgax$tId, ranges = IRanges(tgax$tBeg, end = tgax$tEnd))
+grl = with(tgax, makeGRangesListFromFeatureFragments(
+  seqnames = tId, fragmentStarts = sprintf("%d,", tBeg), 
+  fragmentWidths = sprintf("%d,", tEnd - tBeg + 1), strand = tSrd))
+
+get_ovlp_len <- function(dfi, gr) {
+  c('leno' = sum(width(gr[dfi$tidx])))
+}
+get_ovlp_90_idxs <- function(tgr, tgrl, qgr, qgrl) {
+  gov = intersect(qgr, tgr)
+  ma = as.matrix(findOverlaps(gov, qgrl))
+  dfi = data.frame(idx = ma[,2], tidx = ma[,1])
+  dfl = ddply(dfi, .(idx), get_ovlp_len, gov)
+  df0 = data.frame(idx = 1:length(qgr), len = width(qgr))
+  df = merge(df0, dfl, by = 'idx', all = T)
+  df$leno[is.na(df$leno)] <- 0
+  df = cbind(df, pct = df$leno / df$len)
+  
+  n80 = sum(df$pct >= 0.8)
+  n90 = sum(df$pct >= 0.9)
+  cat(80, n80, n80/nrow(df), "\n", sep = "\t")
+  cat(90, n90, n90/nrow(df), "\n", sep = "\t")
+  df
+}
+dog = get_ovlp_90_idxs(gr, grl, grg, grlg)
+dot = get_ovlp_90_idxs(gr, grl, grt, grlt)
+don = get_ovlp_90_idxs(gr, grl, grn, grln)
+doc = get_ovlp_90_idxs(gr, grl, grc, grlc)
+
+
+#
 
 gr_idm_l = GRanges(seqnames = tm$tId, 
   ranges = IRanges(tm$tBeg, end = tm$tEnd))
@@ -171,7 +190,7 @@ tgn = cbind(tgn, pct_cov = tgn$len_ovlp / (tgn$end - tgn$beg + 1))
 
 sapply(c('gene', 'te', 'crp', 'nbs'), sum_by_col, 'pct_cov', tgn)
 
-# compare SV influences
+# compare SV impacts
 indel = ds$indel
 g_sv <- reduce(GRanges(seqnames = Rle(indel$tid),
   ranges = IRanges(indel$tbeg+1, end = indel$tend)))

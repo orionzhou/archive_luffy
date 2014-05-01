@@ -67,7 +67,6 @@ while( <$fhi> ) {
   my @ps = split("\t", $line);
   @ps == 5 || die "not 5 lines:\n$line\n";
   my ($chr, $beg, $ref, $alts, $str) = @ps;
-  my $end = $beg + length($ref) - 1;
   my @alts = split(",", $alts);
   
   my @types;
@@ -80,10 +79,12 @@ while( <$fhi> ) {
     } elsif($2 eq $3) {
       my ($alt, $type) = ($alts[$2-1], $types[$2-1]);
       my $fho = $hf->{$type};
-
+      
       if($type == 1) {
         print $fho join("\t", $chr, $beg, $ref, $alt)."\n";
       } else {
+        my $end = $beg + length($ref);
+        ($ref, $alt) = (substr($ref, 1), substr($alt, 1));
         print $fho join("\t", $chr, $beg, $end, $ref, $alt)."\n";
       }
     } elsif($2 ne $3 && $2 == 0) {

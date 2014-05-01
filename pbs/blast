@@ -1,12 +1,13 @@
-#PBS -l nodes=1:ppn=4,mem=20GB,walltime=20:00:00
+#PBS -l nodes=1:ppn=16,walltime=10:00:00
 #PBS -m ae
-#PBS -q lab 
+#PBS -M zhoux379@umn.edu
+#PBS -q sb
 
-QRY=${QRY:-HM056}
-TGT=${TGT:-HM101}
-
-cd $data/misc3/$QRY\_$TGT/51_pan3
-blastn -db $data/db/blast/current/nt -outfmt '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' -num_threads 4 -query 01.fa -out 11_blast.tbl
-blast2gal.pl -i 11_blast.tbl -o 12.gal
-galtiling.pl -i 12.gal -o - | galfilter.pl -i - -l 100 -o 13.gal
-annoblast.pl -i 13.gal -o 15.tbl
+cd $misc3/pan4seq
+blastn -db $data/db/blast/current/nt -outfmt \
+  '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' \
+  -num_threads 16 -query 23.fas -out 31_blastnr/02.tbl
+#cd 31_blast
+#blast2gal.pl -i 02.tbl -o 04.gal
+#galtiling.pl -i 04.gal -o - | galfilter.pl -i - -l 100 -o 11.gal
+#annoblast.pl -i 11.gal -o 13.tbl

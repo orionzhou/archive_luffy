@@ -16,8 +16,8 @@
     -h (--help)   brief help message
     -i (--in)     input file
     -o (--out)    output file
-    -q (--qry)    query gaploc file 
-    -t (--tgt)    target gaploc file
+    -q (--qry)    query (BED) file with gap locations
+    -t (--tgt)    target (BED) file with gap locations 
 
 =cut
   
@@ -64,18 +64,18 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-my $tq = readTable(-in=>$fq, -header=>1);
-my $tt = readTable(-in=>$ft, -header=>1);
+my $tq = readTable(-in=>$fq, -header=>0);
+my $tt = readTable(-in=>$ft, -header=>0);
 my ($hq, $ht);
 for my $i (0..$tq->lastRow) {
   my ($chr, $beg, $end) = $tq->row($i);
   $hq->{$chr} ||= [];
-  push @{$hq->{$chr}}, [$beg, $end];
+  push @{$hq->{$chr}}, [$beg + 1, $end];
 }
 for my $i (0..$tt->lastRow) {
   my ($chr, $beg, $end) = $tt->row($i);
   $ht->{$chr} ||= [];
-  push @{$ht->{$chr}}, [$beg, $end];
+  push @{$ht->{$chr}}, [$beg + 1, $end];
 }
 
 print $fho join("\t", @HEAD_GAL)."\n";

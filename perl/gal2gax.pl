@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  idm2bed.pl - convert Idm file to Bed file
+  gal2gax.pl - convert a Gal (wide) file to Gax (long) file
 
 =head1 SYNOPSIS
   
-  idm2bed.pl [-help] [-in input-file] [-out output-file]
+  gal2gax.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input (IDM) file
-      -out    output (BED) file
+    -h (--help)   brief help message
+    -i (--in)     input file
+    -o (--out)    output file
 
 =cut
   
@@ -28,7 +28,8 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Common;
+use Location;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -57,13 +58,23 @@ if ($fo eq "stdout" || $fo eq "-") {
 
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^\s*$)/;
-  my ($chr, $beg, $end, $tBase, $qBase) = split "\t";
-  my $tlen = length($tBase);
-  my $qlen = length($qBase);
-  $end - $beg - 1 == $tlen || die "len error: $chr:$beg-$end\[$tBase]\n";
-  my $name = "$tlen/$qlen";
-  print $fho join("\t", $chr, $beg - 1, $end - 1, $name)."\n";
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my $ps = [ split "\t" ];
+  next unless @$ps == 20;
+  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
+  my ($rqloc, $rtloc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+  for my $i (0..@$rqloc-1) {
+    my ($rtb, $rte) = @{$rtloc->[$i]};
+    my ($rqb, $rqe) = @{$rqloc->[$i]};
+    my ($tb, $te) = $tSrd eq "-" ? ($tEnd-$rte+1, $tEnd-$rtb+1)
+      : ($tBeg+$rtb-1, $tBeg+$rte-1);
+    my ($qb, $qe) = $qSrd eq "-" ? ($qEnd-$rqe+1, $qEnd-$rqb+1)
+      : ($qBeg+$rqb-1, $qBeg+$rqe-1);
+    print $fho join("\t", $tId, $tb, $te, $tSrd, 
+      $id, $qId, $qb, $qe, $qSrd)."\n";
+  }
 }
 close $fhi;
 close $fho;

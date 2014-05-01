@@ -1,76 +1,59 @@
-library("GenomicRanges")
-library("plyr")
+library(plyr)
+library(rtracklayer)
+library(Cairo)
+library(GenomicRanges)
 
-# load query stats
-org.q = "HM056"
-dir.q = file.path('/home/youngn/zhoup/Data/genome', org.q)
+dir = '/home/youngn/zhoup/Data/misc3/pan4seq'
 
-fs.q = file.path(dir.q, '15_seqlen.tbl')
-fg.q = file.path(dir.q, '16_gaploc.tbl')
+# venn-diagram of novel sequences shared
+fc = file.path(dir, '21.tbl')
+tc = read.table(fc, header = T, sep = "\t", as.is = T)
+colnames(tc) = c("cid", "len", 'org', "orgs", "cnts", "strs")
 
-ts.q = read.table(fs.q, sep='\t', header=T, as.is=T)
-tg.q = read.table(fg.q, sep='\t', header=T, as.is=T)
+ddply(tc, .(orgs), summarise, total_len = sum(len))
+x = ddply(tc[tc$len >= 50,], .(orgs), summarise, total_len = sum(len))
+ddply(tc[tc$len >= 1000,], .(orgs), summarise, total_len = sum(len))
 
-si.q = Seqinfo(ts.q$id, seqlengths=ts.q$length)
-gra.q = GRanges(seqnames=Rle(ts.q$id), ranges=IRanges(rep(1, nrow(ts.q)), end=ts.q$length), seqinfo=si.q)
-grg.q = GRanges(seqnames=Rle(tg.q$id), ranges=IRanges(tg.q$beg, end=tg.q$end), seqinfo=si.q)
+labels = c("HM340", "HM034", "HM056")
+n1 = x$total_len[x$orgs == 'HM340.APECCA']
+n2 = x$total_len[x$orgs == 'HM034']
+n3 = x$total_len[x$orgs == 'HM056']
+n12 = x$total_len[x$orgs == 'HM340.APECCA,HM034']
+n13 = x$total_len[x$orgs == 'HM340.APECCA,HM056']
+n23 = x$total_len[x$orgs == 'HM034,HM056']
+n123 = x$total_len[x$orgs == 'HM340.APECCA,HM034,HM056']
 
-sum(width(gra.q))
-sum(width(grg.q))
-
-# load target stats
-org.t = "HM101"
-dir.t = file.path('/home/youngn/zhoup/Data/genome', org.t)
-
-fs.t = file.path(dir.t, '15_seqlen.tbl')
-fg.t = file.path(dir.t, '16_gaploc.tbl')
-
-ts.t = read.table(fs.t, sep='\t', header=T, as.is=T)
-tg.t = read.table(fg.t, sep='\t', header=T, as.is=T)
-
-si.t = Seqinfo(ts.t$id, seqlengths=ts.t$length)
-gra.t = GRanges(seqnames=Rle(ts.t$id), ranges=IRanges(rep(1, nrow(ts.t)), end=ts.t$length), seqinfo=si.t)
-grg.t = GRanges(seqnames=Rle(tg.t$id), ranges=IRanges(tg.t$beg, end=tg.t$end), seqinfo=si.t)
-
-sum(width(gra.t))
-sum(width(grg.t))
-
-# working dir
-dir = sprintf('/home/youngn/zhoup/Data/misc3/%s_%s', org.q, org.t)
-
-# generating novel sequences
-pre="nov1"
-fw = sprintf("%s/41_novelseq/%s.pre.gal", dir, pre)
-tw = read.table(fw, sep='\t', header=T, as.is=T)[,1:17]
-sum(tw$match) / (sum(tw$match) + sum(tw$misMatch))
-fl = sprintf("%s/41_novelseq/%s.pre.gall", dir, pre)
-tl = read.table(fl, sep='\t', header=T, as.is=T)
-
-grm1 = GRanges(seqnames=Rle(tl$tId), ranges=IRanges(tl$tBeg, end=tl$tEnd), seqinfo=si.q)
-grm2 = reduce(grm1)
-sum(width(grm2))
-
-grn1 = setdiff(gra.q, union(grm2, grg.q))
-sum(width(grn1))
-
-tn1 = data.frame(id=as.character(seqnames(grn1)), beg=as.numeric(start(grn1)), end=as.numeric(end(grn1)), len=as.numeric(width(grn1)))
-tn2 = tn1[tn1$len>=1000,]
-sum(tn2$len)
-
-fn = sprintf("%s/41_novelseq/%s.tbl", dir, pre)
-# write.table(tn2, fn, col.names=T, row.names=F, sep='\t', quote=F)
-# seqextract.pl -i $data/genome/$org_q/11_genome.fa -o $pre.fa -n $pre.tbl
-
+venn.plot <- draw.triple.venn(
+  area1 = n1+n12+n13+n123, 
+  area2 = n2+n12+n23+n123,
+  area3 = n3+n13+n23+n123,
+  n12 = n12+n123,
+  n23 = n23+n123,
+  n13 = n13+n123,
+  n123 = n123,
+  category = labels,
+  fill = c("blue", "red", "green"),
+  lty = "blank",
+  cex = 2,
+  cat.cex = 2,
+  cat.col = c("blue", "red", "green"),
+  alpha = 0.3,
+  euler.d = T,
+  scaled = T,
+  overrideTriple = 1)
+CairoPNG(filename = file.path(dir, "venn.png"), width = 900, height = 900)
+grid.draw(venn.plot)
+dev.off()
 
 # plot novel segments length distribution
-tmp1 = table(tn1$len)
+tmp1 = table(tc$len)
 tp.1 = data.frame(len=as.numeric(names(tmp1)), cnt=c(tmp1))
 tp.2 = cbind(tp.1, sum=tp.1$len * tp.1$cnt)
 tp.3 = tp.2[order(tp.2$len, decreasing=T),]
 tp = cbind(tp.3, cumsum=cumsum(tp.3$sum))
-plot(tp$len, tp$cumsum, type='l', xlim=c(0, 8000), main=org.q, xlab='segment length', ylab='cumsum of segments')
-x=c(100,1000)
-y=c(tp$cumsum[tp$len==100], tp$cumsum[tp$len==1000])
+plot(tp$len, tp$cumsum, type='l', xlim=c(0, 8000), main='novel', xlab='segment length', ylab='cumsum of segments')
+x=c(50,100,1000)
+y=c(tp$cumsum[tp$len==50], tp$cumsum[tp$len==100], tp$cumsum[tp$len==1000])
 segments(0, y, x, y, col='blue')
 segments(x, y, x, 0, col='blue')
 

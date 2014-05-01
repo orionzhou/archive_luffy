@@ -30,7 +30,10 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
+use Location;
 use Blast;
+use Gal;
+use List::Util qw/min max sum/;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -97,6 +100,7 @@ while(<$fhi>) {
     my $qb = $qBeg + $qbr - 1;
     my $qe = $qBeg + $qer - 1;
   }
+  my $ident = $mat / ($mat + $mis);
   my ($tLocS, $qLocS) = (locAry2Str($tLoc), locAry2Str($qLoc));
 
   print $fho join("\t", $id++, $tId, $tBeg, $tEnd, $tSrd, $tSize,

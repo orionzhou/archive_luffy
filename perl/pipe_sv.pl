@@ -26,9 +26,9 @@ my $f_bwa = "$DIR_db/bwa/mt_40";
 my $f_rn = "$DIR_misc3/ncgr_fastq/04_fastq_stats.tbl";
 my $f_sm = "$DIR_misc3/ncgr_fastq/21_sample.tbl";
 
-my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
-my $dirI = "$dir/../11_pipe_mapping/21_realigned";
-my $f_stat = "$dir/../11_pipe_mapping/71_stat.tbl";
+my $dir = "$DIR_misc3/hapmap/40_sv";
+my $dirI = "$dir/../11_mapping/31_realigned";
+my $f_stat = "$dir/../11_mapping/71_stat.tbl";
 
 #run_hydra($dir, $sm);
 my $d31 = "$dir/31_pindel";

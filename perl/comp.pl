@@ -13,9 +13,9 @@
   comp.pl [-help] [-qry query-genome] [-tgt target-genome]
 
   Options:
-      -h (--help)   brief help message
-      -q (--qry)    query genome
-      -t (--tgt)    target genome
+    -h (--help)   brief help message
+    -q (--qry)    query genome
+    -t (--tgt)    target genome
 
 =cut
   
@@ -51,8 +51,10 @@ my $qry_2bit = "$data/db/blat/$qry.2bit";
 my $tgt_2bit = "$data/db/blat/$tgt.2bit";
 my $qry_size = "$data/genome/$qry/15.sizes";
 my $tgt_size = "$data/genome/$tgt/15.sizes";
-my $qry_gap = "$data/genome/$qry/16_gap.tbl";
-my $tgt_gap = "$data/genome/$tgt/16_gap.tbl";
+my $qry_size_bed = "$data/genome/$qry/15.bed";
+my $tgt_size_bed = "$data/genome/$tgt/15.bed";
+my $qry_gap = "$data/genome/$qry/16_gap.bed";
+my $tgt_gap = "$data/genome/$tgt/16_gap.bed";
 
 my $dir = "$data/misc3/$qry\_$tgt";
 
@@ -60,30 +62,73 @@ my $d23 = "$dir/23_blat";
 -d $d23 || make_path($d23);
 chdir $d23 || die "cannot chdir to $d23\n";
 
-#pipe_blat();
-pipe_prepare_idx();
+#process_blat1();
+process_blat2();
 
-sub pipe_blat {
+sub process_blat1 { # blat 11_genome.fa -> 11.psl
   runCmd("psl2gal.pl -i 11.psl -o 11.gal");
   runCmd("galfix.pl -i 11.gal -o - | \\
     galrmgap.pl -i - -q $qry_gap -t $tgt_gap -o - | \\
     galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 12.fixed.gal");
   runCmd("gal2psl.pl -i 12.fixed.gal -o 12.fixed.psl");
-  runCmd("pslSwap 12.fixed.psl 14.swap.psl");
 
   runCmd("axtChain -linearGap=medium -psl 12.fixed.psl \\
     $tgt_2bit $qry_2bit 21.chain");
   runCmd("chainPreNet 21.chain $tgt_size $qry_size 23.chain");
-  runCmd("chainNet 23.chain $tgt_size $qry_size stdout /dev/null | \\
-    netSyntenic stdin 25.net");
-  runCmd("netChainSubset 25.net 23.chain 25.chain");
+  runCmd("chain2gal.pl -i 23.chain -o - | \\
+    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 23.gal");
+  runCmd("gal2gax.pl -i 23.gal -o 23.gax");
+  runCmd("gax2bed.pl -i 23.gax -p qry -o - | sortBed -i stdin | \\
+    mergeBed -i stdin > 23.bed");
+  runCmd("subtractBed -a $qry_size_bed -b $qry_gap | \\
+    subtractBed -a stdin -b 23.bed | \\
+    awk '(\$3-\$2) >= 50' - > 24.nov.bed");
+  runCmd("seqret.pl -d $qry_fas -b 24.nov.bed -o 24.nov.fa");
+  runCmd("rm 11.gal 23.chain 23.gax");
+}
 
-  runCmd("axtChain -linearGap=medium -psl 14.swap.psl \\
-    $qry_2bit $tgt_2bit 31.chain");
-  runCmd("chainPreNet 31.chain $qry_size $tgt_size 33.chain");
-  runCmd("chainNet 33.chain $qry_size $tgt_size stdout /dev/null | \\
-    netSyntenic stdin 35.net");
-  runCmd("netChainSubset 35.net 33.chain 35.chain");
+sub pipe_chain_net {
+  my ($pre, $qFas, $tFas, $q2bit, $t2bit, $qSize, $tSize) = @_;
+#  runCmd("axtChain -linearGap=medium -psl $pre.1.psl \\
+#    $t2bit $q2bit $pre.2.chain");
+  runCmd("chainPreNet $pre.2.chain $tSize $qSize $pre.3.chain");
+  runCmd("chain2gal.pl -i $pre.3.chain -o - | \\
+    galfillstat.pl -i - -q $qFas -t $tFas -o $pre.3.gal");
+  runCmd("chainSwap $pre.3.chain $pre.3.swap.chain");
+
+  runCmd("chainNet $pre.3.chain $tSize $qSize stdout /dev/null | \\
+    netSyntenic stdin $pre.5.net");
+  runCmd("netChainSubset $pre.5.net $pre.3.chain stdout | \\
+    chainSort stdin $pre.5.chain");
+#  runCmd("chainSwap $pre.5.chain stdout | \\
+#    chainSort stdin $pre.5.swap.chain");
+  runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
+    galfillstat.pl -i - -q $qFas -t $tFas -o $pre.5.gal");
+  gal_callvnt("$pre.5.gal", $qFas, $tFas, $qSize, $tSize);
+
+  runCmd("chainNet $pre.5.chain $tSize $qSize /dev/null stdout | \\
+    netSyntenic stdin $pre.8.swap.net");
+  runCmd("netChainSubset $pre.8.swap.net $pre.3.swap.chain \\
+    $pre.8.swap.chain");
+  runCmd("chainSwap $pre.8.swap.chain $pre.8.chain");
+  runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
+    galfillstat.pl -i - -q $qFas -t $tFas -o $pre.8.gal");
+  runCmd("galfilter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
+  gal_callvnt("$pre.9.gal", $qFas, $tFas, $qSize, $tSize);
+
+  runCmd("rm $pre.3.chain $pre.3.swap.chain $pre.5.net $pre.5.chain \\
+    $pre.8.swap.net $pre.8.swap.chain $pre.8.chain");
+}
+sub process_blat2 { # blat 24_nov.fa -> 24.nov.psl
+#  runCmd("psl2gal.pl -i 24.nov.psl -o - | \\
+#    galcoord.pl -i - -p qry -q $qry_size -o - | \\
+#    galfix.pl -i - -o 25.gal");
+#  runCmd("gal2psl.pl -i 25.gal -o 25.psl");
+#  runCmd("cat 12.fixed.psl 25.psl > 31.1.psl");
+#  runCmd("pslSwap 31.1.psl 41.1.psl");
+  pipe_chain_net("31", $qry_fas, $tgt_fas, $qry_2bit, $tgt_2bit, $qry_size, $tgt_size);
+#  pipe_chain_net("41", $tgt_fas, $qry_fas, $tgt_2bit, $qry_2bit, $tgt_size, $qry_size);
+  runCmd("rm 25.gal");
 }
 
 sub gal_callvnt {
@@ -97,28 +142,9 @@ sub gal_callvnt {
   runCmd("gal2snp.pl -i ../$base.gal -o snp -q $qFas -t $tFas");
   runCmd("idxsnp.pl -i snp -s $tSize");
 
-  runCmd("gal2idm.pl -i ../$base.gal -o idm");
+  runCmd("gal2idm.pl -i ../$base.gal -o idm -q $qFas -t $tFas");
   runCmd("idxidm.pl -i idm -s $tSize");
   chdir "..";
-}
-sub pipe_prepare_idx {
-#  runCmd("chain2gal.pl -i 23.chain -o - | \\
-#    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 23.gal");
-  gal_callvnt("$d23/23.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
-
-#  runCmd("chain2gal.pl -i 25.chain -o - | \\
-#    galfillstat.pl -i - -q $qry_fas -t $tgt_fas -o 25.gal");
-#  runCmd("galfilter.pl -i 25.gal -m 100 -p 0.6 -o 26.gal");
-  gal_callvnt("$d23/26.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
-
-#  runCmd("chain2gal.pl -i 33.chain -o - | \\
-#    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 33.gal");
-  gal_callvnt("$d23/33.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
-
-#  runCmd("chain2gal.pl -i 35.chain -o - | \\
-#    galfillstat.pl -i - -q $tgt_fas -t $qry_fas -o 35.gal");
-#  runCmd("galfilter.pl -i 35.gal -m 100 -p 0.6 -o 36.gal");
-  gal_callvnt("$d23/36.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
 }
 
 __END__

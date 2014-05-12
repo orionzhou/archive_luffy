@@ -17,8 +17,11 @@ my @orgs = qw/HM340.APECCA HM034 HM056/;
 
 #merge_seq(\@orgs, '01.fas');
 #runCmd("usearch.pl -i 01.fas -o 11");
-clu_group("11.clu", "21.tbl", \@orgs);
-select_clu_seq("21.tbl", "01.fas", "23.fas", 50);
+#clu_group("11.clu", "21.tbl", \@orgs);
+
+#clu_seq_blast("21.tbl", "01.fas", "31.fas", 50);
+### runs blast.pbs
+merge_blastnr("21.tbl", "32.blast.tbl", "41.tbl");
 
 sub merge_seq {
   my ($orgs, $fo) = @_;
@@ -80,7 +83,7 @@ sub clu_group {
   }
   close $fho;
 }
-sub select_clu_seq {
+sub clu_seq_blast {
   my ($fi, $fs, $fo, $minlen) = @_;
   my $t = readTable(-in => $fi, -header => 1);
   my $db = Bio::DB::Fasta->new($fs);
@@ -98,6 +101,34 @@ sub select_clu_seq {
     $seqHO->write_seq(Bio::Seq->new(-id=>$nid, -seq=>$seq));
   }
   $seqHO->close();
+}
+sub merge_blastnr {
+  my ($fi, $fb, $fo) = @_;
+  my $t = readTable(-in => $fi, -header => 1);
+
+  my $tb = readTable(-in => $fb, -header => 1);
+  my $hb;
+  for my $i (0..$tb->nofRow-1) {
+    my ($id, $cat) = ($tb->elm($i, "id"), $tb->elm($i, "cat"));
+    my ($cid, $str) = split(/\|/, $id);
+    !exists $hb->{$cid} || die "$cid appeared >1 times in $fb\n";
+    $hb->{$cid} = $cat;
+  }
+
+  my @srcs;
+  for my $i (0..$t->nofRow-1) {
+    my $cid = $t->elm($i, "cid");
+    if(exists($hb->{$cid})) {
+      push @srcs, $hb->{$cid};
+    } else {
+      push @srcs, "unc";
+    }
+  }
+
+  $t->addCol(\@srcs, "src", 2);
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho $t->tsv(1);
+  close $fho;
 }
 
 #make_chr("$dir/$org.tbl", "$data/genome/$org/11_genome.fa", $org, "$dir/$org");

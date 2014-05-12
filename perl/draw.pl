@@ -1,14 +1,15 @@
 #!/usr/bin/perl -w
 use strict;
-use Cwd qw/abs_path/;
-use File::Basename qw/dirname/;
-BEGIN { unshift @INC, dirname(abs_path($0)); }
+use FindBin;
+use lib "$FindBin::Bin";
+use File::Basename;
 use InitPath;
 use Common;
 use Bio::Graphics;
 use Bio::SeqFeature::Generic;
 use Data::Dumper;
-use List::Util qw/min max sum/; use POSIX qw/ceil floor/;
+use List::Util qw/min max sum/;
+use POSIX qw/ceil floor/;
 
 my @pKs = qw/key glyph height bgcolor fgcolor connector desc/;
 my $pVs = { 

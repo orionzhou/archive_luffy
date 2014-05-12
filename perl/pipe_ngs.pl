@@ -20,7 +20,7 @@ GetOptions(
   'beg|b=i' => \$beg, 'end|e=i' => \$end, 
 );
 
-my $f_ref = "$DIR_genome/Mtruncatula_4.0/11_genome.fa";
+my $f_ref = "$DIR_genome/Mtruncatula_4.0/11_genome.fas";
 my $f_bwa = "$DIR_db/bwa/mt_40";
 my $d_fq = "$DIR_misc3/ncgr_fastq/02_fastq";
 my $f_rn = "$DIR_misc3/ncgr_fastq/04_fastq_stats.tbl";

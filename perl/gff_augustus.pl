@@ -37,7 +37,10 @@ while(<$fhi>) {
   next if !$_ || /^\#/;
   my @ps = split "\t";
   next if $ps[2] !~ /^(gene)|(transcript)|(CDS)$/;
-  $ps[2] = "mRNA" if $ps[2] eq "transcript";
+  if($ps[2] eq "transcript") {
+    $ps[2] = "mRNA";
+    $ps[8] .= ";Note=$ps[5]";
+  }
   print $fho join("\t", @ps)."\n";
 }
 close $fhi;

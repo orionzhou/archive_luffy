@@ -9,7 +9,7 @@ use Run;
 use Mtb;
 use Hmm;
 my $ps = {
-    '02_crp_blastP' => {db=>"mt_35_v5_pro", program=>"blastp", e=>1e-3, pctidty=>0.5, best=>0},
+  '02_crp_blastP' => {db=>"mt_35_v5_pro", program=>"blastp", e=>1e-3, pctidty=>0.5, best=>0},
 };
 my $tag = "02_crp_blastP";
 my $p = $ps->{$tag};

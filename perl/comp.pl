@@ -45,8 +45,8 @@ GetOptions(
 pod2usage(1) if $help_flag;
 
 my $data = '/home/youngn/zhoup/Data';
-my $qry_fas = "$data/genome/$qry/11_genome.fa";
-my $tgt_fas = "$data/genome/$tgt/11_genome.fa";
+my $qry_fas = "$data/genome/$qry/11_genome.fas";
+my $tgt_fas = "$data/genome/$tgt/11_genome.fas";
 my $qry_2bit = "$data/db/blat/$qry.2bit";
 my $tgt_2bit = "$data/db/blat/$tgt.2bit";
 my $qry_size = "$data/genome/$qry/15.sizes";
@@ -63,7 +63,8 @@ my $d23 = "$dir/23_blat";
 chdir $d23 || die "cannot chdir to $d23\n";
 
 #process_blat1();
-process_blat2();
+#process_blat2();
+process_blat3();
 
 sub process_blat1 { # blat 11_genome.fa -> 11.psl
   runCmd("psl2gal.pl -i 11.psl -o 11.gal");
@@ -89,12 +90,13 @@ sub process_blat1 { # blat 11_genome.fa -> 11.psl
 
 sub pipe_chain_net {
   my ($pre, $qFas, $tFas, $q2bit, $t2bit, $qSize, $tSize) = @_;
-#  runCmd("axtChain -linearGap=medium -psl $pre.1.psl \\
-#    $t2bit $q2bit $pre.2.chain");
+  runCmd("axtChain -linearGap=medium -psl $pre.1.psl \\
+    $t2bit $q2bit $pre.2.chain");
   runCmd("chainPreNet $pre.2.chain $tSize $qSize $pre.3.chain");
   runCmd("chain2gal.pl -i $pre.3.chain -o - | \\
     galfillstat.pl -i - -q $qFas -t $tFas -o $pre.3.gal");
   runCmd("chainSwap $pre.3.chain $pre.3.swap.chain");
+  gal_expand("$pre.3.gal", $qFas, $tFas, $qSize, $tSize);
 
   runCmd("chainNet $pre.3.chain $tSize $qSize stdout /dev/null | \\
     netSyntenic stdin $pre.5.net");
@@ -104,7 +106,7 @@ sub pipe_chain_net {
 #    chainSort stdin $pre.5.swap.chain");
   runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
     galfillstat.pl -i - -q $qFas -t $tFas -o $pre.5.gal");
-  gal_callvnt("$pre.5.gal", $qFas, $tFas, $qSize, $tSize);
+  gal_expand("$pre.5.gal", $qFas, $tFas, $qSize, $tSize);
 
   runCmd("chainNet $pre.5.chain $tSize $qSize /dev/null stdout | \\
     netSyntenic stdin $pre.8.swap.net");
@@ -114,36 +116,46 @@ sub pipe_chain_net {
   runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
     galfillstat.pl -i - -q $qFas -t $tFas -o $pre.8.gal");
   runCmd("galfilter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
-  gal_callvnt("$pre.9.gal", $qFas, $tFas, $qSize, $tSize);
+  gal_expand("$pre.9.gal", $qFas, $tFas, $qSize, $tSize);
 
   runCmd("rm $pre.3.chain $pre.3.swap.chain $pre.5.net $pre.5.chain \\
     $pre.8.swap.net $pre.8.swap.chain $pre.8.chain");
 }
 sub process_blat2 { # blat 24_nov.fa -> 24.nov.psl
-#  runCmd("psl2gal.pl -i 24.nov.psl -o - | \\
-#    galcoord.pl -i - -p qry -q $qry_size -o - | \\
-#    galfix.pl -i - -o 25.gal");
-#  runCmd("gal2psl.pl -i 25.gal -o 25.psl");
-#  runCmd("cat 12.fixed.psl 25.psl > 31.1.psl");
-#  runCmd("pslSwap 31.1.psl 41.1.psl");
+  runCmd("psl2gal.pl -i 24.nov.psl -o - | \\
+    galcoord.pl -i - -p qry -q $qry_size -o - | \\
+    galfix.pl -i - -o 25.gal");
+  runCmd("gal2psl.pl -i 25.gal -o 25.psl");
+  runCmd("cat 12.fixed.psl 25.psl > 31.1.psl");
+  runCmd("pslSwap 31.1.psl 41.1.psl");
   pipe_chain_net("31", $qry_fas, $tgt_fas, $qry_2bit, $tgt_2bit, $qry_size, $tgt_size);
-#  pipe_chain_net("41", $tgt_fas, $qry_fas, $tgt_2bit, $qry_2bit, $tgt_size, $qry_size);
+  pipe_chain_net("41", $tgt_fas, $qry_fas, $tgt_2bit, $qry_2bit, $tgt_size, $qry_size);
   runCmd("rm 25.gal");
 }
 
-sub gal_callvnt {
+sub process_blat3 {
+  gal_expand("31.3.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+  gal_expand("31.5.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+  gal_expand("31.9.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+  gal_expand("41.3.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+  gal_expand("41.5.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+  gal_expand("41.9.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+}
+sub gal_expand {
   my ($fi, $qFas, $tFas, $qSize, $tSize) = @_;
   my $base = basename($fi, ".gal");
-  runCmd("idxgal.pl -i $fi -s $tSize");
+  runCmd("gal2bb.pl -i $fi -s $tSize -o $base.bb");
+  runCmd("rm $base.gax*");
   
-  -d "$base.vnt" || make_path("$base.vnt");
-  chdir "$base.vnt" || die "cannod chdir to $base.vnt";
+  -d $base || make_path($base);
+  chdir $base || die "cannod chdir to $base";
   
+  runCmd("idxgal.pl -i ../$base.gal -o gax");
   runCmd("gal2snp.pl -i ../$base.gal -o snp -q $qFas -t $tFas");
   runCmd("idxsnp.pl -i snp -s $tSize");
 
-  runCmd("gal2idm.pl -i ../$base.gal -o idm -q $qFas -t $tFas");
-  runCmd("idxidm.pl -i idm -s $tSize");
+#  runCmd("gal2idm.pl -i ../$base.gal -o idm -q $qFas -t $tFas");
+#  runCmd("idxidm.pl -i idm -s $tSize");
   chdir "..";
 }
 

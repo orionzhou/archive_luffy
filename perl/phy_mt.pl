@@ -26,25 +26,25 @@ make_path($d01, $d11, $d12, $d13, $d21, $d22);
 
 my $regions = ["chr5"];
 for my $reg (@$regions) {
-    my $f01 = "$d01/$reg.snp";
+  my $f01 = "$d01/$reg.snp";
 #    runCmd("bcftools subset -R -U -M -c 2 -o u -v snps -s $fc $fv $reg | 
 #      bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - |
 #      snpfilter.pl -n 50 -m 1 -o $f01");
 
-    my $f11 = "$d11/$reg.snp";
-    runCmd("samplelines.pl -i $f01 -o $f11 -n 10000");
-    my $f12 = "$d12/$reg.phy";
-    runCmd("snp2phy.pl -i $f11 -o $f12");
-    
-    my $f13 = "$d13/$reg.aln";
+  my $f11 = "$d11/$reg.snp";
+  runCmd("samplelines.pl -i $f01 -o $f11 -n 10000");
+  my $f12 = "$d12/$reg.phy";
+  runCmd("snp2phy.pl -i $f11 -o $f12");
+  
+  my $f13 = "$d13/$reg.aln";
 #    runCmd("seqret $f12 $f13 -osformat aln");
 #    runCmd("clustalw2 -INFILE=$f13 -BOOTSTRAP=1000 -OUTORDER=INPUT -OUTPUTTREE=phylip -BOOTLABELS=node -CLUSTERING=NJ -KIMURA");
 #    runCmd("mv $d13/$reg.phb $d21");
-    
-    my $f22 = "$d22/$reg.nwk";
-    runCmd("/home/youngn/zhoup/Source/PhyML-3.1/phyml -i $f12 -d nt");
-    runCmd("mv $f12\_phyml_tree.txt $f22");
-    runCmd("rm $f12\_phyml*");
+  
+  my $f22 = "$d22/$reg.nwk";
+  runCmd("/home/youngn/zhoup/Source/PhyML-3.1/phyml -i $f12 -d nt");
+  runCmd("mv $f12\_phyml_tree.txt $f22");
+  runCmd("rm $f12\_phyml*");
 }
 
 sub snp_convert {

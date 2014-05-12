@@ -24,40 +24,25 @@ our @HEAD_GAL = qw/id tId tBeg tEnd tSrd tSize
     $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
 
 sub read_gax {
-  my ($con, $id, $beg, $end, $opt) = @_;
+  my ($con, $id, $beg, $end) = @_;
   my $iter = $con->query($id, $beg-1, $end);
   my @ary;
   while (my $line = $con->read($iter)) {
     my @ps = split("\t", $line);
-    my ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd);
-    if($opt eq 't') {
-      ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd) = @ps;
-    } else {
-      ($qid, $qb, $qe, $qsrd, $id, $tid, $tb, $te, $tsrd) = @ps;
-    }
+    my ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd) = @ps;
     
-    if($opt eq "t" && $tb < $beg) {
+    if($tb < $beg) {
       $qb += $beg - $tb if $tsrd eq $qsrd;
       $qe -= $beg - $tb if $tsrd ne $qsrd;
       $tb = $beg;
     } 
-    if($opt eq "q" && $qb < $beg) {
-      $tb += $beg - $qb if $tsrd eq $qsrd;
-      $te -= $beg - $qb if $tsrd ne $qsrd;
-      $qb = $beg;
-    }
-    if($opt eq "t" && $te > $end) {
+    if($te > $end) {
       $qe -= $te - $end if $tsrd eq $qsrd;
       $qb += $te - $end if $tsrd ne $qsrd;
       $te = $end;
     }
-    if($opt eq "q" && $qe > $end) {
-      $te -= $qe - $end if $tsrd eq $qsrd;
-      $tb += $qe - $end if $tsrd ne $qsrd;
-      $qe = $end;
-    }
 #    my $alen = $te - $tb + 1;
-#    print join("\t", $qid, $qb, $qe, $tid, $tb, $te, $alen)."\n";
+#    print "$tid : $tb - $te, $qid : $qb - $te, $alen\n";
     push @ary, [$id, $tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd];
   }
   return \@ary;

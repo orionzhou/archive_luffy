@@ -1,0 +1,7 @@
+#PBS -l nodes=1:ppn=2,mem=12GB,walltime=48:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q lab
+
+mt.augustus.pl 
+#augustus --species=medicago --strand=both --gff3=on --UTR=off --outfile=01.gff ../11_genome.fa 

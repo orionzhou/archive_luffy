@@ -20,23 +20,24 @@ namespace po = boost::program_options;
 
 struct GalRecord {
   string id;
-  string qId;
-  uint32_t qBeg;
-  uint32_t qEnd;
-  uint32_t qLen;
-  string qSrd;
-  
   string tId;
   uint32_t tBeg;
   uint32_t tEnd;
-  uint32_t tLen;
+  uint32_t tSize;
   string tSrd;
   
-  uint32_t match;
-  uint32_t misMatch;
-  uint32_t baseN;
+  string qId;
+  uint32_t qBeg;
+  uint32_t qEnd;
+  uint32_t qSize;
+  string qSrd;
+  
+  uint32_t ali;
+  uint32_t mat;
+  uint32_t mis;
+  uint32_t qN;
+  uint32_t tN;
   float ident;
-  double e;
   float score;
 
   LocVec qLoc;
@@ -49,14 +50,6 @@ void check_gal_record(const GalRecord& br) {
     cerr << format("%s: qBeg[%d] > qEnd[%d]\n") % br.qId % br.qBeg % br.qEnd;
   if(br.tBeg > br.tEnd)
     cerr << format("%s: tBeg[%d] > tEnd[%d]\n") % br.tId % br.tBeg % br.tEnd;
-  if(br.qEnd-br.qBeg+1 != br.qLen)
-    cerr << format("%s:%d-%d len not %d\n") % br.qId % br.qBeg % br.qEnd % br.qLen;
-  if(br.tEnd-br.tBeg+1 != br.tLen)
-    cerr << format("%s:%d-%d len not %d\n") % br.tId % br.tBeg % br.tEnd % br.tLen;
-  if(br.qLen != br.tLen)
-    cerr << format("%s:qLen/%d <> %s:tLen/%d\n") % br.qId % br.qLen % br.tId % br.tLen;
-  if(br.qLen != br.match+br.misMatch+br.baseN)
-    cerr << format("qLen/%d <> %d + %d + %d\n") % br.qLen % br.match % br.misMatch % br.baseN;
   if(br.score <= 0)
     cerr << format("%s:%d-%d score:%g\n") % br.qId % br.qBeg % br.qEnd % br.score;
   if(br.qLoc.size() != br.tLoc.size())
@@ -70,27 +63,28 @@ GalRecord make_gal_record(const vector<string>& ss) {
   GalRecord br;
   br.id = ss[0];
 
-  br.qId = ss[1];
-  br.qBeg = lexical_cast<uint32_t>(ss[2]);
-  br.qEnd = lexical_cast<uint32_t>(ss[3]);
-  br.qSrd = ss[4];
-  br.qLen = lexical_cast<uint32_t>(ss[5]);
+  br.tId = ss[1];
+  br.tBeg = lexical_cast<uint32_t>(ss[2]);
+  br.tEnd = lexical_cast<uint32_t>(ss[3]);
+  br.tSrd = ss[4];
+  br.tSize = lexical_cast<uint32_t>(ss[5]);
   
-  br.tId = ss[6];
-  br.tBeg = lexical_cast<uint32_t>(ss[7]);
-  br.tEnd = lexical_cast<uint32_t>(ss[8]);
-  br.tSrd = ss[9];
-  br.tLen = lexical_cast<uint32_t>(ss[10]);
+  br.qId = ss[6];
+  br.qBeg = lexical_cast<uint32_t>(ss[7]);
+  br.qEnd = lexical_cast<uint32_t>(ss[8]);
+  br.qSrd = ss[9];
+  br.qSize = lexical_cast<uint32_t>(ss[10]);
    
-  br.match = ss[11].empty() ? 0 : lexical_cast<uint32_t>(ss[11]);
-  br.misMatch = ss[12].empty() ? 0 : lexical_cast<uint32_t>(ss[12]);
-  br.baseN = ss[13].empty() ? 0 : lexical_cast<uint32_t>(ss[13]);
-  br.ident = ss[14].empty() ? 0 : lexical_cast<float>(ss[14]);
-  br.e = ss[15].empty() ? 0 : lexical_cast<double>(ss[15]);
-  br.score = ss[16].empty() ? lexical_cast<float>(br.match) :  lexical_cast<float>(ss[16]);
+  br.ali = ss[11].empty() ? 0 : lexical_cast<uint32_t>(ss[11]);
+  br.mat = ss[12].empty() ? 0 : lexical_cast<uint32_t>(ss[12]);
+  br.mis = ss[13].empty() ? 0 : lexical_cast<uint32_t>(ss[13]);
+  br.qN  = ss[14].empty() ? 0 : lexical_cast<uint32_t>(ss[14]);
+  br.tN  = ss[15].empty() ? 0 : lexical_cast<uint32_t>(ss[15]);
+  br.ident = ss[16].empty() ? 0 : lexical_cast<float>(ss[16]);
+  br.score = ss[17].empty() ? lexical_cast<float>(br.mat) :  lexical_cast<float>(ss[17]);
 
-  br.qLoc = locStr2Vec(ss[17]);
-  br.tLoc = locStr2Vec(ss[18]);
+  br.qLoc = locStr2Vec(ss[18]);
+  br.tLoc = locStr2Vec(ss[19]);
 
   check_gal_record(br);
   return br;
@@ -118,8 +112,8 @@ void gal_tiling(const GalRecords& grs, string& qId, ofstream& fho, const unsigne
     GalRecord gr = grs[ loc.idx_ext ];
     string id(gr.id), qSrd("+");
     string tSrd = gr.qSrd == gr.tSrd ? "+" : "-";
+    uint32_t tSize(gr.tSize), qSize(gr.qSize);
     float ident(gr.ident), score(gr.score);
-    double e(gr.e);
      
     string tId = gr.tId;
     uint32_t rqb(qBeg-gr.qBeg+1), rqe(qEnd-gr.qEnd+1);
@@ -146,11 +140,11 @@ void gal_tiling(const GalRecords& grs, string& qId, ofstream& fho, const unsigne
     LocVec tLoc = loc_intersect(gr.qLoc, rtLoc);
     uint32_t tBeg = tSrd=="+" ? gr.tBeg+rtb-1 : gr.tEnd-rte+1;
     uint32_t tEnd = tSrd=="+" ? gr.tBeg+rte-1 : gr.tEnd-rtb+1;
-    uint32_t tLen = tEnd - tBeg + 1;
     fho << format("%s\t%s\t%d\t%d\t%s\t%d\t%s\t%d\t%d\t%s\t%d \
-      \t\t\t\t%g\t%g\t%g\t%s\t%s\n") 
-      % id % qId % qBeg % qEnd % qSrd % qLen % tId % tBeg % tEnd % tSrd % tLen 
-      % ident % e % score % locVec2Str(qLoc) % locVec2Str(tLoc);
+      \t\t\t\t\t\t%g\t%g\t%s\t%s\n") 
+      % id % tId % tBeg % tEnd % tSrd % tSize
+           % qId % qBeg % qEnd % qSrd % qSize 
+      % ident % score % locVec2Str(qLoc) % locVec2Str(tLoc);
   }
   cout << qId << endl;
 }
@@ -178,9 +172,9 @@ int main( int argc, char* argv[] ) {
   if(!fhi.is_open()) { cout << format("cannot read: %s\n") % fi; return false; }
   ofstream fho(fo.c_str());
   if(!fho.is_open()) { cout << format("cannot write: %s\n") % fo; return false; }
-  fho << "id\tqId\tqBeg\tqEnd\tqSrd\tqLen"
-    << "\ttId\ttBeg\ttEnd\ttSrd\ttLen"
-    << "\tmatch\tmisMatch\tbaseN\tident\te\tscore\tqLoc\ttLoc" << endl;
+  fho << "id\ttId\ttBeg\ttEnd\ttSrd\ttSize"
+    << "\tqId\tqBeg\tqEnd\tqSrd\tqSize"
+    << "\tali\tmat\tmis\tqN\ttN\tident\tscore\tqLoc\ttLoc" << endl;
   
   GalRecords grs;
   string qId_p = "";

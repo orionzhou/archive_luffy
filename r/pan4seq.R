@@ -2,17 +2,21 @@ library(plyr)
 library(rtracklayer)
 library(Cairo)
 library(GenomicRanges)
+library(VennDiagram)
 
 dir = '/home/youngn/zhoup/Data/misc3/pan4seq'
 
 # venn-diagram of novel sequences shared
-fc = file.path(dir, '21.tbl')
+fc = file.path(dir, '41.tbl')
 tc = read.table(fc, header = T, sep = "\t", as.is = T)
-colnames(tc) = c("cid", "len", 'org', "orgs", "cnts", "strs")
+colnames(tc) = c("cid", "len", 'src', 'org', "orgs", "cnts", "strs")
 
+tc$src[which(tc$src == 'unc')] = 'plant'
 ddply(tc, .(orgs), summarise, total_len = sum(len))
 x = ddply(tc[tc$len >= 50,], .(orgs), summarise, total_len = sum(len))
 ddply(tc[tc$len >= 1000,], .(orgs), summarise, total_len = sum(len))
+y = ddply(tc[tc$len >= 50,], .(orgs, src), summarise, total_len = sum(len))
+
 
 labels = c("HM340", "HM034", "HM056")
 n1 = x$total_len[x$orgs == 'HM340.APECCA']
@@ -32,16 +36,15 @@ venn.plot <- draw.triple.venn(
   n13 = n13+n123,
   n123 = n123,
   category = labels,
-  fill = c("blue", "red", "green"),
+  fill = c("blue", "red", "limegreen"),
   lty = "blank",
   cex = 2,
   cat.cex = 2,
-  cat.col = c("blue", "red", "green"),
-  alpha = 0.3,
+  cat.col = c("blue", "red", "limegreen"),
+  alpha = 0.5,
   euler.d = T,
-  scaled = T,
-  overrideTriple = 1)
-CairoPNG(filename = file.path(dir, "venn.png"), width = 900, height = 900)
+  scaled = T,)
+CairoPNG(filename = file.path(dir, "venn.png"), width = 600, height = 600)
 grid.draw(venn.plot)
 dev.off()
 
@@ -58,15 +61,43 @@ segments(0, y, x, y, col='blue')
 segments(x, y, x, 0, col='blue')
 
 
-# blastn validation
-pre="nov1"
-dirb=sprintf("%s/41_novelseq/%s.blast", dir, pre)
-tvw = read.table(file.path(dirb, '12.gal'), sep='\t', header=T, as.is=T)
-sum(tvw$match)/sum(tvw$match+tvw$misMatch)
-tv = read.table(file.path(dirb, '12.gall'), sep='\t', header=T, as.is=T)
-grv.1 = GRanges(seqnames=Rle(tv$qId), ranges=IRanges(tv$qBeg, end=tv$qEnd), seqinfo=si.q)
-grv.2 = reduce(grv.1)
-sum(width(grv.2))
+##### blast NR/NT database
+fb = file.path(dir, "31_blastnr/15.gal")
+tbl = read.table(fb, header = T, sep = "\t", as.is = T)[,c(1:12,18,21:25)]
+tb = ddply(tbl, .(qId), summarise, 
+  ali=sum(ali), n_seg=length(tId), score = sum(score),
+  n_tax=length(unique(cat)),
+  cat=cat[which(score==max(score))[1]], species=species[1])
+
+t41 = cbind(t21c, category='', stringsAsFactors=FALSE)
+t41$category[t21c$qLen>0] <- 'Medicago'
+for (i in 1:nrow(t37)) {
+  j = which(t41$qId == t37$qId[i])
+  if(t41$score[j] < t37$score[i]) {
+    t41[j, 2:7] = t37[i, 2:7]
+    t41$category[j] = t37$category[i]
+    t41$pct_cov[j] = t41$qLen[j] / t41$len_scaf[j]
+  }
+}
+table(t41$category)
+
+scaffold_stat <- function(ids, df) {
+  dfs = df[df$qId %in% ids,]
+  c('n'=length(ids), 'len_scaf'=sum(dfs$len_scaf), 'qLen_aln'=sum(dfs$qLen), 'hLen_aln'=sum(dfs$hLen))
+}
+id_all = t41$qId
+id_mt = t41$qId[t41$category == "Medicago"]
+id_fa = t41$qId[t41$category == "Fabaceae"]
+id_un = t41$qId[t41$category == ""]
+id_misc = id_all[! id_all %in% c(id_mt, id_fa, id_un)]
+sapply(list(all=id_all, medicago=id_mt, fabaceae=id_fa, unknown=id_un, misc=id_misc), scaffold_stat, t41)
+
+f41 = file.path(dir, "41_scaffold_status.tbl")
+write.table(t41, file=f41, col.names=T, row.names=F, sep="\t", quote=F)
+t41b = t41[t41$qId %in% c(id_fa, id_un),]
+write.table(t41b, file=file.path(dir, "42_unknown.tbl"), col.names=T, row.names=F, sep="\t", quote=F)
+
+
 
 # construct pseudo-chrs
 # get scaffold order

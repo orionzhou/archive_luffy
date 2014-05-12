@@ -6,16 +6,17 @@
   
 =head1 NAME
   
-  idxgal.pl - create index files for a GAL file
+  gal2bb.pl - convert Gal to BigBed file
 
 =head1 SYNOPSIS
   
-  idxgal.pl [-help] [-i input-file] [-o output-file]
+  gal2bb.pl [-help] [-i input-file] [-o output-file]
 
   Options:
     -h (--help)   brief help message
     -i (--in)     input file (Gal format)
-    -o (--out)    output prefix
+    -o (--out)    output file (BigBed format)
+    -s (--size)   chrom-size file for target genome
 
 =cut
   
@@ -33,7 +34,7 @@ use File::Path qw/make_path remove_tree/;
 use File::Basename;
 use List::Util qw/min max sum/;
 
-my ($fi, $fo) = ('', '');
+my ($fi, $fs, $fo) = ('', '', '');
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -41,13 +42,20 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
+  "size|s=s" => \$fs,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi || !$fs;
 
-runCmd("gal2gax.pl -i $fi -o $fo");
-runCmd("sort -k1,1 -k2,2n -k3,3n $fo -o $fo");
-runCmd("bgzip -c $fo > $fo.gz");
-runCmd("tabix -s 1 -b 2 -e 3 $fo.gz");
+my $base = basename($fi, ".gal");
+$fo ||= "$base.bb";
+
+runCmd("gal2psl.pl -i $base.gal -o $base.psl");
+runCmd("pslToBed $base.psl stdout | \\
+  fixbedbygal.pl -i - -g $base.gal -o $base.bed");
+runCmd("bedSort $base.bed $base.bed");
+runCmd("bedToBigBed -tab $base.bed $fs $fo");
+runCmd("rm $base.bed $base.psl");
+
 
 

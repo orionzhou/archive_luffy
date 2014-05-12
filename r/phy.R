@@ -48,17 +48,29 @@ plot_mt_tree_3 <- function(fi, fo, ann) {
   group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
   group2 = c("HM340", "HM324", "HM018", "HM022-I", "HM017-I")
   group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
+  grouph = c("HM034", "HM056", "HM340")
   
   labels = tree$tip.label
   tip.color = rep('black', length(tree$tip.label))
   tip.color[which(labels %in% group1)] = 'red'
   tip.color[which(labels %in% group2)] = 'forestgreen'
   tip.color[which(labels %in% group3)] = 'dodgerblue'
+  
+  font = rep(1, length(tree$tip.label))
+  font[which(labels %in% grouph)] = 2
+  font[which(labels == "HM101")] = 4
 
   df1 = data.frame(idx = 1 : length(labels), id = labels)
   df2 = merge(df1, ann, by = "id", all.x = T)
   df3 = df2[order(df2$idx), ]
-  labelsn = paste(df3$id, df3$country, df3$category, sep = " | ")
+  labelsn = as.character(df3$id)
+  for (i in 1:nrow(df3)) {
+    id = df3$id[i]
+    country = df3$country[i]
+    if(!is.na(country) & country != "") { 
+      labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+    }
+  }
   tree$tip.label = labelsn
 
   scores = as.numeric(tree$node.label)
@@ -67,20 +79,20 @@ plot_mt_tree_3 <- function(fi, fo, ann) {
   node.labels.bg[scores >= 0.95] = 'black'
   node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
 
-  png(filename=fo, width=2000, height=5000, units='px')
-  plot(tree, show.node.label = F, show.tip.label = T, tip.color = tip.color, 
-    font = 2, no.margin = T, cex = 1.2)
+  png(filename=fo, width=600, height=600, units='px')
+  plot(tree, show.node.label = F, show.tip.label = T, font = font, 
+    tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
   nodelabels(pch = 22, bg = node.labels.bg)
-  add.scale.bar(x = 0.05, y = 20, lcol = 'black')
+  add.scale.bar(x = 0.02, y = 20, lcol = 'black')
   dev.off()
 }
 
-f_ann = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny/mt_label.tbl")
+f_ann = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/mt_label.tbl")
 ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
 
-opt = 'all'
+opt = 'deepseq'
 reg = "chr5"
-dir = file.path(DIR_Data, "misc3/hapmap_mt40/31_phylogeny", opt)
+dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny", opt)
 fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
 fo = sprintf("%s/22_phyml/%s.png", dir, reg)
 #fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
@@ -89,7 +101,7 @@ plot_mt_tree_3(fi, fo, ann)
 
 
 opt = 'acc31'
-dir = file.path(DIR_Data, "repo/mt_35/31_phylogeny", opt)
+dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
 for(i in 1:8) {
   fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
   fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
@@ -100,7 +112,7 @@ fo = file.path(dir, "19/04.png")
 plot_mt_tree(fi, fo)
 
 opt = 'acc56'
-dir = file.path(DIR_Data, "repo/mt_35/31_phylogeny", opt)
+dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
 for(i in 1:8) {
   fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
   fo = sprintf("%s/22_phyml/chr%d.png", dir, i)

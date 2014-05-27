@@ -1,17 +1,55 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
+#
+# POD documentation
+#---------------------------------------------------------------------------
+=pod BEGIN
+  
+=head1 NAME
+  
+  phy_mt.pl - extract SNPs and construct phylogeny
+
+=head1 SYNOPSIS
+  
+  phy_mt.pl [-help] [-opt option]
+
+  Options:
+    -h (--help)   brief help message
+    -t (--opt)    option
+
+=cut
+  
+#### END of POD documentation.
+#---------------------------------------------------------------------------
+
 use strict;
+use Getopt::Long;
+use Pod::Usage;
 use FindBin;
 use lib "$FindBin::Bin";
-use File::Path qw/make_path remove_tree/;
 use Common;
 use Data::Dumper;
+use File::Path qw/make_path remove_tree/;
+use File::Basename;
+use List::Util qw/min max sum/;
 
-my $opt = "all";
-my $dir = "/home/youngn/zhoup/Data/misc3/hapmap_mt40/31_phylogeny/$opt";
+my ($opt) = ('ril2');
+my $help_flag;
+
+#--------------------------------- MAIN -----------------------------------#
+GetOptions(
+  "help|h"  => \$help_flag,
+  "opt|t=s" => \$opt,
+) or pod2usage(2);
+pod2usage(1) if $help_flag;
+pod2usage(2) if !$opt;
+
+my $dir = "/home/youngn/zhoup/Data/misc3/hapmap/31_phylogeny/$opt";
 -d $dir || make_path($dir);
-chdir $dir;
+chdir $dir || die "cannot chdir to $dir\n";
 my $fv = "../../30_vnt/acc319.vcf.gz";
+-s $fv || die "$fv not there\n";
 my $fc = "../../30_vnt/$opt.txt";
+-s $fc || die "$fc not there\n";
 
 my $d01 = "01_snp";
 my $d11 = "11_snp_sample";
@@ -27,9 +65,9 @@ make_path($d01, $d11, $d12, $d13, $d21, $d22);
 my $regions = ["chr5"];
 for my $reg (@$regions) {
   my $f01 = "$d01/$reg.snp";
-#    runCmd("bcftools subset -R -U -M -c 2 -o u -v snps -s $fc $fv $reg | 
-#      bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - |
-#      snpfilter.pl -n 50 -m 1 -o $f01");
+  runCmd("bcftools view -U -m2 -M2 -c2 -O u -v snps -s $fc $fv $reg | 
+    bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - |
+    snpfilter.pl -n 8 -m 1 -o $f01");
 
   my $f11 = "$d11/$reg.snp";
   runCmd("samplelines.pl -i $f01 -o $f11 -n 10000");
@@ -63,11 +101,11 @@ sub snp_convert {
     }
 }
 sub run_phyml {
-    my ($dirI, $dirO, $chrs) = @_;
-    system("mkdir -p $dirO") unless -d $dirO;
-    for my $chr (@$chrs) {
+  my ($dirI, $dirO, $chrs) = @_;
+  system("mkdir -p $dirO") unless -d $dirO;
+  for my $chr (@$chrs) {
 #    next unless $chr ge "chr7";
-    }
+  }
 }
 
 

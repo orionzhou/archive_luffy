@@ -1,11 +1,6 @@
 #!/bin/bash
 
-cd $data/genome/pan3
-
-seqlen.pl -i 11_genome.fa -o 15.sizes
-seqgap.pl -i 11_genome.fa -o 16_gap.tbl -m 100
-awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR>1) {$2=$2-1; print $1, $2, $3}}' 16_gap.tbl > 16_gap.bed
-bedToBigBed 16_gap.bed 15.sizes 16_gap.bb
+cd $data/genome/pan4
 
 ln -sf ../Mtruncatula_4.0/40_gene.gtb 40_gene.gtb
 ln -sf ../Mtruncatula_4.0/41_te.gtb 41_te.gtb

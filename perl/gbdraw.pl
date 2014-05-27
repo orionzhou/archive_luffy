@@ -13,63 +13,63 @@ use POSIX qw/ceil floor/;
 
 my @pKs = qw/key glyph height bgcolor fgcolor connector desc/;
 my $pVs = { 
-    mt_30 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
-    mt_35 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
-    mt_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
-    mt_35_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
-    mt_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
-    mt_35_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
-    mt_35_defl => [qw/DEFL_CDS transcript 6 orchid slateblue dashed 1/],
-    mt_35_crp_hit =>[qw/CRP_hit_support transcript2 6 tbs springgreen solid 0/],
-    mt_35_crp_jcvi => [qw/CRPs_built_by_JCVI processed_transcript 6 gold slateblue solid 1/],
-    mt_35_crp_model => [qw/CRP_true_models processed_transcript 6 springgreen slateblue solid 1/],
+  mt_30 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
+  mt_35 => [qw/IMGAG_Gene processed_transcript 6 skyblue slateblue solid 1/],
+  mt_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
+  mt_35_gi => [qw/MtGI-10.0 transcript 6 pink darkgreen dashed 1/],
+  mt_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
+  mt_35_gea => [qw/Mt51k_Array transcript 6 orangered navy dashed 1/],
+  mt_35_defl => [qw/DEFL_CDS transcript 6 orchid slateblue dashed 1/],
+  mt_35_crp_hit =>[qw/CRP_hit_support transcript2 6 tbs springgreen solid 0/],
+  mt_35_crp_jcvi => [qw/CRPs_built_by_JCVI processed_transcript 6 gold slateblue solid 1/],
+  mt_35_crp_model => [qw/CRP_true_models processed_transcript 6 springgreen slateblue solid 1/],
 };
 
 
 sub plotFeaturesByLoc_from_db {
-    my ($loc, $ps, $fo, $hilite, $xtracks) = rearrange([qw/loc ps out hilite xtracks/], @_);
-    my ($chr, $s, $e) = map {$loc->$_} qw/seq_id start end/;
-    my $panel = Bio::Graphics::Panel->new(
-        -start=>$s, -end=>$e, -width=>800, 
-        -pad_left=>10, -pad_right=>40, -key_style=>'between', -grid=>1);
-    my $full_length = Bio::SeqFeature::Generic->new(
-        -display_name=>$chr, -start=>$s, -end=>$e);
-    $panel->add_track($full_length, -glyph=>'arrow', -bump=>0, -double=>1, -tick=>1, -label=>1);
-    for my $p (@$ps) {
-        my ($db, $opt, $ld, $conf, $fes) = map {$p->{$_}} qw/db opt ld conf fes/;
-        $ld ||= Localdb->new(-db=>$db, -opt=>$opt);
-        $fes ||= [ $ld->getFeatures(-loc=>$loc, -types=>$ld->{type}) ];
+  my ($loc, $ps, $fo, $hilite, $xtracks) = rearrange([qw/loc ps out hilite xtracks/], @_);
+  my ($chr, $s, $e) = map {$loc->$_} qw/seq_id start end/;
+  my $panel = Bio::Graphics::Panel->new(
+    -start=>$s, -end=>$e, -width=>800, 
+    -pad_left=>10, -pad_right=>40, -key_style=>'between', -grid=>1);
+  my $full_length = Bio::SeqFeature::Generic->new(
+    -display_name=>$chr, -start=>$s, -end=>$e);
+  $panel->add_track($full_length, -glyph=>'arrow', -bump=>0, -double=>1, -tick=>1, -label=>1);
+  for my $p (@$ps) {
+    my ($db, $opt, $ld, $conf, $fes) = map {$p->{$_}} qw/db opt ld conf fes/;
+    $ld ||= Localdb->new(-db=>$db, -opt=>$opt);
+    $fes ||= [ $ld->getFeatures(-loc=>$loc, -types=>$ld->{type}) ];
 #    $fes = [grep {$_->source_tag eq "picked"} @$fes] if $db eq "mt_35_crp_hit";
-        $conf ||= getTrackConf($db, $p->{opt});
-        my ($glyph, $key, $height, $conn, $bg, $fg, $label, $desc) = 
-            map {$conf->{$_}} qw/glyph key height connector bgcolor fgcolor label desc/;
-        $panel->add_track(
-            $fes, -glyph=>$glyph, -key=>$key, -height=>$height, -connector=>$conn,
-            -bgcolor=>$bg, -fgcolor=>$fg, -label=>$label, -description=>$desc, 
-            -hilite=>sub {return shift->id eq $hilite ? 'yellow' : undef}
-        );
-    }
-    for my $xtrack (@$xtracks) {
-        $panel->add_track(
-            $xtrack->{fe},
-            -glyph      => $xtrack->{glyph},
-            -graph_type => $xtrack->{graph_type},
-            -point_symbol => $xtrack->{point_symbol},
-            -point_radius => $xtrack->{point_radius},
-            -scale        => $xtrack->{scale},
-            -height    => $xtrack->{height},
-            -key       => $xtrack->{key},
-            -connector => $xtrack->{connector},
-            -bgcolor   => $xtrack->{bgcolor},
-            -fgcolor   => $xtrack->{fgcolor},
-            -label     => $xtrack->{label},
-            -description => $xtrack->{description},
-            -min_score => $xtrack->{min_score},
-            -max_score => $xtrack->{max_score}
-        );
-    }
-    open(FH, ">$fo") or die "cannot open $fo for write\n";
-    print FH $panel->png;
+    $conf ||= getTrackConf($db, $p->{opt});
+    my ($glyph, $key, $height, $conn, $bg, $fg, $label, $desc) = 
+      map {$conf->{$_}} qw/glyph key height connector bgcolor fgcolor label desc/;
+    $panel->add_track(
+      $fes, -glyph=>$glyph, -key=>$key, -height=>$height, -connector=>$conn,
+      -bgcolor=>$bg, -fgcolor=>$fg, -label=>$label, -description=>$desc, 
+      -hilite=>sub {return shift->id eq $hilite ? 'yellow' : undef}
+    );
+  }
+  for my $xtrack (@$xtracks) {
+    $panel->add_track(
+      $xtrack->{fe},
+      -glyph      => $xtrack->{glyph},
+      -graph_type => $xtrack->{graph_type},
+      -point_symbol => $xtrack->{point_symbol},
+      -point_radius => $xtrack->{point_radius},
+      -scale        => $xtrack->{scale},
+      -height    => $xtrack->{height},
+      -key       => $xtrack->{key},
+      -connector => $xtrack->{connector},
+      -bgcolor   => $xtrack->{bgcolor},
+      -fgcolor   => $xtrack->{fgcolor},
+      -label     => $xtrack->{label},
+      -description => $xtrack->{description},
+      -min_score => $xtrack->{min_score},
+      -max_score => $xtrack->{max_score}
+    );
+  }
+  open(FH, ">$fo") or die "cannot open $fo for write\n";
+  print FH $panel->png;
 }
 sub drawFe {
     my ($fe, $fo, $ps, $padding, $xtracks) =

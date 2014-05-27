@@ -134,28 +134,29 @@ sub process_blat2 { # blat 24_nov.fa -> 24.nov.psl
 }
 
 sub process_blat3 {
-  gal_expand("31.3.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
-  gal_expand("31.5.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
-  gal_expand("31.9.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
-  gal_expand("41.3.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
-  gal_expand("41.5.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+#  gal_expand("31.3.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+#  gal_expand("31.5.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+#  gal_expand("31.9.gal", $qry_fas, $tgt_fas, $qry_size, $tgt_size);
+#  gal_expand("41.3.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
+#  gal_expand("41.5.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
   gal_expand("41.9.gal", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
 }
 sub gal_expand {
   my ($fi, $qFas, $tFas, $qSize, $tSize) = @_;
   my $base = basename($fi, ".gal");
-  runCmd("gal2bb.pl -i $fi -s $tSize -o $base.bb");
-  runCmd("rm $base.gax*");
+#  runCmd("gal2bb.pl -i $fi -s $tSize -o $base.bb");
+#  runCmd("rm $base.gax*");
   
   -d $base || make_path($base);
   chdir $base || die "cannod chdir to $base";
   
-  runCmd("idxgal.pl -i ../$base.gal -o gax");
-  runCmd("gal2snp.pl -i ../$base.gal -o snp -q $qFas -t $tFas");
-  runCmd("idxsnp.pl -i snp -s $tSize");
+#  runCmd("idxgal.pl -i ../$base.gal -o gax");
+#  runCmd("gal2snp.pl -i ../$base.gal -o snp -q $qFas -t $tFas");
+#  runCmd("idxsnp.pl -i snp -s $tSize");
 
-#  runCmd("gal2idm.pl -i ../$base.gal -o idm -q $qFas -t $tFas");
-#  runCmd("idxidm.pl -i idm -s $tSize");
+  runCmd("gal2idm.pl -i ../$base.gal -d idm -s sv -q $qFas -t $tFas");
+  runCmd("idxidm.pl -i idm -s $tSize");
+  runCmd("idxidm.pl -i sv -s $tSize");
   chdir "..";
 }
 

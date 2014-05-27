@@ -1,30 +1,54 @@
 #!/usr/bin/perl
 use strict;
-use Init;
+use Getopt::Long;
+use Pod::Usage;
+use FindBin;
+use lib "$FindBin::Bin";
+use Bio::DB::Fasta;
 use Common;
-use Gtb;
-use Align;
+use Data::Dumper;
+use File::Path qw/make_path remove_tree/;
+use File::Basename;
+use List::Util qw/min max sum/;
 
-my $f_ref = "$DIR_Genome/mt_35/41_genome.fa";
-my $f_gtb = "$DIR_Genome/mt_35/10_model_Mt3.5v5/62_phase_fixed.gtb";
+my $fam = "PF00931";
+my @orgs = qw/HM034 HM056 HM340.APECCA/;
+my $dir = "/home/youngn/zhoup/Data/misc2/genefam/$fam";
+-d $dir || make_path($dir);
+chdir $dir || die "cannot chdir to $dir\n";
 
-my $dir = "$DIR_Misc2/nbs/mt_35";
-my $f00 = "$dir/00_id_gene.tbl";
-my $f01 = "$dir/01.gtb";
-#extract_gtb_by_ids($f00, $f_gtb, $f01);
-my $f06 = "$dir/06.gff";
-#gtb2Gff($f01, $f06);
-my $f07 = "$dir/07.bed";
-#gtb2Bed($f01, $f07);
-
-my $f11 = "$dir/11_seq.fa";
-#gtb2Seq(-in=>$f01, -out=>$f11, -seq=>$f_ref, -opt=>2);
-
-my $f16 = "$dir/16.aln";
-#run_clustalo(-in=>$f11, -out=>$f16);
-
+extract_seq_by_pfam("$dir/01.fas", \@orgs, $fam);
+runCmd("clustalo -i 01.fas -o 05.aln --outfmt=clu --force --hmm-in=../$fam.hmm --full");
+runCmd("aln2phy.pl -i 05.aln -o 05.phy -l 30");
+runCmd("/home/youngn/zhoup/Source/PhyML-3.1/phyml -i 05.phy -d aa");
+runCmd("mv 05.phy_phyml_tree.txt 06.nwk");
+runCmd("rm 05.phy_phyml*");
+ 
 my $f17 = "$dir/17.phb";
 #convertTree(-in=>$f021, -out=>$f022, -informat=>'newick', -outformat=>'newick');
+
+sub extract_seq_by_pfam {
+  my ($fo, $orgs, $fam) = @_;
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+ 
+  my $di = '/home/youngn/zhoup/Data/genome';
+  for my $org (@$orgs) {
+    my $fd = "$di/$org/21.fas"; 
+    my $fp = "$di/$org/23.pfam.tsv"; 
+    my $tp = readTable(-in => $fp, -header => 0);
+    my $db = Bio::DB::Fasta->new($fd);
+  
+    for my $i (0..$tp->nofRow-1) {
+      my ($id, $md5, $len, $prog, $pid, $desc, $beg, $end, $e) = $tp->row($i);
+      if($pid eq $fam) {
+        my $nid = "$org-$id-$beg-$end";
+        my $seq = $db->seq($id, $beg, $end);
+        print $fho ">$nid\n$seq\n";
+      }
+    }
+  }
+  close $fho;
+}
 
 =cut
 #run_hmmscan(-in=>$f03, -out=>$f04);

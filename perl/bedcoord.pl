@@ -59,8 +59,7 @@ while(<$fhi>) {
   my ($sid, $rb, $re) = split "\t";
   if($sid =~ /^([\w\-\.]+)\-([0-9e\+]+)\-([0-9e\+]+)$/) {
     my ($id, $b, $e) = ($1, $2, $3);
-    my ($beg, $end) = ($b + $rb, $b + $re - 1);
-    print $fho join("\t", $id, $beg - 1, $end)."\n";
+    print $fho join("\t", $id, $b-1 + $rb, $b-1 + $re)."\n";
   } else {
     die "unknown id: $sid\n";
   }

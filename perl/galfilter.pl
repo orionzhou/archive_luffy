@@ -18,6 +18,7 @@
     -o (--out)    output file
     -m (--match)  minimum matches (default: 1) 
     -p (--ident)  minimum percent identity (default: 0.5) 
+    -s (--score)  minimum score (default: 0) 
 
 =cut
   
@@ -34,7 +35,7 @@ use Location;
 use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my ($min_match, $min_ident) = (1, 0.5);
+my ($min_match, $min_ident, $min_score) = (1, 0.5, 0);
 my ($fhi, $fho);
 my $help_flag;
 
@@ -45,17 +46,18 @@ GetOptions(
   "out|o=s"  => \$fo,
   "match|m=i"  => \$min_match,
   "ident|p=f"  => \$min_ident,
+  "score|s=i"  => \$min_score,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+#pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
@@ -74,6 +76,7 @@ while( <$fhi> ) {
     $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
   $mat >= $min_match || next;
   $ident >= $min_ident || next;
+  next if $score ne "" && $score < $min_score;
   print $fho join("\t", @$ps)."\n";
   $cnt ++;
 }

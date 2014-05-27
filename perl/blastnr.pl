@@ -16,7 +16,6 @@
     -h (-help)   brief help message
     -i (--in)    input sequence file
     -o (--out)   output file (prefix)
-    -d (--db)    search database (defaut: $data/db/blast/current/nt)
 
 =cut
   
@@ -42,25 +41,18 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
-  "db|d=s"   => \$db,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
-my $dir = dirname($fo);
+-d $fo || make_path($fo);
+#chdir $fo || die "cannot chdir to $fo\n";
 
--d $dir || make_path($dir);
-chdir $dir || die "cannot chdir to $dir\n";
-
-#runCmd("blastn -db $db -outfmt \\
-#  '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' \\
-#  -evalue 0.1 -word_size 15 -gapopen 5 -gapextend 2 -reward 2 -penalty -3 \\
-#  -max_target_seqs 50 -num_threads 16 -query $fi -out $fo.1.tbl");
-#runCmd("blast2gal.pl -i $fo.1.tbl -o $fo.2.gal");
-#runCmd("galtiling.pl -i $fo.2.gal -o -m 10 -o $fo.3.tiled.gal");
-runCmd("blastanno.pl -i $fo.3.tiled.gal -o $fo.4.anno.gal");
-sum_cat("$fo.4.anno.gal", "$fo.tbl");
-runCmd("rm $fo.2.gal $fo.3.tiled.gal $fo.4.anno.gal");
+-s "$fo/01.tbl" || die "blastnr output $fo/01.tbl not found\n";
+runCmd("blast2gal.pl -i $fo/01.tbl | galfilter.pl -s 80 -o $fo/02.gal");
+runCmd("galtiling.pl -i $fo/02.gal -o -m 10 -o $fo/03.tiled.gal");
+runCmd("blastanno.pl -i $fo/03.tiled.gal -o $fo/04.anno.gal");
+sum_cat("$fo/04.anno.gal", "$fo.tbl");
 
 sub sum_cat {
   my ($fi, $fo) = @_;

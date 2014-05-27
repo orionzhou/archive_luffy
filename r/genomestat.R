@@ -1,3 +1,24 @@
+require(plyr)
+
+org = "HM101"
+dirg = file.path(DIR_Data, 'genome', org)
+
+
+fg = file.path(dirg, '51.gtb')
+tg = read.table(fg, header = T, as.is = T, sep = "\t", quote = "")[,c(1,3:6)]
+tg = cbind(tg, len = tg$end - tg$beg + 1)
+nrow(tg)
+median(tg$end - tg$beg + 1)
+
+fb = file.path(dirg, '51.bed/cds.bed')
+tb = read.table(fb, header = F, as.is = T, sep = "\t", quote = "")
+colnames(tb) = c("chr", 'beg', 'end', 'id', 'score', 'srd')
+tb = cbind(tb, len = tb$end - tb$beg)
+tbm = ddply(tb, .(id), summarise, len = sum(len))
+median(tbm$len)/3
+
+
+
 a1 = readAssembly("mt_35")
 a = droplevels(subset(a1, type!='centromere'))
 c = droplevels(subset(a1, type=='centromere'))

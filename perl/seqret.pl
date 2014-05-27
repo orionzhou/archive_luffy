@@ -92,6 +92,7 @@ if($str) {
     my $id = join("-", $seqid, $beg, $end);
     my $seq = $db->seq($seqid, $beg, $end);
     $seqHO->write_seq( Bio::Seq->new(-id=>$id, -seq=>$seq) );
+    $cnt ++;
   }
 }
 $seqHO->close();

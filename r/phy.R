@@ -1,4 +1,8 @@
 require(ape)
+
+f_ann = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/mt_label.tbl")
+ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
+
 plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   tree = read.tree(fi)
 
@@ -42,7 +46,36 @@ plot_mt_tree_2 <- function(fi, fo, ann, opt) {
   add.scale.bar()
   dev.off()
 }
-plot_mt_tree_3 <- function(fi, fo, ann) {
+
+### plot acc31 tree
+opt = 'acc31'
+dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
+for(i in 1:8) {
+  fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
+  fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
+  plot_mt_tree(fi, fo, ann)
+}
+fi = file.path(dir, "19/04.nwk")
+fo = file.path(dir, "19/04.png")
+plot_mt_tree(fi, fo)
+
+### plot acc56 tree
+opt = 'acc56'
+dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
+for(i in 1:8) {
+  fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
+  fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
+  plot_mt_tree(fi, fo, ann)
+}
+
+### plot deepseq tree
+opt = 'deepseq'
+reg = "chr5"
+dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny", opt)
+fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
+fo = sprintf("%s/22_phyml/%s.png", dir, reg)
+#fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
+#fo = sprintf("%s/21_phynj/%s.png", dir, reg)
   tree = read.tree(fi)
 
   group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
@@ -85,42 +118,103 @@ plot_mt_tree_3 <- function(fi, fo, ann) {
   nodelabels(pch = 22, bg = node.labels.bg)
   add.scale.bar(x = 0.02, y = 20, lcol = 'black')
   dev.off()
-}
 
-f_ann = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/mt_label.tbl")
-ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
-
-opt = 'deepseq'
+### plot RIL1 tree
+opt = 'ril1'
 reg = "chr5"
 dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny", opt)
 fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
 fo = sprintf("%s/22_phyml/%s.png", dir, reg)
-#fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
-#fo = sprintf("%s/21_phynj/%s.png", dir, reg)
-plot_mt_tree_3(fi, fo, ann)
+
+  tree = read.tree(fi)
+
+  group1 = c("HM004", "HM005", "HM006", "HM017-I", "HM018", "HM019", "HM026", "HM027", "HM028")
+  group2 = c("HM101")
+  
+  labels = tree$tip.label
+  tip.color = rep('black', length(tree$tip.label))
+  tip.color[which(labels %in% group1)] = 'dodgerblue'
+  tip.color[which(labels %in% group2)] = 'red'
+#  tip.color[which(labels %in% group3)] = 'forestgreen'
+  
+  font = rep(2, length(tree$tip.label))
+#  font[which(labels %in% grouph)] = 2
+
+  df1 = data.frame(idx = 1 : length(labels), id = labels)
+  df2 = merge(df1, ann, by = "id", all.x = T)
+  df3 = df2[order(df2$idx), ]
+  labelsn = as.character(df3$id)
+  for (i in 1:nrow(df3)) {
+    id = df3$id[i]
+    country = df3$country[i]
+    if(!is.na(country) & country != "") { 
+      labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+    }
+  }
+  tree$tip.label = labelsn
+
+  scores = as.numeric(tree$node.label)
+  if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+  node.labels.bg = rep('white', tree$Nnode)
+  node.labels.bg[scores >= 0.95] = 'black'
+  node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+  png(filename=fo, width=600, height=600, units='px')
+  plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.6,
+    tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.3)
+  nodelabels(pch = 22, bg = node.labels.bg)
+  add.scale.bar(x = 0.02, y = 13, lcol = 'black')
+  dev.off()
+
+### plot RIL2 tree
+opt = 'ril2'
+reg = "chr5"
+dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny", opt)
+fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
+fo = sprintf("%s/22_phyml/%s.png", dir, reg)
+
+  tree = read.tree(fi)
+
+  group1 = c("HM004", "HM005", "HM006", "HM017-I", "HM018", "HM019", "HM026", "HM027", "HM028")
+  group2 = c("HM101")
+  
+  labels = tree$tip.label
+  tip.color = rep('black', length(tree$tip.label))
+  tip.color[which(labels %in% group1)] = 'dodgerblue'
+  tip.color[which(labels %in% group2)] = 'red'
+#  tip.color[which(labels %in% group3)] = 'forestgreen'
+  
+  font = rep(2, length(tree$tip.label))
+#  font[which(labels %in% grouph)] = 2
+
+  df1 = data.frame(idx = 1 : length(labels), id = labels)
+  df2 = merge(df1, ann, by = "id", all.x = T)
+  df3 = df2[order(df2$idx), ]
+  labelsn = as.character(df3$id)
+  for (i in 1:nrow(df3)) {
+    id = df3$id[i]
+    country = df3$country[i]
+    if(!is.na(country) & country != "") { 
+      labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+    }
+  }
+  tree$tip.label = labelsn
+
+  scores = as.numeric(tree$node.label)
+  if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+  node.labels.bg = rep('white', tree$Nnode)
+  node.labels.bg[scores >= 0.95] = 'black'
+  node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+  png(filename = fo, width = 600, height = 800, units = 'px')
+  plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.55,
+    tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+  nodelabels(pch = 22, bg = node.labels.bg)
+  add.scale.bar(x = 0.02, y = 22, lcol = 'black')
+  dev.off()
 
 
-opt = 'acc31'
-dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
-for(i in 1:8) {
-  fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
-  fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
-  plot_mt_tree(fi, fo, ann)
-}
-fi = file.path(dir, "19/04.nwk")
-fo = file.path(dir, "19/04.png")
-plot_mt_tree(fi, fo)
-
-opt = 'acc56'
-dir = file.path(DIR_Data, "misc3/hapmap_mt35/31_phylogeny", opt)
-for(i in 1:8) {
-  fi = sprintf("%s/22_phyml/chr%d.nwk", dir, i)
-  fo = sprintf("%s/22_phyml/chr%d.png", dir, i)
-  plot_mt_tree(fi, fo, ann)
-}
-
-
-#compare sv phylogeny with chr5 phylogeny
+### compare sv phylogeny with chr5 phylogeny
   fi_chr5 = file.path(DIR_Data, "repo/mt_35/31_phylogeny", "acc26", "21_phynj/chr5.phb")
   fo_chr5 = file.path(DIR_Data, "repo/mt_35/31_phylogeny", "acc26", "21_phynj/chr5.png")
   tree = read.tree(fi_chr5)

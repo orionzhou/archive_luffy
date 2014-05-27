@@ -17,6 +17,7 @@
     -i (--in )    input sequence file (fasta)
     -o (--out)    output prefix
     -r (--red)    percent redundancy threshold (0.001, i.e., 0.1%)
+    -l (--len)    minimum length of a cluster to keep (50)
 
 =cut
   
@@ -43,6 +44,7 @@ use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwi
 
 my ($fi, $fo) = ('') x 2;
 my $red = 0.001;
+my $minlen = 50;
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -51,20 +53,26 @@ GetOptions(
   "in|i=s"  => \$fi,
   "out|o=s" => \$fo,
   "red|r=f" => \$red,
+  "len|l=i" => \$minlen,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
+pod2usage(2) if !$fi || !$fo;
 
 my $mincols = 50;
 my ($redcy, $rep) = (1, 0);
-runCmd("usearch -sortbylength $fi -output $fo.r0.fas");
-runCmd("seqlen.pl -i $fo.r0.fas | awk 'BEGIN{OFS=\"\\t\"; C=1} {print \$1, 1, \$2, \"+\", C; C+=1}' > $fo.r0.clu");
+
+my $dir = $fo;
+-d $dir || make_path($dir);
+
+runCmd("usearch -sortbylength $fi -output $dir/r0.fas");
+runCmd("seqlen.pl -i $dir/r0.fas | awk 'BEGIN{OFS=\"\\t\"; C=1} {print \$1, 1, \$2, \"+\", C; C+=1}' > $dir/r0.clu");
 
 while($redcy > $red) {
   printf "=============== Begin Rep %d ===============\n", ++$rep;
 #  next if $rep <= 1;
-  my $prev_fas = $fo.".r".($rep-1).".fas";
-  my $prev_clu = $fo.".r".($rep-1).".clu";
-  my $pre = "$fo.r$rep";
+  my $prev_fas = sprintf("%s/r%d.fas", $dir, $rep - 1);
+  my $prev_clu = sprintf("%s/r%d.clu", $dir, $rep - 1);
+  my $pre = sprintf("%s/r%d", $dir, $rep);
   runCmd("usearch -cluster_smallmem $prev_fas \\
     -id 0.9 -mincols $mincols -strand both -uc $pre.1.uc");
   uc_parse("$pre.1.uc", "$pre.2.tbl", $mincols, $rep);
@@ -76,14 +84,14 @@ while($redcy > $red) {
   update_cluster($prev_clu, "$pre.clu", "$pre.3.clu");
   cluster_stat("$pre.clu");
   clu2aln("$pre.clu", $fi, "$pre.5.aln");
-  clu2bed("$pre.clu", "$pre.bed");
+  clu2bed("$pre.clu", "$pre.bed", $minlen);
   runCmd("seqret.pl -d $fi -b $pre.bed -o $pre.fas");
   runCmd("rm $pre.2.tbl $pre.3.clu");
   printf "##### redundancy: %.05f\n", $redcy;
 }
-runCmd("ln -sf $fo.r$rep.fas $fo.fas");
-runCmd("ln -sf $fo.r$rep.bed $fo.bed");
-runCmd("ln -sf $fo.r$rep.clu $fo.clu");
+runCmd("ln -sf $dir/r$rep.fas $fo.fas");
+runCmd("ln -sf $dir/r$rep.bed $fo.bed");
+runCmd("ln -sf $dir/r$rep.clu $fo.clu");
 
 sub read_cluster {
   my ($fi) = @_;
@@ -410,7 +418,7 @@ sub ucstat {
   return $redcy;
 }
 sub clu2bed {
-  my ($fi, $fo) = @_;
+  my ($fi, $fo, $minlen) = @_;
   my ($hl, $hc) = read_cluster($fi);
   open(my $fho, ">$fo") or die "cannot write $fo\n";
   for my $cid (sort(keys(%$hc))) {
@@ -419,7 +427,7 @@ sub clu2bed {
     my ($beg, $end, $srd, $cid2) = @{$hl->{$sid}->[$idx]};
     $cid == $cid2 || die "error clu: $cid : $sid:$beg-$end\n";
     my $len = $end - $beg + 1;
-    next if $len < 50;
+    next if $len < $minlen;
     print $fho join("\t", $sid, $beg - 1, $end)."\n";
   }
   close $fho;

@@ -70,6 +70,11 @@ if [[ -d $soft ]]; then
       export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
     fi
   done
+  for subpath in RepeatMasker interproscan-5.4-47.0
+  do
+    export PATH=$soft/$subpath:$PATH
+  done
+  
 fi
 
 # generic locations

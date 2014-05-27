@@ -10,14 +10,16 @@
 
 =head1 SYNOPSIS
   
-  gal2idm.pl [-help] [-in input-Gal] [-out output-file]
+  gal2idm.pl [-help] [-in input-Gal] [-idm InDel-output] [-sv SV-output]
 
   Options:
     -h (--help)   brief help message
     -i (--in)     input Gal
-    -o (--out)    output file 
+    -d (--idm)    InDel output file 
+    -s (--sv )    SV output file 
     -q (--qry)    query-seq file 
     -t (--tgt)    target-seq file
+    -l (--len)    length threshold for Indel/SV (default: 50)
 
 =cut
   
@@ -36,35 +38,34 @@ use Seq;
 use File::Path qw/make_path remove_tree/;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 
-my ($fi, $fo) = ('') x 2;
+my ($fi, $fd, $fs) = ('') x 3;
 my ($fq, $ft) = ('') x 2; 
-my ($fn) = (''); 
-my ($fhi, $fho);
+my ($len) = (50); 
+my ($fhi, $fhd, $fhs);
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
 GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
-  "out|o=s"  => \$fo,
+  "idm|d=s"  => \$fd,
+  "sv|s=s"   => \$fs,
   "qry|q=s"  => \$fq,
   "tgt|t=s"  => \$ft,
+  "len|l=i"  => \$len,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi || !$fd || !$fs;
 pod2usage(2) if !$fq || !$ft;
 
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't read $fi\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
-} else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
-}
+open ($fhd, ">$fd") || die "Can't write file $fd\n";
+open ($fhs, ">$fs") || die "Can't write file $fs\n";
 
 while( <$fhi> ) {
   chomp;
@@ -93,15 +94,21 @@ while( <$fhi> ) {
     my ($tb, $te) = $tSrd eq "-" ? ($tEnd - $rte + 1, $tEnd - $rtb + 1) : 
       ($tBeg + $rtb - 1, $tBeg + $rte - 1);
 
-    my $tBase = $tins > 0 ? seqRet([[$tb+1, $te-1]], $tId, $tSrd, $ft) : '';
-    my $qBase = $qins > 0 ? seqRet([[$qb+1, $qe-1]], $qId, $qSrd, $fq) : '';
-
-    print $fho join("\t", $tId, $tb, $te, $tBase, $qBase, 
-      $id, $qId, $qb, $qe)."\n";
+    if($qins >= $len || $tins >= $len) {
+      print $fhs join("\t", $tId, $tb, $te, $id, $qId, $qb, $qe)."\n";
+    } else {
+      my $tBase = $tins > 0 ? 
+        seqRet([[$tb+1, $te-1]], $tId, $tSrd, $ft) : '';
+      my $qBase = $qins > 0 ? 
+        seqRet([[$qb+1, $qe-1]], $qId, $qSrd, $fq) : '';
+      print $fhd join("\t", $tId, $tb, $te, $tBase, $qBase, 
+        $id, $qId, $qb, $qe)."\n";
+    }
   }
 }
 close $fhi;
-close $fho;
+close $fhd;
+close $fhs;
 
 
 __END__

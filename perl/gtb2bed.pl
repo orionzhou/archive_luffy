@@ -15,8 +15,7 @@
   Options:
     -h (--help)   brief help message
     -i (--in)     input file (Gtb format)
-    -o (--out)    output prefix ( <pre>.cds.bed, <pre>.intron.bed, 
-                                  <pre>.utr5.bed, <pre>.utr3.bed )
+    -o (--out)    output prefix
 
 =cut
   
@@ -44,10 +43,7 @@ GetOptions(
   "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi;
-
-my $base = basename($fi, ".gtb");
-$fo ||= $base;
+pod2usage(2) if !$fi || !$fo;
 
 my $fhi;
 if ($fi eq "stdin" || $fi eq "-") {
@@ -56,10 +52,13 @@ if ($fi eq "stdin" || $fi eq "-") {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
+my $dir = $fo;
+-d $dir || make_path($dir);
+
 my $hh;
-for my $suf (qw/cds intron utr5 utr3/) {
-  open (my $fho, ">$fo\_$suf.bed") || die "cannot write $fo\_$suf.bed\n";
-  $hh->{$suf} = $fho;
+for my $pre (qw/mrna cds intron utr5 utr3/) {
+  open (my $fho, ">$dir/$pre.bed") || die "cannot write $dir/$pre.bed\n";
+  $hh->{$pre} = $fho;
 }
 
 while(<$fhi>) {
@@ -68,8 +67,11 @@ while(<$fhi>) {
   my ($id, $par, $chr, $beg, $end, $srd, 
     $locES, $locIS, $locCS, $loc5S, $loc3S, $phase, 
     $src, $conf, $cat1, $cat2, $cat3, $note) = split "\t";
+  next if $cat2 ne "mRNA";
   die "no CDS-loc for $id\n" unless $locCS;
+  my $len = $end - $beg + 1;
   my $hl = {
+    'mrna' => "1-$len",
     'cds' => $locCS,
     'intron' => $locIS,
     'utr5' => $loc5S,
@@ -92,10 +94,10 @@ while(<$fhi>) {
   }
 }
 close $fhi;
-for my $suf (keys(%$hh)) {
-  my $fho = $hh->{$suf};
+for my $pre (keys(%$hh)) {
+  my $fho = $hh->{$pre};
   close $fho;
-  runCmd("bedSort $fo\_$suf.bed $fo\_$suf.bed", 1);
+  runCmd("bedSort $fo/$pre.bed $fo/$pre.bed");
 }
 
 __END__

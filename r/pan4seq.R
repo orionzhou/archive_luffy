@@ -2,22 +2,66 @@ library(plyr)
 library(rtracklayer)
 library(Cairo)
 library(GenomicRanges)
-library(VennDiagram)
 
 dir = '/home/youngn/zhoup/Data/misc3/pan4seq'
 
-# venn-diagram of novel sequences shared
-fc = file.path(dir, '41.tbl')
+# total NR segments, shared, accession-specific
+fg = file.path(dir, '27.cluster.tbl')
+tg = read.table(fg, header = T, sep = "\t", as.is = T)
+tg = tg[tg$len >= 50,]
+nrow(tg)
+sum(tg$len)
+
+tgs = tg[! tg$orgs %in% c("HM034", "HM056", "HM340.APECCA"),]
+nrow(tgs)
+sum(tgs$len)
+
+sum(tg$len) - sum(tgs$len)
+
+# sharing status of novel (coding) segments
+fc = file.path(dir, '27.coord.tbl')
 tc = read.table(fc, header = T, sep = "\t", as.is = T)
-colnames(tc) = c("cid", "len", 'src', 'org', "orgs", "cnts", "strs")
+tc = cbind(tc, len = tc$end - tc$beg + 1)
+sum(tc$len)
 
-tc$src[which(tc$src == 'unc')] = 'plant'
+tc = tc[tc$len >= 50,]
+ddply(tg, .(orgs), summarise, total_len = sum(len))
 ddply(tc, .(orgs), summarise, total_len = sum(len))
-x = ddply(tc[tc$len >= 50,], .(orgs), summarise, total_len = sum(len))
-ddply(tc[tc$len >= 1000,], .(orgs), summarise, total_len = sum(len))
-y = ddply(tc[tc$len >= 50,], .(orgs, src), summarise, total_len = sum(len))
 
 
+fc034 = file.path(DIR_Data, 'genome', "HM034/51.bed/cds.bed")
+fc056 = file.path(DIR_Data, 'genome', "HM056/51.bed/cds.bed")
+fc340 = file.path(DIR_Data, 'genome', "HM340.APECCA/51.bed/cds.bed")
+tc034 = read.table(fc034, sep = "\t", header = F, as.is = T)
+tc056 = read.table(fc056, sep = "\t", header = F, as.is = T)
+tc340 = read.table(fc340, sep = "\t", header = F, as.is = T)
+colnames(tc034) = c("id", "beg", "end", 'gene', 'srd')
+colnames(tc056) = c("id", "beg", "end", 'gene', 'srd')
+colnames(tc340) = c("id", "beg", "end", 'gene', 'srd')
+gr034 = GRanges(seqnames = tc034$id, ranges = 
+  IRanges(tc034$beg+1, end = tc034$end))
+gr056 = GRanges(seqnames = tc056$id, ranges = 
+  IRanges(tc056$beg+1, end = tc056$end))
+gr340 = GRanges(seqnames = tc340$id, ranges = 
+  IRanges(tc340$beg+1, end = tc340$end))
+
+org = "HM340"
+orgs = "HM340 HM034 HM056"
+tcs = tc[tc$org == org & tc$orgs == orgs,]
+gr = GRanges(seqnames = tcs$id, ranges = IRanges(tcs$beg, end = tcs$end))
+
+if(org == "HM034") {
+  grc = gr034
+} else if (org == "HM056") {
+  grc = gr056
+} else {
+  grc = gr340
+}
+sum(width(gr))
+sum(width(intersect(gr, grc)))
+
+# use R-package to plot venn diagram
+library(VennDiagram)
 labels = c("HM340", "HM034", "HM056")
 n1 = x$total_len[x$orgs == 'HM340.APECCA']
 n2 = x$total_len[x$orgs == 'HM034']
@@ -54,11 +98,14 @@ tp.1 = data.frame(len=as.numeric(names(tmp1)), cnt=c(tmp1))
 tp.2 = cbind(tp.1, sum=tp.1$len * tp.1$cnt)
 tp.3 = tp.2[order(tp.2$len, decreasing=T),]
 tp = cbind(tp.3, cumsum=cumsum(tp.3$sum))
-plot(tp$len, tp$cumsum, type='l', xlim=c(0, 8000), main='novel', xlab='segment length', ylab='cumsum of segments')
-x=c(50,100,1000)
-y=c(tp$cumsum[tp$len==50], tp$cumsum[tp$len==100], tp$cumsum[tp$len==1000])
-segments(0, y, x, y, col='blue')
-segments(x, y, x, 0, col='blue')
+for (x in c(1,50,60,100,500,1000)) {
+  tt = tc[tc$len >= x,]
+  cat(x, nrow(tt), sum(tt$len), "\n", sep = "\t")
+}
+#segments(0, y, x, y, col='blue')
+#segments(x, y, x, 0, col='blue')
+
+
 
 
 ##### blast NR/NT database

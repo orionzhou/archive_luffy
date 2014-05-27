@@ -46,7 +46,7 @@ GetOptions(
   "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi;
 
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
@@ -54,7 +54,7 @@ if ($fi eq "stdin" || $fi eq "-") {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";

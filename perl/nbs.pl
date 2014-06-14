@@ -12,17 +12,21 @@ use File::Basename;
 use List::Util qw/min max sum/;
 
 my $fam = "PF00931";
-my @orgs = qw/HM034 HM056 HM340.APECCA/;
+my @orgs = qw/HM101 HM034 HM056 HM340/;
 my $dir = "/home/youngn/zhoup/Data/misc2/genefam/$fam";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
-extract_seq_by_pfam("$dir/01.fas", \@orgs, $fam);
-runCmd("clustalo -i 01.fas -o 05.aln --outfmt=clu --force --hmm-in=../$fam.hmm --full");
-runCmd("aln2phy.pl -i 05.aln -o 05.phy -l 30");
-runCmd("/home/youngn/zhoup/Source/PhyML-3.1/phyml -i 05.phy -d aa");
-runCmd("mv 05.phy_phyml_tree.txt 06.nwk");
-runCmd("rm 05.phy_phyml*");
+#extract_seq_by_pfam("$dir/01.fas", \@orgs, $fam);
+#runCmd("clustalo -i 01.fas -o 05.aln --outfmt=clu --force --hmm-in=../$fam.hmm --full");
+#runCmd("aln2phy.pl -i 05.aln -o 05.phy -l 40");
+
+#runCmd("phyml -i 05.phy -d aa");
+#runCmd("mv 05.phy_phyml_tree.txt 06.nwk");
+#runCmd("rm 05.phy_phyml*");
+
+runCmd("clustalw2 -INFILE=05.aln -BOOTSTRAP=1000 -OUTORDER=INPUT -OUTPUTTREE=phylip -BOOTLABELS=node -CLUSTERING=NJ -KIMURA");
+#runCmd("mv .phb ");
  
 my $f17 = "$dir/17.phb";
 #convertTree(-in=>$f021, -out=>$f022, -informat=>'newick', -outformat=>'newick');

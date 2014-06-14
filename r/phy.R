@@ -213,6 +213,17 @@ fo = sprintf("%s/22_phyml/%s.png", dir, reg)
   add.scale.bar(x = 0.02, y = 22, lcol = 'black')
   dev.off()
 
+# plot NBS-LRR tree
+dir = '/home/youngn/zhoup/Data/misc2/genefam/PF00931'
+fi = file.path(dir, "05.ph")
+fo = file.path(dir, "05.png")
+
+  tree = read.tree(fi)
+
+  png(filename = fo, width = 800, height = 32000, units = 'px')
+  plot(tree, font = 1, label.offset = 0.01, no.margin = T, cex = 0.77)
+  add.scale.bar(lcol = 'black')
+  dev.off()
 
 ### compare sv phylogeny with chr5 phylogeny
   fi_chr5 = file.path(DIR_Data, "repo/mt_35/31_phylogeny", "acc26", "21_phynj/chr5.phb")

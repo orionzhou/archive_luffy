@@ -62,11 +62,21 @@ my $d23 = "$dir/23_blat";
 -d $d23 || make_path($d23);
 chdir $d23 || die "cannot chdir to $d23\n";
 
-#process_blat1();
+#prepare_blat();
+process_blat1();
 #process_blat2();
-process_blat3();
+#process_blat3();
 
-sub process_blat1 { # blat 11_genome.fa -> 11.psl
+sub prepare_blat {
+  -d "01_seq" || make_path("01_seq");
+  chdir "01_seq" || die "cannot chdir to 01_seq\n";
+  runCmd("ln -sf $qry_fas part.fas");
+  runCmd("pyfasta split -n 10 part.fas");
+  runCmd("rm part.fas.*");
+  chdir "..";
+}
+sub process_blat1 { # blat 11_genome.fas -> 11.psl
+  runCmd("cat 01_seq/part.*.psl > 11.psl");
   runCmd("psl2gal.pl -i 11.psl -o 11.gal");
   runCmd("galfix.pl -i 11.gal -o - | \\
     galrmgap.pl -i - -q $qry_gap -t $tgt_gap -o - | \\

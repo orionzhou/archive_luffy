@@ -65,10 +65,17 @@ if($fb && -s $fb) {
   while(<$fhb>) {
     chomp;
     my ($seqid, $beg, $end) = split "\t";
-    $beg += 1; # 0-based
+    my $id;
+    if(!defined($beg) || !defined($end)) {
+      $beg = 1;
+      $end = $db->length($seqid);
+      $id = $seqid;
+    } else {
+      $beg += 1; # 0-based coordinate
+      $id = join("-", $seqid, $beg, $end);
+    } 
     $beg <= $end || die "loc error in $fb\n$seqid:$beg-$end\n";
     
-    my $id = join("-", $seqid, $beg, $end);
     my $seq = $db->seq($seqid, $beg, $end);
     $seqHO->write_seq( Bio::Seq->new(-id=>$id, -seq=>$seq) );
     $cnt ++;

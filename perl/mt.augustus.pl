@@ -21,6 +21,6 @@ my $bam_in = "\$misc2/rnaseq/mt/24_genome/$org.bam";
 runCmd("bam2hints --intronsonly --in=14.sf.bam --out=15.hints.gff");
 
 runCmd("augustus --species=medicago --extrinsicCfgFile=\$AUGUSTUS_CONFIG_PATH/extrinsic/extrinsic.M.RM.E.W.cfg --alternatives-from-evidence=true --hintsfile=15.hints.gff --allow_hinted_splicesites=atac --introns=on --genemodel=complete --strand=both --gff3=on --outfile=21.gff ../11_genome.fas");
-
+runCmd("rm 11.f.bam 14.sf.bam");
 
 

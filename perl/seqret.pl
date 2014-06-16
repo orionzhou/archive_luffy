@@ -89,10 +89,12 @@ if($str) {
     my ($seqid, $beg, $end);
     if(/^([\w\-]+)\:(\d+)\-(\d+)$/) {
       ($seqid, $beg, $end) = ($1, $2, $3);
-    } elsif(/^(\w+)\:(\d+)$/) {
-      ($seqid, $beg, $end) = ($1, $2, $db->length($seqid));
-    } elsif(/^(\w+)$/) {
-      ($seqid, $beg, $end) = ($1, 1, $db->length($seqid));
+    } elsif(/^([\w\-]+)\:(\d+)$/) {
+      ($seqid, $beg) = ($1, $2);
+      $end = $db->length($seqid);
+    } elsif(/^([\w\-]+)$/) {
+      $seqid = $1;
+      ($beg, $end) = (1, $db->length($seqid));
     } else {
       die "unknown locstring: $str\n";
     }

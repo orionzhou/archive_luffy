@@ -14,8 +14,8 @@
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input (Fasta) file
-    -o (--out)    output (BED) file
+    -i (--in)     input (FASTA format) (default: 'stdin')
+    -o (--out)    output (BED format) (default: "stdout') 
     -m (--min)    minimum length of gaps to report (default: 10)
 
 =head1 DESCRIPTION
@@ -57,17 +57,16 @@ GetOptions(
   "min|m=i" => \$len_min,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
 
 # read from stdin or opens an input file handler
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 # write to stdout or opens an output file handler
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";

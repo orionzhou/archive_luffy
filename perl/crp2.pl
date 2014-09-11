@@ -46,7 +46,7 @@ sub upgrade_crp_gtb {
         my ($locC) = parse_old_loc_str($locCS);
         my ($loc5) = parse_old_loc_str($loc5S);
         my ($loc3) = parse_old_loc_str($loc3S);
-        $srd = is_opposite_strands($srd, "+") ? "-" : "+";
+        $srd = is_revsrd($srd, "+") ? "-" : "+";
         $ti->setElm($i, "strand", $srd);
         $ti->setElm($i, "locE", locAry2Str($locE));
         $ti->setElm($i, "locI", locAry2Str($locI));

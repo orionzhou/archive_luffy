@@ -17,7 +17,7 @@
     -i (--in)     input file
     -o (--out)    output file
     -d (--db)     sequence database (fasta) file
-    -o (--opt)    ouput option (default: protein)
+    -p (--opt)    ouput option (default: protein)
 
 =cut
   
@@ -52,24 +52,24 @@ my ($fhi, $fho);
 if ($fi eq '' || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, "<$fi") || die "cannot read $fi\n";
 }
 
 if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 my $cntp = 0;
-my $seqH = Bio::SeqIO->new(-fh=>$fho, -format=>"fasta");
+my $seqH = Bio::SeqIO->new(-fh => $fho, -format => "fasta");
 while( <$fhi> ) {
   chomp;
-  next if /(^id)|(^\#)|(^\s*$)/;
+  /(^id)|(^\#)|(^\s*$)/i && next;
   my $ps = [ split "\t" ];
   next unless @$ps >= 18;
   my ($id, $par, $chr, $beg, $end, $srd, $locES, $locIS, $locCS, $loc5S, $loc3S, $phaseS, $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
-  $cat2 eq "mRNA" || next;
+  $cat1 eq "mRNA" || next;
   $locCS || die "no CDS for $id\n";
   my $rloc = locStr2Ary($locCS);
   my $loc = $srd eq "-" ? [map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$rloc] : 

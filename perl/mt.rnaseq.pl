@@ -8,50 +8,77 @@ use List::Util qw/min max sum/;
 use Common;
 use Bam;
 
-my $dir = "/home/youngn/zhoup/Data/misc2/rnaseq/mt";
+my $dir = "$ENV{'misc2'}/rnaseq/mt";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir $dir\n";
 
-#gzip_fastq("01.tbl", "11_fastq", "12_fastq_gz");
-#run_tophat("21.tbl", "12_fastq_gz", "22_tophat");
-#merge_bam_genome("21.tbl", "22_tophat", "24_genome");
+#gzip_fastq();
+run_tophat();
 
 sub gzip_fastq {
-  my ($f01, $d11, $d12) = @_;
-  -d $d12 || make_path($d12);
-  my $t = readTable(-in=>$f01, -header=>1);
+  -d "12_fastq_gz" || make_path("12_fastq_gz");
+  my $t = readTable(-in=>"01.tbl", -header=>1);
   for my $i (0..$t->lastRow) {
 #    next if $i < 13;
     my ($sam, $id, $label, $note1, $note2) = $t->row($i);
-    my $fa = "$d11/$id\_$label\_R1_001.fastq";
-    my $fb = "$d11/$id\_$label\_R2_001.fastq";
+    my $fa = "11_fastq/$id\_$label\_R1_001.fastq";
+    my $fb = "11_fastq/$id\_$label\_R2_001.fastq";
     -s $fa || die "$fa is not there\n";
     -s $fb || die "$fb is not there\n";
     print "compressing $id\_$label\n";
-    runCmd("gzip -c $fa > $d12/$id.1.fq.gz", 1); 
-    runCmd("gzip -c $fb > $d12/$id.2.fq.gz", 1); 
+    runCmd("gzip -c $fa > 12_fastq_gz/$id.1.fq.gz", 1); 
+    runCmd("gzip -c $fb > 12_fastq_gz/$id.2.fq.gz", 1); 
   }
 }
-sub run_tophat {
-  my ($fi, $ds, $do) = @_;
+sub read_fastq_by_org {
+  my ($fi) = @_;
   my $t = readTable(-in=>$fi, -header=>1);
-  -d $do || make_path($do);
+  my $h;
   for my $i (0..$t->lastRow) {
-#    next if $i+1 < 37;
-    my ($sam, $id, $genome) = $t->row($i);
-    if(check_bam("$do/$id\_$genome/unmapped.bam")) {
-      printf "%s|%s passed\n", $id, $genome;
+    my ($org, $id) = $t->row($i);
+    $h->{$org} ||= [];
+    push @{$h->{$org}}, $id;
+  }
+  return $h;
+}
+sub read_rnaseq_mapping {
+  my ($fi) = @_;
+  my $t = readTable(-in=>$fi, -header=>1);
+  my $h;
+  for my $i (0..$t->lastRow) {
+    my ($org, $orgr) = $t->row($i);
+    !exists $h->{$org} || die "$org has >=2 mappings\n";
+    $h->{$org} = $orgr;
+  }
+  return $h;
+}
+sub run_tophat {
+  -d "22_tophat" || make_path("22_tophat");
+  my $hi = read_fastq_by_org("01.tbl");
+  my $hr = read_rnaseq_mapping("21.tbl");
+  for my $org (sort(keys(%$hr))) {
+    my $orgr = $hr->{$org};
+    my $dir = "22_tophat/$orgr\_$org";
+    if(check_bam("$dir/unmapped.bam")) {
+      printf "%s RNA-Seq -> %s: done\n", $orgr, $org;
       next;
     }
-    printf "%s: working on %s\n", $id, $genome;
-    my $fa = "$ds/$id.1.fq.gz";
-    my $fb = "$ds/$id.2.fq.gz";
-    -s $fa || die "$fa is not there\n";
-    -s $fb || die "$fb is not there\n";
+    printf "%s RNA-Seq -> %s: working...\n", $orgr, $org;
+    my @ids = @{$hi->{$orgr}};
+    my @fns;
+    for my $id (@ids) {
+      my $fa = "12_fastq_gz/$id.1.fq.gz";
+      my $fb = "12_fastq_gz/$id.2.fq.gz";
+      -s $fa || die "$fa is not there\n";
+      -s $fb || die "$fb is not there\n";
+      push @fns, ($fa, $fb);
+    }
+    my $str_fn = join(" ", @fns);
     runCmd("tophat2 --num-threads 16 --mate-inner-dist 0 \\
       --min-intron-length 45 --max-intron-length 5000 \\
       --min-segment-intron 45 --max-segment-intron 5000 \\
-      -o $do/$id\_$genome \$data/db/bowtie2/$genome $fa $fb", 1);
+      -o $dir \$data/db/bowtie2/$org \\
+      $str_fn");
   }
 }
 sub merge_bam_genome {

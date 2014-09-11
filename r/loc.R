@@ -28,7 +28,7 @@ locCluster <- function(pos, wsize) {
     }
   }
 
-  hist(as.matrix(table(df2$cluster)), xlab='cluster size', main=paste(wsize, 'bp', sep=''))
+#  hist(as.matrix(table(df2$cluster)), xlab='cluster size', main=paste(wsize, 'bp', sep=''))
   df2
 }
 

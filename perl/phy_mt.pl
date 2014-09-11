@@ -32,7 +32,7 @@ use File::Path qw/make_path remove_tree/;
 use File::Basename;
 use List::Util qw/min max sum/;
 
-my ($opt) = ('ril2');
+my ($opt) = ('ingroup');
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -80,7 +80,7 @@ for my $reg (@$regions) {
 #    runCmd("mv $d13/$reg.phb $d21");
   
   my $f22 = "$d22/$reg.nwk";
-  runCmd("/home/youngn/zhoup/Source/PhyML-3.1/phyml -i $f12 -d nt");
+  runCmd("phyml -i $f12 -d nt");
   runCmd("mv $f12\_phyml_tree.txt $f22");
   runCmd("rm $f12\_phyml*");
 }

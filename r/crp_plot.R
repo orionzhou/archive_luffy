@@ -109,3 +109,10 @@ for (org in orgs) {
   n_ncr = sum(ti$family >= "CRP1130" & ti$family <= "CRP1530")
   cat(org, "CRP:", n_crp, "NCR:", n_ncr, "\n", sep=" ")
 }
+
+
+org = "HM101"
+fi = sprintf("/home/youngn/zhoup/Data/misc4/spada.crp.%s/61_final.tbl", org)
+ti = read.table(fi, sep="\t", header=T, as.is=T)[,c(1:5)]
+ts = ti[ti$family <= 'CRP1600',]
+

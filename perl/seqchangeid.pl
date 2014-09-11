@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -10,22 +10,18 @@
 
 =head1 SYNOPSIS
   
-  seqchangeid.pl [-help] [-opt convert-option] [-in input-file] [-out output-file]
+  seqchangeid.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
-      -opt    convert option (default=1)
-
-=head1 DESCRIPTION
-
-  This program convert sequence identifiers in a Fasta file to standard IDs
+    -h (--help)   brief help message
+    -i (--in)     input file
+    -o (--out)    output file
+    -o (--opt)    convert option (default: 1)
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 use strict;
 use Getopt::Long;
@@ -36,73 +32,73 @@ my ($fi, $fo) = ('') x 2;
 my $opt = 1;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
-    "opt|p=i" => \$opt,
+  "help|h"  => \$help_flag,
+  "in|i=s"  => \$fi,
+  "out|o=s" => \$fo,
+  "opt|p=i" => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
 my ($fhi, $fho);
 if ($fi eq "stdin" || $fi eq "-") {
-    $fhi = \*STDIN;
+  $fhi = \*STDIN;
 } else {
-    open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
-    $fho = \*STDOUT;
+  $fho = \*STDOUT;
 } else {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
 my $seqHI = Bio::SeqIO->new(-fh=>$fhi, -format=>'fasta');
 my $seqHO = Bio::SeqIO->new(-fh=>$fho, -format=>'fasta');
 while(my $seqO = $seqHI->next_seq()) {
-    my $id = $seqO->id;
-    if($opt == 1) {
-        $id = convert_id($id);
-    } elsif($opt == 7) { # Zmays
-        $id = convert_id_zmays($id);
-    }
-    $seqHO->write_seq(Bio::Seq->new(-id=>$id, -seq=>$seqO->seq()));
+  my $id = $seqO->id;
+  if($opt == 1) {
+    $id = convert_id($id);
+  } elsif($opt == 7) { # Zmays
+    $id = convert_id_zmays($id);
+  }
+  $seqHO->write_seq(Bio::Seq->new(-id=>$id, -seq=>$seqO->seq()));
 }
 $seqHI->close();
 $seqHO->close();
 
 sub convert_id {
-    my ($id) = @_;
-    if($id =~ /chr(\w+)/i) {
-        $id = "chr$1";
-    } elsif($id =~ /\|?([A-Z]{2}\d{6}\.[0-9DF]{1,2})\|?/) {
-        $id = $1;
-    } elsif($id =~ /([A-Z]{2}\d{6})([^\.]|$)/) {
-        $id = $1;
-    }
-    return $id;
+  my ($id) = @_;
+  if($id =~ /chr(\w+)/i) {
+    $id = "chr$1";
+  } elsif($id =~ /\|?([A-Z]{2}\d{6}\.[0-9DF]{1,2})\|?/) {
+    $id = $1;
+  } elsif($id =~ /([A-Z]{2}\d{6})([^\.]|$)/) {
+    $id = $1;
+  }
+  return $id;
 }
 sub convert_id_zmays {
-    my ($id) = @_;
-    if($id =~ /chromosome (\w+)$/) {
-        $id = $1;
-        if($id =~ /^\d+$/) {
-            $id = "chr$id";
-        } elsif($id eq "UNKNOWN") {
-            $id = "chrU";
-        } elsif($id eq "mitochondrion") {
-            $id = "Mt";
-        } elsif($id eq "chloroplast") {
-            $id = "Pt"
-        } else {
-            die "unknonw chr ID: $id\n";
-        }
+  my ($id) = @_;
+  if($id =~ /chromosome (\w+)$/) {
+    $id = $1;
+    if($id =~ /^\d+$/) {
+      $id = "chr$id";
+    } elsif($id eq "UNKNOWN") {
+      $id = "chrU";
+    } elsif($id eq "mitochondrion") {
+      $id = "Mt";
+    } elsif($id eq "chloroplast") {
+      $id = "Pt"
     } else {
-        die "unknonw chr ID: $id\n";
+      die "unknonw chr ID: $id\n";
     }
-    return $id;
+  } else {
+    die "unknonw chr ID: $id\n";
+  }
+  return $id;
 }
 exit 0;
 

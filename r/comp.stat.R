@@ -1,15 +1,17 @@
 require(rtracklayer)
+require(plyr)
+require(GenomicRanges)
 source("comp.fun.R")
 
 tname = "hm101"
-qname = "hm340_apecca"
+qname = "hm340"
 
 t = read_genome_stat(tname)
 q = read_genome_stat(qname)
 #cq = read_comp_stat(qname, tname)
 #vq = read_var_stat(qname)
 
-# basic assembly statistics
+# basic assembly stats
 library(Biostrings)
 source(paste("http://faculty.ucr.edu/~tgirke/",
     "Documents/R_BioCond/My_R_Scripts/contigStats.R", sep=''))
@@ -36,6 +38,54 @@ p = ggplot(data.frame(size = tmp)) +
   scale_y_continuous(name = "") +
   theme(axis.text.x = element_text(angle = 15, size = 8))
 ggsave(file.path(q$dir, "figs/01_scaffold_size.png"), p, width=5, height=4)
+
+
+##### comp stats
+qname = "hm034"
+tname = "hm101"
+dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat", 
+  toupper(qname), toupper(tname))
+fi = file.path(dir, '31.5.gal')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[, c(1:19)]
+ddply(ti, .(lev), summarise, ali=sum(ali))
+fi = file.path(dir, '31.9.gal')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[, c(1:19)]
+ddply(ti, .(lev), summarise, ali=sum(ali))
+
+fx = file.path(dir, '31.9/gax')
+tx = read.table(fx, header = F, sep = "\t", as.is = T)
+colnames(tx) = c("tid", 'tb', 'te', 'tsrd', 'qid', 'qb', 'qe', 'qsrd', 'cid', 'lev')
+grq = GRanges(seqnames = tx$qid, ranges = IRanges(tx$qb, end = tx$qe))
+sum(width(grq))
+sum(width(reduce(grq)))
+
+
+
+fgt = file.path(dir, '31.9/gax')
+fgq = file.path(dir, '41.9/gax')
+tt = read.table(fgt, header = F, sep = "\t", as.is = T)
+colnames(tt) = c('tid', 'tbeg', 'tend', 'tsrd', 'qid', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
+tq = read.table(fgq, header = F, sep = "\t", as.is = T)
+colnames(tq) = c('qid', 'qbeg', 'qend', 'qsrd', 'tid', 'tbeg', 'tend', 'tsrd', 'cid', 'lev')
+
+grt1 = GRanges(seqnames = tt$tid, ranges = IRanges(tt$tbeg, end = tt$tend))
+grt2 = GRanges(seqnames = tq$tid, ranges = IRanges(tq$tbeg, end = tq$tend))
+
+grq1 = GRanges(seqnames = tt$qid, ranges = IRanges(tt$qbeg, end = tt$qend))
+grq2 = GRanges(seqnames = tq$qid, ranges = IRanges(tq$qbeg, end = tq$qend))
+sum(width(grq1))
+sum(width(grq2))
+sum(width(intersect(grq1, grq2)))
+
+
+fd = file.path(dir, 't.t.4.del.bed')
+td = read.table(fd, header = F, sep = "\t", as.is = T)
+colnames(td) = c('chr', 'beg', 'end')
+td$beg = td$beg + 1
+td = cbind(td, len = td$end - td$beg + 1, 
+  str = sprintf("%s:%d-%d", td$chr, td$beg, td$end))
+td[order(td$len, decreasing = T), ][1:50,]
+
 
 # plot global pairwise comparison
 p <- ggplot(data = q$tw) +
@@ -88,6 +138,26 @@ sum(width(intersect(gs1, gs2)))
 #ti2 = read.table(fi2, header = F, sep = "\t", as.is = T)[, 1:3]
 #colnames(ti2) = c('chr', 'beg', 'end')
 #gi2 = GRanges(seqnames = ti2s$chr, ranges = IRanges(ti2s$beg, end = ti2s$end))
+
+
+# IDM statistics indel/other
+tname = "hm101"
+qname = "hm340.apecca"
+
+dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat/31.9", 
+  toupper(qname), toupper(tname))
+fs = file.path(dir, 'idm.large.cat.tbl')
+ts = read.table(fs, header = F, sep = "\t", quote = "", as.is = T)
+colnames(ts) = c('tid', 'tbeg', 'tend', 'id', 'qid', 'qbeg', 'qend', 'ttype', 
+  'qtype')
+ts = cbind(ts, 'tlen' = ts$tend - ts$tbeg - 1, 
+  'qlen' = ts$qend - ts$qbeg - 1)
+tu = ts[ts$ttype == 'abs' & ts$qtype == 'abs',]
+tb = ts[ts$ttype == 'pre' | ts$qtype == 'pre',]
+
+c('unb_n' = nrow(tu), 'unb_bp_tgt' = sum(tu$tlen), 'unb_bp_qry' = sum(tu$qlen),
+  'bal_n' = nrow(tb), 'bal_bp_tgt' = sum(tb$tlen), 'bal_bp_qry' = sum(tb$qlen))
+
 
 # plot compstat and save to comp.png
 dirstat = '/home/youngn/zhoup/Data/misc3/compstat'

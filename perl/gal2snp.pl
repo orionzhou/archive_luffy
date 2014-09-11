@@ -10,12 +10,12 @@
 
 =head1 SYNOPSIS
   
-  gal2snp.pl [-help] [-in input-file] [-qry qry-fasta] [-tgt tgt-fasta] [-out output-file]
+  gal2snp.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+    -i (--in)     input file (Gal)
+    -o (--out)    output tabular file (tid tpos tnt qnt qid qpos cid lev)
     -q (--qry)    query-seq file 
     -t (--tgt)    target-seq file
 
@@ -55,25 +55,25 @@ pod2usage(2) if !$fq || !$ft;
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 while( <$fhi> ) {
   chomp;
   next if /(^id)|(^\#)|(^\s*$)/;
   my $ps = [ split "\t" ];
-  next unless @$ps == 20;
-  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize,
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  my ($rqLoc, $rtLoc) = (locStr2Ary($qlS), locStr2Ary($tlS));
   
-  my ($rqLoc, $rtLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
   @$rqLoc == @$rtLoc || die "unequal pieces\n";
   my $nBlock = @$rqLoc;
   my @lens = map {$_->[1] - $_->[0] + 1} @$rqLoc;
@@ -106,12 +106,13 @@ while( <$fhi> ) {
     }
     $len += $lens[$i];
   }
-  @tPoss == $mis || die "$id not $mis SNPs: ".scalar(@tPoss)."\n";
+  @tPoss == $mis || die "$cid not $mis SNPs: ".scalar(@tPoss)."\n";
   
   for my $i (0..@qPoss-1) {
     my ($qPos, $tPos, $qNt, $tNt) = 
       ($qPoss[$i], $tPoss[$i], $qNts[$i], $tNts[$i]);
-    print $fho join("\t", $tId, $tPos, $tNt, $qNt, $id, $qId, $qPos)."\n";
+    print $fho join("\t", $tId, $tPos, $tNt, $qNt, 
+      $qId, $qPos, $cid, $lev)."\n";
   }
 }
 close $fhi;

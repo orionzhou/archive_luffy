@@ -14,8 +14,8 @@
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input file
-    -o (--out)    output file
+    -i (--in)     input file (Gal)
+    -o (--out)    output file (Gax: tid tb te tsrd qid qb qe qsrd cid lev)
 
 =cut
   
@@ -47,24 +47,24 @@ pod2usage(2) if !$fi || !$fo;
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 while( <$fhi> ) {
   chomp;
   next if /(^id)|(^\#)|(^\s*$)/;
   my $ps = [ split "\t" ];
-  next unless @$ps == 20;
-  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize,
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
-  my ($rqloc, $rtloc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  my ($rqloc, $rtloc) = (locStr2Ary($qlS), locStr2Ary($tlS));
   for my $i (0..@$rqloc-1) {
     my ($rtb, $rte) = @{$rtloc->[$i]};
     my ($rqb, $rqe) = @{$rqloc->[$i]};
@@ -73,7 +73,7 @@ while( <$fhi> ) {
     my ($qb, $qe) = $qSrd eq "-" ? ($qEnd-$rqe+1, $qEnd-$rqb+1)
       : ($qBeg+$rqb-1, $qBeg+$rqe-1);
     print $fho join("\t", $tId, $tb, $te, $tSrd, 
-      $id, $qId, $qb, $qe, $qSrd)."\n";
+      $qId, $qb, $qe, $qSrd, $cid, $lev)."\n";
   }
 }
 close $fhi;

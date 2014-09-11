@@ -199,7 +199,7 @@ sub insert_cluster {
       my ($yi, $yidx) = @$_;
       my ($yob, $yoe, $yos, $ocid2) = @{$hl->{$yi}->[$yidx]};
       $ocid == $ocid2 || die "hc/hl error: $yi:$yob-$yoe\n";
-      my $yns = $xos eq $yos ? $xns : get_opposite_strand($xns);
+      my $yns = $xos eq $yos ? $xns : get_revsrd($xns);
       my $ynb = coordTransform($xnb, [[$xob, $xoe]], $xos, [[$yob, $yoe]], $yos);
       my $yne = coordTransform($xne, [[$xob, $xoe]], $xos, [[$yob, $yoe]], $yos);
       ($ynb, $yne) = ($yne, $ynb) if $ynb > $yne;

@@ -29,7 +29,8 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
-use Location;
+use Common;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
 my $opt = "tgt";
@@ -45,6 +46,7 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$opt;
+$opt = lc($opt);
 
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
@@ -58,15 +60,19 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
-$opt = lc($opt);
 while( <$fhi> ) {
   chomp;
   next if /(^id)|(^\#)|(^\s*$)/;
-  my ($tid, $tb, $te, $tsrd, $id, $qid, $qb, $qe, $qsrd) = split "\t";
+  my ($tid, $tb, $te, $tsrd, $qid, $qb, $qe, $qsrd, $cid, $lev) 
+    = split "\t";
+  my $srd = is_revsrd($tsrd, $qsrd) ? "-" : "+";
+  my $score = exists $h_score->{$lev} ? $h_score->{$lev} : 300;
   if($opt eq "qry") {
-    print $fho join("\t", $qid, $qb - 1, $qe)."\n";
+    my $id = "$cid|$tid:$tb-$te";
+    print $fho join("\t", $qid, $qb - 1, $qe, $id, $score, $srd)."\n";
   } elsif($opt eq "tgt") {
-    print $fho join("\t", $tid, $tb - 1, $te)."\n";
+    my $id = "$cid|$qid:$qb-$qe";
+    print $fho join("\t", $tid, $tb - 1, $te, $id, $score, $srd)."\n";
   } else {
     die "unknow optiotn: $opt\n";
   }

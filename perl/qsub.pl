@@ -4,12 +4,12 @@ use Common;
 use Text::Template;
 use Getopt::Long;
 
-my ($opt, $program) = ("", "");
-GetOptions('opt|t=s'=>\$opt, 'program|p=s'=>\$program);
+my ($opt, $prog) = ('') x 2;
+GetOptions('opt|t=s'=>\$opt, 'prog|p=s'=>\$program);
 
-my $dir = $ENV{"m"}."/pbs";
-chdir($dir);
-my $f_tmpl = $dir."/perl.tmpl";
+my $dir = "$ENV{'code'}/pbs";
+chdir($dir) or die "cannot chdir to $dir\n";
+my $f_tmpl = "$dir/perl.tmpl";
 my $tmpl = Text::Template->new( SOURCE=>"perl.tmpl" );
 
 my ($queue, $nodes, $ppn, $mem, $walltime, $chdir_str, $module_str, $cmd) = ("") x 8;

@@ -1,1 +1,0 @@
-../../spada/gtbcompare.pl

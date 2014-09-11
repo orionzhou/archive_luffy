@@ -3,7 +3,8 @@ source("comp.fun.R")
 
 tname = "hm101"
 qname1 = "hm056"
-qname2 = "hm340"
+qname2 = "hm034"
+qname3 = "hm340"
 qname = qname1
 
 t = read_genome_stat(tname)
@@ -16,7 +17,7 @@ tg = read.table(file.path(t$dir, "51.gtb")
   , sep="\t", as.is = T, header = T, quote="")[ , c(1, 3:6, 17)]
 tg = cbind(tg, crp = grepl('CRP', tg$cat3), nbs = grepl('NBS', tg$cat3), 
   te = grepl('TE', tg$cat3))
-tg = cbind(tg, gene=!(tg$crp|tg$nbs|tg$te))
+tg = cbind(tg, gene=!(tg$crp | tg$nbs | tg$te))
 
 tgg = tg[tg$gene == T, ]
 tgt = tg[tg$te == T, ]
@@ -50,7 +51,7 @@ grln = with(tgn, makeGRangesListFromFeatureFragments(
   fragmentWidths = sprintf("%d,", end - beg + 1), strand = srd))
 
 # assess conserved proportion of genic regions
-fgax = file.path(cq$dir, "29.gax")
+fgax = file.path(cq$dir, "31.9/gax")
 tgax = read.table(fgax, sep = "\t", header = F, as.is = T)
 colnames(tgax) = c("tId", "tBeg", "tEnd", "tSrd", "id", "qId", "qBeg", "qEnd",
   "qSrd")
@@ -82,7 +83,6 @@ dog = get_ovlp_90_idxs(gr, grl, grg, grlg)
 dot = get_ovlp_90_idxs(gr, grl, grt, grlt)
 don = get_ovlp_90_idxs(gr, grl, grn, grln)
 doc = get_ovlp_90_idxs(gr, grl, grc, grlc)
-
 
 #
 

@@ -2,14 +2,6 @@
 
 cd $data/genome/HM056
 
-cd augustus
-gff_augustus.pl -i 21.gff -o - | gff2gtb.pl -i - -o 22.gtb
-gtb_augustus.pl -i 22.gtb -o 23.gtb
-
-cd ..
-ln -sf augustus/23.gtb 21.gtb
-
-
 
 awk 'BEGIN {FS="\t"; OFS="\t"} {if(NR!=1) {$17="gene";} print}' 23.gtb > ../40_gene.gtb
 cd ..

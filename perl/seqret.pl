@@ -70,6 +70,7 @@ if($fb && -s $fb) {
       $beg = 1;
       $end = $db->length($seqid);
       $id = $seqid;
+      defined $end || die "$id not in db\n";
     } else {
       $beg += 1; # 0-based coordinate
       $id = join("-", $seqid, $beg, $end);
@@ -77,6 +78,7 @@ if($fb && -s $fb) {
     $beg <= $end || die "loc error in $fb\n$seqid:$beg-$end\n";
     
     my $seq = $db->seq($seqid, $beg, $end);
+    defined $seq || die "$id not in db\n";
     $seqHO->write_seq( Bio::Seq->new(-id=>$id, -seq=>$seq) );
     $cnt ++;
   }

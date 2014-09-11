@@ -61,8 +61,8 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
 }
 
 open ($fhg, "<$fg") || die "Can't open file $fg for writing: $!\n";
-my $line = <$fhg>;
 
+my $line = <$fhg>;
 while(<$fhi>) {
   chomp;
   my @ps = split "\t";
@@ -71,7 +71,7 @@ while(<$fhi>) {
   $line = <$fhg>;
   my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize) = split("\t", $line);
-  die "sync error\n" if $chr ne $tId || $beg ne $tBeg-1 || $end ne $tEnd;
+  die "sync error $chr:$beg-$end\n" if $chr ne $tId || $beg ne $tBeg-1 || $end ne $tEnd;
 
   $ps[3] = sprintf("%s[%d]:%d-%d", $qId, $qSize, $qBeg, $qEnd);
   print $fho join("\t", @ps)."\n";

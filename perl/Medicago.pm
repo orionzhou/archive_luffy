@@ -8,19 +8,19 @@ require Exporter;
 @EXPORT = qw/get_mt_ids/;
 @EXPORT_OK = qw//;
 sub get_mt_ids {
-    my ($opt) = @_;
-    my $fi = $ENV{"code"}."/conf/acc_ids.tbl";
-    my $t = readTable(-in=>$fi, -header=>1);
+  my ($opt) = @_;
+  my $fi = $ENV{"code"}."/conf/acc_ids.tbl";
+  my $t = readTable(-in=>$fi, -header=>1);
 
-    my $idx = -1;
-    if($opt =~ /^(acc|opt)([\d\.]+)$/) {
-        $idx = first_index {$_ eq $opt} $t->header;
-    } 
-    
-    $idx == -1 || die "unknown opt $opt\n";
-    $t = $t->match_pattern("\$_->[$idx] eq 1");
-    my $ids = $t->colRef("id");
-    return $ids;
+  my $idx = -1;
+  if($opt =~ /^(acc|opt)([\d\.]+)$/) {
+      $idx = first_index {$_ eq $opt} $t->header;
+  } 
+  
+  $idx == -1 || die "unknown opt $opt\n";
+  $t = $t->match_pattern("\$_->[$idx] eq 1");
+  my $ids = $t->colRef("id");
+  return $ids;
 }
 
 

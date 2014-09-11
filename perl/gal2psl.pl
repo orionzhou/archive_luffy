@@ -13,9 +13,9 @@
   gal2psl.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-      -help   brief help message
-      -in     input file
-      -out    output file
+    -h (--help)   brief help message
+    -i (--in)     input file (Gal)
+    -o (--out)    output file (PSL)
 
 =cut
   
@@ -48,26 +48,26 @@ pod2usage(1) if $help_flag;
 if ($fi eq '' || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
 if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 while( <$fhi> ) {
   chomp;
   next if /(^id)|(^\#)|(^\s*$)/;
   my $ps = [ split "\t" ];
-  next unless @$ps == 20;
-  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize,
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
-  $tSrd eq "+" || die "$id: tSrd -\n";
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  my ($qLoc, $tLoc) = (locStr2Ary($qlS), locStr2Ary($tlS));
+  $tSrd eq "+" || die "$cid: tSrd -\n";
 
-  my ($qLoc, $tLoc) = (locStr2Ary($qLocS), locStr2Ary($tLocS));
   @$qLoc == @$tLoc || die "unequal pieces\n";
   my $nBlock = @$qLoc;
   

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -13,11 +13,11 @@
   seqtile.pl [-help] [-in input] [-step win-step] [-size win-size] [-out output]
 
   Options:
-      -help   brief help message
-      -in     input (can be 'stdin')
-      -out    output (can be 'stdout')
-      -step   sliding window step (default: 5)
-      -size   sliding window size (default: 60)
+    -h (--help)   brief help message
+    -i (--in)     input (can be 'stdin')
+    -o (--out)    output (can be 'stdout')
+    -s (--step)   sliding window step (default: 5)
+    -s (--size)   sliding window size (default: 60)
 
 =head1 BUGS
   
@@ -30,7 +30,7 @@
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 use strict;
 use Getopt::Long;
@@ -72,7 +72,7 @@ my $cnt = 0;
 while(my $seqO = $seqHI->next_seq()) {
   my ($id, $len, $seq) = ($seqO->id, $seqO->length, $seqO->seq);
   my ($beg, $end) = (1, $len);
-  if($id =~ /^(\w+)\:(\d+)\-(\d+)$/) {
+  if($id =~ /^([\w\-]+)\:(\d+)\-(\d+)$/) {
     ($id, $beg, $end) = ($1, $2, $3);
   }
   

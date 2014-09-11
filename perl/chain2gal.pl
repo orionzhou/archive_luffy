@@ -93,7 +93,7 @@ while( <$fhi> ) {
     my ($rtlocs, $rqlocs) = (locAry2Str($rtloc), locAry2Str($rqloc));
     print $fho join("\t", $id, $tId, $tBeg, $tEnd, $tSrd, $tSize,
       $qId, $qBeg, $qEnd, $qSrd, $qSize, 
-      $ali, $ali, 0, 0, 0, '', $score, $rtlocs, $rqlocs)."\n";;
+      '', $ali, $ali, 0, 0, 0, '', $score, $rtlocs, $rqlocs)."\n";;
   }
 }
 close $fhi;

@@ -119,6 +119,59 @@ fo = sprintf("%s/22_phyml/%s.png", dir, reg)
   add.scale.bar(x = 0.02, y = 20, lcol = 'black')
   dev.off()
 
+### plot ingroup tree
+opt = 'ingroup'
+reg = "chr5"
+dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny", opt)
+fi = sprintf("%s/22_phyml/%s.nwk", dir, reg)
+fo = sprintf("%s/22_phyml/%s.png", dir, reg)
+#fi = sprintf("%s/21_phynj/%s.phb", dir, reg)
+#fo = sprintf("%s/21_phynj/%s.png", dir, reg)
+  tree = read.tree(fi)
+
+  group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
+  group2 = c("HM340", "HM324", "HM018", "HM022-I", "HM017-I")
+  group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
+  group4 = c("HM002", "HM004", "HM005", "HM006", "HM010", "HM020", "HM026", "HM035", "HM050", "HM341")
+  grouph = c("HM034", "HM056", "HM340")
+  
+  labels = tree$tip.label
+  tip.color = rep('black', length(tree$tip.label))
+  tip.color[which(labels %in% group1)] = 'red'
+  tip.color[which(labels %in% group2)] = 'forestgreen'
+  tip.color[which(labels %in% group3)] = 'dodgerblue'
+  tip.color[which(labels %in% group4)] = 'purple'
+  
+  font = rep(1, length(tree$tip.label))
+  font[which(labels %in% grouph)] = 2
+  font[which(labels == "HM101")] = 4
+
+  df1 = data.frame(idx = 1 : length(labels), id = labels)
+  df2 = merge(df1, ann, by = "id", all.x = T)
+  df3 = df2[order(df2$idx), ]
+  labelsn = as.character(df3$id)
+  for (i in 1:nrow(df3)) {
+    id = df3$id[i]
+    country = df3$country[i]
+    if(!is.na(country) & country != "") { 
+      labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+    }
+  }
+  tree$tip.label = labelsn
+
+  scores = as.numeric(tree$node.label)
+  if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+  node.labels.bg = rep('white', tree$Nnode)
+  node.labels.bg[scores >= 0.95] = 'black'
+  node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+  png(filename=fo, width=1000, height=4000, units='px')
+  plot(tree, show.node.label = F, show.tip.label = T, font = font, 
+    tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+  nodelabels(pch = 22, bg = node.labels.bg)
+  add.scale.bar(x = 0.02, y = 20, lcol = 'black')
+  dev.off()
+
 ### plot RIL1 tree
 opt = 'ril1'
 reg = "chr5"
@@ -211,18 +264,6 @@ fo = sprintf("%s/22_phyml/%s.png", dir, reg)
     tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
   nodelabels(pch = 22, bg = node.labels.bg)
   add.scale.bar(x = 0.02, y = 22, lcol = 'black')
-  dev.off()
-
-# plot NBS-LRR tree
-dir = '/home/youngn/zhoup/Data/misc2/genefam/PF00931'
-fi = file.path(dir, "05.ph")
-fo = file.path(dir, "05.png")
-
-  tree = read.tree(fi)
-
-  png(filename = fo, width = 800, height = 32000, units = 'px')
-  plot(tree, font = 1, label.offset = 0.01, no.margin = T, cex = 0.77)
-  add.scale.bar(lcol = 'black')
   dev.off()
 
 ### compare sv phylogeny with chr5 phylogeny

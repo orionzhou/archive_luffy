@@ -13,9 +13,9 @@
   psl2gal.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input file
-    -out    output file
+    -h (--help)   brief help message
+    -i (--in)     input file (PSL)
+    -o (--out)    output file (Gal)
 
 =cut
   
@@ -43,15 +43,14 @@ GetOptions(
   "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "Can't open file $fi: $!\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
@@ -106,11 +105,12 @@ while(<$fhi>) {
   }
   my ($tLocS, $qLocS) = (locAry2Str(\@tLoc), locAry2Str(\@qLoc));
   my ($mat, $mis, $qN, $tN) = ($match, $misMatch, $baseN, 0);
-  my $score = $mat;
+  my $score = $mat - $mis - $qNumIns - $tNumIns;
   my $ali = $mat + $mis + $qN + $tN;
+  my $ident = sprintf "%.03f", $mat / ($mat + $mis);
   print $fho join("\t", $id, $tId, $tBeg+1, $tEnd, $tSrd, $tSize,
     $qId, $qBeg+1, $qEnd, $qSrd, $qSize, 
-    $ali, $mat, $mis, $qN, $tN, '', $score, $tLocS, $qLocS)."\n";
+    '', $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS)."\n";
 }
 close $fhi;
 close $fho;

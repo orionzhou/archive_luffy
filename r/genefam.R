@@ -1,7 +1,55 @@
-require(ggplot2)
-require(Hmisc)
-dir = file.path(DIR_Misc2, "genefam")
+require(plyr)
 
+misc2 = Sys.getenv("misc2")
+misc4 = Sys.getenv("misc4")
+genome = Sys.getenv("genome")
+dir = file.path(misc2, 'genefam')
+
+orgs = c("HM101", "HM004", "HM010", "HM018", "HM034", "HM050", "HM056", "HM058", "HM340")
+
+##### CRP stat
+fi = file.path(dir, 'crp.info')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:2]
+
+for (org in orgs) {
+  fg = sprintf("%s/spada.crp.%s/61_final.gtb", misc4, org)
+  tg = read.table(fg, header = T, sep = "\t", as.is = T)[,17]
+  tt = table(tg)
+  dg = data.frame(id = names(tt), org = as.numeric(tt))
+  colnames(dg)[2] = org
+  ti = merge(ti, dg, by = 'id', all.x = T)
+}
+ti[is.na(ti)] = 0
+colnames(ti)[1] = 'sub-family'
+ti = ti[,-2]
+
+idxs = apply(ti[,-1], 1, sum) > 0
+ti = ti[idxs, ]
+
+fo = file.path(dir, 'crp.cnt.tbl')
+write.table(ti, fo, sep="\t", row.names = F, col.names = T, quote = F)
+
+
+##### NBS stat
+fi = file.path(dir, 'nbs.info')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:2]
+
+for (org in orgs) {
+  fg = file.path(genome, org, '42.nbs', '12.gtb')
+  tg = read.table(fg, header = T, as.is = T, sep = "\t", quote = "")[,17]
+  tt = table(tg)
+  dg = data.frame(id = names(tt), org = as.numeric(tt))
+  colnames(dg)[2] = org
+  ti = merge(ti, dg, by = 'id', all.x = T)
+}
+ti[is.na(ti)] = 0
+
+colnames(ti)[1] = 'sub-family'
+fo = file.path(dir, 'nbs.cnt.tbl')
+write.table(ti, fo, sep="\t", row.names = F, col.names = T, quote = F)
+
+
+##### old stuff
 ta1 = read.table(file.path(dir, "31_merged.gtb"), header=T, as.is=T, sep="\t", quote="")
 
 ta2 = cbind(ta1[,c('id','chr','beg','end','strand')], cat=ta1$cat1)

@@ -9,8 +9,8 @@ DIR_Misc4 <- file.path(DIR_Data, "misc4");
 DIR_R <- file.path(DIR_Misc1, "r");
 
 #source("http://www.bioconductor.org/biocLite.R")
-require(ggplot2)
-require(data.table)
+#require(ggplot2)
+#require(data.table)
 #require(Hmisc)
 #require(ape)
 #require(gplots)

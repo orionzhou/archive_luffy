@@ -11,13 +11,16 @@ seqconcat.pl -i 03.scaffolds.fas -o 03.scaffolds.concat.fas -p 03.scaffolds.conc
 
 cat 03.chrs.fas 03.scaffolds.concat.fas > ../11_genome.fas
 
-gff_jcvi.pl -i 11.gff -o 12_jcvi_fixed.gff
-gff_convert_loc.pl -i 12_jcvi_fixed.gff -p 03.scaffolds.concat.tbl -o 15_global_loc.gff
+gff.jcvi.pl -i 11.gff -o 12_jcvi_fixed.gff
+gff.coord.pl -i 12_jcvi_fixed.gff -p 03.scaffolds.concat.tbl -o 15_global_loc.gff
 gff2gtb.pl -i 15_global_loc.gff -o 15_global_loc.gtb
-gtbcheckphase.pl -i 15_global_loc.gtb -s ../11_genome.fa -o 17_phase_fixed.gtb
-gtbcatte.pl -i 17_phase_fixed.gtb -o 21.gtb
-gtbdedup.pl -i 21.gtb -o 25_dedup.gtb
-gtblongest.pl -i 25_dedup.gtb -o 26_longest.gtb
+gtb.phase.pl -i 15_global_loc.gtb -s ../11_genome.fas -o 17_phase_fixed.gtb
+gtb.dedup.pl -i 17_phase_fixed.gtb -o 25.dedup.gtb
+#gtb.pickalt.pl -i 25.dedup.gtb -o 26.longest.gtb
 
-cd ..
-ln -sf raw/26_longest.gtb 21.gtb
+ln -sf 31.gtb 25.dedup.gtb
+gtb2gff.pl -i 31.gtb -o 31.gff
+gtb2fas.pl -i 31.gtb -o 31.fas -d ../11_genome.fas
+
+
+#run pipe_pfam() in mt.augus.pl -g HM101 

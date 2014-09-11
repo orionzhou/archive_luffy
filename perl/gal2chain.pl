@@ -13,9 +13,9 @@
   gal2chain.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input file
-    -out    output file
+    -h (--help)   brief help message
+    -i (--in)     input file
+    -o (--out)    output file
 
 =cut
   
@@ -37,7 +37,7 @@ my ($fi, $fo) = ('', '');
 my ($fhi, $fho);
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
@@ -48,34 +48,34 @@ pod2usage(1) if $help_flag;
 if ($fi eq '' || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
 if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 while( <$fhi> ) {
   chomp;
-  next if /(^id)|(^\#)|(^\s*$)/;
+  /(^id)|(^\#)|(^\s*$)/ && next;
   my $ps = [ split "\t" ];
-  next unless @$ps == 20;
-  my ($id, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize,
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS) = @$ps;
-  $tSrd eq "+" || die "$id: tSrd -\n";
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  $tSrd eq "+" || die "$cid: tSrd -\n";
 
-  my ($qloc, $tloc) = (locStr2Ary($qlocS), locStr2Ary($tlocS));
+  my ($qloc, $tloc) = (locStr2Ary($qlS), locStr2Ary($tlS));
   @$qloc == @$tloc || die "unequal pieces\n";
   my $nBlock = @$qloc;
   
-  my ($ctb, $cte) = ($tb - 1, $te);
-  my ($cqb, $cqe) = $qSrd eq "+" ? ($qb - 1, $qe) : 
-    ($qsize-$qe+1 - 1, $qsize-$qb+1);
+  my ($ctb, $cte) = ($tBeg - 1, $tEnd);
+  my ($cqb, $cqe) = $qSrd eq "+" ? ($qBeg - 1, $qEnd) : 
+    ($qSize - $qEnd + 1 - 1, $qSize - $qBeg + 1);
   print $fho join(" ", "chain", $score, $tId, $tSize, $tSrd, $ctb, $cte,
-    $qId, $qSize, $qSrd, $cqb, $cqe, $id)."\n";
+    $qId, $qSize, $qSrd, $cqb, $cqe, $cid)."\n";
   if($nBlock > 1) {
     for my $i (0..$nBlock-2) {
       my $len = $tloc->[$i]->[1] - $tloc->[$i]->[0] + 1;

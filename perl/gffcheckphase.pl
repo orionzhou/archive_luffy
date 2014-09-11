@@ -1,27 +1,27 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
   
-  gffcheckphase.pl - check and fix the phases in a Gff file
+  gffphase.pl - check and fix the phases in a Gff file
 
 =head1 SYNOPSIS
   
-  gffcheckphase.pl [-help] [-in input-Gff] [-seq refseq-fasta] [-out output-Gff]
+  gffphase.pl [-help] [-in input-Gff] [-seq refseq-fasta] [-out output-Gff]
 
   Options:
-      -help   brief help message
-      -in     input file (Gff)
-      -out    output file (Gff)
-      -seq    sequence-fasta
+    -help   brief help message
+    -in     input file (Gff)
+    -out    output file (Gff)
+    -seq    sequence-fasta
 
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 use strict;
 use FindBin;
 use lib "$FindBin::Bin";
@@ -33,7 +33,7 @@ use Gff;
 my ($fi, $fo, $fs) = ('') x 3;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
     "help|h"  => \$help_flag,
     "in|i=s"  => \$fi,

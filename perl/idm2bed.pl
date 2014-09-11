@@ -29,6 +29,7 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -58,12 +59,12 @@ if ($fo eq "stdout" || $fo eq "-") {
 while( <$fhi> ) {
   chomp;
   next if /(^\#)|(^\s*$)/;
-  my ($chr, $beg, $end, $tBase, $qBase) = split "\t";
-  my $tlen = length($tBase);
-  my $qlen = length($qBase);
-  $end - $beg - 1 == $tlen || die "len error: $chr:$beg-$end\[$tBase]\n";
+  my ($tid, $tb, $te, $qid, $qb, $qe, $id, $lev) = split "\t";
+  my $tlen = $te - $tb + 1;
+  my $qlen = $qe - $qb + 1;
   my $name = "$tlen/$qlen";
-  print $fho join("\t", $chr, $beg - 1, $end - 1, $name)."\n";
+  my $score = exists $h_score->{$lev} ? $h_score->{$lev} : 300;
+  print $fho join("\t", $tid, $tb - 1, $te - 1, $name, $score)."\n";
 }
 close $fhi;
 close $fho;

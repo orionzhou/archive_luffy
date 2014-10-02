@@ -1,0 +1,1 @@
+../../spada/seq.check.pl

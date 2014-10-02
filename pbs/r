@@ -1,9 +1,12 @@
-#PBS -l nodes=1:ppn=2,mem=10GB,walltime=10:00:00
-#PBS -q lab
+#PBS -l nodes=1:ppn=16,walltime=2:00:00
+#PBS -q sb
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 
+QRY=${QRY:-HM056}
+TGT=${TGT:-HM101}
+
 cd $code/r
-R CMD BATCH --no-init-file --no-restore comp.plot.R ../pbs/r.Rout
+Rscript --no-init-file --no-restore comp.ortho.R $QRY > ../pbs/r.Rout
 
 

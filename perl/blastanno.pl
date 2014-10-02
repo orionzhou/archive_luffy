@@ -10,7 +10,7 @@
 
 =head1 SYNOPSIS
   
-  annoblast.pl [-help] [-in input-file] [-out output-file]
+  blastanno.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
@@ -45,19 +45,13 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
-  $fhi = \*STDIN;
-} else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
-}
-
 if ($fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-my $t = readTable(-inh=>$fi, -header=>1);
+my $t = readTable(-in => $fi, -header => 1);
 my @gis;
 for my $i (0..$t->nofRow-1) {
   my $id = $t->elm($i, "tId");
@@ -87,7 +81,6 @@ for my $i (0..$t->nofRow-1) {
   $t->setElm($i, "species", $cats[3]);
   $t->setElm($i, "cat", $cat);
 }
-close $fhi;
 
 print $fho $t->tsv(1);
 close $fho;

@@ -6,7 +6,7 @@
   
 =head1 NAME
   
-  blastnr.pl - blast NR/NT database
+  blastnr.pl - postprocess NR/NT blast output
 
 =head1 SYNOPSIS
   
@@ -33,7 +33,7 @@ use File::Path qw/make_path remove_tree/;
 use Common;
 
 my ($fi, $fo) = ('') x 2;
-my $db = "\$data/db/blast/current/nt";
+my $nr = "$ENV{'data'}/db/blast/current/nt";
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -45,14 +45,11 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
--d $fo || make_path($fo);
-#chdir $fo || die "cannot chdir to $fo\n";
-
--s "$fo/01.tbl" || die "blastnr output $fo/01.tbl not found\n";
-runCmd("blast2gal.pl -i $fo/01.tbl | galfilter.pl -s 80 -o $fo/02.gal");
-runCmd("galtiling.pl -i $fo/02.gal -o -m 10 -o $fo/03.tiled.gal");
-runCmd("blastanno.pl -i $fo/03.tiled.gal -o $fo/04.anno.gal");
-sum_cat("$fo/04.anno.gal", "$fo.tbl");
+-s "$fo.1.tbl" || die "blastnr output $fo.1.tbl not found\n";
+runCmd("blast2gal.pl -i $fo.1.tbl | gal.filter.pl -s 80 -o $fo.2.gal");
+runCmd("gal.tiling.pl -i $fo.2.gal -o -m 10 -o $fo.3.tiled.gal");
+runCmd("blastanno.pl -i $fo.3.tiled.gal -o $fo.4.anno.gal");
+sum_cat("$fo.4.anno.gal", "$fo.tbl");
 
 sub sum_cat {
   my ($fi, $fo) = @_;

@@ -39,39 +39,39 @@ my $d33 = "$dir/33_crest";
 #run_tigrasv($dir, $sm);
 
 sub run_hydra {
-    my ($dir, $sms) = @_;
-    my $d01 = "$dir/01_pos_sorted"; 
-    my $d02 = "$dir/02_rn_sorted"; 
-    my $f03 = "$dir/03_stat.tbl"; 
-    my $t = readTable(-in=>$f03, -header=>1);
-    
-    my $d11 = "$dir/11_stretched";
-    my $d13 = "$dir/13_hydra";
-    my $d14 = "$dir/14_hydra_filtered";
-    
-    my $hydra = "\$src/Hydra-Version-0.5.3/bin/hydra";
-    for my $sm (@$sms) {
-        my $t2 = $t->match_pattern("\$_->[0] eq '$sm'");
-        die "cannot find $sm in table\n" unless $t2->nofRow == 1;
-        my ($sm, $rns, $is_mld, $is_mno) = map {$t2->elm(0, $_)} qw/sm rns is_mld is_mno/;
-        my $rgs_str = join(" ", map {"-g $_"} split(" ", $rns));
-        runCmd("bamPickStretched -i $d01/$sm.bam -o $d11/$sm.bed -m $is_mno $rgs_str -r chr5");
-        runCmd("$hydra -in $d11/$sm.bed -out $d13/$sm -mld $is_mld -mno $is_mno -ms 5");
-    }
+  my ($dir, $sms) = @_;
+  my $d01 = "$dir/01_pos_sorted"; 
+  my $d02 = "$dir/02_rn_sorted"; 
+  my $f03 = "$dir/03_stat.tbl"; 
+  my $t = readTable(-in=>$f03, -header=>1);
+  
+  my $d11 = "$dir/11_stretched";
+  my $d13 = "$dir/13_hydra";
+  my $d14 = "$dir/14_hydra_filtered";
+  
+  my $hydra = "\$src/Hydra-Version-0.5.3/bin/hydra";
+  for my $sm (@$sms) {
+      my $t2 = $t->match_pattern("\$_->[0] eq '$sm'");
+      die "cannot find $sm in table\n" unless $t2->nofRow == 1;
+      my ($sm, $rns, $is_mld, $is_mno) = map {$t2->elm(0, $_)} qw/sm rns is_mld is_mno/;
+      my $rgs_str = join(" ", map {"-g $_"} split(" ", $rns));
+      runCmd("bamPickStretched -i $d01/$sm.bam -o $d11/$sm.bed -m $is_mno $rgs_str -r chr5");
+      runCmd("$hydra -in $d11/$sm.bed -out $d13/$sm -mld $is_mld -mno $is_mno -ms 5");
+  }
 }
 sub prepare_pindel {
-    my ($fi, $fo, $fs, $fr, $sm) = @_;
-    open(FHI, "<$fi") or die "cannot read $fi\n";
-    while(<FHI>) {
-        next if /^id\t/;
-        chomp;
-        my ($id1, $mate1, $type1, $chr1, $beg1, $end1, $strd1, $cigar1, $mq1, $is1, $rg1, $seq1) = split("\t", $_);
-        my $line2 = <FHI>;
-        chomp($line2);
-        my ($id2, $mate2, $type2, $chr2, $beg2, $end2, $strd2, $cigar2, $mq2, $is2, $rg2, $seq2) = split("\t", $line2);
-        die "$id1/$mate1:$chr1 $beg1 $rg1 <> $id2/$mate2:$chr2 $beg2 $rg2\n" if $id1 ne $id2 || $mate1 != 1 || $mate2 != 2;
-    } 
-    close FHI;
+  my ($fi, $fo, $fs, $fr, $sm) = @_;
+  open(FHI, "<$fi") or die "cannot read $fi\n";
+  while(<FHI>) {
+    next if /^id\t/;
+    chomp;
+    my ($id1, $mate1, $type1, $chr1, $beg1, $end1, $strd1, $cigar1, $mq1, $is1, $rg1, $seq1) = split("\t", $_);
+    my $line2 = <FHI>;
+    chomp($line2);
+    my ($id2, $mate2, $type2, $chr2, $beg2, $end2, $strd2, $cigar2, $mq2, $is2, $rg2, $seq2) = split("\t", $line2);
+    die "$id1/$mate1:$chr1 $beg1 $rg1 <> $id2/$mate2:$chr2 $beg2 $rg2\n" if $id1 ne $id2 || $mate1 != 1 || $mate2 != 2;
+  } 
+  close FHI;
 }
 sub prepare_pindel_s {
     my ($fi, $fo, $fs, $fr, $sm) = @_;

@@ -58,7 +58,8 @@ while(<$fhi>) {
   chomp;
   next if /^\s*$/;
   my ($id, $beg, $end) = split "\t";
-  print $fho join("\t", $id, $beg, $end)."\n" if $end - $beg >= $minlen;
+  $end - $beg >= $minlen || next;
+  print $fho join("\t", $id, $beg, $end)."\n";
 }
 close $fhi;
 close $fho;

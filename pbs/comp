@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=2,mem=8GB,walltime=23:00:00
+#PBS -l nodes=1:ppn=2,mem=8GB,walltime=48:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 #PBS -q lab
@@ -10,5 +10,4 @@ echo QRY=$QRY
 echo TGT=$TGT
 
 comp.pl -q $QRY -t $TGT
-#novseq.pl -q $QRY -t $TGT
 

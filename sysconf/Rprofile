@@ -1,12 +1,12 @@
 .First <- function() {
-    setwd(Sys.getenv("SCRIPT_HOME_R"));
-    source('init_path.R');
-    source('common.R');
-    cat("-------------\n", sep="");
-    cat("Welcome to R!\n", sep="");
-    cat("Current directory: ", getwd(), "\n", sep="");
+  setwd(Sys.getenv("SCRIPT_HOME_R"))
+  source('init_path.R')
+  source('common.R')
+  cat("-------------\n", sep="")
+  cat("Welcome to R!\n", sep="")
+  cat("Current directory: ", getwd(), "\n", sep="")
 }
 .Last <- function() {
-    cat("----\n");
-    cat("bye!\n");
+  cat("----\n")
+  cat("bye!\n")
 }

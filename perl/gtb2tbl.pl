@@ -61,9 +61,11 @@ if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
 while(<$fhi>) {
   chomp;
   /(^id)|(^\#)|(^\s*$)/i && next;
+  my $ps = [ split("\t", $_, -1) ];
+  @$ps >= 18 || die "not 19 fileds:\n$_\n";
   my ($id, $par, $chr, $beg, $end, $srd, 
     $locES, $locIS, $locCS, $loc5S, $loc3S, $phase, 
-    $src, $conf, $cat1, $cat2, $cat3, $note) = split "\t";
+    $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
   $cat1 eq "mRNA" || next;
   die "no CDS-loc for $id\n" unless $locCS;
   my $len = $end - $beg + 1;

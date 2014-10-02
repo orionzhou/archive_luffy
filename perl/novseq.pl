@@ -48,7 +48,7 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my $data = '/home/youngn/zhoup/Data';
+my $data = "$ENV{'data'}";
 my $qry_fas = "$data/genome/$qry/11_genome.fas";
 my $tgt_fas = "$data/genome/$tgt/11_genome.fas";
 my $qry_2bit = "$data/db/blat/$qry.2bit";
@@ -57,30 +57,75 @@ my $qry_size = "$data/genome/$qry/15.sizes";
 my $tgt_size = "$data/genome/$tgt/15.sizes";
 my $qry_size_bed = "$data/genome/$qry/15.bed";
 my $tgt_size_bed = "$data/genome/$tgt/15.bed";
-my $qry_gap = "$data/genome/$qry/16_gap.bed";
-my $tgt_gap = "$data/genome/$tgt/16_gap.bed";
+my $qry_gap = "$data/genome/$qry/16.gap.bed";
+my $tgt_gap = "$data/genome/$tgt/16.gap.bed";
 
 my $dir = "$data/misc3/$qry\_$tgt/41_novseq";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
+my $nr = "$ENV{'data'}/db/blast/current/nt";
+
 if($stat_flag) {
   print_stat();
   exit;
 }
-#pipe1();
-#pipe2();
-pipe3();
+pipe1(); ### Itasca
+#pipe2(); ### requires internet
 
 sub pipe1 {
-  runCmd("gal2gax.pl -i ../23_blat/41.3.gal -o 41.3.gax");
-  runCmd("gax2bed.pl -i 41.3.gax -p tgt -o - | sortBed -i stdin | \\
-    mergeBed -i stdin > 41.3.bed");
+  runCmd("gax2bed.pl -i ../23_blat/41.5/gax -p tgt -o - | \\
+    sortBed -i stdin | mergeBed -i stdin > 00.bed");
   runCmd("subtractBed -a $qry_size_bed -b $qry_gap | \\
-    subtractBed -a stdin -b 41.3.bed | bedfilter.pl -l 50 -o 01.bed");
-  runCmd("rm 41.3.gax 41.3.bed");
+    subtractBed -a stdin -b 00.bed | bedfilter.pl -l 50 -o 01.bed");
   runCmd("seqret.pl -d $qry_fas -b 01.bed -o 01.fas");
+
+  runCmd("blastn -db $nr -outfmt \\
+    '6 qseqid qstart qend qlen sseqid sstart send slen length nident mismatch gaps evalue bitscore qseq sseq' \\
+    -evalue 0.1 -word_size 15 -gapopen 5 -gapextend 2 \\
+    -reward 2 -penalty -3 -max_target_seqs 50 -num_threads 16 \\
+    -query 01.fas -out 11.blastnr.1.tbl");
 }
+sub pipe2 {
+  runCmd("blastnr.pl -i 01.fas -o 11.blastnr");
+  cat_seq("01.bed", "11.blastnr.tbl", "12.bed");
+  runCmd("awk 'BEGIN{OFS=\"\\t\"} {if(\$4==\"foreign\") print}' \\
+    12.bed > 12.foreign.bed");
+  runCmd("awk 'BEGIN{OFS=\"\\t\"} {if(\$4!=\"foreign\") print}' \\
+    12.bed > 12.unforeign.bed");
+  runCmd("ln -sf 12.unforeign.bed 21.bed");
+  runCmd("seqret.pl -d $qry_fas -b 21.bed -o 21.fas");
+}
+
+sub sum_cat {
+  my ($fi, $fo) = @_;
+  my $t = readTable(-in => $fi, -header => 1);
+
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho join("\t", qw/id size ali cat/)."\n";
+  $t->sort("qId", 1, 0, "qBeg", 0, 0);
+  my $ref = group($t->colRef("qId"));
+  for my $qId (sort(keys(%$ref))) {
+    my ($idxb, $cnt) = @{$ref->{$qId}};
+    my $hc;
+    for my $idx ($idxb..$idxb+$cnt-1) {
+      my ($ali1, $cat1) = map {$t->elm($idx, $_)} qw/ali cat/;
+      $hc->{$cat1} ||= 0;
+      $hc->{$cat1} += $ali1;
+    }
+    my @cats = sort {$hc->{$a} <=> $hc->{$b}} keys(%$hc);
+
+    my $str = join(" ", map {$_."[".$hc->{$_}."]"} keys(%$hc));
+    print "$qId: $str\n" if @cats > 1;
+    
+    my $cat = $cats[-1];
+    my $ali = $hc->{$cat};
+    my $qSize = $t->elm($idxb, "qSize");
+    print $fho join("\t", $qId, $qSize, $ali, $cat)."\n";
+  }
+  close $fho;
+}
+
 sub pipe_dust {
   my ($fi, $fo) = @_;
   -d $fo || make_path($fo);
@@ -98,7 +143,7 @@ sub pipe_trf {
   runCmd("awk 'BEGIN{OFS=\"\\t\"} {print \$1, \$2-1, \$3}' $fo.tbl \\
     | sortBed -i stdin | mergeBed -i stdin > $fo.bed");
 }
-sub pipe2 {
+sub pipe2_old {
   pipe_dust("01.fas", "03.dust");
   pipe_trf("01.fas", "05.trf");
   runCmd("cat 03.dust.bed 05.trf.bed | bedcoord.pl | \\
@@ -106,14 +151,6 @@ sub pipe2 {
   runCmd("subtractBed -a 01.bed -b 09.bed | \\
     bedfilter.pl -l 50 -o 11.bed");
   runCmd("seqret.pl -d $qry_fas -b 11.bed -o 11.fas");
-}
-sub pipe3 {
-  runCmd("blastnr.pl -i 11.fas -o 17.blastnr"); #blastnr on Itasca
-  cat_seq("11.bed", "17.blastnr.tbl", "19.bed");
-  runCmd("awk 'BEGIN{OFS=\"\\t\"} {if(\$4!=\"foreign\") print}' 19.bed > 21.bed");
-  runCmd("seqret.pl -d $qry_fas -b 21.bed -o 21.fas");
-  runCmd("usearch.pl -i 21.fas -o 31");
-  runCmd("bedcoord.pl -i 31.bed -o 41.bed");
 }
 sub print_stat {
   print "raw novseq\n";

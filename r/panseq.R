@@ -3,7 +3,16 @@ library(rtracklayer)
 library(Cairo)
 library(GenomicRanges)
 
-dir = '/home/youngn/zhoup/Data/misc3/pan4seq'
+dir = file.path(Sys.getenv('misc3'), 'panseq')
+
+##### pan-genome stats
+fi = file.path(dir, 'out.tbl')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+ts = ddply(ti, .(cid), summarise,
+  orgs = paste(sort(unique(as.character(org))), collapse = "_"),
+  len = as.integer(mean(end - beg + 1))
+)
+tss = ddply(ts, .(orgs), summarise, len = sum(len))
 
 # total NR segments, shared, accession-specific
 fg = file.path(dir, '27.cluster.tbl')

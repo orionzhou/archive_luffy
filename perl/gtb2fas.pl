@@ -61,20 +61,21 @@ if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-my $cntp = 0;
+my ($cnta, $cntp) = (0, 0);
 my $seqH = Bio::SeqIO->new(-fh => $fho, -format => "fasta");
 while( <$fhi> ) {
   chomp;
   /(^id)|(^\#)|(^\s*$)/i && next;
-  my $ps = [ split "\t" ];
-  next unless @$ps >= 18;
+  my $ps = [ split("\t", $_, -1) ];
+  @$ps >= 18 || die "not 19 fileds:\n$_\n";
   my ($id, $par, $chr, $beg, $end, $srd, $locES, $locIS, $locCS, $loc5S, $loc3S, $phaseS, $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
-  $cat1 eq "mRNA" || next;
+#  $cat1 eq "mRNA" || next;
   $locCS || die "no CDS for $id\n";
   my $rloc = locStr2Ary($locCS);
   my $loc = $srd eq "-" ? [map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$rloc] : 
     [map {[$beg+$_->[0]-1, $beg+$_->[1]-1]} @$rloc];
 
+  $cnta ++;
   my $seq;
   if($opt =~ /^cds$/i) {
     my $seqstr = seqRet($loc, $chr, $srd, $fd);
@@ -102,6 +103,6 @@ while( <$fhi> ) {
 }
 close $fhi;
 $seqH->close();
-print "$cntp models with in-frame stop codons\n" if $cntp > 0;
+print "$cntp / $cnta models with in-frame stop codons\n";
 
 __END__

@@ -1,36 +1,52 @@
 require(rtracklayer)
 require(plyr)
-require(GenomicRanges)
-source("comp.fun.R")
+require(seqinr)
+require(GenomicRanges))
 
-tname = "hm101"
-qname = "hm340"
+diro = file.path(Sys.getenv("misc3"), "compstat")
 
-t = read_genome_stat(tname)
-q = read_genome_stat(qname)
-#cq = read_comp_stat(qname, tname)
-#vq = read_var_stat(qname)
+tname = "HM101"
+qnames = c(
+  "hm004", "hm010", "hm018", "hm022", "hm034", 
+  "hm050", "hm056", "hm058", "hm060", "hm095", 
+  "hm125", "hm129", "hm185", "hm324", "hm340")
+qnames = c("hm056", "hm056.ap", "hm340", "hm340.ap")
+qnames = toupper(qnames)
 
-# basic assembly stats
+###### basic assembly stats
 library(Biostrings)
 source(paste("http://faculty.ucr.edu/~tgirke/",
     "Documents/R_BioCond/My_R_Scripts/contigStats.R", sep=''))
 
-scf = sprintf("/home/youngn/zhoup/Data/genome/%s/scf.fas", qname)
-assembly <- readDNAStringSet(scf, "fasta")
-N <- list(acc = width(assembly))
-reflength <- sapply(N, sum)
-stats <- contigStats(N = N, reflength = reflength, style = "data")
-stats[["Contig_Stats"]]
+stats = list()
+for (qname in c(tname, qnames)) {
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  flen = file.path(dir, "15.sizes")
+  tlen = read.table(flen, sep = "\t", header = F, as.is = T)
+  total_len = sum(tlen$V2)
+  
+  fgap = file.path(dir, "16.gap.bed")
+  tgap = read.table(fgap, sep = "\t", header = F, as.is = T)
+  total_gap = sum(tgap$V3 - tgap$V2)
+  total_bases = total_len - total_gap
+  
+  scf = file.path(dir, "11_genome.fas")
+  assembly <- readDNAStringSet(scf, "fasta")
+  N <- list(acc = width(assembly))
+  reflength <- sapply(N, sum)
+  stat <- contigStats(N = N, reflength = reflength, style = "data")
+  st = as.integer(stat$Contig_Stats)
+  stats[[qname]] = matrix(c(total_len, total_bases, st[c(8,2,6,4)]), 
+    nrow = 1, dimnames = list(NULL, c("Total Span", "Total Bases",
+    "# Scaffolds" ,"Scaffold N50" , "Scaffold Median" , "Scaffold Max")))
+}
+ds = do.call(rbind.data.frame, stats)
+do = ds
+for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+fo = file.path(diro, "01_assembly_stat.tbl")
+write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
 
-ctg = sprintf("/home/youngn/zhoup/Data/genome/%s/ctg.fas", org)
-assembly <- readDNAStringSet(ctg, "fasta")
-N <- list(acc = width(assembly))
-reflength <- sapply(N, sum)
-stats <- contigStats(N = N, reflength = reflength, style = "data")
-stats[["Contig_Stats"]]
-
-# plot scaffold size distribution
+#### plot scaffold size distribution
 tmp = cut(t_len$length / 1000, breaks = c(0,1,5,10,50,100,500,1000,5000))
 p = ggplot(data.frame(size = tmp)) +
   geom_bar(aes(x = factor(size)), width = 0.7) + 
@@ -40,51 +56,264 @@ p = ggplot(data.frame(size = tmp)) +
 ggsave(file.path(q$dir, "figs/01_scaffold_size.png"), p, width=5, height=4)
 
 
+##### functional annotation stats
+stats = list()
+
+fi = file.path(Sys.getenv("data"), "db", "pfam", 'genefam.tbl')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+fams = unique(ti$fam[order(ti$pri)])
+for (qname in c(tname, qnames)) {
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  fg = file.path(dir, "51.gtb")
+  tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,15:17)]
+  ngene = nrow(tg)
+  
+  dtn = table(tg$cat2)
+  x = c()
+  x[fams] = 0
+  x[names(dtn)] = dtn
+  
+  tf = file.path(dir, "51.fas")
+  y = read.fasta(tf, as.string = TRUE, seqtype = "AA")
+  dl = ldply(y, nchar)
+  mean_prot = mean(dl$V1)
+  med_prot = median(dl$V1)
+  
+  stats[[qname]] = matrix(c(ngene, med_prot, x),
+    nrow = 1, dimnames = list(NULL, c("Total Genes", "Median Prot Length",
+    fams)))
+}
+ds = do.call(rbind.data.frame, stats)
+do = ds
+for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+fo = file.path(diro, "03_annotation.tbl")
+write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+
+##### NBS-LRR stats
+stats = list()
+
+fi = file.path(Sys.getenv("misc2"), "genefam", "nbs.info")
+fams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
+for (qname in c(tname, qnames)) {
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  fg = file.path(dir, "42.nbs", "12.gtb")
+  tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,15:17)]
+  dtn = table(tg$cat3)
+  x = c()
+  x[fams] = 0
+  x[names(dtn)] = dtn
+  stats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, fams))
+}
+ds = do.call(rbind.data.frame, stats)
+colsums = apply(ds, 2, sum)
+do = ds[,colsums>0]
+for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+fo = file.path(diro, "04_nbs.tbl")
+write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+
+##### CRP stats
+stats = list()
+
+fi = file.path(Sys.getenv("misc2"), "genefam", "crp.info")
+fams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
+for (qname in c(tname, qnames)) {
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  fg = file.path(dir, "51.gtb")
+  tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,15:17)]
+  tn = tg[tg$cat2 == 'crp',]
+  dtn = table(tn$cat3)
+  x = c()
+  x[fams] = 0
+  x[names(dtn)] = dtn
+  stats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, fams))
+}
+ds = do.call(rbind.data.frame, stats)
+colsums = apply(ds, 2, sum)
+do = ds[,colsums>0]
+for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+fo = file.path(diro, "05_crp.tbl")
+write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+
+
 ##### comp stats
-qname = "hm034"
-tname = "hm101"
-dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat", 
-  toupper(qname), toupper(tname))
-fi = file.path(dir, '31.5.gal')
-ti = read.table(fi, header = T, sep = "\t", as.is = T)[, c(1:19)]
-ddply(ti, .(lev), summarise, ali=sum(ali))
-fi = file.path(dir, '31.9.gal')
-ti = read.table(fi, header = T, sep = "\t", as.is = T)[, c(1:19)]
-ddply(ti, .(lev), summarise, ali=sum(ali))
+stats = list()
+for (qname in qnames) {
+  
+  #add repeatmasker stats
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  flen = file.path(dir, "15.sizes")
+  tlen = read.table(flen, sep = "\t", header = F, as.is = T)
+  total_len = sum(tlen$V2)
+  
+  fgap = file.path(dir, "16.gap.bed")
+  tgap = read.table(fgap, sep = "\t", header = F, as.is = T)
+  total_gap = sum(tgap$V3 - tgap$V2)
+  total_bases = total_len - total_gap
+  
+  frep = file.path(dir, "12.rm.bed")
+  trep = read.table(frep, sep = "\t", header = F, as.is = T)
+  brep = sum(trep$V3 - trep$V2)
+  pct_rep = brep / total_bases * 100
 
-fx = file.path(dir, '31.9/gax')
-tx = read.table(fx, header = F, sep = "\t", as.is = T)
-colnames(tx) = c("tid", 'tb', 'te', 'tsrd', 'qid', 'qb', 'qe', 'qsrd', 'cid', 'lev')
-grq = GRanges(seqnames = tx$qid, ranges = IRanges(tx$qb, end = tx$qe))
-sum(width(grq))
-sum(width(reduce(grq)))
+  dir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), 
+    toupper(qname), toupper(tname))
+  fi = file.path(dir, '41.5/gax')
+  ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:3,10)]
+  colnames(ti) = c('tid', 'tbeg', 'tend', 'lev')
+  aligned = sum(ti$tend - ti$tbeg + 1)
+  pct_aligned = aligned / total_bases * 100
+
+  fi = file.path(dir, '31.9/gax')
+  ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:3,10)]
+  colnames(ti) = c('tid', 'tbeg', 'tend', 'lev')
+  synteny = sum(ti$tend - ti$tbeg + 1)
+  pct_synteny = synteny / total_bases * 100
+
+  total_bases = format(total_bases, big.mark = ",")
+  brep = format(brep, big.mark = ",")
+  aligned = format(aligned, big.mark = ",")
+  synteny = format(synteny, big.mark = ",")
+  pct_rep = sprintf("%.01f%%", pct_rep)
+  pct_aligned = sprintf("%.01f%%", pct_aligned)
+  pct_synteny = sprintf("%.01f%%", pct_synteny)
+  stats[[qname]] = matrix(c(total_bases, brep, pct_rep, 
+    aligned, pct_aligned, synteny, pct_synteny), nrow = 1, 
+    dimnames = list(NULL, c("Total Bases", 
+    "Repeats", "", "Alignable to HM101", "", "Synteny Blocks", "")))
+}
+ds = do.call(rbind.data.frame, stats)
+fo = file.path(diro, "11_comp_stat.tbl")
+write.table(ds, fo, sep = "\t", row.names = T, col.names = T, quote = F)
 
 
+##### variation stats
+stats = list()
+for (qname in qnames) {
+  dir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), 
+    toupper(qname), toupper(tname))
+  fi = file.path(dir, '31.9/gax')
+  ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:3,10)]
+  colnames(ti) = c('tid', 'tbeg', 'tend', 'lev')
+  ti = ti[ti$lev <= 2,]
+  ali = sum(ti$tend - ti$tbeg + 1)
+  
+  fi = file.path(dir, '31.9/snp')
+  ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:2,8)]
+  colnames(ti) = c('chr', 'beg', 'lev')
+  snp = sum(ti$lev <= 2)
+  snpd = sprintf("%.02f%%", snp / ali * 100)
 
-fgt = file.path(dir, '31.9/gax')
-fgq = file.path(dir, '41.9/gax')
-tt = read.table(fgt, header = F, sep = "\t", as.is = T)
-colnames(tt) = c('tid', 'tbeg', 'tend', 'tsrd', 'qid', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
-tq = read.table(fgq, header = F, sep = "\t", as.is = T)
-colnames(tq) = c('qid', 'qbeg', 'qend', 'qsrd', 'tid', 'tbeg', 'tend', 'tsrd', 'cid', 'lev')
+  fi = file.path(dir, '31.9/sv.ins.tbl')
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1,4)]
+  l1 = strsplit(ti$loc, ":")
+  str2 = matrix(unlist(l1), ncol = 2, byrow = T)[,2]
+  l2 = strsplit(str2, "-")
+  str3 = matrix(unlist(l2), ncol = 2, byrow = T)
+  ti = cbind(ti, beg = as.numeric(str3[,1]), end = as.numeric(str3[,2]))
+  ti = cbind(ti, len = ti$end - ti$beg + 1)
+  tis = ti[ti$len < 50,]
+  si_n = nrow(tis)
+  si_b = sum(tis$len)
+  til = ti[ti$len >= 50,]
+  li_n = nrow(til)
+  li_b = sum(til$len)
 
-grt1 = GRanges(seqnames = tt$tid, ranges = IRanges(tt$tbeg, end = tt$tend))
-grt2 = GRanges(seqnames = tq$tid, ranges = IRanges(tq$tbeg, end = tq$tend))
 
-grq1 = GRanges(seqnames = tt$qid, ranges = IRanges(tt$qbeg, end = tt$qend))
-grq2 = GRanges(seqnames = tq$qid, ranges = IRanges(tq$qbeg, end = tq$qend))
-sum(width(grq1))
-sum(width(grq2))
-sum(width(intersect(grq1, grq2)))
+  fi = file.path(dir, '31.9/sv.gan.tbl')
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1,4)]
+  l1 = strsplit(ti$loc, ":")
+  str2 = matrix(unlist(l1), ncol = 2, byrow = T)[,2]
+  l2 = strsplit(str2, "-")
+  str3 = matrix(unlist(l2), ncol = 2, byrow = T)
+  ti = cbind(ti, beg = as.numeric(str3[,1]), end = as.numeric(str3[,2]))
+  ti = cbind(ti, len = ti$end - ti$beg + 1)
+  g_n = nrow(ti)
+  g_b = sum(ti$len)
+
+  fi = file.path(dir, '31.9/sv.del.tbl')
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1:3)]
+  ti = cbind(ti, len = ti$end - ti$beg + 1)
+  tis = ti[ti$len < 50,]
+  sd_n = nrow(tis)
+  sd_b = sum(tis$len)
+  til = ti[ti$len >= 50,]
+  ld_n = nrow(til)
+  ld_b = sum(til$len)
+
+  fi = file.path(dir, '31.9/sv.los.tbl')
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1:3)]
+  ti = cbind(ti, len = ti$end - ti$beg + 1)
+  l_n = nrow(ti)
+  l_b = sum(ti$len)
+  
+  fi = file.path(dir, '31.9/sv.tlc.tbl')
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1:3)]
+  ti = cbind(ti, len = ti$tend - ti$tbeg + 1)
+  t_n = nrow(ti)
+  t_b = sum(ti$len)
+  
+  snpstr = sprintf("%s | %5s", format(snp, big.mark = ","), snpd)
+  sistr = sprintf("%s | %11s", format(si_n, big.mark = ","), format(si_b, big.mark = ","))
+  sdstr = sprintf("%s | %11s", format(sd_n, big.mark = ","), format(sd_b, big.mark = ","))
+  listr = sprintf("%s | %11s", format(li_n, big.mark = ","), format(li_b, big.mark = ","))
+  ldstr = sprintf("%s | %11s", format(ld_n, big.mark = ","), format(ld_b, big.mark = ","))
+  gstr = sprintf("%s | %11s", format(g_n, big.mark = ","), format(g_b, big.mark = ","))
+  lstr = sprintf("%s | %11s", format(l_n, big.mark = ","), format(l_b, big.mark = ","))
+  tstr = sprintf("%s | %11s", format(t_n, big.mark = ","), format(t_b, big.mark = ","))
+  stat = c(snpstr, sdstr, sistr, ldstr, listr, lstr, gstr, tstr)
+  stats[[qname]] = matrix(stat, nrow = 1, dimnames = list(NULL, 
+    c("SNP (Number | Density)", "Small Del", "Small Ins", "Large Del", 
+    "Large Ins", "Copy Number Loss", "Copy Number Gain", "Translocation")))
+}
+ds = do.call(rbind.data.frame, stats)
+fo = file.path(diro, "15_vnt_stat.tbl")
+write.table(ds, fo, sep = "\t", row.names = T, col.names = T, quote = F)
 
 
-fd = file.path(dir, 't.t.4.del.bed')
-td = read.table(fd, header = F, sep = "\t", as.is = T)
-colnames(td) = c('chr', 'beg', 'end')
-td$beg = td$beg + 1
-td = cbind(td, len = td$end - td$beg + 1, 
-  str = sprintf("%s:%d-%d", td$chr, td$beg, td$end))
-td[order(td$len, decreasing = T), ][1:50,]
+##### NovelSeq stats
+stats = list()
+for (qname in qnames) {
+  dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  flen = file.path(dir, "15.sizes")
+  tlen = read.table(flen, sep = "\t", header = F, as.is = T)
+  total_len = sum(tlen$V2)
+  
+  fgap = file.path(dir, "16.gap.bed")
+  tgap = read.table(fgap, sep = "\t", header = F, as.is = T)
+  total_gap = sum(tgap$V3 - tgap$V2)
+  total_bases = total_len - total_gap
+  
+  fcds = file.path(dir, "51.tbl")
+  tcds = read.table(fcds, sep = "\t", header = F, as.is = T)[,1:6]
+  tcds = tcds[tcds$V6 == 'cds',]
+  grc = GRanges(seqnames = tcds$V1, ranges = IRanges(tcds$V2, end = tcds$V3))
+  grc = reduce(grc)
+  
+  dir = sprintf("%s/%s_%s/41_novseq", Sys.getenv("misc3"), 
+    toupper(qname), toupper(tname))
+  fi = file.path(dir, '21.bed')
+  ti = read.table(fi, sep = "\t", header = F, as.is = T)
+  bnov = sum(ti$V3 - ti$V2)
+  pnov = bnov / total_bases * 100
+  
+  grn = GRanges(seqnames = ti$V1, ranges = IRanges(ti$V2+1, end = ti$V3))
+  grn = reduce(grn)
+  bcds = sum(width(intersect(grc, grn)))
+  pcds = bcds / bnov * 100
+
+  total_bases = format(total_bases, big.mark = ",")
+  bnov = format(bnov, big.mark = ",")
+  pnov = sprintf("%.01f%%", pnov)
+  bcds = format(bcds, big.mark = ",")
+  pcds = sprintf("%.01f%%", pcds)
+  stats[[qname]] = matrix(c(total_bases, bnov, pnov, bcds, pcds
+    ), nrow = 1, 
+    dimnames = list(NULL, c("Total Bases", 
+    "Novel Sequences", "", "Novel Coding Seq", "")))
+}
+ds = do.call(rbind.data.frame, stats)
+fo = file.path(diro, "21_novseq.tbl")
+write.table(ds, fo, sep = "\t", row.names = T, col.names = T, quote = F)
 
 
 # plot global pairwise comparison

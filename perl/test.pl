@@ -119,39 +119,89 @@ sub double_genome {
     $seqHI->close();
     $seqHO->close();
 }
-
-use Vcf;
-my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
-my $fi = "$dir/HM056_chr5_SI.vcf";
-my $fo = "$dir/HM056_chr5_SI.tbl";
-open(FHO, ">$fo") or die "cannot write $fo\n";
+sub vcf_parse {
+  use Vcf;
+  my $dir = "$DIR_misc3/hapmap_mt40/40_sv";
+  my $fi = "$dir/HM056_chr5_SI.vcf";
+  my $fo = "$dir/HM056_chr5_SI.tbl";
+  open(FHO, ">$fo") or die "cannot write $fo\n";
   my $vcf = Vcf->new(file=>$fi);
   $vcf->parse_header();
 
   my $header_printed=0;
 
   while (my $x=$vcf->next_data_hash()) {
-      if ( !$header_printed ) {
-          print FHO "chr\tpos\ttype\tend\tsvlen\tntlen\thomlen\thomseq\tref\talt";
-          for my $col (sort keys %{$$x{gtypes}}) {
-              print FHO "\t$col";
-          }
-          print FHO "\n";
+    if ( !$header_printed ) {
+        print FHO "chr\tpos\ttype\tend\tsvlen\tntlen\thomlen\thomseq\tref\talt";
+        for my $col (sort keys %{$$x{gtypes}}) {
+            print FHO "\t$col";
+        }
+        print FHO "\n";
 
-          $header_printed = 1;
-      }
+        $header_printed = 1;
+    }
 
-      my $y = $$x{INFO};
-      my ($ntlen, $homseq) = (0, "");
-      $ntlen = $$y{NTLEN} if exists $$y{NTLEN};
-      $homseq = $$y{HOMSEQ} if exists $$y{HOMSEQ};
-      print FHO join("\t", $$x{CHROM}, $$x{POS}, $$y{SVTYPE}, $$y{END}, $$y{SVLEN}, 
-          $ntlen, $$y{HOMLEN}, $homseq, $$x{REF}, $$x{ALT}->[0]);
-      for my $col (sort keys %{$$x{gtypes}}) {
-          my ($al1,$sep,$al2) = exists($$x{gtypes}{$col}{GT}) ? $vcf->parse_alleles($x,$col) : ('.','/','.');
-          my $gt = $al1.'/'.$al2;
-          print FHO "\t".$gt;
-      }
-      print FHO "\n";
+    my $y = $$x{INFO};
+    my ($ntlen, $homseq) = (0, "");
+    $ntlen = $$y{NTLEN} if exists $$y{NTLEN};
+    $homseq = $$y{HOMSEQ} if exists $$y{HOMSEQ};
+    print FHO join("\t", $$x{CHROM}, $$x{POS}, $$y{SVTYPE}, $$y{END}, $$y{SVLEN}, 
+        $ntlen, $$y{HOMLEN}, $homseq, $$x{REF}, $$x{ALT}->[0]);
+    for my $col (sort keys %{$$x{gtypes}}) {
+        my ($al1,$sep,$al2) = exists($$x{gtypes}{$col}{GT}) ? $vcf->parse_alleles($x,$col) : ('.','/','.');
+        my $gt = $al1.'/'.$al2;
+        print FHO "\t".$gt;
+    }
+    print FHO "\n";
   }
+}
+sub parse_locstr {
+  my ($str) = @_;
+  my ($chr, $beg, $end);
+  if($str =~ /^([\w\.]+)\:([\d\.E]+)\-([\d\.E]+)$/) {
+    ($chr, $beg, $end) = ($1, $2, $3);
+  } else {
+    die "unknonw locstr: $str\n";
+  }
+  return ($chr, $beg, $end);
+}
+my $dir = "/home/youngn/zhoup/Data/misc3/HM034_HM101/23_blat";
+sv2bed("$dir/31.9/sv.ins.tbl", "$dir/lins.bed");
+sv2bed("$dir/31.9/sv.del.tbl", "$dir/ldel.bed");
+sub sv2bed {
+  my ($fi, $fo) = @_;
+  my $t = readTable(-in => $fi, -header => 1);
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+
+  for my $i (0..$t->lastRow) {
+    my ($chr, $beg, $end, $loc) = $t->row($i);
+    my ($id, $b, $e) = parse_locstr($loc);
+    my $len = $e - $b + 1;
+    $len >= 200 || next;
+    print $fho join("\t", $chr, $beg-1, $end)."\n";
+  }
+  close $fho;
+}
+sub tlc2tbl {
+  my ($fi, $fo) = @_;
+  my $t = readTable(-in => $fi, -header => 1);
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  
+  my $j = 1;
+  for my $i (0..$t->lastRow) {
+    my ($ti, $tb, $te, $qi, $qb, $qe, $type, $tiloc, $tdloc) = $t->row($i);
+    $type eq "r" || next;
+    my ($chr1, $beg1, $end1) = parse_locstr($tiloc);
+    my ($chr2, $beg2, $end2) = parse_locstr($tdloc);
+    my $len = $te - $tb + 1;
+    $len >= 100 || next;
+    $beg1 -= int($len / 2);
+    $beg2 -= int($len / 2);
+    $end1 += int($len / 2);
+    $end2 += int($len / 2);
+    print $fho join("\t", $j, $chr1, $beg1, $end1)."\n";
+    print $fho join("\t", $j, $chr2, $beg2, $end2)."\n";
+  }
+  close $fho;
+}
 

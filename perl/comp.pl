@@ -67,7 +67,8 @@ chdir $d23 || die "cannot chdir to $d23\n";
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-process_blat2();
+#process_blat2();
+gal_expand("41.5.gal", "41.5", $tgt_fas, $qry_fas, $tgt_size, $qry_size);
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");

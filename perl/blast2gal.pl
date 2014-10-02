@@ -105,7 +105,7 @@ while(<$fhi>) {
 
   print $fho join("\t", $id++, $tId, $tBeg, $tEnd, $tSrd, $tSize,
     $qId, $qBeg, $qEnd, $qSrd, $qSize, 
-    $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS)."\n";
+    '', $ali, $mat, $mis, $qN, $tN, $ident, $score, $tLocS, $qLocS)."\n";
 }
 
 __END__

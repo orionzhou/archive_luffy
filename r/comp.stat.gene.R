@@ -1,5 +1,6 @@
 require(rtracklayer)
-source("comp.fun.R")
+require(plyr)
+
 
 tname = "hm101"
 qname1 = "hm056"
@@ -112,6 +113,51 @@ tgm = cbind(tgm, loc = sprintf("%s:%d-%d", tgm$chr, tgm$beg - lent/2,
   tgm$end + lent/2))
 write.table(tgm, file.path(dir, "81.gene.tbl"), sep = "\t",
   quote = F, row.names = F, col.names = T)
+
+
+##### compare gene family fragility
+tname = "HM101"
+qname = "HM058"
+  dir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), 
+    toupper(qname), toupper(tname))
+
+
+fn = file.path(dir, "ortho.tbl")
+tn = read.table(fn, sep = "\t", header = T, as.is = T)
+tns = tn[tn$qid != '' & tn$tid != '',]
+
+ti = cbind(tn[,1:5], type = '', fam = '', stringsAsFactors = F)
+ti$type[ti$qid == ''] = 'tnq'
+ti$type[ti$tid == ''] = 'qnt'
+ti$type[ti$qid != '' & ti$tid != '' & ti$slen/ti$tlen >= 0.9] = 'conserved'
+ti$type[ti$qid != '' & ti$tid != '' & ti$slen/ti$tlen < 0.9] = 'fragile'
+
+  tdir = sprintf("%s/%s", Sys.getenv("genome"), tname)
+  fg = file.path(tdir, "51.gtb")
+  tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1,16)]
+
+  qdir = sprintf("%s/%s", Sys.getenv("genome"), qname)
+  fg = file.path(qdir, "51.gtb")
+  qg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1,16)]
+
+tu = merge(ti, tg, by.x = 'tid', by.y = 'id', all.x = T)
+colnames(tu)[8] = 'tfam'
+tu = merge(tu, qg, by.x = 'qid', by.y = 'id', all.x = T)
+colnames(tu)[9] = 'qfam'
+
+tu$fam = tu$tfam
+tu$fam[is.na(tu$tfam)] = tu$qfam[is.na(tu$tfam)]
+
+tus = tu[tu$tid != '' & tu$qid != '',]
+
+x = ddply(tu, .(fam), summarise, 
+    pct_conserved = sum(type=='conserved')/length(type),
+    pct_fragile = sum(type=='fragile')/length(type),
+    pct_tnq = sum(type=='tnq')/length(type),
+    pct_qnt = sum(type=='qnt')/length(type)
+)
+x[order(x$pct_conserved, decreasing = T),]
+
 
 
 # compare SNP/indel density

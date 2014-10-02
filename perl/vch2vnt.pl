@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  vcf2vnt.pl - convert a VCF (human readable) file to SNP/IDM file
+  vch2vnt.pl - convert a VCF (human readable) file to SNP/IDM file
 
 =head1 SYNOPSIS
   
-  vcf2snp.pl [-help] [-in input] [-out output dir] 
+  vch2vnt.pl [-help] [-in input-file] [-out output-prefix] 
 
   Options:
-      -h (--help)       brief help message
-      -i (--in)         input
-      -o (--out)        output dir
+    -h (--help)   brief help message
+    -i (--in)     input file (VCH)
+    -o (--out)    output prefix
 
 =cut
   
@@ -51,13 +51,14 @@ unless ($fi eq "stdin" || $fi eq "-" || $fi eq "") {
 -d $do || make_path($do);
 
 my $hf = {
-  1  => "$do/snp",
-  0  => "$do/het", 
-  9  => "$do/idm",
+  'snp' => 1,
+  'het' => 1, 
+  'ins' => 1,
+  'del' => 1,
 };
 for my $type (keys(%$hf)) {
-  my $f = $hf->{$type};
-  open(my $fh, ">$f") || die "cannot write file $f\n";
+  my $fn = "$do/$type"; 
+  open(my $fh, ">$fn") || die "cannot write $fn\n";
   $hf->{$type} = $fh;
 }
 
@@ -68,33 +69,51 @@ while( <$fhi> ) {
   @ps == 5 || die "not 5 lines:\n$line\n";
   my ($chr, $beg, $ref, $alts, $str) = @ps;
   my @alts = split(",", $alts);
-  
-  my @types;
-  for my $alt (@alts) {
-    my $type = (length($ref) == 1 && length($alt) == 1) ? 1 : 9;
-    push @types, $type;
-  }
+  my $alt;
   if($str =~ /([A-Za-z0-9\-_]+)\=([\d\.])\/([\d\.])/) {
-    if($2 eq '.' || $3 eq '.') {
-    } elsif($2 eq $3) {
-      my ($alt, $type) = ($alts[$2-1], $types[$2-1]);
-      my $fho = $hf->{$type};
-      
-      if($type == 1) {
-        print $fho join("\t", $chr, $beg, $ref, $alt)."\n";
-      } else {
-        my $end = $beg + length($ref);
-        ($ref, $alt) = (substr($ref, 1), substr($alt, 1));
-        print $fho join("\t", $chr, $beg, $end, $ref, $alt)."\n";
-      }
-    } elsif($2 ne $3 && $2 == 0) {
-      my ($alt, $type) = ($alts[$3-1], $types[$3-1]);
-      $type = 0;
-      my $fho = $hf->{$type};
-      print $fho join("\t", $chr, $beg, $ref, $alt)."\n";
+    if($2 eq $3) {
+      $alt = $alts[$2-1];
+    } elsif($2 ne $3 && $3 != 0) {
+      my $alt1 = $2 == 0 ? $ref : $alts[$2-1];
+      my $alt2 = $alts[$3-1];
+      my $fh = $hf->{'het'};
+      print $fh join("\t", $chr, $beg, $ref, "$alt1|$alt2")."\n";
+      next;
+    } else {
+      die "unknown allele: $str\n";
     }
   } else {
-      die "unknown allele: $str\n";
+    die "unknown allele: $str\n";
+  }
+
+  my ($lenr, $lena) = (length($ref), length($alt));
+  my $fh;
+  my ($tbeg, $tend, $talt);
+  if($lenr == 1 && $lena == 1) {  
+    $fh = $hf->{'snp'};
+    print $fh join("\t", $chr, $beg, $ref, $alt)."\n";
+  } elsif($lenr < $lena && $alt =~ /^$ref([ATCG]+)$/) {
+    $fh = $hf->{'ins'};
+    $talt = $1;
+    $tbeg = $beg + $lenr - 1;
+    print $fh join("\t", $chr, $tbeg, $tbeg, $talt)."\n";
+  } elsif($lenr > $lena && $ref =~ /^$alt([ATCG]+)$/) {
+    $fh = $hf->{'del'};
+    $talt = $1;
+    $tbeg = $beg + $lena;
+    $tend = $beg + $lenr - 1;
+    print $fh join("\t", $chr, $tbeg, $tend, $talt)."\n";
+  } else {
+    substr($ref, 0, 1) eq substr($alt, 0, 1) ||
+      die "unknown allele: $ref $alt\n";
+    $fh = $hf->{'del'};
+    ($tbeg, $tend) = ($beg + 1, $beg + $lenr - 1);
+    $talt = substr($ref, 1);
+    print $fh join("\t", $chr, $tbeg, $tend, $talt)."\n";
+    $fh = $hf->{'ins'};
+    $tbeg = $beg;
+    $talt = substr($alt, 1);
+    print $fh join("\t", $chr, $tbeg, $tbeg, $talt)."\n";
   }
 }
 close $fhi;

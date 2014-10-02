@@ -1,23 +1,54 @@
+require(GenomicRanges)
 require(plyr)
-require(VennDiagram)
+require(rtracklayer)
+#require(VennDiagram)
 
-qorg = "HM340"
-qdir = file.path('/home/youngn/zhoup/Data/genome', qorg)
-qfs = file.path(qdir, '15.sizes')
-qfg = file.path(qdir, '16_gap.tbl')
-qts = read.table(qfs, sep='\t', header=T, as.is=T)
-qtg = read.table(qfg, sep='\t', header=T, as.is=T)
+org = "HM034"
 
-torg = "HM101"
-tdir = file.path('/home/youngn/zhoup/Data/genome', torg)
-tfs = file.path(tdir, '15.sizes')
-tfg = file.path(tdir, '16_gap.tbl')
-tts = read.table(tfs, sep='\t', header=T, as.is=T)
-ttg = read.table(tfg, sep='\t', header=T, as.is=T)
+##### Mapping-based approach
+chrs = sprintf("chr%s", 1:8)
 
+dirr = file.path(Sys.getenv('genome'), "HM101")
+fa = file.path(dirr, '15.sizes')
+fg = file.path(dirr, '16.gap.bed')
+ta = read.table(fa, sep = '\t', header = F, as.is = T)
+tg = read.table(fg, sep = '\t', header = F, as.is = T)
+ta = ta[ta$V1 %in% chrs,]
+tg = tg[tg$V1 %in% chrs,]
+ga = GRanges(seqnames = ta$V1, ranges = IRanges(1, end = ta$V2))
+gg = GRanges(seqnames = tg$V1, ranges = IRanges(tg$V2+1, end = tg$V3))
+gr = setdiff(ga, gg)
+
+### generate coverage BED file (takes long time - run with caution)
+orgs = c(
+  "hm004", "hm010", "hm018", "hm022", "hm034", 
+  "hm050", "hm056", "hm058", "hm060", "hm095", 
+  "hm125", "hm129", "hm185", "hm324", "hm340")
+orgs = c(
+  "hm050", "hm056", "hm058", "hm060", "hm095", 
+  "hm125", "hm129", "hm185", "hm324", "hm340")
+orgs = toupper(orgs)
+
+for (org in orgs) {
+dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr")
+fcov = sprintf("%s/35_cov/%s.bw", dirm, org)
+
+bw = import(fcov, which = gr, asRangedData = F)
+chrs = seqnames(bw)
+poss = start(bw)
+idxs = bw$score >= 1
+rm(bw)
+gm = GRanges(seqnames = chrs[idxs], ranges = IRanges(poss[idxs], end = poss[idxs]))
+gm = reduce(gm)
+rm(chrs, poss, idxs)
+
+tm = data.frame(chr = seqnames(gm), beg = start(gm) - 1, end = end(gm))
+fo = sprintf("%s/38_covered/%s.bed", dirm, org)
+write.table(tm, fo, row.names = F, col.names = F, sep = "\t", quote = F)
+}
 
 # SNP density
-fw = sprintf('/home/youngn/zhoup/Data/misc3/%s_%s/41_novelseq/nov2/35.gal', org.q, org.t)
+fw = sprintf("%s/%s_HM101/23_blat/31.9/snp", Sys.getenv("misc3"), org)
 tw = read.table(fw, sep='\t', header=T, as.is=T)[,1:17]
 tw = cbind(tw, alnlen=tw$match+tw$misMatch)
 tw = tw[tw$alnlen > 0,]

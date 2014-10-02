@@ -11,7 +11,7 @@ require Exporter;
 @EXPORT = qw/gi2Taxid annotate_taxid/;
 @EXPORT_OK = qw//;
 
-our $dir = "/home/youngn/zhoup/Data/db/ncbi_taxon";
+my $dir = "$ENV{'data'}/db/ncbi_taxon";
 our $fnodes = "$dir/nodes.dmp";
 our $fnames = "$dir/names.dmp";
 

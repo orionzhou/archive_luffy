@@ -46,7 +46,7 @@ pod2usage(1) if $help_flag;
 my @orgs1 = qw/HM004 HM010 HM018 HM022 HM034/;
 my @orgs2 = qw/HM050 HM056 HM058 HM060 HM095/;
 my @orgs3 = qw/HM125 HM129 HM185 HM324 HM340/;
-my @orgs = (@orgs1, @orgs2, @orgs3);
+my @orgs = (@orgs3);
 
 my $dir = "$ENV{'misc3'}/hapmap_mt40/12_ncgr";
 -d $dir || make_path($dir);
@@ -58,17 +58,18 @@ my $fv = "$dir/../30_vnt/acc319.vcf.gz";
 
 -d "35_cov" || make_path("35_cov");
 -d "36_abcov" || make_path("36_abcov");
--d "41_vch" || make_path("41_vch");
+-d "41_vcf" || make_path("41_vcf");
 
 for my $org (@orgs) {
   my $orgi = $org;
   $orgi = "$org-I" if $org =~ /^HM0(17)|(20)|(22)$/;
   
-#  runCmd("bcftools view --exclude-uncalled --min-ac 1 --output-type u \\
-#    --types snps,indels,mnps -s $orgi $fv | \\
-#    bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - |\\
-#    grep -P \"^chr[1-8]\" > 41_vch/$org.vch");
-  runCmd("vch2vnt.pl -i 41_vch/$org.vch -o 42_vnt/$org");
+  runCmd("bcftools view \\
+    -R \$genome/HM101/15.chr.tbl \\
+    --exclude-uncalled --min-ac 2:alt1 --trim-alt-alleles \\
+    --output-type v --types snps,indels,mnps \\
+    -s $orgi $fv -o 41_vcf/$org.vcf");
+#  runCmd("vch2vnt.pl -i 41_vch/$org.vch -o 42_vnt/$org");
  
   my $fb = "01_raw/$orgi.recalibrated.bam";
   -s $fb || die "cannot find $fb\n";

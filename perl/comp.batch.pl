@@ -50,6 +50,8 @@ for my $qry (@qrys) {
   my $qsize = "$ENV{'genome'}/$qry/15.sizes";
   my $tsize = "$ENV{'genome'}/$tgt/15.sizes";
   chdir $dir || die "cannot chdir to $dir\n";
+  runCmd("rm 31.9/idm*");
+  runCmd("gal2idm.pl -i 31.9/gal -o 31.9/idm");
 #  runCmd("idm.refine.pl -q $qry -t $tgt -i 31.9/idm -o 31.9/sv");
 #  print "qsub spada -N spada.$tag -v ORG=$qry -l qos=weightlessqos\n";
 #  print "qsub job.lab -N hmm.$tag -v ORG=$qry\n";

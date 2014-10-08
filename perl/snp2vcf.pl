@@ -6,16 +6,17 @@
   
 =head1 NAME
   
-  snp2bed.pl - convert Snp file to Bed file
+  snp2vcf.pl - convert Snp file to Vcf file
 
 =head1 SYNOPSIS
   
-  snp2bed.pl [-help] [-in input-file] [-out output-file]
+  snp2vcf.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -help   brief help message
     -in     input (SNP) file
-    -out    output (BED) file
+    -out    output (VCF) file
+    -sample sample ID 
 
 =cut
   
@@ -29,9 +30,9 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
-use Gal;
 
 my ($fi, $fo) = ('') x 2;
+my $sample = "";
 my ($fhi, $fho);
 my $help_flag;
 
@@ -40,9 +41,10 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
+  "sample|s=s"  => \$sample,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+pod2usage(2) if !$fi || !$fo || !$sample;
 
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
@@ -56,16 +58,24 @@ if ($fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
 }
 
+print $fho "##fileformat=VCFv4.1
+##FILTER=<ID=q10,Description=\"Quality below 10\">
+##FILTER=<ID=s50,Description=\"Less than 50% of samples have data\">
+##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n";
+print $fho join("\t", "#CHROM", qw/POS ID REF ALT QUAL FILTER INFO FORMAT/,
+  $sample)."\n";
+
 while( <$fhi> ) {
   chomp;
   next if /(^\#)|(^id)|(^\s*$)/s;
   my ($chr, $pos, $tBase, $qBase, $qid, $qpos, $cid, $lev) = split "\t";
-  my $name = "$tBase/$qBase";
-  my $score = exists $h_score->{$lev} ? $h_score->{$lev} : 300;
-  print $fho join("\t", $chr, $pos-1, $pos, $name, $score)."\n";
+  print $fho join("\t", $chr, $pos, ".", $tBase, $qBase, 50, 'PASS',
+    '.', 'GT', '1/1')."\n";
 }
 close $fhi;
 close $fho;
+#runCmd("bgzip -f $fo");
+#runCmd("tabix -p vcf $fo.gz");
 
 
 __END__

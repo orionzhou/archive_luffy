@@ -185,7 +185,6 @@ sub gal_expand {
   runCmd("snp.idx.pl -i snp -s $tSize");
 
   runCmd("gal2idm.pl -i gal -o idm");
-  runCmd("idm.idx.pl -i idm -s $tSize");
   chdir "..";
 }
 

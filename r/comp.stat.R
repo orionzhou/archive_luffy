@@ -7,11 +7,12 @@ diro = file.path(Sys.getenv("misc3"), "compstat")
 
 tname = "HM101"
 qnames = c(
-  "hm004", "hm010", "hm018", "hm022", "hm034", 
-  "hm050", "hm056", "hm058", "hm060", "hm095", 
-  "hm125", "hm129", "hm185", "hm324", "hm340")
-qnames = c("hm056", "hm056.ap", "hm340", "hm340.ap")
-qnames = toupper(qnames)
+  "HM058", "HM056", "HM125", "HM129", "HM060", 
+  "HM095", "HM185", "HM034", "HM004", "HM050", 
+  "HM018", "HM010", "HM022", "HM324", "HM340"
+)
+#qnames = c("hm056", "hm056.ap", "hm340", "hm340.ap")
+#qnames = toupper(qnames)
 
 ###### basic assembly stats
 library(Biostrings)

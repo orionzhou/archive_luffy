@@ -83,9 +83,8 @@ while( <$fhi> ) {
       ($qBeg + $rqb - 1, $qBeg + $rqe - 1);
     my ($tb, $te) = $tSrd eq "-" ? ($tEnd - $rte + 1, $tEnd - $rtb + 1) : 
       ($tBeg + $rtb - 1, $tBeg + $rte - 1);
-#  my $tBase = $tins > 0 ? seqRet([[$tb+1, $te-1]], $tId, $tSrd, $ft) : '';
-#  my $qBase = $qins > 0 ? seqRet([[$qb+1, $qe-1]], $qId, $qSrd, $fq) : '';
-    print $fho join("\t", $tId, $tb, $te, $qId, $qb, $qe, $cid, $lev)."\n";
+    print $fho join("\t", $tId, $tb, $te, $tSrd, 
+      $qId, $qb, $qe, $qSrd, $cid, $lev)."\n";
   }
 }
 close $fhi;

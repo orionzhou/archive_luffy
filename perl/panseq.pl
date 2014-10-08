@@ -47,8 +47,9 @@ pod2usage(1) if $help_flag;
 my $dir = "$ENV{'misc3'}/panseq";
 chdir $dir || die "cannot chdir to $dir\n";
 
-my @orgs = qw/HM004 HM010 HM018 HM022 HM034 HM050/;# HM056 HM058 HM060 
-#  HM095 HM125 HM129 HM185 HM324 HM340/;
+my @orgs = qw/HM004 HM010 HM018 HM022 HM034 
+  HM050 HM056 HM058 HM060 HM095 
+  HM125 HM129 HM185 HM324 HM340/;
 
 if($stat_flag) {
   exit;

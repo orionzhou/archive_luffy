@@ -71,16 +71,19 @@ while(<$fhi>) {
   my $len = $end - $beg + 1;
   my $hl = {
     'mrna' => "1-$len",
-    'cds' => $locCS,
+    'cds'  => $locCS,
+    'utr5' => $loc5S,
+    'utr3' => $loc3S,
+    'intron' => $locIS,
   };
-  print $fho join("\t", $chr, $beg, $end, $srd, $id, "mrna", $cat2)."\n";
-
-  my $rcloc = locStr2Ary($locCS);
-  my $cloc = $srd eq "-" ?
-    [ map {[$end - $_->[1] + 1, $end - $_->[0] + 1]} @$rcloc ] :
-    [ map {[$beg + $_->[0] - 1, $beg + $_->[1] - 1]} @$rcloc ];
-  for (@$cloc) {
-    print $fho join("\t", $chr, @$_, $srd, $id, "cds", $cat2)."\n";
+  for my $type (keys(%$hl)) {
+    my $rloc = locStr2Ary($hl->{$type});
+    my $loc = $srd eq "-" ?
+      [ map {[$end - $_->[1] + 1, $end - $_->[0] + 1]} @$rloc ] :
+      [ map {[$beg + $_->[0] - 1, $beg + $_->[1] - 1]} @$rloc ];
+    for (@$loc) {
+      print $fho join("\t", $chr, @$_, $srd, $id, $type, $cat2)."\n";
+    }
   }
 }
 close $fhi;

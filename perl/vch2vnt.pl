@@ -28,6 +28,7 @@ use Pod::Usage;
 use FindBin;
 use lib $FindBin::Bin;
 use Data::Dumper;
+use Common;
 use File::Path qw/make_path remove_tree/;
 use List::Util qw/min max sum/;
 
@@ -119,4 +120,15 @@ while( <$fhi> ) {
 close $fhi;
 for (keys(%$hf)) { close $hf->{$_}; }
 
+runCmd("sort -k1,1 -k2,2n $do/snp -o $do/snp");
+runCmd("bgzip -c $do/snp > $do/snp.gz");
+runCmd("tabix -s 1 -b 2 -e 2 -f $do/snp.gz");
+
+runCmd("sort -k1,1 -k2,2n -k3,3n $do/del -o $do/del");
+runCmd("bgzip -c $do/del > $do/del.gz");
+runCmd("tabix -s 1 -b 2 -e 3 -f $do/del.gz");
+
+runCmd("sort -k1,1 -k2,2n $do/ins -o $do/ins");
+runCmd("bgzip -c $do/ins > $do/ins.gz");
+runCmd("tabix -s 1 -b 2 -e 3 -f $do/ins.gz");
 

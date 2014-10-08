@@ -59,7 +59,7 @@ if ($fo eq "stdout" || $fo eq "-") {
 while( <$fhi> ) {
   chomp;
   next if /(^\#)|(^\s*$)/;
-  my ($tid, $tb, $te, $qid, $qb, $qe, $id, $lev) = split "\t";
+  my ($tid, $tb, $te, $ts, $qid, $qb, $qe, $qs, $id, $lev) = split "\t";
   my $tlen = $te - $tb + 1;
   my $qlen = $qe - $qb + 1;
   my $name = "$tlen/$qlen";

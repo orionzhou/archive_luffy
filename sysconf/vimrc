@@ -1,5 +1,5 @@
-filetype plugin on
 syntax on
+filetype indent plugin on
 au BufWinEnter * silent loadview
 colorscheme desert 
 set number

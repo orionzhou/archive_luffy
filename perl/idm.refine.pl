@@ -141,7 +141,8 @@ sub cat_var {
   while( <$fhi> ) {
     chomp;
     next if /(^\#)|(^\s*$)/;
-    my ($tid, $tbeg, $tend, $qid, $qbeg, $qend, $cid, $lev) = split "\t";
+    my ($tid, $tbeg, $tend, $tsrd, $qid, $qbeg, $qend, $qsrd, $cid, $lev) 
+      = split "\t";
     $lev == 1 || next;
     my $tlen = $tend - $tbeg - 1;
     my $qlen = $qend - $qbeg - 1;

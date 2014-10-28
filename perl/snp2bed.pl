@@ -13,9 +13,9 @@
   snp2bed.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input (SNP) file
-    -out    output (BED) file
+    -h (--help)   brief help message
+    -i (--in)     input (SNP) file
+    -o (--out)    output (BED) file
 
 =cut
   
@@ -47,13 +47,13 @@ pod2usage(2) if !$fi || !$fo;
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open ($fhi, "<$fi") || die "cannot read $fi\n";
 }
 
 if ($fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 while( <$fhi> ) {

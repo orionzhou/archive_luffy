@@ -2,6 +2,12 @@ require(ape)
 require(geiger)
 require(igraph)
 
+orgs = c(
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
+  "HM095", "HM185", "HM034", "HM004", "HM050", 
+  "HM023", "HM010", "HM022", "HM324", "HM340"
+)
+chrs = sprintf("chr%s", 1:8)
 
 #### plot NBS-LRR tree (with label)
 dir = file.path(Sys.getenv('misc2'), 'nbs/mt_40')
@@ -55,29 +61,34 @@ plot(tree, show.tip.label = T, font = 1,
 add.scale.bar(lcol = 'black')
 dev.off()
 
-##### plot crp subgroup tree
+##### identify crp sub-clade membership
 source('clustertree.R')
 
 dir = file.path(Sys.getenv("misc2"), 'genefam')
 fc = file.path(dir, "11.crp.tbl")
-tc = read.table(fc, sep = "\t", header = T, as.is = T)[,1:12]
-fo = sprintf("%s/27.stat.tbl", dir)
+tc = read.table(fc, sep = "\t", header = T, as.is = T)[,1:13]
 
-dat = data.frame()
-for (fam in unique(tc$family)) {
-  fam = tolower(fam)
-  fi = sprintf("%s/24_phb/%s.phb", dir, fam)
-  ff = sprintf("%s/26_fig/%s.png", dir, fam)
+to = cbind(tc, clu = NA)
+fams = unique(tc$family)
+for (fam in fams) {
+  tcs = tc[tc$family == fam,]
+  if(nrow(tcs) < 10) next
+  fi = sprintf("%s/23_aln/%s.ph", dir, tolower(fam))
+  ff = sprintf("%s/26_fig/%s.png", dir, tolower(fam))
   if(!file.exists(fi)) next
   
   tree = read.tree(fi)
   cls = prosperi.cluster(tree, 0.05)$membership
 
   ids = tree$tip.label
-  orgs = sapply(strsplit(ids, "_"), "[", 1)
+  aorgs = sapply(strsplit(ids, "_"), "[", 1)
+  
+  for (i in 1:length(ids)) {
+    to$clu[to$family == fam & to$treeid == ids[i]] = cls[i]
+  }
 
   ucl = sort(unique(cls))
-  uorg = sort(unique(orgs))
+  uorg = sort(unique(aorgs))
 
   pal = rainbow(length(ucl))
   names(pal) = as.character(ucl)
@@ -91,21 +102,58 @@ for (fam in unique(tc$family)) {
 
   add.scale.bar(lcol = 'black')
   dev.off()
+}
+fo = sprintf("%s/27.cl.tbl", dir)
+write.table(to, file = fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
-  mat = matrix(0, nrow = length(ucl), ncol = length(uorg), dimnames = 
-    list(ucl, uorg))
-  for (cl in ucl) {
-    tab = table(orgs[cls == cl])
-    mat[as.character(cl), names(tab)] = tab
+### identify crp tandup
+dir = file.path(Sys.getenv("misc2"), 'genefam')
+fc = file.path(dir, "27.cl.tbl")
+tc = read.table(fc, sep = "\t", header = T, as.is = T)
+
+orts = list()
+for (org in orgs) {
+  ft = sprintf("%s/%s_HM101/23_blat/ortho.tbl", Sys.getenv("misc3"), org)
+  tt = read.table(ft, header = T, sep = "\t", as.is = T)[,c(1,3)]
+  orts[[org]] = tt
+}
+
+dat = data.frame()
+fams = unique(tc$family)
+fo = sprintf("%s/28.expand.tbl", dir)
+for (fam in fams) {
+  tc1 = tc[tc$family == fam,]
+  if(nrow(tc1) < 10) next
+
+  for (cl in sort(unique(tc1$cl))) {
+    if(cl == 0) next
+    tc2 = tc1[tc1$cl == cl,]
   
-    n0 = as.numeric(tab['hm101'])
-    n0 = ifelse(is.na(n0), 0, n0)
-    for (org in names(tab)) {
-      if(org == 'hm101') next
-      n = as.numeric(tab[org])
-      if((n0 == 0 & n - n0 > 1) | (n0 > 0 & n - n0 > 0))  {
-        x = data.frame(fam = fam, cl = cl, hm101 = n0, org = org, n = n,
-          ids = paste(ids[cls == cl & orgs == org], collapse = ' '))
+    tcr = tc2[tc2$org == "HM101",]
+    if(nrow(tcr) == 0) next
+    for (org in sort(unique(tc2$org))) {
+      if(org == 'HM101') next
+      tc3 = tc2[tc2$org == org,]
+      
+      ort = orts[[org]]
+      
+      t_ort = ort[ort$qid %in% tc3$id,]
+      ids_orphan = t_ort$qid[t_ort$tid == ""]
+      if(length(ids_orphan) == 0) next
+      tc4 = tc3[tc3$id %in% ids_orphan,]
+      for (i in 1:nrow(tcr)) {
+        idr = tcr$id[i]
+        ido = ort$qid[ort$tid == idr]
+        chr = tc3$chr[tc3$id == ido]
+        pos = (tc3$beg[tc3$id == ido] + tc3$end[tc3$id == ido]) / 2
+        
+        if(ido == '') next
+        idxs = tc4$chr == chr & abs((tc4$beg+tc4$end)/2 - pos) < 5000
+        if(sum(idxs) == 0) next
+        tcd = tc4[idxs,]
+      
+        x = data.frame(fam = fam, cl = cl, org = org, idr = idr, ido = ido,
+          ide = tcd$id, chr = tcd$chr, beg = tcd$beg, end = tcd$end)
         dat = rbind(dat, x)
       }
     }

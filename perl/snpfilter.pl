@@ -38,8 +38,6 @@ use List::Util qw/min max sum/;
 
 my ($fi, $fo) = ('') x 2;
 my ($co_mis, $co_mac) = (-1, 0);
-my $fhi;
-my $fho;
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -52,13 +50,17 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-$fhi = \*STDIN;
-$fho = \*STDOUT;
-unless ($fi eq "stdin" || $fi eq "-" || $fi eq "") {
-  open ($fhi, "<$fi") || die "Can't open file $fi: $!\n";
+my ($fhi, $fho);
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
+  $fhi = \*STDIN;
+} else {
+  open ($fhi, "<$fi") || die "cannot read $fi\n";
 }
-unless ($fo eq "stdout" || $fo eq "-" || $fo eq "") {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
+  $fho = \*STDOUT;
+} else {
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 my @names;

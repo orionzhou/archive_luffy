@@ -7,9 +7,9 @@ diro = file.path(Sys.getenv("misc3"), "compstat")
 
 tname = "HM101"
 qnames = c(
-  "HM058", "HM056", "HM125", "HM129", "HM060", 
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
   "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM018", "HM010", "HM022", "HM324", "HM340"
+  "HM023", "HM010", "HM022", "HM324", "HM340"
 )
 #qnames = c("hm056", "hm056.ap", "hm340", "hm340.ap")
 #qnames = toupper(qnames)
@@ -85,8 +85,8 @@ for (qname in c(tname, qnames)) {
     fams)))
 }
 ds = do.call(rbind.data.frame, stats)
-do = ds
-for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+do = t(ds)
+#for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
 fo = file.path(diro, "03_annotation.tbl")
 write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
 
@@ -108,9 +108,10 @@ for (qname in c(tname, qnames)) {
 ds = do.call(rbind.data.frame, stats)
 colsums = apply(ds, 2, sum)
 do = ds[,colsums>0]
-for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+do = t(do)
+do = cbind('sub-family' = rownames(do), do)
 fo = file.path(diro, "04_nbs.tbl")
-write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+write.table(do, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 ##### CRP stats
 stats = list()
@@ -121,7 +122,7 @@ for (qname in c(tname, qnames)) {
   dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
   fg = file.path(dir, "51.gtb")
   tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,15:17)]
-  tn = tg[tg$cat2 == 'crp',]
+  tn = tg[tg$cat2 == 'CRP',]
   dtn = table(tn$cat3)
   x = c()
   x[fams] = 0
@@ -131,9 +132,10 @@ for (qname in c(tname, qnames)) {
 ds = do.call(rbind.data.frame, stats)
 colsums = apply(ds, 2, sum)
 do = ds[,colsums>0]
-for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
+do = t(do)
+do = cbind('sub-family' = rownames(do), do)
 fo = file.path(diro, "05_crp.tbl")
-write.table(do, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+write.table(do, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 
 ##### comp stats
@@ -162,25 +164,24 @@ for (qname in qnames) {
   ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:3,10)]
   colnames(ti) = c('tid', 'tbeg', 'tend', 'lev')
   aligned = sum(ti$tend - ti$tbeg + 1)
-  pct_aligned = aligned / total_bases * 100
+#  pct_aligned = aligned / total_bases * 100
 
   fi = file.path(dir, '31.9/gax')
   ti = read.table(fi, header = F, sep = "\t", as.is = T)[,c(1:3,10)]
   colnames(ti) = c('tid', 'tbeg', 'tend', 'lev')
   synteny = sum(ti$tend - ti$tbeg + 1)
-  pct_synteny = synteny / total_bases * 100
+#  pct_synteny = synteny / total_bases * 100
 
   total_bases = format(total_bases, big.mark = ",")
   brep = format(brep, big.mark = ",")
   aligned = format(aligned, big.mark = ",")
   synteny = format(synteny, big.mark = ",")
   pct_rep = sprintf("%.01f%%", pct_rep)
-  pct_aligned = sprintf("%.01f%%", pct_aligned)
-  pct_synteny = sprintf("%.01f%%", pct_synteny)
-  stats[[qname]] = matrix(c(total_bases, brep, pct_rep, 
-    aligned, pct_aligned, synteny, pct_synteny), nrow = 1, 
-    dimnames = list(NULL, c("Total Bases", 
-    "Repeats", "", "Alignable to HM101", "", "Synteny Blocks", "")))
+#  pct_aligned = sprintf("%.01f%%", pct_aligned)
+#  pct_synteny = sprintf("%.01f%%", pct_synteny)
+  stats[[qname]] = matrix(c(total_bases, brep, pct_rep, aligned, synteny), 
+    nrow = 1, dimnames = list(NULL, c("Total Bases", 
+    "Repeats", "", "Alignable to HM101", "Synteny Blocks")))
 }
 ds = do.call(rbind.data.frame, stats)
 fo = file.path(diro, "11_comp_stat.tbl")
@@ -333,80 +334,3 @@ p <- ggplot(data = q$tw) +
 ggsave(p, filename = file.path(q$dir, "figs/03_coverage.png"), 
     width = 7, height = 5)
 
-# compare SNPs called by 2 approaches
-qname = "hm340"
-cq = read_comp_stat(qname, tname)
-vq = read_var_stat(qname)
-
-#fc = file.path(cq$dir, '29.gax')
-#tc = read.table(fc, header = F, sep = "\t", as.is = T)[, 1:3]
-#colnames(tc) = c('chr', 'beg', 'end')
-#grc = GRanges(seqnames = tc$chr, ranges = IRanges(tc$beg, end = tc$end))
-
-fs1 = file.path(cq$dir, '29.vnt/snp')
-ts1 = read.table(fs1, header = F, sep = "\t", as.is = T)[, 1:2]
-colnames(ts1) = c('chr', 'pos')
-gs1 = GRanges(seqnames = ts1$chr, ranges = IRanges(ts1$pos, end = ts1$pos))
-
-fs2 = file.path(vq$dir, 'snp')
-ts2 = read.table(fs2, header = F, sep = "\t", as.is = T)[, 1:2]
-colnames(ts2) = c('chr', 'pos')
-gs2 = GRanges(seqnames = ts2$chr, ranges = IRanges(ts2$pos, end = ts2$pos))
-#gs2s = intersect(grc, gr2)
-
-sum(width(gs1))
-sum(width(gs2))
-sum(width(intersect(gs1, gs2)))
-
-#fi1 = file.path(cq$dir, '29.vnt/idm')
-#ti1 = read.table(fi1, header = F, sep = "\t", as.is = T)[, 1:3]
-#colnames(ti1) = c('chr', 'beg', 'end')
-#ti1$end = ti1$end - 1
-#gi1 = GRanges(seqnames = ti1s$chr, ranges = IRanges(ti1s$beg, end = ti1s$end))
-
-#fi2 = file.path(vq$dir, 'idm')
-#ti2 = read.table(fi2, header = F, sep = "\t", as.is = T)[, 1:3]
-#colnames(ti2) = c('chr', 'beg', 'end')
-#gi2 = GRanges(seqnames = ti2s$chr, ranges = IRanges(ti2s$beg, end = ti2s$end))
-
-
-# IDM statistics indel/other
-tname = "hm101"
-qname = "hm340.apecca"
-
-dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat/31.9", 
-  toupper(qname), toupper(tname))
-fs = file.path(dir, 'idm.large.cat.tbl')
-ts = read.table(fs, header = F, sep = "\t", quote = "", as.is = T)
-colnames(ts) = c('tid', 'tbeg', 'tend', 'id', 'qid', 'qbeg', 'qend', 'ttype', 
-  'qtype')
-ts = cbind(ts, 'tlen' = ts$tend - ts$tbeg - 1, 
-  'qlen' = ts$qend - ts$qbeg - 1)
-tu = ts[ts$ttype == 'abs' & ts$qtype == 'abs',]
-tb = ts[ts$ttype == 'pre' | ts$qtype == 'pre',]
-
-c('unb_n' = nrow(tu), 'unb_bp_tgt' = sum(tu$tlen), 'unb_bp_qry' = sum(tu$qlen),
-  'bal_n' = nrow(tb), 'bal_bp_tgt' = sum(tb$tlen), 'bal_bp_qry' = sum(tb$qlen))
-
-
-# plot compstat and save to comp.png
-dirstat = '/home/youngn/zhoup/Data/misc3/compstat'
-tt = read.table(file.path(dirstat, 'comp.tbl'), header = T, sep = "\t", as.is = T)
-tp = cbind(tt[,c(1,5)], ovl = tt$ovl / tt$ass * 100, 
-  ass = (tt$ass - tt$ovl) / tt$ass * 100,
-  map = (tt$map - tt$ovl) / tt$ass * 100)
-tl = reshape(tp, idvar = c("sam", "type"), varying=list(3:5), timevar="prop", 
-  v.names = 'pct', times = colnames(tp)[3:5], direction = 'long')
-
-p <- ggplot(data = tl) +
-  geom_bar(mapping = aes(x = sam, y = pct, fill = prop), stat = 'identity', 
-    position = 'stack') +
-#  layer(data=s3, geom="text", mapping=aes(x=acc, y=total/1000000 - 5, label=sprintf("%.01fx", cov_mapping)), geom_params=list(size=3.5, color='white')) +
-#  layer(data=s3, geom="text", mapping=aes(x=acc, y=total/1000000 + 5, label=sprintf("%.01fx", cov_sequencing)), geom_params=list(size=3.5)) +
-  scale_fill_brewer(palette = 'Set1', breaks = c("ovl", 'ass', 'map'), 
-    labels=c("SNPs called by both approaches", "SNPs only called by assembly-based approach", "SNPs only called by mapping-based approach")) +
-  scale_x_discrete(name = '') +
-  scale_y_continuous(name = 'Proportion') +
-  coord_flip() +
-  theme(legend.title = element_blank(), legend.direction = 'vertical', legend.position = 'top')
-ggsave(p, filename=file.path(dirstat, "compstat.png"), width=8, height=3.5)

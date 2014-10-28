@@ -4,17 +4,16 @@ require(rtracklayer)
 require(Rsamtools)
 require(ggplot2)
 require(grid)
-#require(VennDiagram)
 
 orgs = c(
-  "HM058", "HM056", "HM125", "HM129", "HM060", 
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
   "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM010", "HM018", "HM022", "HM324", "HM340"
+  "HM023", "HM010", "HM022", "HM324", "HM340"
 )
-#orgs = toupper(orgs)
+chrs = sprintf("chr%s", 1:8)
+
 
 ##### Mapping-based approach
-chrs = sprintf("chr%s", 1:8)
 
 dirr = file.path(Sys.getenv('genome'), "HM101")
 fa = file.path(dirr, '15.sizes')
@@ -121,7 +120,7 @@ for (type in unique(tc$type)) {
 ta = cbind(ta, subrate = ta$nsnp / ta$bcov)
 
 
-##### compare SNPs called from two sources
+##### compare SNP density estimates from two sources
 to = rbind(cbind(method = 'mapping', tr), cbind(method = 'assembly', ta))
 fo = file.path(Sys.getenv("misc3"), "compstat", "snp.pdf")
 
@@ -145,33 +144,155 @@ p = ggplot(to) +
 ggsave(p, filename = fo, width = 6, height = 6)
 
 
-### venn diagram
-chrs = seq(8)
-names(chrs) = sprintf("chr%s", seq(8))
+##### compare SNPs/Indels called by two approaches
+do = data.frame()
+for (org in orgs) {
+#org = "HM034"
+  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
+  fa = file.path(dira, "vnt.tbl")
+  ta = read.table(fa, sep = "\t", header = F, as.is = T)
+  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
 
-dir = sprintf("%s/%s_%s/23_blat", DIR_Misc3, qorg, torg)
-fd = file.path(dir, "27.snp")
-td = read.table(fd, sep='\t', header=T, as.is=T)[,3:4]
-colnames(td) = c('chr', 'pos')
-td.1 = td[td$chr %in% names(chrs),]
-possd = chrs[td.1$chr]*1000000000+td.1$pos
+  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
+  fm = sprintf("%s/%s.tbl", dirm, org)
+  tm = read.table(fm, sep = "\t", header = F, as.is = T)
+  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
 
-fb = sprintf('/home/youngn/zhoup/Data/misc3/hapmap_mt40/30_vnt/%s.snp', qorg)
-tb = read.table(fb, sep='\t', header=T, as.is=T)[,1:2]
-colnames(tb) = c('chr', 'pos')
-tb.1 = tb[tb$chr %in% names(chrs),]
-possb = chrs[tb.1$chr]*1000000000+tb.1$pos
+  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
+  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
+  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
+  
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
+  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
 
-area1 = length(possd)
-area2 = length(possb)
-areac = sum(possd %in% possb)
-venn.plot <- draw.pairwise.venn( area1, area2, areac, 
-category = c("de novo", "read mapping"),
-fill = c("blue", "red"), lty = "blank", cex = 2, 
-cat.cex = 2, cat.pos = c(285, 105), cat.dist = 0.09, cat.just = list(c(-1, -1), c(1, 1)),
-ext.pos = 30, ext.dist = -0.05, ext.length = 0.85, ext.line.lwd = 2, ext.line.lty = "dashed")
-tiff(sprintf('/home/youngn/zhoup/Data/misc3/%s_%s/snpcmp.tiff', qorg, torg))
-grid.draw(venn.plot)
-dev.off()
+  d1 = data.frame(org = org, vnt_type = 'snp', type = c("Assembly-Only", 
+    "Assembly+Mapping:Concordant", "Assembly+Mapping:Discordant", 
+    "Mapping-Only"), cnt = c(nrow(t_anm), n_con, n_dis, nrow(t_mna)))
+  
+  tms = tm[tm$chr %in% chrs & (nchar(tm$ref) != 1 | nchar(tm$alt) != 1), ]
+  tas = ta[ta$chr %in% chrs & (nchar(ta$ref) != 1 | nchar(ta$alt) != 1), ]
+  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
+  
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  n_con = sum(t_ovl$ref.x == t_ovl$ref.y & t_ovl$alt.x == t_ovl$alt.y)
+  n_dis = sum(t_ovl$ref.x != t_ovl$ref.y | t_ovl$alt.x != t_ovl$alt.y)
 
+  d2 = data.frame(org = org, vnt_type = 'indel', type = c("Assembly-Only", 
+    "Assembly+Mapping:Concordant", "Assembly+Mapping:Discordant", 
+    "Mapping-Only"), cnt = c(nrow(t_anm), n_con, n_dis, nrow(t_mna)))
+  do = rbind(do, d1, d2)
+}
+
+fo = file.path(Sys.getenv("misc3"), "compstat", "comp_vnt.pdf")
+
+do$org = factor(do$org, levels = orgs)
+#do$type = factor(do$type, levels = c('CDS', 'Intron', 'UTR', 'Intergenic'))
+p = ggplot(do) +
+  geom_bar(mapping = aes(x = org, y = cnt, fill = type), 
+    stat = 'identity', position = 'stack', geom_params=list(width = 0.5)) +
+  scale_fill_manual(values = c('skyblue1', 'firebrick1', 'orchid', 'palegreen'), name = '', guide = guide_legend(nrow = 2, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
+  scale_x_discrete(name = '') +
+  scale_y_continuous(name = 'Variant #') +
+  facet_wrap( ~ vnt_type, ncol = 1) +
+  coord_flip() +
+  theme_bw() +
+  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
+ggsave(p, filename = fo, width = 6, height = 6)
+
+
+##### show variant quality score distribution of mapping/assembly
+org = "HM034"
+  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
+  fa = file.path(dira, "vnt.tbl")
+  ta = read.table(fa, sep = "\t", header = F, as.is = T)
+  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
+
+  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
+  fm = sprintf("%s/%s.tbl", dirm, org)
+  tm = read.table(fm, sep = "\t", header = F, as.is = T)
+  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
+
+  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
+  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
+  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
+  
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
+
+to = rbind(cbind(t_ovl, type = 'Assembly+Mapping'), 
+  cbind(t_mna, type = 'Mapping-Only'))
+
+fo = sprintf("%s/compstat/comp_snp_%s.pdf", Sys.getenv("misc3"), org)
+p = ggplot(to) +
+  geom_histogram(mapping = aes(x = score, fill = type), 
+    position = "dodge", geom_params=list(width = 0.5, alpha = 0.8)) +
+  scale_fill_manual(values = c('skyblue1', 'firebrick1', 'orchid', 'palegreen'), name = '', guide = guide_legend(nrow = 1, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
+  scale_x_continuous(name = 'variant score', limits = c(0, 60000)) +
+  scale_y_continuous(name = 'count') +
+  theme_bw() +
+  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
+ggsave(p, filename = fo, width = 6, height = 6)
+
+
+##### compare InDels
+chrs = sprintf("chr%s", 1:8)
+
+do = data.frame()
+for (org in c("HM058", "HM060", "HM095", "HM034")) {
+#org = "HM034"
+  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
+  fa = file.path(dira, "vnt.tbl")
+  ta = read.table(fa, sep = "\t", header = F, as.is = T)
+  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
+
+  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
+  fm = sprintf("%s/%s.tbl", dirm, org)
+  tm = read.table(fm, sep = "\t", header = F, as.is = T)
+  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
+
+  tms = tm[tm$chr %in% chrs & (nchar(tm$ref) != 1 | nchar(tm$alt) != 1), ]
+  tas = ta[ta$chr %in% chrs & (nchar(ta$ref) != 1 | nchar(ta$alt) != 1), ]
+#  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
+  
+  x = c(-49:-1, 1:49)
+  
+  tb = table(nchar(tms$alt) - nchar(tms$ref))
+  y = tb[as.character(x)]
+  y[is.na(y)] = 0
+  df1 = data.frame(type = 'Mapping-based', len = x, cnt = y)
+
+  tb = table(nchar(tas$alt) - nchar(tas$ref))
+  y = tb[as.character(x)]
+  y[is.na(y)] = 0
+  df2 = data.frame(type = 'Assembly-based', len = x, cnt = y)
+
+  dos = cbind(rbind(df1, df2), org = org)
+  do = rbind(do, dos)
+}
+#  do$cnt = log(do$cnt)
+
+fo = sprintf("%s/compstat/comp_idm_size.pdf", Sys.getenv("misc3"))
+p = ggplot(do) +
+  geom_bar(mapping = aes(x = len, y = cnt, fill = type), 
+    stat = 'identity', position = 'dodge', 
+    geom_params=list(width = 0.8, alpha = 0.8)) +
+  scale_fill_brewer(palette='Set1', name = '', guide = guide_legend(nrow = 1, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
+  scale_x_continuous(name = 'Indel Size (bp)') +
+  scale_y_continuous(name = '# events (log)') +
+  facet_wrap( ~ org, nrow = 2) +
+  theme_bw() +
+  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
+ggsave(p, filename = fo, width = 6, height = 6)
 

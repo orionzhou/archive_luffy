@@ -51,7 +51,7 @@ export PATH=$PATH:$prefix/bin
 export soft=$prefix/soft
 if [[ -d $soft ]]; then
   for subpath in zlib gcc boost libsequence \
-    samtools bamtools bedtools \
+    samtools bamtools bedtools vcftools bedops \
     tabix bwa bowtie2 sra blast bwtool\
     clustalw clustalo \
     parallel blast CAP3 cmake cufflinks \

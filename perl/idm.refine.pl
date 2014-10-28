@@ -53,6 +53,42 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
+sv_tbl2bed("$fo.ins.tbl", "$fo.ins.bed");
+sv_tbl2bed("$fo.gan.tbl", "$fo.gan.bed");
+sv_tbl2bed("$fo.del.tbl", "$fo.del.bed");
+sv_tbl2bed("$fo.los.tbl", "$fo.los.bed");
+sv_tlc2bed("$fo.tlc.tbl", "$fo.tlc.gan.bed", "$fo.tlc.los.bed");
+sub sv_tbl2bed {
+  my ($fi, $fo) = @_;
+  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  while(<$fhi>) {
+    chomp;
+    /(^chr\s)|(^\s*$)/ && next;
+    my ($chr, $beg, $end, $locs) = split "\t";
+    my ($c, $b, $e) = parse_locstr($locs);
+    print $fho join("\t", $c, $b-1, $e)."\n";
+  }
+  close $fhi;
+  close $fho;
+}
+sub sv_tlc2bed {
+  my ($fi, $fg, $fl) = @_;
+  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+  open(my $fhg, ">$fg") or die "cannot write $fg\n";
+  open(my $fhl, ">$fl") or die "cannot write $fl\n";
+  while(<$fhi>) {
+    chomp;
+    /(^tid)|(^\s*$)/ && next;
+    my ($tid, $tbeg, $tend, $qid, $qbeg, $qend) = split "\t";
+    print $fhg join("\t", $qid, $qbeg-1, $qend)."\n";
+    print $fhl join("\t", $tid, $tbeg-1, $tend)."\n";
+  }
+  close $fhi;
+  close $fhg;
+  close $fhl;
+}
+__END__
 cat_var($fi, "$fo.1.ins.tbl", "$fo.1.del.tbl", "$fo.1.gan.tbl", "$fo.1.los.tbl", "$fo.1.tlc.tbl");
 runCmd("sort.header.pl -i $fo.1.ins.tbl -o $fo.ins.tbl");
 runCmd("sort.header.pl -i $fo.1.del.tbl -o $fo.del.tbl");

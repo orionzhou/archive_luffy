@@ -129,18 +129,20 @@ fo = sprintf("%s/22_phyml/%s.png", dir, reg)
 #fo = sprintf("%s/21_phynj/%s.png", dir, reg)
   tree = read.tree(fi)
 
-  group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
-  group2 = c("HM340", "HM324", "HM018", "HM022-I", "HM017-I")
-  group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
-  group4 = c("HM002", "HM004", "HM005", "HM006", "HM010", "HM020", "HM026", "HM035", "HM050", "HM341")
-  grouph = c("HM034", "HM056", "HM340")
+group1 = c(
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
+  "HM095", "HM185", "HM034", "HM004", "HM050", 
+  "HM023", "HM010", "HM022-I", "HM324", "HM340"
+)
+group2 = c("HM101", "HM034", "HM056", "HM340")
+grouph = c("HM101")
   
   labels = tree$tip.label
   tip.color = rep('black', length(tree$tip.label))
   tip.color[which(labels %in% group1)] = 'red'
   tip.color[which(labels %in% group2)] = 'forestgreen'
-  tip.color[which(labels %in% group3)] = 'dodgerblue'
-  tip.color[which(labels %in% group4)] = 'purple'
+#  tip.color[which(labels %in% group3)] = 'dodgerblue'
+#  tip.color[which(labels %in% group4)] = 'purple'
   
   font = rep(1, length(tree$tip.label))
   font[which(labels %in% grouph)] = 2
@@ -265,6 +267,155 @@ fo = sprintf("%s/22_phyml/%s.png", dir, reg)
   nodelabels(pch = 22, bg = node.labels.bg)
   add.scale.bar(x = 0.02, y = 22, lcol = 'black')
   dev.off()
+
+### plot pan16-denovo tree
+dir = file.path(DIR_Data, "misc3/phy_denovo")
+fi = file.path(dir, "12.nwk")
+fo = file.path(dir, "12.png")
+tree = read.tree(fi)
+
+group1 = c("HM101", "HM056", "HM058", "HM117", "HM125")
+group2 = c("HM340", "HM324", "HM018", "HM022", "HM017")
+group3 = c("HM034", "HM129", "HM060", "HM095", "HM185")
+grouph = c("HM034", "HM056", "HM340")
+
+labels = tree$tip.label
+tip.color = rep('black', length(tree$tip.label))
+tip.color[which(labels %in% group1)] = 'red'
+tip.color[which(labels %in% group2)] = 'forestgreen'
+tip.color[which(labels %in% group3)] = 'dodgerblue'
+
+font = rep(1, length(tree$tip.label))
+font[which(labels %in% grouph)] = 2
+font[which(labels == "HM101")] = 4
+
+df1 = data.frame(idx = 1 : length(labels), id = labels)
+df2 = merge(df1, ann, by = "id", all.x = T)
+df3 = df2[order(df2$idx), ]
+labelsn = as.character(df3$id)
+for (i in 1:nrow(df3)) {
+  id = df3$id[i]
+  country = df3$country[i]
+  if(!is.na(country) & country != "") { 
+    labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+  }
+}
+tree$tip.label = labelsn
+
+scores = as.numeric(tree$node.label)
+if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+node.labels.bg = rep('white', tree$Nnode)
+node.labels.bg[scores >= 0.95] = 'black'
+node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+png(filename=fo, width=600, height=600, units='px')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, 
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+nodelabels(pch = 22, bg = node.labels.bg)
+add.scale.bar(x = 0.02, y = 10, lcol = 'black')
+dev.off()
+
+### plot ingroup + HM018_DN tree
+dir = file.path(DIR_Data, "misc3/phy_finderror")
+fi = file.path(dir, "52.nwk")
+fo = file.path(dir, "52.png")
+tree = read.tree(fi)
+
+group1 = c(
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
+  "HM095", "HM185", "HM034", "HM004", "HM050", 
+  "HM023", "HM010", "HM022", "HM324", "HM340"
+)
+group2 = c("HM101", "HM034", "HM056", "HM340")
+grouph = c("HM101")
+
+labels = tree$tip.label
+tip.color = rep('black', length(tree$tip.label))
+tip.color[which(labels %in% group1)] = 'red'
+tip.color[which(labels %in% group2)] = 'forestgreen'
+#tip.color[which(labels %in% group3)] = 'dodgerblue'
+
+font = rep(1, length(tree$tip.label))
+font[which(labels %in% grouph)] = 2
+font[which(labels == "HM101")] = 4
+
+df1 = data.frame(idx = 1 : length(labels), id = labels)
+df2 = merge(df1, ann, by = "id", all.x = T)
+df3 = df2[order(df2$idx), ]
+labelsn = as.character(df3$id)
+for (i in 1:nrow(df3)) {
+  id = df3$id[i]
+  country = df3$country[i]
+  if(!is.na(country) & country != "") { 
+    labelsn[i] = paste(df3$id[i], df3$country[i], sep = " | ")
+  }
+}
+tree$tip.label = labelsn
+
+scores = as.numeric(tree$node.label)
+if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+node.labels.bg = rep('white', tree$Nnode)
+node.labels.bg[scores >= 0.95] = 'black'
+node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+png(filename=fo, width=1000, height=4000, units='px')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, 
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+nodelabels(pch = 22, bg = node.labels.bg)
+add.scale.bar(x = 0.02, y = 10, lcol = 'black')
+dev.off()
+
+### plot pan16-expanded tree
+dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/pan16x")
+fi = file.path(dir, "31.nwk")
+fo = file.path(dir, "32.png")
+tree = read.tree(fi)
+
+grouph = c("HM101")
+group1 = c(
+  "HM058", "HM125", "HM056", "HM129", "HM060", 
+  "HM095", "HM185", "HM034", "HM004", "HM050", 
+  "HM023", "HM010", "HM022", "HM324", "HM340"
+)
+group2 = c("HM101", "HM034", "HM056", "HM340")
+
+labels = tree$tip.label
+
+font = rep(1, length(labels))
+font[which(labels %in% grouph)] = 4
+tip.color = rep('black', length(labels))
+tip.color[which(labels %in% grouph)] = 'dodgerblue'
+
+label1.bg = rep('white', length(labels))
+label1.bg[which(labels %in% group1)] = 'red'
+
+label2.bg = rep('white', length(labels))
+label2.bg[which(labels %in% group2)] = 'forestgreen'
+
+df1 = data.frame(idx = 1:length(labels), id = labels)
+df2 = merge(df1, ann, by = "id", all.x = T)
+df3 = df2[order(df2$idx), ]
+notes = as.character(df3$country)
+notes[is.na(notes)] = ""
+notes = sprintf(paste("%-", max(nchar(notes)), "s", sep = ''), notes)
+
+scores = as.numeric(tree$node.label)
+if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+node.labels.bg = rep('white', tree$Nnode)
+node.labels.bg[scores >= 0.95] = 'black'
+node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+#tree = root(tree, 4)
+png(filename=fo, width = 700, height = 750, units='px')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.65,
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+nodelabels(pch = 22, bg = node.labels.bg)
+tiplabels(pch = 22, col = NA, bg = label1.bg, adj = 0.563, cex = 2)
+tiplabels(pch = 22, col = NA, bg = label2.bg, adj = 0.576, cex = 2)
+par(family = "Courier New")
+tiplabels(notes, col = 'black', frame = 'none', adj = -0.8)
+add.scale.bar(x = 0, y = 16, lcol = 'black')
+dev.off()
 
 ### compare sv phylogeny with chr5 phylogeny
   fi_chr5 = file.path(DIR_Data, "repo/mt_35/31_phylogeny", "acc26", "21_phynj/chr5.phb")

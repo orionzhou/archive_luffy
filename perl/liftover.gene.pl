@@ -77,7 +77,7 @@ if ($fo eq "stdout" || $fo eq "-") {
 my $db = Bio::DB::Fasta->new($fr);
 my $gax = Tabix->new(-data => $fx);
 my $snp = Tabix->new(-data => $fs);
-my $idm = Tabix->new(-data => $fd);
+#my $idm = Tabix->new(-data => $fd);
 
 my ($cnt, $cntu) = (0, 0);
 print $fho join("\t", qw/id chr beg end srd cat3 clen lent qid qpos/)."\n";

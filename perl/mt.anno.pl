@@ -77,7 +77,7 @@ runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} \\
 runCmd("gtb2gff.pl -i 51.gtb -o 51.gff");
 runCmd("gtb.idx.pl -i 51.gtb -s 15.sizes");
 runCmd("gtb2tbl.pl -i 51.gtb -o 51.tbl");
-#runCmd("gtb2fas.pl -i 51.gtb -d 11_genome.fas -o 51.fas");
+runCmd("gtb2fas.pl -i 51.gtb -d 11_genome.fas -o 51.fas");
 
 
 __END__

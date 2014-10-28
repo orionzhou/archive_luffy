@@ -32,7 +32,6 @@ use Data::Dumper;
 use Common;
 use Location;
 use Seq;
-use Gatk;
 use List::Util qw/min max sum/;
 
 my ($qry, $tgt) = ('HM056', 'HM101');
@@ -87,18 +86,11 @@ while( <$fhi> ) {
     next;
   }
 #  substr($ref, 0, 1) eq substr($alt, 0, 1) || print "$tid:$tbeg-$tend ref[$ref] alt[$alt]\n";
-  print $fho join("\t", $tid, $tbeg, ".", $ref, $alt, 50, 'PASS',
+  print $fho join("\t", $tid, $tbeg, ".", $ref, $alt, 50, '.',
     '.', 'GT', '1/1')."\n";
 }
 close $fhi;
 close $fho;
-
-runCmd("java -jar $gatk -T LeftAlignAndTrimVariants \\
-  -R \$genome/$tgt/11_genome.fasta --trimAlleles \\
-  --variant $fo -o $fo.2.vcf");
-runCmd("mv $fo.2.vcf $fo");
-runCmd("rm $fo*.idx");
-
 
 
 __END__

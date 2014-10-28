@@ -6,17 +6,16 @@
   
 =head1 NAME
   
-  snp2vcf.pl - convert Snp file to Vcf file
+  vcf2tbl.pl - convert VCF file to TBL file
 
 =head1 SYNOPSIS
   
-  snp2vcf.pl [-help] [-in input-file] [-out output-file]
+  vcf2tbl.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input (SNP) file
-    -out    output (VCF) file
-    -sample sample ID 
+    -h (--help)   brief help message
+    -i (--in)     input (VCF) file
+    -o (--out)    output (TBL) file
 
 =cut
   
@@ -32,7 +31,6 @@ use Pod::Usage;
 use Common;
 
 my ($fi, $fo) = ('') x 2;
-my $sample = "";
 my ($fhi, $fho);
 my $help_flag;
 
@@ -41,10 +39,9 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
-  "sample|s=s"  => \$sample,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo || !$sample;
+pod2usage(2) if !$fi || !$fo;
 
 if ($fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
@@ -58,24 +55,17 @@ if ($fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-print $fho "##fileformat=VCFv4.1
-##FILTER=<ID=q10,Description=\"Quality below 10\">
-##FILTER=<ID=s50,Description=\"Less than 50% of samples have data\">
-##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n";
-print $fho join("\t", "#CHROM", qw/POS ID REF ALT QUAL FILTER INFO FORMAT/,
-  $sample)."\n";
-
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^id)|(^\s*$)/s;
-  my ($chr, $pos, $tBase, $qBase, $qid, $qpos, $cid, $lev) = split "\t";
-  print $fho join("\t", $chr, $pos, ".", $tBase, $qBase, 50, '.',
-    '.', 'GT', '1/1')."\n";
+  next if /(^\#)|(^\s*$)/s;
+  my ($chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @sams) = 
+    split "\t";
+  my @alts = split(",", $alt);
+  @alts == 1 || die "$chr:$pos $ref-$alt >1 alts\n";
+  print $fho join("\t", $chr, $pos, $ref, $alt, $qual)."\n";
 }
 close $fhi;
 close $fho;
-#runCmd("bgzip -f $fo");
-#runCmd("tabix -p vcf $fo.gz");
 
 
 __END__

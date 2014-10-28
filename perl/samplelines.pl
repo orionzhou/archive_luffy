@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # POD documentation
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 =pod BEGIN
   
 =head1 NAME
@@ -13,20 +13,16 @@
   samplelines.pl [-help] [options] [-in input-file] [-out output] 
 
   Options:
-      -h, --help       brief help message
-      -i, --in         input file
-      -o, --out        output
-      -n, --sample     number of lines to sample (default: 1)
-      -p, --opt        sample option (serial / random; default: serial)
+    -h, --help       brief help message
+    -i, --in         input file
+    -o, --out        output
+    -n, --sample     number of lines to sample (default: 1)
+    -p, --opt        sample option (serial / random; default: serial)
 
-=head1 VERSION
-  
-  0.1
-  
 =cut
   
 #### END of POD documentation.
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 use strict;
 use Getopt::Long;
@@ -44,57 +40,57 @@ my $fhi;
 my $fho;
 my $help_flag;
 
-#----------------------------------- MAIN -----------------------------------#
+#--------------------------------- MAIN -----------------------------------#
 GetOptions(
-    "help|h"  => \$help_flag,
-    "in|i=s"  => \$fi,
-    "out|o=s" => \$fo,
-    "sample|n=i" => \$n_sam,
-    "opt|p=s"    => \$opt,
+  "help|h"  => \$help_flag,
+  "in|i=s"  => \$fi,
+  "out|o=s" => \$fo,
+  "sample|n=i" => \$n_sam,
+  "opt|p=s"    => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(1) if !$fi;
 
-open ($fhi, "<$fi") || die "Can't open file $fi: $!\n";
+open ($fhi, "<$fi") || die "cannot read $fi\n";
 
 $fho = \*STDOUT;
 unless ($fo eq "stdout" || $fo eq "-" || $fo eq "") {
-    open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
 my $n_tot = `wc -l <$fi`;
 my @nums;
 if($opt eq "serial") {
-    @nums = sample_serial($n_tot, $n_sam);
+  @nums = sample_serial($n_tot, $n_sam);
 } elsif($opt eq "random") {
-    @nums = sample_random($n_tot, $n_sam);
+  @nums = sample_random($n_tot, $n_sam);
 } else {
-    die "unknown opt: $opt\n";
+  die "unknown opt: $opt\n";
 }
 
 my ($line, $idx) = (1, 0);
 while( <$fhi> ) {
-    if($idx < @nums && $line == $nums[$idx]) {
-        print $fho $_;
-        $idx ++;
-    } 
-    $line ++;
+  if($idx < @nums && $line == $nums[$idx]) {
+    print $fho $_;
+    $idx ++;
+  } 
+  $line ++;
 }
 close $fhi;
 close $fho;
 
 sub sample_serial {
-    my ($n_tot, $n_sam) = @_;
-    $n_sam = 1 if $n_sam > $n_tot || $n_sam <= 0;
-    my $inc = $n_tot / $n_sam;
-    my @nums = map { int($_ * $inc) + 1 } (0..$n_sam-1);
-    return @nums;
+  my ($n_tot, $n_sam) = @_;
+  $n_sam = 1 if $n_sam > $n_tot || $n_sam <= 0;
+  my $inc = $n_tot / $n_sam;
+  my @nums = map { int($_ * $inc) + 1 } (0..$n_sam-1);
+  return @nums;
 }
 sub sample_random {
-    my ($n_tot, $n_sam) = @_;
-    $n_sam = 1 if $n_sam > $n_tot || $n_sam <= 0;
-    my $inc = $n_tot/$n_sam;
-    my @nums = map { int(($_+rand()) * $inc) + 1 } (0..$n_sam-1);
-    return @nums;
+  my ($n_tot, $n_sam) = @_;
+  $n_sam = 1 if $n_sam > $n_tot || $n_sam <= 0;
+  my $inc = $n_tot/$n_sam;
+  my @nums = map { int(($_+rand()) * $inc) + 1 } (0..$n_sam-1);
+  return @nums;
 }
 

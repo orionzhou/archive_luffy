@@ -155,16 +155,6 @@ sub vcf_parse {
     print FHO "\n";
   }
 }
-sub parse_locstr {
-  my ($str) = @_;
-  my ($chr, $beg, $end);
-  if($str =~ /^([\w\.]+)\:([\d\.E]+)\-([\d\.E]+)$/) {
-    ($chr, $beg, $end) = ($1, $2, $3);
-  } else {
-    die "unknonw locstr: $str\n";
-  }
-  return ($chr, $beg, $end);
-}
 my $dir = "/home/youngn/zhoup/Data/misc3/HM034_HM101/23_blat";
 sv2bed("$dir/31.9/sv.ins.tbl", "$dir/lins.bed");
 sv2bed("$dir/31.9/sv.del.tbl", "$dir/ldel.bed");

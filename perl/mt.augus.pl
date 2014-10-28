@@ -51,10 +51,10 @@ chdir $dir || die "cannot chdir $dir\n";
 my $fg = "../11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
-#get_hints_ortholog();
-#get_hints_rnaseq();
-#run_aug();
-#postprocess_aug();
+get_hints_ortholog();
+get_hints_rnaseq();
+run_aug();
+postprocess_aug();
 pipe_pfam();
 
 sub get_hints_ortholog {
@@ -122,7 +122,7 @@ sub pipe_pfam {
 ##runCmd("interproscan.sh -appl PfamA -dp -i 31.fas -f tsv -o 33.pfam.tsv");
 ##runCmd("pfam2tbl.pl -i 33.pfam.tsv -o 34.pfam.tbl -e 1 -l 10");
 #  -s "33.txt" && runCmd("cp 33.txt 34.tbl.1.txt");
-#  runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
+  runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
   runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
 }
 

@@ -448,8 +448,8 @@ comp.plot <- function(fn, dats, tname, qnames, width = 1000, subtitle = "") {
   tmap = tdat$map; ttik = tdat$tik; tgap = tdat$gap; tgene = tdat$gene
   
   main = sprintf("%s compare to %d accessions", toupper(tname), length(qnames))
-  fillg = c('te' = 'slategray3', 'gene' = 'tan', 'nbs' = 'forestgreen', 
-    'crp' = 'dodgerblue')
+  fillg = c('TE' = 'slategray3', 'Coding_Gene' = 'tan', 
+    'NBS-LRR' = 'forestgreen', 'CRP' = 'dodgerblue')
 
   trackheight = c('axis' = 30, 'gap' = 10, 'gene' = 15, 
     'taxis' = 30, 'tgap' = 10, 'tgene' = 15, 'link' = 45)

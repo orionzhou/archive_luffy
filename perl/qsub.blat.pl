@@ -10,7 +10,7 @@
 
 =head1 SYNOPSIS
   
-  qsub.seq.pl [-help] [-in input-file] [-out output-directory]
+  qsub.blat.pl [-help] [-in input-file] [-out output-directory]
                       [-n number-batches] [-db blat-db]
 
   Options:

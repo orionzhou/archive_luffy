@@ -57,17 +57,15 @@ my $tgt_size_bed = "$data/genome/$tgt/15.bed";
 my $qry_gap = "$data/genome/$qry/16.gap.bed";
 my $tgt_gap = "$data/genome/$tgt/16.gap.bed";
 
-my $dir = "$data/misc3/$qry\_$tgt";
-
-my $d23 = "$dir/23_blat";
--d $d23 || make_path($d23);
-chdir $d23 || die "cannot chdir to $d23\n";
+my $dir = "$data/misc3/$qry\_$tgt/23_blat";
+-d $dir || make_path($dir);
+chdir $dir || die "cannot chdir to $dir\n";
 
 #prepare_blat();
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-process_blat2();
+#process_blat2();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");

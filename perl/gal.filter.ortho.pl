@@ -6,18 +6,16 @@
   
 =head1 NAME
   
-  gal.best.pl - pick best hits for query/target
+  gal.filter.ortho.pl - filter Gal records 
 
 =head1 SYNOPSIS
   
-  gal.best.pl [-help] [-in input-file] [-out output-file]
+  gal.filter.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
     -i (--in)     input file
     -o (--out)    output file
-    -p (--opt)    option (tgt | qry, def: qry)
-    -r (--rep)    whether discard repetitive mapping (def: FALSE)
 
 =cut
   
@@ -34,8 +32,6 @@ use Location;
 use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my $opt = 'qry';
-my $flag_rep = 0;
 my ($fhi, $fho);
 my $help_flag;
 
@@ -44,54 +40,41 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
-  "opt|p=s"  => \$opt,
-  "rep|r"    => \$flag_rep,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+#pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
   open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-my ($hq, $ht);
+my ($min_ident, $min_qcov, $min_tcov) = (0.7, 0.7, 0.7);
+print $fho join("\t", @HEAD_GAL)."\n";
+
+my $cnt = 0;
 while( <$fhi> ) {
   chomp;
   next if /(^id)|(^\#)|(^\s*$)/;
-  my $ps = [ split "\t" ];
+  my $ps = [split "\t"];
   next unless @$ps == 21;
   my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
     $qId, $qBeg, $qEnd, $qSrd, $qSize,
     $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
-  my ($qLoc, $tLoc) = (locStr2Ary($qlS), locStr2Ary($tlS));
-  @$qLoc == @$tLoc || die "unequal pieces\n";
-  my $nBlock = @$qLoc;
-
-  $hq->{$qId} ||= [];
-  $ht->{$tId} ||= [];
-  push @{$hq->{$qId}}, [$ps, $score];
-  push @{$ht->{$tId}}, [$ps, $score];
+  $ident >= $min_ident || next;
+  my ($qcov, $tcov) = ($ali / $qSize, $ali / $tSize);
+  ($qcov >= $min_qcov || $tcov >= $min_tcov) || next;
+  print $fho join("\t", @$ps)."\n";
+  $cnt ++;
 }
 close $fhi;
-
-die "unknown opt: $opt\n" if $opt ne "qry" && $opt ne "tgt";
-my $h = $opt eq "qry" ? $hq : $ht;
-
-print $fho join("\t", @HEAD_GAL)."\n";
-for my $uid (sort(keys(%$h))) {
-  my @ps = @{$h->{$uid}};
-  @ps = sort {$b->[1] <=> $a->[1]} @ps;
-  next if $flag_rep && @ps >= 2 && $ps[0]->[1] == $ps[1]->[1];
-  print $fho join("\t", @{$ps[0]->[0]})."\n";
-}
 close $fho;
 
 

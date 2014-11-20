@@ -33,7 +33,7 @@ elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
     export soft_msi=/soft
   fi
   
-  for subpath in blat/34 usearch/7.0 \
+  for subpath in blat/34 usearch/7.0 muscle/3.8.31 \
     augustus/3.0.2 exonerate/2.2.0 structure/2.3.1
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then
@@ -55,7 +55,7 @@ if [[ -d $soft ]]; then
     tabix bwa bowtie2 sra blast bwtool\
     clustalw clustalo \
     parallel blast CAP3 cmake cufflinks \
-    augustus maker ocaml opam\
+    augustus maker ocaml opam \
     emboss gd geco genometools gmap hmmer mysql \
     R root tophat trimAl wise2 GEM kent unafold imagemagick
   do
@@ -73,7 +73,7 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan-5.4-47.0 \
-    mugsy lastz snap trimal phyml
+    mugsy lastz snap trimal phyml paramugsy
   do
     export PATH=$soft/$subpath:$PATH
   done

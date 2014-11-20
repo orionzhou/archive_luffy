@@ -57,13 +57,23 @@ if($stat_flag) {
   exit;
 }
 
-for my $org (@orgs) {
-  runCmd("ln -sf $ENV{'misc3'}/$org\_HM101/41_novseq/21.fas $org.fas");
+write_file_list("01.filelist.txt", \@orgs);
+sub write_file_list {
+  my ($fl, $orgs) = @_;
+  open(my $fhl, ">$fl") or die "cannot write $fl\n";
+  for my $org (@$orgs) {
+    my $fn = "$ENV{'misc3'}/$org\_HM101/41_novseq/21.fas";
+    print $fhl "$fn\n";
+  }
+  close $fhl;
 }
-my $fstr = join(" ", map {"$_.fas"} @orgs);
-runCmd("mugsy -p out --directory $dir $fstr");
 
-maf2tbl('out.maf', 'out.tbl');
+my $dir_tmp = "/lustre/zhoup/tmp_paramugsy";
+my $f_templ = "\$soft/paramugsy/pm_qsub_template.sh";
+runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
+  -out-maf 21.maf -tmp-dir $dir_tmp -template_file $f_temp");
+
+#maf2tbl('out.maf', 'out.tbl');
 sub maf2tbl {
   my ($fi, $fo) = @_;
   my $ai = Bio::AlignIO->new(-file => $fi, -format => 'maf');

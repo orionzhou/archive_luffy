@@ -19,10 +19,10 @@ sub gzip_fastq {
   -d "12_fastq_gz" || make_path("12_fastq_gz");
   my $t = readTable(-in=>"01.tbl", -header=>1);
   for my $i (0..$t->lastRow) {
-#    next if $i < 13;
-    my ($sam, $id, $label, $note1, $note2) = $t->row($i);
-    my $fa = "11_fastq/$id\_$label\_R1_001.fastq";
-    my $fb = "11_fastq/$id\_$label\_R2_001.fastq";
+    next if $i < 36;
+    my ($sam, $dir, $id, $label, $note1, $note2) = $t->row($i);
+    my $fa = "$dir/$id\_$label\_R1_001.fastq";
+    my $fb = "$dir/$id\_$label\_R2_001.fastq";
     -s $fa || die "$fa is not there\n";
     -s $fb || die "$fb is not there\n";
     print "compressing $id\_$label\n";
@@ -35,7 +35,7 @@ sub read_fastq_by_org {
   my $t = readTable(-in=>$fi, -header=>1);
   my $h;
   for my $i (0..$t->lastRow) {
-    my ($org, $id) = $t->row($i);
+    my ($org, $dir, $id) = $t->row($i);
     $h->{$org} ||= [];
     push @{$h->{$org}}, $id;
   }

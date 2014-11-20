@@ -2,6 +2,7 @@ require(ggplot2)
 require(RColorBrewer)
 source("loc.R")
 
+##### NBS-LRR
 ff = '/home/youngn/zhoup/Data/misc2/genefam/nbs.info'
 tf = read.table(ff, sep="\t", header=T, as.is=T)[,1:2]
 labs = unique(tf$id)
@@ -13,7 +14,6 @@ oshas = 0:5 #15:19
 cols = rep(ocols, 6)
 shas = rep(oshas, each = 6)
 
-##### NBS-LRR
 ## HM101
 org = "HM101"
 dir = file.path('/home/youngn/zhoup/Data/genome', org, '42.nbs')
@@ -55,4 +55,55 @@ p <- ggplot(data = tlo) +
   theme(axis.text.y = element_blank(), axis.ticks = element_blank())
 do = '/home/youngn/zhoup/Data/misc2/genefam/fig.nbs'
 ggsave(p, filename=sprintf("%s/%s.pdf", do, org), width=15, heigh=9)
+
+##### CRP
+ff = '/home/youngn/zhoup/Data/misc2/genefam/crp.info'
+tf = read.table(ff, sep="\t", header=T, as.is=T)[,1:2]
+labs = unique(tf$cat)
+length(labs)
+
+ocols = brewer.pal(8, "Dark2")
+oshas = 0:6 #15:19
+
+cols = rep(ocols, 7)
+shas = rep(oshas, each = 8)
+
+## HM101
+org = "HM101"
+fg = file.path(Sys.getenv('genome'), org, '51.gtb')
+tg = read.table(fg, header = T, as.is = T, sep = "\t")[,c(1,3:6,16:17)]
+  
+t1 = tg[tg$cat2 == 'CRP',]
+t1 = cbind(t1, rpos = (t1$beg + t1$end) / 2)
+
+t2 = merge(t1, tf, by.x = "cat3", by.y = "id")
+
+## plot
+t2$cat = factor(t2$cat, levels = labs)
+
+chrs = sort(unique(t2$chr))
+tloc = data.frame(chr = chrs, chrnum = 1:length(chrs))
+
+t3 = merge(t2, tloc, by = 'chr')
+locs = t3$chrnum * 1000000000 + t2$rpos
+names(locs) = t2$id
+cl = locCluster(locs, 50000)
+tlo = merge(t3, cl, by="id")
+
+p <- ggplot(data = tlo) +
+  geom_point(mapping = aes(x = rpos/1000000, y = cluster_y,
+    colour = cat, shape = cat), size = 0.9) +
+  scale_x_continuous(name='Chr Position (Mbp)', expand=c(0.01, 0)) +
+  scale_y_continuous(name='', expand=c(0.04, 0)) +
+  facet_grid(chr ~ .) + 
+  scale_colour_manual(name = "cat", breaks = labs, labels = labs, values = cols) +
+  scale_shape_manual(name = "cat", breaks = labs, labels = labs, values = shas) +
+  theme_bw() +
+  theme(legend.position='right', legend.title = element_blank()) +
+  guides(color = guide_legend(ncol=2)) +
+  theme(axis.text.x = element_text(size=8, angle=0)) +
+  theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+do = '/home/youngn/zhoup/Data/misc2/genefam/fig.crp'
+ggsave(p, filename=sprintf("%s/%s.pdf", do, org), width=15, heigh=9)
+
 

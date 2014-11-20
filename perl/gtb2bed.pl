@@ -57,11 +57,10 @@ if ($fo eq '' || $fo eq "stdout" || $fo eq "-") {
 }
 
 my $hcol = {
-  "default" => "0",
-  "gene" => "0,0,120",
-  "te"   => "64,64,64",
-  "crp"  => "0,128,255",
-  "nbs"  => "255,128,0",
+  "default" => "0,0,120",
+  "TE"      => "64,64,64",
+  "CRP"     => "0,128,255",
+  "NBS-LRR" => "255,128,0",
 };
 
 #print $fho "#track name=gene_models itemRgb=On useScore=0\n";

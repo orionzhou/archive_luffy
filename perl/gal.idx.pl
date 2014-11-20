@@ -45,16 +45,17 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fs;
 
-runCmd("tail -n +2 $fi | sort -k2,2 -k3,3n -k4,4n -o $fi");
-runCmd("bgzip -c $fi > $fi.gz");
-runCmd("tabix -f -s 2 -b 3 -e 4 $fi.gz");
-
-__END__
 runCmd("gal2psl.pl -i $fi -o $fi.1.psl");
 runCmd("pslToBed $fi.1.psl $fi.2.bed");
 runCmd("fixbedbygal.pl -i $fi.2.bed -g $fi -o $fi.3.bed");
 runCmd("bedSort $fi.3.bed $fi.3.bed");
 runCmd("bedToBigBed -tab $fi.3.bed $fs $fi.bb");
-runCmd("rm $fi.1.psl $fi.2.bed $fi.3.bed");
 
+runCmd("tail -n +2 $fi | sort -k2,2 -k3,3n -k4,4n -o $fi.4.gal");
+runCmd("bgzip -c $fi.4.gal > $fi.gz");
+runCmd("tabix -f -s 2 -b 3 -e 4 $fi.gz");
+
+runCmd("rm $fi.1.psl $fi.2.bed $fi.3.bed $fi.4.gal");
+
+__END__
 

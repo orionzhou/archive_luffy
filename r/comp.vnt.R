@@ -296,3 +296,46 @@ p = ggplot(do) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
 ggsave(p, filename = fo, width = 6, height = 6)
 
+##### validate SNP calling set
+org = "HM340"
+  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
+  fa = file.path(dira, "vnt.tbl")
+  ta = read.table(fa, sep = "\t", header = F, as.is = T)
+  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
+
+  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
+  fm = sprintf("%s/%s.tbl", dirm, org)
+  tm = read.table(fm, sep = "\t", header = F, as.is = T)
+  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
+
+  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
+  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
+
+dir = file.path(Sys.getenv("misc3"), "seqvalidation")
+fg = file.path(dir, "16.snp")
+tg = read.table(fg, sep = "\t", header = F, as.is = T)[,1:4]
+colnames(tg) = c("chr", "pos", "ref", "alt")
+tg = tg[order(tg$chr, tg$pos),]
+tg = unique(tg)
+tg = cbind(tg, id = paste(tg$chr, tg$pos, sep = ":"))
+dup_ids = tg$id[duplicated(tg$id)]
+tg = tg[!tg$id %in% dup_ids,1:4]
+
+
+  tc = merge(tg, tas, by = c('chr', 'pos'), all.x = T)
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_mis = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
+  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
+  n_con
+  n_dis
+  nrow(t_mis)
+
+  tc = merge(tg, tms, by = c('chr', 'pos'), all.x = T)
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_mis = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
+  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
+  n_con
+  n_dis
+  nrow(t_mis)

@@ -68,8 +68,9 @@ runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {if(NR>1) \\
   cut -f1-18 > 43.crp.gtb");
 
 runCmd("cat 4[1-3]*.gtb > 49.gtb");
-runCmd("gtb.dedup.pl -i 49.gtb -o 50.gtb");
-runCmd("gtb.pickalt.pl -i 50.gtb -o 51.gtb");
+runCmd("gtb.dedup.pl -i 49.gtb -o 50.1.dedup.gtb");
+runCmd("gtb.pickalt.pl -i 50.1.dedup.gtb -o 50.2.pickalt.gtb");
+runCmd("gtb.fill.len.pl -i 50.2.pickalt.gtb | gtb.filter.pl -l 30 -o 51.gtb");
 
 runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} \\
   {if(NR==1 || tolower(\$16) != \"te\") print}' 51.gtb > 55_noTE.gtb");

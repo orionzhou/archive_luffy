@@ -57,21 +57,23 @@ if($stat_flag) {
   exit;
 }
 
-write_file_list("01.filelist.txt", \@orgs);
+#write_file_list("01_files", "02.file.list", \@orgs);
 sub write_file_list {
-  my ($fl, $orgs) = @_;
+  my ($do, $fl, $orgs) = @_;
+  -d $do || make_path($do);
   open(my $fhl, ">$fl") or die "cannot write $fl\n";
   for my $org (@$orgs) {
     my $fn = "$ENV{'misc3'}/$org\_HM101/41_novseq/21.fas";
-    print $fhl "$fn\n";
+    runCmd("ln -sf $fn $do/$org.fas");
+    print $fhl "$dir/$do/$org.fas\n";
   }
   close $fhl;
 }
 
 my $dir_tmp = "/lustre/zhoup/tmp_paramugsy";
-my $f_templ = "\$soft/paramugsy/pm_qsub_template.sh";
-runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
-  -out-maf 21.maf -tmp-dir $dir_tmp -template_file $f_temp");
+my $f_tmpl = "\$soft/paramugsy/pm_qsub_template.sh";
+#runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
+#  -out-maf 21.maf -tmp-dir $dir_tmp -template-file $f_tmpl");
 
 #maf2tbl('out.maf', 'out.tbl');
 sub maf2tbl {

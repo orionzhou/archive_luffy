@@ -27,14 +27,10 @@ if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
   export git=$home/git
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
   export git=$home/git
-elif [[ $HOSTNAME =~ ^elmo|^mirror|^bat|^cl[05]|^lab.*[0-9]+|^node ]]; then
-  export soft_msi=/nfs/soft-sle11
-  if [[ $HOSTNAME =~ ^node ]]; then
-    export soft_msi=/soft
-  fi
-  
+elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node ]]; then
+  export soft_msi=/soft
   for subpath in blat/34 usearch/7.0 muscle/3.8.31 \
-    augustus/3.0.2 exonerate/2.2.0 structure/2.3.1
+    augustus/3.0.2 exonerate/2.2.0 structure/2.3.3
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then
       export PATH=$soft_msi/$subpath/bin:$PATH
@@ -52,7 +48,7 @@ export soft=$prefix/soft
 if [[ -d $soft ]]; then
   for subpath in zlib gcc boost libsequence \
     samtools bamtools bedtools vcftools bedops \
-    tabix bwa bowtie2 sra blast bwtool\
+    hdf tabix bwa bowtie2 sra blast bwtool\
     clustalw clustalo \
     parallel blast CAP3 cmake cufflinks \
     augustus maker ocaml opam \
@@ -73,7 +69,7 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan-5.4-47.0 \
-    mugsy lastz snap trimal phyml paramugsy
+    lastz snap trimal phyml paramugsy blasr
   do
     export PATH=$soft/$subpath:$PATH
   done

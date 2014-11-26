@@ -27,6 +27,7 @@ use strict;
 use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
+use Gtb;
 use Pod::Usage;
 use Common;
 
@@ -40,33 +41,35 @@ GetOptions(
   "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
 
 my ($fhi, $fho);
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, $fi) || die "Can't open file $fi: $!\n";
+  open($fhi, "<$fi") or die "cannot read $fi\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
-  open ($fho, ">$fo") || die "Can't open file $fo for writing: $!\n";
+  open($fho, ">$fo") or die "cannot write $fo\n";
 }
 
-my $t = readTable(-inh => $fhi, -header => 1);
-close $fhi;
-
-for my $i (0..$t->lastRow) {
-  my ($id, $par, $chr, $beg, $end, $srd, $locE, $locI, $locC, $loc5, $loc3, $phase, $src, $conf, $cat1, $cat2, $cat3, $note) = $t->row($i);
+print $fho join("\t", @HEAD_GTB)."\n";
+while( <$fhi> ) {
+  chomp;
+  /(^id)|(^\#)|(^\s*$)/i && next;
+  my $ps = [ split("\t", $_, -1) ];
+  @$ps >= 18 || die "not 19 fileds:\n$_\n";
+  my ($id, $par, $chr, $beg, $end, $srd, $locES, $locIS, $locCS, $loc5S, $loc3S, $phaseS, $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
   if($cat1 =~ /^gene$/i) {
-      $t->setElm($i, "cat3", "gene");
+    $ps->[16] = "gene";
   } elsif($cat1 =~ /transposable_element/i) {
-      $t->setElm($i, "cat3", "TE");
+    $ps->[16] = "TE";
   }
+  print $fho join("\t", @$ps)."\n";
 }
-print $fho $t->tsv(1);
+close $fhi;
 close $fho;
 
 

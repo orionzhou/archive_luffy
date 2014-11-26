@@ -8,14 +8,26 @@ require(seqinr)
 
 ##### cluster initialization
 aa_pw_dist <- function(rw) {
-  s1 = rw['tseq']
-  s2 = rw['qseq']
-  pw = pairwiseAlignment(AAString(s1), AAString(s2), 
+  qseq = rw['qseq']
+  tseq = rw['tseq']
+  qlen = as.numeric(nchar(qseq))
+  tlen = as.numeric(nchar(tseq))
+  pw = pairwiseAlignment(AAString(tseq), AAString(qseq), type = "global",
     substitutionMatrix = "BLOSUM62", gapOpening = -3, gapExtension = -1)
-  len = nchar(pw)
+  mat = nmatch(pw)
+  mis = nmismatch(pw)
   indel = nindel(pw)
-  mis = nrow(mismatchTable(pw)) + indel@insertion[2] + indel@deletion[2]
-  mis / len
+  qgap = indel@insertion[2]
+  tgap =indel@deletion[2]
+  alen = nchar(pw)
+  stopifnot(alen == mis + mat + qgap + tgap)
+  qres = qlen - (mat + mis + tgap)
+  tres = tlen - (mat + mis + qgap)
+  qgap = qgap + tres
+  tgap = tgap + qres
+  len = alen + qres + tres
+  stopifnot(len == mis + mat + qgap + tgap)
+  c('alen'=alen,'mat'=mat,'mis'=mis,'tgap'=tgap,'qgap'=qgap,'len'=len)
 }
 
 cl = makeCluster(detectCores())
@@ -43,18 +55,20 @@ qfas <- read.fasta(f_qfas, seqtype = "AA", as.string = T, set.attributes = F)
 
 diro = sprintf("%s/%s_%s/51_ortho", Sys.getenv("misc3"), qname, tname)
 
-fi = file.path(diro, "31.ortho.tbl")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
+fi = file.path(diro, "01.ortho.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)[,1:4]
 
-tm = cbind(ti, tseq = as.character(tfas[ti$tid]), qseq = as.character(qfas[ti$qid]))
+tm = cbind(ti, tseq = as.character(tfas[ti$tid]), 
+  qseq = as.character(qfas[ti$qid]), stringsAsFactors = F)
 
 ptm <- proc.time()
 y = parApply(cl, tm, 1, aa_pw_dist)
 proc.time() - ptm
 
-
-to = cbind(ti, dist = y)
-fo = file.path(diro, "33.ortho.dist.tbl")
+to = cbind(ti, t(y))
+to$qlen = as.integer(to$qlen / 3)
+to$tlen = as.integer(to$tlen / 3)
+fo = file.path(diro, "05.score.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 }
 

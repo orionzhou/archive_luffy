@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  novseq.pl - identify and characterize novel sequences
+  comp.novseq.pl - identify and characterize novel sequences
 
 =head1 SYNOPSIS
   
-  novseq.pl [-help] [-qry query-genome] [-tgt target-genome]
+  comp.novseq.pl [-help] [-qry query-genome] [-tgt target-genome]
 
   Options:
     -h (--help)   brief help message

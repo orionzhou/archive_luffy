@@ -45,18 +45,17 @@ my @qrys = qw/
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010 HM022 HM324 HM340
 /;
-#@qrys = qw/HM056.AP HM340.AP/;
+@qrys = qw/HM056 HM340/;
 
 for my $qry (@qrys) {
   my $tag = $qry;
   $tag =~ s/HM//i;
   my $dir = "$ENV{'misc3'}/$qry\_$tgt/23_blat";
-  my $qsize = "$ENV{'genome'}/$qry/15.sizes";
-  my $tsize = "$ENV{'genome'}/$tgt/15.sizes";
   chdir $dir || die "cannot chdir to $dir\n";
+#  runCmd("comp.pl -q $qry -t $tgt");
 #  runCmd("comp.sv.pl -q $qry -t $tgt");
-  runCmd("comp.ortho.pl -q $qry -t $tgt");
-#  runCmd("comp.vcf.pl -q $qry -t $tgt");
+#  runCmd("comp.novseq.pl -q $qry -t $tgt");
+#  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
 }
 
 __END__

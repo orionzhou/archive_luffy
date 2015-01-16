@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  vcf2tbl.pl - convert VCF file to TBL file
+  vcf.addref.pl - add a 'reference sample' in an VCF file
 
 =head1 SYNOPSIS
   
-  vcf2tbl.pl [-help] [-in input-file] [-out output-file]
+  vcf.addref.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
     -i (--in)     input (VCF) file
-    -o (--out)    output (TBL) file
+    -o (--out)    output (VCF) file
 
 =cut
   
@@ -29,7 +29,6 @@ use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
 use Common;
-use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
 my ($fi, $fo) = ('') x 2;
 my ($fhi, $fho);
@@ -58,18 +57,15 @@ if ($fo eq "stdout" || $fo eq "-") {
 
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^\s*$)/s;
-  my ($chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @sams) = 
-    split "\t";
-  my @alts = split(",", $alt);
-  my $reflen = length($ref);
-  my @altlens = uniq(map {length($_)} @alts);
-  @altlens == 1 || die "$chr:$pos $ref-$alt alts not same lens\n";
-  my $altlen = $altlens[0];
-  
-#  ($reflen == 1 || $altlen == 1) || die "$chr:$pos $ref-$alt MNP\n";
-  $alt = $alts[0];
-  print $fho join("\t", $chr, $pos, $ref, $alt, $qual)."\n";
+  if(/^#CHROM/) {
+    print $fho join("\t", $_, "HM101")."\n";
+    next;
+  } elsif(/(^\#)|(^\s*$)/) {
+    print $fho $_."\n";
+    next;
+  }
+  my @ps = split "\t";
+  print $fho join("\t", @ps, "0/0")."\n";
 }
 close $fhi;
 close $fho;

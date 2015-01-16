@@ -1,5 +1,38 @@
 #!/usr/bin/perl -w
-use POSIX /ceil floor/;
+#
+# POD documentation
+#---------------------------------------------------------------------------
+=pod BEGIN
+  
+=head1 NAME
+  
+  dot_matrix.pl - print a dot matrix for each input word
+
+=head1 SYNOPSIS
+  
+  dot_matrix.pl [-help] input-words
+
+  Options:
+    -h (--help)   brief help message
+
+=cut
+  
+#### END of POD documentation.
+#---------------------------------------------------------------------------
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use POSIX qw/ceil floor/;
+
+my $help_flag;
+
+#------------------------------ MAIN -----------------------------------#
+GetOptions(
+  "help|h"   => \$help_flag,
+) or pod2usage(2);
+pod2usage(1) if $help_flag;
+pod2usage(2) if @ARGV == 0;
 
 my @alphabet = (
     0x00, 0x00, 0x00, 0x00, 0x00,# ' '
@@ -145,7 +178,6 @@ sub dot_matrix_word {
     print "$str\n";
   }
 }
-
 
 my ($name) = @ARGV;
 dot_matrix_word($name);

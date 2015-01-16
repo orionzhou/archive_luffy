@@ -49,13 +49,6 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my @qrys = qw/
-  HM058 HM125 HM056 HM129 HM060
-  HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010 HM022 HM324 HM340
-/;
-@qrys = qw/HM004/;
-
 my $dir = "$ENV{'misc3'}/$qry\_$tgt/31_sv";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
@@ -63,6 +56,9 @@ chdir $dir || die "cannot chdir to $dir\n";
 my $tdir = "$ENV{'genome'}/$tgt";
 my $qdir = "$ENV{'genome'}/$qry";
 my $cdir = "$ENV{'misc3'}/$qry\_$tgt/23_blat";
+
+my $tref = Bio::DB::Fasta->new("$tdir/11_genome.fas");
+my $qref = Bio::DB::Fasta->new("$qdir/11_genome.fas");
 
 my $fgt = "$tdir/51.gtb";
 my $fgq = "$qdir/51.gtb";
@@ -72,13 +68,15 @@ my $qdb = Bio::DB::Fasta->new("$qdir/51.fas");
 my $tgene = Tabix->new(-data => "$tdir/51.tbl.gz");
 my $qgene = Tabix->new(-data => "$qdir/51.tbl.gz");
 
-cat_var($tdir, $qdir, $cdir, "01.stb", "01.tlc");
-runCmd("sort.header.pl -f stb -i 01.stb -o 02.sort.stb");
-runCmd("sort.header.pl -f tlc -i 01.tlc -o 02.sort.tlc");
-refine_tlc("02.sort.tlc", "05.refine.tlc");
-#sv_stb2bed("02.sort.stb", "08");
-#sv_tlc2bed("05.refine.tlc", "08");
-stb_ovlp_cds("02.sort.stb", "11.cds.tbl");
+#cat_var($tdir, $qdir, $cdir, "01.stb", "01.tlc");
+#runCmd("sort.header.pl -f stb -i 01.stb -o 02.sort.stb");
+#runCmd("sort.header.pl -f tlc -i 01.tlc -o 02.sort.tlc");
+#refine_tlc("02.sort.tlc", "05.refine.tlc");
+#stb2vcf("02.sort.stb", "11.stb.vcf");
+#tlc2vcf("05.refine.tlc", "12.tlc.vcf");
+
+
+#stb_ovlp_cds("02.sort.stb", "11.cds.tbl");
 
 sub cat_var {
   my ($tdir, $qdir, $dir, $fos, $fot) = @_;
@@ -294,47 +292,53 @@ sub check_ovlp {
   return $olen;
 }
 
-sub sv_tlc2bed {
+sub stb2vcf {
   my ($fi, $fo) = @_;
-  open(my $fhg, ">$fo.tlc.gan.bed") or die "cannot write $fo\n";
-  open(my $fhl, ">$fo.tlc.los.bed") or die "cannot write $fo\n";
   my $t = readTable(-in => $fi, -header => 1);
-  for my $i (0..$t->lastRow) {
-    my ($tdchr, $tdbeg, $tdend, $tichr, $tibeg, 
-        $qdchr, $qdbeg, $qdend, $qichr, $qibeg, $type) = $t->row($i);
-    print $fhg join("\t", $qdchr, $qdbeg-1, $qdend)."\n";
-    print $fhl join("\t", $tdchr, $tdbeg-1, $tdend)."\n";
-  }
-  close $fhg;
-  close $fhl;
-}
-sub sv_stb2bed {
-  my ($fi, $fo) = @_;
-  open(my $fhi, ">$fo.ins.bed") or die "cannot write $fo\n";
-  open(my $fhg, ">$fo.gan.bed") or die "cannot write $fo\n";
-  open(my $fhd, ">$fo.del.bed") or die "cannot write $fo\n";
-  open(my $fhl, ">$fo.los.bed") or die "cannot write $fo\n";
-  my $t = readTable(-in => $fi, -header => 1);
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
   for my $i (0..$t->lastRow) {
     my ($tchr, $tbeg, $tend, $btbeg, $btend, $type,
       $qchr, $qbeg, $qend, $bqbeg, $bqend) = $t->row($i);
-    if($type eq "INS") {
-      print $fhi join("\t", $qchr, $qbeg-1, $qend)."\n";
-    } elsif($type eq "CNG") {
-      print $fhg join("\t", $qchr, $qbeg-1, $qend)."\n";
-    } elsif($type eq "DEL") {
-      print $fhd join("\t", $tchr, $tbeg-1, $tend)."\n";
-    } elsif($type eq "CNL") {
-      print $fhl join("\t", $tchr, $tbeg-1, $tend)."\n";
+    my ($ref, $alt, $svtype);
+    if($type eq "INS" || $type eq "CNG") {
+      $ref = $tref->seq($tchr, $btbeg, $btbeg);
+      $alt = $ref . $qref->seq($qchr, $qbeg, $qend);
+      $svtype = $type eq "INS" ? "INS" : "INS:CNG";
+    } elsif($type eq "DEL" || $type eq "CNL") {
+      $ref = $tref->seq($tchr, $btbeg, $tend);
+      $alt = substr($ref, 0, 1);
+      $svtype = $type eq "DEL" ? "DEL" : "DEL:CNL";
     } else {
       die "unknonw type: $type\n";
     }
+    print $fho join("\t", $tchr, $btbeg, ".", $ref, $alt, 50, '.',
+      "SVTYPE=$svtype", 'GT', '1/1')."\n";
   }
-  close $fhi;
-  close $fhg;
-  close $fhd;
-  close $fhl;
+  close $fho;
 }
+sub tlc2vcf {
+  my ($fi, $fo) = @_;
+  my $t = readTable(-in => $fi, -header => 1);
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  for my $i (0..$t->lastRow) {
+    my ($tdchr, $tdbeg, $tdend, $tichr, $tibeg, 
+        $qdchr, $qdbeg, $qdend, $qichr, $qibeg, $type) = $t->row($i);
+    my ($ref, $alt, $svtype);
+    $svtype = $type eq "tTLC" ? "TLC1" : $type eq "qTLC" ? "TLC2" : "TLC3";
+    $ref = $tref->seq($tdchr, $tdbeg-1, $tdend);
+    $alt = substr($ref, 0, 1);
+    print $fho join("\t", $tdchr, $tdbeg-1, ".", $ref, $alt, 50, '.',
+      "SVTYPE=DEL:$svtype", 'GT', '1/1')."\n";
+    
+    $type eq "tTLC" && next;
+    $ref = $tref->seq($tichr, $tibeg, $tibeg);
+    $alt = $ref . $qref->seq($qdchr, $qdbeg, $qdend);
+    print $fho join("\t", $tichr, $tibeg, ".", $ref, $alt, 50, '.',
+      "SVTYPE=INS:$svtype", 'GT', '1/1')."\n";
+  }
+  close $fho;
+}
+
 sub read_cds {
   my ($con, $chr, $beg, $end) = @_;
   my $iter = $con->query($chr, $beg - 1, $end);

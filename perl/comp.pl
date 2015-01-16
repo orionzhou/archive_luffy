@@ -65,7 +65,7 @@ chdir $dir || die "cannot chdir to $dir\n";
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-#process_blat2();
+process_blat2();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
@@ -182,6 +182,14 @@ sub gal_expand {
   runCmd("snp.idx.pl -i snp -s $tSize");
 
   runCmd("gal2idm.pl -i gal -o idm");
+  
+  runCmd("snp2vcf.pl -i snp -o snp.vcf -s $qry");
+  runCmd("idm2vcf.pl -q $qry -t $tgt");
+  runCmd("vcf-concat snp.vcf idm.vcf | vcf-sort > vnt.1.vcf");
+  runCmd("vcf.fix.indel.pl -i vnt.1.vcf -o vnt.vcf");
+  runCmd("vcf2tbl.pl -i vnt.vcf -o vnt.tbl");
+  runCmd("rm vnt.*.vcf");
+  
   chdir "..";
 }
 

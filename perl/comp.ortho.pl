@@ -51,9 +51,9 @@ chdir $dir || die "cannot chdir to $dir\n";
 
 my $tgt = "HM101";
 my @qrys = qw/
-  HM058 HM125 HM056 HM129 HM060
+  HM058 HM125 HM056.AC HM129 HM060
   HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010 HM022 HM324 HM340
+  HM023 HM010 HM022 HM324 HM340.AC
 /;
 my @orgs = ($tgt, @qrys);
 
@@ -65,8 +65,8 @@ my @orgs = ($tgt, @qrys);
 #get_best_hit('15.pairs.sort.tbl', '21.best.pairs.tbl');
 #runCmd("\$soft/mcl/bin/mcl 21.best.pairs.tbl -te 16 -I 5.0 --abc -o 25.txt");
 #parse_mcl("25.txt", "26.tbl", \@orgs);
-#ortho_group_refine("01.ortho.tbl", "26.tbl", "31.ortho.tbl", \@orgs);
-ortho_group_cat("31.ortho.tbl", "33.ortho.cat.tbl", \@orgs);
+ortho_group_refine("01.ortho.tbl", "26.tbl", "31.ortho.tbl", \@orgs);
+#ortho_group_cat("31.ortho.tbl", "33.ortho.cat.tbl", \@orgs);
 
 sub extract_unortho_seq {
   my ($fi, $do) = @_;

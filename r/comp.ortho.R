@@ -7,14 +7,13 @@ require(ape)
 require(gridBase)
 require(colorRamps)
 
-diro = file.path(Sys.getenv("misc3"), "comp.ortho")
-
 tname = "HM101"
 qnames = c(
-  "HM058", "HM125", "HM056", "HM129", "HM060", 
+  "HM058", "HM125", "HM056.AC", "HM129", "HM060", 
   "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340"
+  "HM023", "HM010", "HM022", "HM324", "HM340.AC"
 )
+diro = file.path(Sys.getenv("misc3"), "comp.ortho")
 
 ##### create raw ortholog groups for 16 accessions & write un-ortholog seqs
 f_tgene = file.path(Sys.getenv("genome"), tname, "51.gtb")
@@ -41,7 +40,7 @@ for (qname in qnames) {
 n_org = apply(to, 1, function(z) sum(!is.na(z[c(-1,-2)])))
 tt = cbind(to, n_org = n_org)
 ft = file.path(diro, "01.ortho.tbl")
-write.table(tt, ft, sep = "\t", row.names = F, col.names = T, quote = F)
+write.table(tt, ft, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
 
 ids = tt[tt$n_org != length(qnames), tname]
@@ -88,10 +87,10 @@ for (qname in qnames) {
 sum(is.na(ma))
 
 fo = file.path(diro, "35.ortho.score.tbl")
-write.table(ma, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+write.table(ma, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
 
-##### CRP ortho-map HC
+##### CRP ortho-map hclust
 fi = file.path(diro, "33.ortho.cat.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 ti[is.na(ti)] = ''
@@ -99,6 +98,7 @@ ti[is.na(ti)] = ''
 fr = file.path(diro, "35.ortho.score.tbl")
 tr = read.table(fr, sep = "\t", header = T, stringsAsFactors = F)
 
+fam = "CRP"
 idxs = ti$cat2 == "CRP"
 tis = ti[idxs,]
 trs = tr[idxs,]
@@ -130,17 +130,15 @@ tp$org = factor(tp$org, levels = orgs)
 p = ggplot(tp, aes(x = x, y = org, fill = score)) +
   geom_tile(stat = 'identity', position = "identity") + 
   scale_fill_gradientn(colours = matlab.like2(20)) +
-#  scale_fill_manual(name = "AA distance:", breaks = labs, labels = labs, values = cols, guide = guide_legend(nrow = 2, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
 #  labs(fill = "Pariwise AA distance") +
-#  coord_flip() +
   scale_x_discrete(name = '', breaks = tx$mid, labels = tx$cat) +
   scale_y_discrete(name = '') +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.1, 'lines')) +
   theme(legend.position = "right", legend.key.size = unit(1, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,0,0,0), "lines")) +
   theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 45, hjust = 0, vjust = 1)) +
-  theme(axis.text.y = element_text(size = 10, colour = "blue", angle = 0))
+  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 45, hjust = 1, vjust = 1)) +
+  theme(axis.text.y = element_text(size = 10, colour = "blue", angle = 0, hjust = 0))
 
 gt <- ggplot_gtable(ggplot_build(p))
 gt$layout$clip[gt$layout$name == "panel"] <- "off"

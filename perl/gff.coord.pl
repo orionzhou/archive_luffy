@@ -51,9 +51,9 @@ open(FHO, ">$fo") || die "Can't open file $fo for writing";
 my $t = readTable(-in=>$fp, -header=>1);
 my $h;
 for my $i (0..$t->nofRow-1) {
-    my ($id, $chr, $beg, $end, $strd) = $t->row($i);
-    die "$id has >1 mappings\n" if exists $h->{$id};
-    $h->{$id} = [$chr, $beg, $end, $strd];
+  my ($id, $chr, $beg, $end, $strd) = $t->row($i);
+  die "$id has >1 mappings\n" if exists $h->{$id};
+  $h->{$id} = [$chr, $beg, $end, $strd];
 }
 
 print FHO "##gff-version 3\n";

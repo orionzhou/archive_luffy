@@ -1,29 +1,7 @@
-library(plyr)
-library(rtracklayer)
-library(Cairo)
-
-read_genome_stat <- function(name) {
-  dir = file.path(Sys.getenv("genome"), toupper(name))
-  
-  # sequence lengths
-  f_len = file.path(dir, "15.sizes")
-  len = read.table(f_len, header=F, sep="\t", as.is=T)
-  colnames(len) = c("id", "size")
-
-  # gap locations
-  f_gap = file.path(dir, "16_gap.bed")
-  gap = read.table(f_gap, header = F, sep = "\t", as.is = T)
-  colnames(gap) = c('chr', 'beg', 'end')
-  gap$beg = gap$beg + 1
-  gr_gap = GRanges(seqnames = gap$chr, ranges = IRanges(gap$beg, end = gap$end))
-
-  # gene annotation
-#  f_gen = file.path(dir, "51.tbl")
-#  gene = read.table(f_gen, header=T, sep="\t", quote="", as.is=T)
-
-  list(name = name, dir = dir, len = len, gap = gap, #gene = gene,
-    gr_gap = gr_gap)
-}
+require(plyr)
+require(rtracklayer)
+require(Cairo)
+source("comp.fun.R")
 
 build_ideogram_track <- function(tgap, tlen, tname) {
   gg = GRanges(seqnames=Rle(tgap$id), ranges=IRanges(tgap$beg, end=tgap$end))
@@ -40,7 +18,6 @@ build_ideogram_track <- function(tgap, tlen, tname) {
   IdeogramTrack(genome = tname, bands = t, bevel = 0, 
     showId = T, cex = 1.0)
 }
-
 read_var_stat <- function(qname) {
   dirp = "/home/youngn/zhoup/Data/misc3/hapmap_mt40"
   dir = file.path(dirp, "30_vnt", toupper(qname))
@@ -55,7 +32,6 @@ read_var_stat <- function(qname) {
     fsnp = fsnp, fidm = fidm, fhet = fhet,
     fcov = fcov, fcovab = fcovab)
 }
-
 read_comp_stat <- function(qname, tname) {
   dir = sprintf("/home/youngn/zhoup/Data/misc3/%s_%s/23_blat", 
     toupper(qname), toupper(tname))
@@ -72,7 +48,6 @@ read_comp_stat <- function(qname, tname) {
     tgal = tgal, tgax = tgax, tsnp = tsnp,
     qgal = qgal, qgax = qgax, qsnp = qsnp)
 }
-
 build_var_track <- function(filepath, chr, beg, end,
   showTxt = F, trackName='noname', genome='genome') {
   x = import(filepath, 
@@ -124,7 +99,6 @@ build_var_tracks <- function(var, chr, beg, end, name, genome) {
     insTrack = insTrack, delTrack = delTrack,
     covTrack = covTrack, abcovTrack = abcovTrack)
 }
-
 build_comp_track <- function(filepath, chr, beg, end, 
   showTxt = F, trackName='noname', genome='genome') {
   x = import(filepath, 
@@ -160,7 +134,6 @@ build_comp_track <- function(filepath, chr, beg, end,
   chromosome(aT) <- chr
   aT
 }
-
 trim_mapping <- function(ds, beg, end, opt = 't') {
   for (i in 1:nrow(ds)) {
     if(opt == 't' & ds$tBeg[i] < beg) {
@@ -241,7 +214,6 @@ read_gax <- function(gax, snp, id, beg, end, opt = 't') {
     (tc$qgap + tc$tgap - tc$gapo) * (-2)
   cbind(tc, score = score)
 }
-
 myimport <- function(filepath, selection) {
   x = import(filepath, which = selection, 
     trackLine = F, 
@@ -333,7 +305,6 @@ assign_panel <- function(dfi, gap_prop=0.4, gap_len=5000) {
   dfo = dfo[, !colnames(dfo) %in% c('idx','panel_old')]
   ddply(dfo, .(panel), summarise, id=unique(id), beg=min(beg), end=max(end), strand=strand[which(end-beg == max(end-beg))[1]])
 }
-
 assign_block_mapping <- function(dfi, gap_len_q=10000, gap_len_h=100000) {
   order.idx = order(dfi[,1], dfi[,2], dfi[,3])
   df = dfi[order.idx,]
@@ -365,7 +336,6 @@ assign_block_mapping <- function(dfi, gap_len_q=10000, gap_len_h=100000) {
     pct = mean(pct), e = min(e), score = sum(score))
   list('df'=dfo, 'dfb'=dfb)
 }
-
 prepare_coord <- function(dfi, tl) {
   dfi = merge(dfi, tl, by='id')
   df = dfi[order(dfi$panel),]
@@ -389,7 +359,6 @@ prepare_coord <- function(dfi, tl) {
   df7 = cbind(df6, end.a=df6$beg.a+df6$len-1)
   df7
 }
-
 filter_assign_panel <- function(dfi, dfb) {
   if(ncol(dfi) == 3) { dfi = cbind(dfi, strand="+") }
   colnames(dfi)[1:4] = c('id','beg','end','strand')
@@ -443,7 +412,6 @@ filter_assign_panel <- function(dfi, dfb) {
   }
   cbind(dfi[idxs,], panel=panels, beg.a=begs.a, end.a=ends.a, strand.a=strands.a, stringsAsFactors=F)
 }
-
 filter_assign_panel_wig <- function(bw, dfb) {
   h = hash()
   for (i in 1:nrow(dfb)) {  
@@ -481,7 +449,6 @@ filter_assign_panel_wig <- function(bw, dfb) {
   }
   cbind(dfi, panel=panels, beg.a=begs.a, end.a=ends.a, stringsAsFactors=F)
 }
-
 get_ticks <- function(dfi, tick_itv) {
   dft = data.frame(panel=c(),pos=c())  
   for (i in 1:nrow(dfi)) {
@@ -504,7 +471,6 @@ get_ticks <- function(dfi, tick_itv) {
   dfl = ddply(dft, .(panel), summarise, beg.a=min(pos.a), end.a=max(pos.a))
   list(tick=dft, line=dfl)
 }
-
 
 data_preprocess <- function(tws, tls, q, t) {
   qPanel = prepare_coord( assign_panel(tws[,c('qId', 'qBeg', 'qEnd', 'qSrd')]), q$len )
@@ -536,9 +502,6 @@ data_preprocess <- function(tws, tls, q, t) {
     gene1=gene1, gene2=gene2,
     max_len=max_len)
 }
-
-
-
 data_preprocess_old <- function(tas, dat1, dat2) {
   dfm = assign_block_mapping(tas, 10000, 10000)$df
   dfm = dfm[order(dfm$hId, dfm$hBeg, dfm$hEnd), !colnames(dfm) %in% c('block')]

@@ -51,7 +51,7 @@ print "qsub rnaseq\n";
 for my $org (@orgs) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
-  runCmd("mt.anno.pl -g $org");
+##  runCmd("mt.anno.pl -g $org");
 #  runCmd("genome.fas.pl -g $org");
 #  runCmd("genome.db.pl -g $org");
 #  print "qsub rm -N rm.$org -v ORG=$org -l qos=weightlessqos\n";

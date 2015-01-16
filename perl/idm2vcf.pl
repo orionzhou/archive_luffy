@@ -61,6 +61,7 @@ open(my $fhi, "<$fi") or die "cannot read $fi\n";
 open(my $fho, ">$fo") or die "cannot write $fo\n";
 
 print $fho "##fileformat=VCFv4.1
+##INFO=<ID=SVTYPE,Number=1,Type=String,Description=\"Type of structural variant\">
 ##FILTER=<ID=q10,Description=\"Quality below 10\">
 ##FILTER=<ID=s50,Description=\"Less than 50% of samples have data\">
 ##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n";

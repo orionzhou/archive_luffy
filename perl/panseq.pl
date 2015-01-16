@@ -75,21 +75,27 @@ my $f_tmpl = "\$soft/paramugsy/pm_qsub_template.sh";
 #runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
 #  -out-maf 21.maf -tmp-dir $dir_tmp -template-file $f_tmpl");
 
-#maf2tbl('out.maf', 'out.tbl');
+maf2tbl('21.maf', '22.tbl');
 sub maf2tbl {
   my ($fi, $fo) = @_;
   my $ai = Bio::AlignIO->new(-file => $fi, -format => 'maf');
   open(my $fho, ">$fo") or die "cannot write $fo\n";
-  print $fho join("\t", qw/cid org chr beg end srd/)."\n";
+  print $fho join("\t", qw/cid alen org chr beg end srd/)."\n";
   my $i = 1;
   while(my $aln = $ai->next_aln()) {
     my $n = $aln->num_sequences;
+    my $alen = $aln->length();
     for my $seq ($aln->each_seq) {  
       my ($id, $beg, $end, $srd) = ($seq->id, $seq->start, $seq->end,
         $seq->strand);
       my ($org, $nid) = split(/\./, $id);
       $srd = $srd == -1 ? "-" : "+";
-      print $fho join("\t", $i, $org, $nid, $beg, $end, $srd)."\n";
+      if($srd eq "-" && $end > $beg) {
+        my ($pid, $pbeg, $pend) = split("_", $nid);
+        my $len = $pend - $pbeg + 1;
+        ($beg, $end) = ($len - $end + 1, $len - $beg + 1);
+      }
+      print $fho join("\t", $i, $alen, $org, $nid, $beg, $end, $srd)."\n";
     }
     $i ++;
   }

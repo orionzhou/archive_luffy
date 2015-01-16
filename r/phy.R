@@ -368,7 +368,7 @@ dev.off()
 ### plot pan16-expanded tree
 dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/pan16x")
 fi = file.path(dir, "31.nwk")
-fo = file.path(dir, "32.png")
+fo = file.path(dir, "32.pdf")
 tree = read.tree(fi)
 
 grouph = c("HM101")
@@ -379,25 +379,25 @@ group1 = c(
 )
 group2 = c("HM101", "HM034", "HM056", "HM340")
 
-labels = tree$tip.label
+labs = tree$tip.label
 
-font = rep(1, length(labels))
-font[which(labels %in% grouph)] = 4
-tip.color = rep('black', length(labels))
-tip.color[which(labels %in% grouph)] = 'dodgerblue'
+font = rep(1, length(labs))
+font[which(labs %in% grouph)] = 4
+tip.color = rep('black', length(labs))
+tip.color[which(labs %in% grouph)] = 'dodgerblue'
 
-label1.bg = rep('white', length(labels))
-label1.bg[which(labels %in% group1)] = 'red'
+label1.bg = rep('white', length(labs))
+label1.bg[which(labs %in% group1)] = 'red'
 
-label2.bg = rep('white', length(labels))
-label2.bg[which(labels %in% group2)] = 'forestgreen'
+label2.bg = rep('white', length(labs))
+label2.bg[which(labs %in% group2)] = 'forestgreen'
 
-df1 = data.frame(idx = 1:length(labels), id = labels)
+df1 = data.frame(idx = 1:length(labs), id = labs)
 df2 = merge(df1, ann, by = "id", all.x = T)
 df3 = df2[order(df2$idx), ]
 notes = as.character(df3$country)
 notes[is.na(notes)] = ""
-notes = sprintf(paste("%-", max(nchar(notes)), "s", sep = ''), notes)
+#notes = sprintf(paste("%-", max(nchar(notes)), "s", sep = ''), notes)
 
 scores = as.numeric(tree$node.label)
 if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
@@ -405,15 +405,15 @@ node.labels.bg = rep('white', tree$Nnode)
 node.labels.bg[scores >= 0.95] = 'black'
 node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
 
+tree$tip.label = paste(labs, notes, sep = "       ")
 #tree = root(tree, 4)
-png(filename=fo, width = 700, height = 750, units='px')
-plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.65,
-  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+pdf(file = fo, width = 6, height = 7, bg = 'transparent')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.67,
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 0.9)
 nodelabels(pch = 22, bg = node.labels.bg)
-tiplabels(pch = 22, col = NA, bg = label1.bg, adj = 0.563, cex = 2)
-tiplabels(pch = 22, col = NA, bg = label2.bg, adj = 0.576, cex = 2)
-par(family = "Courier New")
-tiplabels(notes, col = 'black', frame = 'none', adj = -0.8)
+tiplabels(pch = 22, col = NA, bg = label1.bg, adj = 0.573, cex = 1.5)
+tiplabels(pch = 22, col = NA, bg = label2.bg, adj = 0.587, cex = 1.5)
+#par(family = "Courier New")
 add.scale.bar(x = 0, y = 16, lcol = 'black')
 dev.off()
 

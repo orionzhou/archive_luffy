@@ -43,11 +43,15 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my @orgs1 = qw/HM004 HM010 HM022 HM023 HM034/;
-my @orgs2 = qw/HM050 HM056 HM058 HM060 HM095/;
-my @orgs3 = qw/HM125 HM129 HM185 HM324 HM340/;
-my @orgs = (@orgs1, @orgs2, @orgs3);
-@orgs = ("HM023");
+my @orgs = qw/
+  HM058 HM125 HM056 HM129 HM060
+  HM095 HM185 HM034 HM004 HM050 
+  HM023 HM010 HM022 HM324 HM340
+/;
+@orgs = qw/
+  HM058 HM125 HM056 HM129 HM060
+  HM095 HM185 HM034 HM004 HM050 
+  HM023 HM010/;
 
 my $dir = "$ENV{'misc3'}/hapmap_mt40/12_ncgr";
 -d $dir || make_path($dir);
@@ -59,25 +63,59 @@ my $fv = "$dir/../30_vnt/acc319.vcf.gz";
 
 -d "35_cov" || make_path("35_cov");
 -d "36_abcov" || make_path("36_abcov");
--d "41_vcf" || make_path("41_vcf");
--d "42_vcf_fix" || make_path("42_vcf_fix");
--d "44_tbl" || make_path("44_tbl");
+-d "44_snp" || make_path("44_snp");
 
-for my $org (@orgs) {
-  my $orgi = $org;
-  $orgi = "$org-I" if $org =~ /^HM0(17)|(20)|(22)$/;
-  
-#  runCmd("bcftools view \\
-#    -R \$genome/HM101/15.chr.tbl \\
-#    --exclude-uncalled --min-ac 2:alt1 --trim-alt-alleles \\
-#    --output-type v --types snps,indels,mnps \\
-#    -s $orgi $fv -o 41_vcf/$org.vcf");
-  runCmd("vcf.fix.indel.pl -i 41_vcf/$org.vcf -o 42_vcf_fix/$org.vcf");
-  runCmd("vcf2tbl.pl -i 42_vcf_fix/$org.vcf -o 44_tbl/$org.tbl");
- 
-  my $fb = "01_raw/$orgi.recalibrated.bam";
-  -s $fb || die "cannot find $fb\n";
- 
+#call_vcf();
+#call_vnt_org();
+call_indel();
+
+sub call_vcf {
+  my @norgs;
+  for (@orgs) { 
+    $_ =~ s/^HM0((17)|(20)|(22))$/HM0$1-I/;
+    push @norgs, $_;
+  }
+  my $orgstr = join(",", @norgs);
+  my $chrstr = join(",", map {"chr".$_} (1..8));
+  runCmd("bcftools view -r $chrstr \\
+    --exclude-uncalled -g hom --min-ac 2:alt1 --trim-alt-alleles \\
+    --output-type v --types snps,indels,mnps \\
+    -s $orgstr $fv -o 41.vcf");
+  runCmd("bcftools norm -m +snps --check-ref w -f \$genome/HM101/11_genome.fas -O v 41.vcf -o 42.norm.vcf");
+  runCmd("bcftools view -v snps -O v 42.norm.vcf | vcf.addref.pl -i - -o 43.snp.vcf");
+  runCmd("vcf.stat.py 43.snp.vcf 45.stat.tbl");
+}
+sub call_vnt_org {
+  for my $org (@orgs) {
+    my $orgi = $org;
+    $orgi =~ s/^HM0((17)|(20)|(22))$/HM0$1-I/;
+#    runCmd("bcftools view \\
+#      --exclude-uncalled --min-ac 1:alt1 --trim-alt-alleles \\
+#      -s $orgi -O v 43.snp.vcf -o 44_snp/$org.vcf");
+#    runCmd("vcf2tbl.py 44_snp/$org.vcf 44_snp/$org.tbl");
+    runCmd("bgzip -c 44_snp/$org.tbl > 44_snp/$org.tbl.gz");
+    runCmd("tabix -s 1 -b 2 -e 2 -S 1 44_snp/$org.tbl.gz");
+  }
+}
+sub call_indel {
+  my @norgs;
+  for (@orgs) { 
+    $_ =~ s/^HM0((17)|(20)|(22))$/HM0$1-I/;
+    push @norgs, $_;
+  }
+  my $orgstr = join(",", @norgs);
+  my $chrstr = join(",", map {"chr".$_} (1..8));
+  runCmd("bcftools view -v indels -O v 42.norm.vcf | vcf.addref.pl -i - -o 51.indel.vcf");
+  runCmd("vcf.stat.py 51.indel.vcf 52.stat.tbl");
+}
+sub call_cvg {
+  for my $org (@orgs) {
+    my $orgi = $org;
+    $orgi = "$org-I" if $org =~ /^HM0(17)|(20)|(22)$/;
+    
+    my $fb = "01_raw/$orgi.recalibrated.bam";
+    -s $fb || die "cannot find $fb\n";
+   
 #  runCmd("bamtools filter -in $fb -mapQuality \">=20\" \\
 #    -isDuplicate \"false\" | samtools depth /dev/stdin | \\
 #    cov2bed.pl | grep -P \"^chr[1-8]\" > 35_cov/$org.bed");
@@ -90,8 +128,8 @@ for my $org (@orgs) {
 #    cov2bed.pl -o 36_abcov/$org.bed");
 #  runCmd("bedGraphToBigWig 36_abcov/$org.bed $fs 36_abcov/$org.bw");
 #  runCmd("rm 36_abcov/$org.bed");
+  }
 }
-
 
 __END__
 sub collect_rg {

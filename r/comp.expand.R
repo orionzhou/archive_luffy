@@ -2,51 +2,83 @@ require(ape)
 require(seqinr)
 require(rbamtools)
 require(plyr)
+require(ggplot2)
 require(Gviz)
+require(reshape2)
 require(Biostrings)
 source("Align.R")
 source("Location.R")
 source("comp.fun.R")
 
-qnames = c(
-  "HM058", "HM125", "HM056.AC", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340.AC"
-)
-tname = "HM101"
-qname = "HM340.AC"
-tcfg = get_genome_cfg(tname)
-qcfg = get_genome_cfg(qname)
+dirw = file.path(Sys.getenv("misc3"), "comp.ortho")
+diro = file.path(Sys.getenv("misc3"), "comp.expand")
 
-dir = file.path(Sys.getenv("misc3"), "comp.expand", qname)
+fi = file.path(dirw, "21.gid.tbl")
+tid = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "21.loc.tbl")
+tlo = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "21.sta.tbl")
+tst = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "22.cat.tbl")
+tca = read.table(fi, header = T, sep = "\t", as.is = T)
 
-tq = read.table(qcfg$gene, header = F, sep = "\t", as.is = T)
-colnames(tq) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
-tqf = tq[tq$type == 'mrna', c(1:5)]
+##### plot selected gene-fams distr
+fams = c("Peroxidase", "Hydrolase", "Auxin_inducible", "Deaminase",
+  "tnl0850", "tnl0480", "cnl0950",
+  "CRP0010", "CRP0110", "CRP0355", "CRP0675", "CRP1430", "CRP1520")
+for (fam in fams) {
+fam = "CRP1440"
+idxs = tca$idx[tca$cat3 == fam | tca$cat2 == fam]
+tm = tst[idxs, orgs]
+tm[tm == ''] = 'na'
 
-qseqlen = read.table(qcfg$size, header = F, sep = "\t",  as.is = T, col.names = c("id", "size"))
-qseqinfo = read_seqinfo(qcfg$size)
+norgs = apply(tm, 1, function(x) sum(!x %in% c('','-')))
+chrs = tlo$chr[idxs]
+tcu = locCluster(idxs, 3)
 
-fi = file.path(Sys.getenv("misc3"), "comp.ortho", "33.ortho.cat.tbl")
-ti = read.table(fi, header = T, sep = "\t", as.is = T)
-ti[is.na(ti)] = ''
+tw = cbind(idx = tst$idx[idxs], x = 1:length(idxs), norg = norgs, chr = chrs, clu = tcu$cluster, tm)
 
-##### create CRP physical clusters
-ids = ti[ti$cat2 == 'CRP', qname]
-ids = ids[ids != '']
-td = tqf[tqf$id %in% ids,]
+to = melt(tw, id.vars = c('idx', 'x', 'norg', 'chr', 'clu'), 
+  measure.vars = orgs, variable.name = 'org', value.name = 'sta')
+to$org = factor(to$org, levels = rev(orgs))
+to$sta = factor(to$sta, levels = c('syn', 'rbh', '-|rbh', '-', 'na'))
 
-chrs = sort(unique(td$chr))
-chrmap = 1:length(chrs)
-names(chrmap) = chrs
-gpos = chrmap[td$chr] * 100000000 + as.integer((td$beg + td$end) / 2)
-clus = locCluster(gpos, 15000)
-td = cbind(td, clu = clus$cluster, stringsAsFactors = F)
+tx = ddply(tw, .(chr), summarise, beg = min(x), end = max(x))
+tx = tx[tx$end > tx$beg,]
 
-fd = file.path(dir, "01.cluster.tbl")
-write.table(td, file = fd, sep = "\t", row.names = F, col.names = T, quote = F)
+tc = ddply(tw, .(clu), summarise, beg = min(x), end = max(x))
+tc = tc[tc$end > tc$beg,]
 
-##### identify CRP expansion
+p <- ggplot(data = to) +
+  geom_tile(mapping = aes(x = x, y = org, fill = sta), height = 0.6, width = 0.8) +
+  scale_x_continuous(name = '', limits = c(0, max(to$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$chr) +
+  scale_y_discrete(name='', expand=c(0.03, 0)) +
+#  scale_fill_gradient(name = "Sharing accessions", guide = guide_legend(label.position = "right", direction = "vertical", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
+  scale_fill_manual(name = "Status", labels = c('syntenic ortholog', 'RBH ortholog', 'translocated', 'deleted', 'NA (missing data)'), values = c('dodgerblue1', 'deepskyblue', 'cyan2', 'brown', 'azure2')) +
+  theme_bw() +
+  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
+  theme(legend.position = "top", legend.direction = 'horizontal', legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.5, 'lines')) +
+  theme(axis.text.x = element_text(size=8, angle=30)) +
+  theme(axis.text.y = element_text(size=8, angle=0), axis.ticks = element_blank()) +
+  annotate('segment', x = tx$beg, xend = tx$end, y = 0.3, yend = 0.3, size = 0.6, color = 'darkgreen') +
+  annotate('segment', x = tc$beg, xend = tc$end, y = length(orgs)+0.7, yend = length(orgs)+0.7, size = 0.6, color = "blueviolet")
+
+fo = sprintf("%s/%s.pdf", diro, fam)
+ggsave(p, filename = fo, width = 6, heigh = 4)
+
+}
+
+
+##### find tan-dup
+idxs_ins = which(tst[,tname] == '-')
+tandups = (tca$cat2[idxs_ins] == tca$cat2[idxs_ins-1] & tca$cat3[idxs_ins] == tca$cat3[idxs_ins-1]) | (tca$cat2[idxs_ins] == tca$cat2[idxs_ins+1] & tca$cat3[idxs_ins] == tca$cat3[idxs_ins+1])
+idxs_tandup = idxs_ins[tandups]
+
+x = idxs_tandup[tca$cat2[idxs_tandup] == 'CRP']
+x =  which(tst[,tname] == '-' & tca$cat2 == 'CRP')
+cbind(tst[x,3:12], tca[x,3])
+
+# find expansion - old
 tfas <- read.fasta(tcfg$protein, seqtype = "AA", as.string = T, set.attributes = F)
 qfas <- read.fasta(qcfg$protein, seqtype = "AA", as.string = T, set.attributes = F)
 
@@ -84,7 +116,7 @@ write.table(tm, file = fb, sep = "\t", row.names = F, col.names = T, quote = F, 
 
 ## find pacbio support - run "comp.expand.pl"
 
-### plot CRP expansion - Gviz
+### plot gene expansion - Gviz
 fc = file.path(dir, "01.cluster.tbl")
 tc = read.table(fc, header = T, sep = "\t", as.is = T)
 fx = file.path(dir, "12.pacbio.tbl")
@@ -95,78 +127,98 @@ ty = ddply(tx, .(clu), summarise, chr = chr[1], beg = min(beg, abeg),
   end = max(end, aend), ids = paste(id, collapse = ' '), 
   aids = paste(aid, collapse = ' '), reads = paste(reads, collapse = ' '))
 
-dna = readDNAStringSet(qcfg$dna)
 
-fbam = file.path(Sys.getenv("misc3"), 'pacbio', 'HM340_HM340.AC', '15.bam')
-bam = bamReader(fbam, idx = T)
-seqmap = getRefData(bam)
+org = "HM034"
 
-read_bam <- function(bam, seqmap, chr, beg, end) {
-  refid = seqmap$ID[seqmap$SN == chr]
-  reads = bamRange(bam, c(refid, beg, end))
-  td <- as.data.frame(reads)
-  tr = data.frame(chr = chr, beg = td$position + 1, end = NA, 
-    len = nchar(td$seq), srd = "+", id = td$name, cigar = td$cigar, 
-    seq = td$seq, stringsAsFactors = F)
-  tr$end = tr$beg + tr$len - 1
-  tr$srd[which(td$revstrand)] = "-"
-  tr
-}
+dg = read.table(cfg$gene, header = F, sep = "\t", as.is = T)
+colnames(dg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+dg = dg[dg$type == 'mrna',]
+
+dna = readDNAStringSet(cfg$dna)
+
+fbam1 = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), org, org)
+bam1 = bamReader(fbam1, idx = T)
+
+fbam2 = sprintf("%s/rnaseq/mt/22_tophat/%s_%s/accepted_hits.bam", Sys.getenv("misc2"), org, org)
+bam2 = bamReader(fbam2, idx = T)
+
+
+33504 35027 50715 62745 69548
+    
+idx_rng = 74523
+cfg = cfgs[[org]]
+gids = tid[(min(idx_rng)-1):(max(idx_rng)+1), org]
+dgs = dg[dg$id %in% gids,]
+chr = dgs$chr[1]; beg = min(dgs$beg) - 1000; end = max(dgs$end) + 1000
+sprintf("%s:%d-%d", chr, beg, end)
 
 options(ucscChromosomeNames = FALSE)
 axisTrack <- GenomeAxisTrack(cex = 1.0, exponent = 3)
 sTrack <- SequenceTrack(dna)
 
-for (i in 1:nrow(ty)) {
-i = 19
-chr = ty$chr[i]; beg = max(1, ty$beg[i]-1000); 
-end = min(ty$end[i]+1000, qseqlen$size[qseqlen$id==chr])
-ids = as.character(strsplit(ty$ids[i], split = " ")[[1]])
-aids = as.character(strsplit(ty$aids[i], split = " ")[[1]])
-rids = unique(as.character(strsplit(ty$reads[i], split = " ")[[1]]))
+#for (i in 1:nrow(ty)) {
+#i = 19
+#chr = ty$chr[i]; beg = max(1, ty$beg[i]-1000); 
+#end = min(ty$end[i]+1000, qseqlen$size[qseqlen$id==chr])
+#ids = as.character(strsplit(ty$ids[i], split = " ")[[1]])
+#aids = as.character(strsplit(ty$aids[i], split = " ")[[1]])
+#rids = unique(as.character(strsplit(ty$reads[i], split = " ")[[1]]))
 gr = GRanges(seqnames = chr, ranges = IRanges(beg, end = end))
 
-tp = read_gap(qcfg$gapz, gr)
-gapTrack <- AnnotationTrack(genome = qname, 
+tp = read_gap(cfg$gapz, gr)
+gapTrack <- AnnotationTrack(genome = org, 
   chromosome = tp$id, start = tp$beg, end = tp$end, name = 'gap', 
   showId = F, fill = 'maroon', background.title = "midnightblue")
 
-tg = read_gene(qcfg$genez, gr)
+tg = read_gene(cfg$genez, gr)
 tg = tg[tg$type == 'cds',]
 dfg = data.frame(chromosome = tg$chr, start = tg$beg, end = tg$end,
   width = tg$end-tg$beg+1, strand = tg$srd, feature = tg$type, gene = tg$id, 
   exon = NA, transcript = tg$id, symbol = tg$id, stringsAsFactors = F)
 gr.fill = rep('gray', nrow(dfg))
-gr.fill[tg$id %in% aids] = 'orange'
-gr.fill[tg$id %in% ids] = 'green'
-grTrack <- GeneRegionTrack(dfg, genome = qname, shape = 'smallArrow',
+#gr.fill[tg$id %in% aids] = 'orange'
+#gr.fill[tg$id %in% ids] = 'green'
+grTrack <- GeneRegionTrack(dfg, genome = org, shape = 'smallArrow',
   name = "genes", showId = T, just.group = 'below', stackHeight = 0.75,
   fill = gr.fill, fontsize = 9, max.height = 10,
   cex.group = 0.8, cex.title = 1, background.title = 'midnightblue')
 
-tr = read_bam(bam, seqmap, chr, beg, end)
-reads.col = rep('#BABABA', nrow(tr))
-reads.col[tr$id %in% rids] = 'firebrick'
-alTrack <- AlignmentsTrack(genome = qname, 
-  chromosome = tr$chr, range = fbam, 
-  name = 'PacBio', showId = F, 
-  fill.reads = reads.col, lwd.reads = 0, alpha.reads = 0.8, 
+tr1 = read_bam(bam1, chr, beg, end)
+#reads.col = rep('#BABABA', nrow(tr))
+#reads.col[tr$id %in% rids] = 'firebrick'
+alTrack1 <- AlignmentsTrack(fbam1, genome = org, 
+  chromosome = chr,
+  name = 'PacBio', showId = F, #fill.reads = reads.col,
+   lwd.reads = 0, alpha.reads = 0.8, 
   col.mismatch = 'blue', lwd.mismatch = 0, alpha.mismatch = 0.6,
   showMismatches = T, noLetters = T, max.height = 5, 
   background.title = "midnightblue", isPaired = F)
 
-fo = sprintf("%s/fig%03d.pdf", dir, i)
+tr2 = read_bam(bam2, chr, beg, end)
+#reads.col = rep('#BABABA', nrow(tr))
+#reads.col[tr$id %in% rids] = 'firebrick'
+alTrack2 <- AlignmentsTrack(genome = org, 
+  chromosome = chr, range = fbam2, 
+  name = 'RNA-Seq', showId = F, #fill.reads = reads.col,
+   lwd.reads = 0, alpha.reads = 0.8, 
+  col.mismatch = 'blue', lwd.mismatch = 0, alpha.mismatch = 0.6,
+  showMismatches = T, noLetters = T, max.height = 5, 
+  background.title = "midnightblue", isPaired = F)
+
+
+fo = sprintf("%s/x_demo.pdf", diro)
 pdf(file = fo, width = 8, height = 6, bg = 'transparent')
   plotTracks(
-    list(axisTrack, gapTrack, grTrack, alTrack, sTrack),
+    list(axisTrack, gapTrack, grTrack, alTrack1, sTrack),
     chromosome = chr, from = beg, to = end,
     min.height = 0, coverageHeight = 0.08, minCoverageHeight = 0,
-    sizes = c(1, 0.4, 1, 5, 1)
+    sizes = c(1, 0.4, 1, 3, 1)
   )
   dev.off()
-}
+#}
 
-bamClose(bam)
+bamClose(bam1)
+bamClose(bam2)
 
 ### plot CRP expansion phylogeny
 fc = file.path(dir, "01.cluster.tbl")

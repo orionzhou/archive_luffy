@@ -43,7 +43,6 @@ my @orgs = qw/
   HM058 HM125 HM056 HM129 HM060
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010 HM022 HM324 HM340
-  HM056.AP HM340.AP HM101
 /;
 
 print "qsub rnaseq\n";
@@ -51,7 +50,7 @@ print "qsub rnaseq\n";
 for my $org (@orgs) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
-##  runCmd("mt.anno.pl -g $org");
+  runCmd("mt.anno.pl -g $org");
 #  runCmd("genome.fas.pl -g $org");
 #  runCmd("genome.db.pl -g $org");
 #  print "qsub rm -N rm.$org -v ORG=$org -l qos=weightlessqos\n";

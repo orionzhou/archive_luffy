@@ -65,7 +65,9 @@ chdir $dir || die "cannot chdir to $dir\n";
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-process_blat2();
+#process_blat2();
+#process_vnt();
+  pipe_gal("31", $qry_fas, $tgt_fas, $qry_2bit, $tgt_2bit, $qry_size, $tgt_size);
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
@@ -155,15 +157,15 @@ sub pipe_chain_net {
 }
 sub pipe_gal {
   my ($pre, $qFas, $tFas, $q2bit, $t2bit, $qSize, $tSize) = @_;
-  runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
-    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
-    gal.addlev.pl -i - -n $pre.5.net -o $pre.5.gal");
-  gal_expand("$pre.5.gal", "$pre.5", $qFas, $tFas, $qSize, $tSize);
+#  runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
+#    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
+#    gal.addlev.pl -i - -n $pre.5.net -o $pre.5.gal");
+#  gal_expand("$pre.5.gal", "$pre.5", $qFas, $tFas, $qSize, $tSize);
 
-  runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
-    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
-    gal.addlev.pl -i - -n $pre.8.net -o $pre.8.gal");
-  runCmd("gal.filter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
+#  runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
+#    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
+#    gal.addlev.pl -i - -n $pre.8.net -o $pre.8.gal");
+#  runCmd("gal.filter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
   gal_expand("$pre.9.gal", "$pre.9", $qFas, $tFas, $qSize, $tSize);
 }
 sub gal_expand {
@@ -182,16 +184,18 @@ sub gal_expand {
   runCmd("snp.idx.pl -i snp -s $tSize");
 
   runCmd("gal2idm.pl -i gal -o idm");
-  
-  runCmd("snp2vcf.pl -i snp -o snp.vcf -s $qry");
-  runCmd("idm2vcf.pl -q $qry -t $tgt");
-  runCmd("vcf-concat snp.vcf idm.vcf | vcf-sort > vnt.1.vcf");
-  runCmd("vcf.fix.indel.pl -i vnt.1.vcf -o vnt.vcf");
-  runCmd("vcf2tbl.pl -i vnt.vcf -o vnt.tbl");
-  runCmd("rm vnt.*.vcf");
-  
   chdir "..";
 }
+sub process_vnt { 
+  chdir "31.9" || die "cannot chdir to 31.9\n";
+  runCmd("snp2vcf.pl -i snp -o snp.vcf -s $qry");
+  runCmd("comp.sv.pl -q $qry -t $tgt");
+  runCmd("vcf-concat snp.vcf ../../31_sv/11.sv.vcf | vcf-sort > vnt.1.vcf");
+  runCmd("bcftools norm -c w -f $tgt_fas -o vnt.vcf vnt.1.vcf");
+##  runCmd("vcf.fix.indel.pl -i vnt.2.vcf -o vnt.vcf");
+  runCmd("vcf2tbl.pl -i vnt.vcf -o vnt.tbl");
+  chdir "..";
+} 
 
 __END__
 

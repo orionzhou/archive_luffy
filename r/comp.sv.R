@@ -2,98 +2,86 @@ require(rtracklayer)
 require(plyr)
 require(grid)
 require(ggplot2)
+source('Location.R')
+source('comp.fun.R')
 
-qnames1 = c(
-  "HM058", "HM125", "HM056", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340"
-)
-dir = sprintf("%s/gene_sv", Sys.getenv("misc3"))
+dirw = sprintf("%s/comp.stat", Sys.getenv("misc3"))
+
+tlen = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
+grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
+
+tgap = read.table(tcfg$gap, sep = "\t", header = F, as.is = T)
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+grnp = GenomicRanges::setdiff(grt, grp)
+tsize = sum(width(grt))
+tsize2 = sum(width(grnp))
+
+tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
+colnames(tg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+tg = tg[tg$type == 'cds',]
+#tg_size = ddply(tg, .(id, cat), summarise, size = sum(end - beg + 1))
+grgt = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 ##### SV impact on gene families
 qname = "HM004"
-tname = "HM101"
+for (qname in qnames_all) {
 
-tdir = sprintf("%s/%s", Sys.getenv("genome"), tname)
-tfg = file.path(tdir, "51.tbl")
-tg = read.table(tfg, sep = "\t", header = F, as.is = T)
-colnames(tg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
-tg = tg[tg$type == 'cds',]
-tg_size = ddply(tg, .(id, cat), summarise, size = sum(end - beg + 1))
+cfg = cfgs[[qname]]
 
+tlen = read.table(cfg$size, sep = "\t", header = F, as.is = T)
+grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
 
-qdir = sprintf("%s/%s", Sys.getenv("genome"), qname)
-qfg = file.path(qdir, "51.tbl")
-qg = read.table(qfg, sep = "\t", header = F, as.is = T)
+tgap = read.table(cfg$gap, sep = "\t", header = F, as.is = T)
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+grnp = GenomicRanges::setdiff(grt, grp)
+qsize = sum(width(grt))
+qsize2 = sum(width(grnp))
+
+qg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
 colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
 qg = qg[qg$type == 'cds',]
-qg_size = ddply(qg, .(id, cat), summarise, size = sum(end - beg + 1))
+#qg_size = ddply(qg, .(id, cat), summarise, size = sum(end - beg + 1))
+grgq = with(qg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
-do = data.frame()
+cdir = cfg$cdir
+fy = file.path(cdir, "31.9/gal")
+ty = read.table(fy, header = T, sep = "\t", as.is = T)[,c('tId', 'tBeg', 'tEnd', 'qId', 'qBeg', 'qEnd')]
+gryt = with(ty, GRanges(seqnames = tId, ranges = IRanges(tBeg, end = tEnd)))
+gryq = with(ty, GRanges(seqnames = qId, ranges = IRanges(qBeg, end = qEnd)))
+ytlen = sum(width(reduce(gryt)))
+yqlen = sum(width(reduce(gryq)))
 
-type = 'ins'
-f_bed = sprintf("%s/%s.ins.bed", dir, qname)
-gene = qg
-gene_size = qg_size
-t_bed = read.table(f_bed, sep = "\t", header = F, as.is = T)[,c(1:3,7)]
-colnames(t_bed) = c("chr", "beg", "end", "len")
-t_bed$beg = t_bed$beg + 1
-tm = merge(gene, t_bed, by = c("chr", "beg", "end"), all = T)
-tms = ddply(tm, .(id), summarise, len = sum(len))
-tp = merge(gene_size, tms, by = "id", all = T)
-tp = cbind(tp, pct = tp$len / tp$size)
-td = ddply(tp, .(cat), summarise, mean = mean(pct), std = sd(pct))
-do = rbind(do, cbind(type = type, td))
+fv = file.path(cdir, "../31_sv/05.stb")
+tv = read.table(fv, header = T, sep = "\t", as.is = T)
+tv = tv[,c('id','tchr','tbeg','tend','tlen','srd','qchr','qbeg','qend','qlen')]
+tv = tv[tv$tlen+tv$qlen-2 >= 50,]
+tvt = tv[tv$tlen > 0, c('tchr','tbeg','tend')]
+grst = with(tvt, GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
+tvq = tv[tv$qlen > 0, c('qchr','qbeg','qend')]
+grsq = with(tvq, GRanges(seqnames = qchr, ranges = IRanges(qbeg, end = qend)))
 
-type = 'gan'
-f_bed = sprintf("%s/%s.gan.bed", dir, qname)
-gene = qg
-gene_size = qg_size
-t_bed = read.table(f_bed, sep = "\t", header = F, as.is = T)[,c(1:3,7)]
-colnames(t_bed) = c("chr", "beg", "end", "len")
-t_bed$beg = t_bed$beg + 1
-tm = merge(gene, t_bed, by = c("chr", "beg", "end"), all = T)
-tms = ddply(tm, .(id), summarise, len = sum(len))
-tp = merge(gene_size, tms, by = "id", all = T)
-tp = cbind(tp, pct = tp$len / tp$size)
-td = ddply(tp, .(cat), summarise, mean = mean(pct), std = sd(pct))
-do = rbind(do, cbind(type = type, td))
+stlen = sum(width(reduce(grst)))
+sqlen = sum(width(reduce(grsq)))
 
-type = 'del'
-f_bed = sprintf("%s/%s.del.bed", dir, qname)
-gene = tg
-gene_size = tg_size
-t_bed = read.table(f_bed, sep = "\t", header = F, as.is = T)[,c(1:3,7)]
-colnames(t_bed) = c("chr", "beg", "end", "len")
-t_bed$beg = t_bed$beg + 1
-tm = merge(gene, t_bed, by = c("chr", "beg", "end"), all = T)
-tms = ddply(tm, .(id), summarise, len = sum(len))
-tp = merge(gene_size, tms, by = "id", all = T)
-tp = cbind(tp, pct = tp$len / tp$size)
-td = ddply(tp, .(cat), summarise, mean = mean(pct), std = sd(pct))
-do = rbind(do, cbind(type = type, td))
+tocnt = intersect_count(grgt, grst)
+tg2 = cbind(tg, cnt = tocnt)
+tgb = group_by(tg2, id)
+x = summarise(tgb, cnt = sum(cnt))
+tpct = sum(x$cnt > 0) / nrow(x)
 
-type = 'los'
-f_bed = sprintf("%s/%s.los.bed", dir, qname)
-gene = tg
-gene_size = tg_size
-t_bed = read.table(f_bed, sep = "\t", header = F, as.is = T)[,c(1:3,7)]
-colnames(t_bed) = c("chr", "beg", "end", "len")
-t_bed$beg = t_bed$beg + 1
-tm = merge(gene, t_bed, by = c("chr", "beg", "end"), all = T)
-tms = ddply(tm, .(id), summarise, len = sum(len))
-tp = merge(gene_size, tms, by = "id", all = T)
-tp = cbind(tp, pct = tp$len / tp$size)
-td = ddply(tp, .(cat), summarise, mean = mean(pct), std = sd(pct))
-do = rbind(do, cbind(type = type, td))
+qocnt = intersect_count(grgq, grsq)
+qg2 = cbind(qg, cnt = qocnt)
+qgb = group_by(qg2, id)
+x = summarise(qgb, cnt = sum(cnt))
+qpct = sum(x$cnt > 0) / nrow(x)
 
+cat(sprintf("%s: genome [tgt %.03f qry %.03f] gene [tgt %.03f qry %.03f]\n", qname, stlen/ytlen, sqlen/yqlen, tpct, qpct))
 
-f_tlg = sprintf("%s/%s.tlc.gan.bed", dir, qname)
+}
 
-
-f_tll = sprintf("%s/%s.tlc.los.bed", dir, qname)
-
-fo = sprintf("%s/compstat/comp_genesv_%s.pdf", Sys.getenv("misc3"), qname)
+fo = sprintf("%s/comp_genesv_%s.pdf", dirw)
 p = ggplot(do) +
   geom_bar(mapping = aes(x = cat, y = mean), 
     stat = 'identity', geom_params=list(width = 0.8, alpha = 0.8)) +

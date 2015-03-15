@@ -58,19 +58,26 @@ runCmd("ln -sf $f_aug 41.gtb");
 my $f_nbs = "42.nbs/11.gtb";
 -s $f_nbs or die "$f_nbs is not there\n";
 runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {if(NR>1) \\
-  {\$15=\"mRNA\"; \$16=\"NBS-LRR\"; print}}' $f_nbs | \\
+  {\$15=\"mRNA\"; \$16=\"NBS-LRR\"} print}' $f_nbs | \\
   cut -f1-18 > 42.nbs.gtb");
 
 my $f_crp = "$ENV{'misc4'}/spada.crp.$org/61_final.gtb";
 -s $f_crp or die "$f_crp is not there\n";
 runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {if(NR>1) \\
-  {\$15=\"mRNA\"; \$16=\"CRP\"; \$18=\"\"; print}}' $f_crp | \\
+  {\$15=\"mRNA\"; \$16=\"CRP\"; \$18=\"\"} print}' $f_crp | \\
   cut -f1-18 > 43.crp.gtb");
 
-runCmd("cat 4[1-3]*.gtb > 49.gtb");
-runCmd("gtb.dedup.pl -i 49.gtb -o 50.1.dedup.gtb");
-runCmd("gtb.pickalt.pl -i 50.1.dedup.gtb -o 50.2.pickalt.gtb");
-runCmd("gtb.fill.len.pl -i 50.2.pickalt.gtb | gtb.filter.pl -l 30 -o 51.gtb");
+#runCmd("gtb.merge.pl -a 41.gtb -b 42.nbs.gtb -o 49.1.gtb");
+#runCmd("gtb.merge.pl -a 49.1.gtb -b 43.crp.gtb -o 49.gtb");
+#runCmd("gtb.dedup.pl -i 49.gtb -o 50.1.dedup.gtb");
+#runCmd("gtb.pickalt.pl -i 50.1.dedup.gtb -o 50.2.pickalt.gtb");
+
+my $f_ctm = "\$misc3/$org\_HM101/41_novseq/15.foreign.scf.txt";
+if($org eq "HM101") {
+  runCmd("gtb.fill.len.pl -i 50.2.pickalt.gtb | gtb.filter.pl -l 30 -o 51.gtb");
+} else {
+  runCmd("gtb.fill.len.pl -i 50.2.pickalt.gtb | gtb.filter.pl -l 30 -c $f_ctm -o 51.gtb");
+}
 
 runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} \\
   {if(NR==1 || tolower(\$16) != \"te\") print}' 51.gtb > 55_noTE.gtb");

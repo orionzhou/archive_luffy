@@ -6,16 +6,16 @@
   
 =head1 NAME
   
-  snp2bed.pl - convert Snp file to Bed file
+  gal2tbl.pl - convert Gal file to Tbl input
 
 =head1 SYNOPSIS
   
-  snp2bed.pl [-help] [-in input-file] [-out output-file]
+  gal2tbl.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
-    -i (--in)     input (SNP) file
-    -o (--out)    output (BED) file
+    -i (--in)     input file (Gal)
+    -o (--out)    output tabular file (tid qid tcov qcov score)
 
 =cut
   
@@ -28,7 +28,9 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Location;
 use Common;
+use Seq;
 use Gal;
 
 my ($fi, $fo) = ('') x 2;
@@ -42,15 +44,15 @@ GetOptions(
   "out|o=s"  => \$fo,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo;
+#pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, "<$fi") || die "cannot read $fi\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "cannot write $fo\n";
@@ -58,11 +60,15 @@ if ($fo eq "stdout" || $fo eq "-") {
 
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^id)|(^\s*$)/s;
-  my ($chr, $pos, $tBase, $qBase, $qid, $qpos, $cid, $lev) = split "\t";
-  my $name = "$tBase/$qBase";
-  my $score = exists $h_score->{$lev} ? $h_score->{$lev} : 300;
-  print $fho join("\t", $chr, $pos-1, $pos, $qBase, $lev)."\n";
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my $ps = [ split "\t" ];
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  my $tcov = sprintf "%.03f", $ali / $tSize;
+  my $qcov = sprintf "%.03f", $ali / $qSize;
+  print $fho join("\t", $tId, $qId, $tcov, $qcov, $score)."\n";
 }
 close $fhi;
 close $fho;

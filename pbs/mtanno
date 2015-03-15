@@ -1,0 +1,10 @@
+##PBS -l nodes=1:ppn=2,mem=12GB,walltime=48:00:00
+#PBS -l nodes=1:ppn=16,walltime=23:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q sb
+
+ORG=${ORG:-HM034}
+
+module load java
+genome.anno.pl -g $ORG

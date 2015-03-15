@@ -1,0 +1,25 @@
+#PBS -l nodes=1:ppn=16,walltime=10:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q sb
+
+PRE=${PRE:-$data/in/pblat}
+SUF=${SUF:-fas}
+TGT=${TGT:-HM101}
+BEG=${BEG:-0}
+DIG=${DIG:-2}
+
+echo PRE = $PRE
+echo BEG = $BEG
+echo DIG = $DIG
+echo SUF = $SUF
+echo TGT = $TGT
+
+END=$((BEG + 15))
+BIT=$data/db/blat/$TGT.2bit
+OOC=$data/db/blat/$TGT.2bit.tile11.ooc
+REM=$data/genome/$TGT/12.rm/11_genome.fas.out
+
+seq $BEG $END | xargs -i printf "%0${DIG}d\\n" {} | \
+  parallel -j 16 blat $BIT $PRE.{}.$SUF -ooc=$OOC $PRE.{}.psl -noTrimA -noHead
+

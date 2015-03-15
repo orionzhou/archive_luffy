@@ -1,5 +1,6 @@
 require(Gviz)
 require(rtracklayer)
+source("comp.fun.R")
 source("comp.gviz.fun.R")
 
 tname = "hm101"

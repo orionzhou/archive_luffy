@@ -1,8 +1,10 @@
 require(GenomicRanges)
 require(dplyr)
+#options(scipen=999)
+
 locCluster <- function(pos, wsize) {
   npos = length(pos)
-  df = data.frame(id=names(pos), pos=pos, cluster=1:npos)
+  df = data.frame(id=1:npos, pos=pos, cluster=1:npos)
   df = df[order(df$pos),]
   for (i in 1:npos) {
     for (j in (i+1):npos) {
@@ -73,58 +75,119 @@ get_loc_gene <- function(g) {
 }
 
 intersect_basepair <- function(gr1, gr2) {
-  t1 = data.frame(idx = 1:length(gr1), chr = seqnames(gr1), beg = start(gr1),
-    end = end(gr1), stringsAsFactors = F)
-  t2 = data.frame(idx = 1:length(gr2), chr = seqnames(gr2), beg = start(gr2),
-    end = end(gr2), stringsAsFactors = F)
-  grl = split(gr1, 1:length(gr1))
+  t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
+    idx = 1:length(gr1), stringsAsFactors = F)
+  t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
+    idx = 1:length(gr2), stringsAsFactors = F)
   
-  ma = as.matrix(findOverlaps(gr2, grl))
-  dx1 = data.frame(tidx = ma[,2], qidx = ma[,1])
-  dx2 = merge(dx1, t2, by.x = 'qidx', by.y = 'idx') 
+  fbd1 = 'xtest1.bed'
+  fbd2 = 'xtest2.bed'
+  fres = 'xout.bed'
+  options(scipen = 999)
+  write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
+  write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
+  options(scipen = 0)
+  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
 
-  t11 = merge(t1, dx2, by.x = 'idx', by.y = 'tidx', all.x = T)
-  gp = group_by(t11, idx)
-  t12 = summarise(gp, leno = sum(pmin(end.x, end.y) - pmax(beg.x, beg.y) + 1))
-  t12$leno[is.na(t12$leno)] = 0
-  t12$leno
+  t3 = read.table(fres, sep = "\t", header = F, as.is = T)
+  colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'olen')
+  system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
+
+  gp = group_by(t3, idx)
+  t4 = dplyr::summarise(gp, olen = sum(olen))
+  as.numeric(t4$olen)
 }
 intersect_score <- function(gr1, gr2) {
-  t1 = data.frame(idx = 1:length(gr1), chr = seqnames(gr1), beg = start(gr1),
-    end = end(gr1), stringsAsFactors = F)
-  t2 = data.frame(idx = 1:length(gr2), chr = seqnames(gr2), beg = start(gr2),
-    end = end(gr2), score = mcols(gr2)$score, stringsAsFactors = F)
-  grl = split(gr1, 1:length(gr1))
+  t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
+    idx = 1:length(gr1), stringsAsFactors = F)
+  t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
+    idx = 1:length(gr2), score = mcols(gr2)$score, stringsAsFactors = F)
   
-  ma = as.matrix(findOverlaps(gr2, grl))
-  dx1 = data.frame(tidx = ma[,2], qidx = ma[,1])
-  dx2 = merge(dx1, t2, by.x = 'qidx', by.y = 'idx') 
+  fbd1 = 'xtest1.bed'
+  fbd2 = 'xtest2.bed'
+  fres = 'xout.bed'
+  options(scipen = 999)
+  write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
+  write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
+  options(scipen = 0)
+  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
 
-  t11 = merge(t1, dx2, by.x = 'idx', by.y = 'tidx', all.x = T)
-  gp = group_by(t11, idx)
-  t12 = summarise(gp, score = sum(score))
-  t12$score[is.na(t12$score)] = 0
-  t12$score
+  t3 = read.table(fres, sep = "\t", header = F, as.is = T)
+  colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'score', 'olen')
+  system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
+
+  gp = group_by(t3, idx)
+  t4 = dplyr::summarise(gp, score = sum(score, na.rm = T))
+  as.numeric(t4$score)
 }
 intersect_count <- function(gr1, gr2) {
-  t1 = data.frame(idx = 1:length(gr1), chr = seqnames(gr1), beg = start(gr1),
-    end = end(gr1), stringsAsFactors = F)
-  t2 = data.frame(idx = 1:length(gr2), chr = seqnames(gr2), beg = start(gr2),
-    end = end(gr2), stringsAsFactors = F)
-  grl = split(gr1, 1:length(gr1))
+  t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
+    idx = 1:length(gr1), stringsAsFactors = F)
+  t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
+    idx = 1:length(gr2), stringsAsFactors = F)
   
-  ma = as.matrix(findOverlaps(gr2, grl))
-  dx1 = data.frame(tidx = ma[,2], qidx = ma[,1])
-  dx2 = merge(dx1, t2, by.x = 'qidx', by.y = 'idx') 
+  fbd1 = 'xtest1.bed'
+  fbd2 = 'xtest2.bed'
+  fres = 'xout.bed'
+  options(scipen = 999)
+  write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
+  write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
+  options(scipen = 0)
+  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
 
-  t11 = merge(t1, dx2, by.x = 'idx', by.y = 'tidx')
-  t12 = transform(t11, leno = pmin(end.x, end.y) - pmax(beg.x, beg.y) + 1)
-  t13 = t12[t12$leno / (t12$end.y - t12$beg.y + 1) >= 0.5, ]
-  gp = group_by(t13, idx)
-  t21 = summarise(gp, cnt = length(leno))
+  t3 = read.table(fres, sep = "\t", header = F, as.is = T)
+  colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'olen')
+  system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
+
+  gp = group_by(t3, idx)
+  t4 = dplyr::summarise(gp, cnt = sum(qidx != '.'))
+  as.numeric(t4$cnt)
+}
+intersect_idx <- function(gr1, gr2) {
+  t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
+    idx = 1:length(gr1), stringsAsFactors = F)
+  t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
+    idx = 1:length(gr2), stringsAsFactors = F)
   
-  cnts = rep(0, nrow(t1))
-  names(cnts) = t1$idx
-  cnts[t21$idx] = t21$cnt
-  as.numeric(cnts)
+  fbd1 = 'xtest1.bed'
+  fbd2 = 'xtest2.bed'
+  fres = 'xout.bed'
+  options(scipen = 999)
+  write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
+  write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
+  options(scipen = 0)
+  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
+
+  t3 = read.table(fres, sep = "\t", header = F, as.is = T)
+  colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'olen')
+  system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
+
+  gp = group_by(t3, idx)
+  t4 = dplyr::summarise(gp, qidx = qidx[which(olen == max(olen))[1]])
+  as.numeric(t4$qidx)
+}
+intersect_cds_sv <- function(gr1, gr2, cdsidx) {
+  t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
+    idx = cdsidx, stringsAsFactors = F)
+  t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
+    idx = 1:length(gr2), stringsAsFactors = F)
+  
+  fbd1 = 'xtest1.bed'
+  fbd2 = 'xtest2.bed'
+  fres = 'xout.bed'
+  options(scipen = 999)
+  write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
+  write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
+  options(scipen = 0)
+  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
+
+  t3 = read.table(fres, sep = "\t", header = F, as.is = T)
+  colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'olen')
+  system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
+
+  gp = group_by(t3, idx, qidx)
+  t4 = dplyr::summarise(gp, olen = sum(olen))
+  gp2 = group_by(t4, idx)
+  t5 = dplyr::summarise(gp2, qidx = qidx[which(olen == max(olen))][1], olen = sum(olen))
+  t5
 }

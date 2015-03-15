@@ -51,4 +51,4 @@ runCmd("tabix -s 1 -b 2 -e 2 $fi.gz");
 
 runCmd("snp2bed.pl -i $fi -o $fi.bed");
 runCmd("bedToBigBed -tab -type=bed5 $fi.bed $fs $fi.bb");
-runCmd("rm $fi.bed");
+#runCmd("rm $fi.bed");

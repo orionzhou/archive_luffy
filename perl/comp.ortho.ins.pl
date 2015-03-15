@@ -48,7 +48,7 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my $dir = "$ENV{'misc3'}/comp.ortho";
+my $dir = "$ENV{'misc3'}/comp.ortho.ins";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
@@ -60,128 +60,66 @@ my @qrys = qw/
 /;
 my @orgs = ($tgt, @qrys);
 
-### run comp.syn.ortho.pl generate HM*_HM101/51_ortho/01.ortho.tbl
-### run comp.ortho.ins.R create 01.tbl, 05.ortho.tbl, 06.no.ortho.tbl
+#make_ins_fas("01.tbl", "03_seq", \@qrys);
+grouping_seq("01.tbl", "03_seq", "05.group.tbl", \@qrys);
 
-#get_seq_by_org("05.ortho.tbl", "05.fas");
-#get_seq_by_org("06.no.ortho.tbl", "06.fas");
-#parallel_blat_8("06.fas", "05.fas", "08_blat", "08.blat.psl");
-#runCmd("psl2gal.pl -i 08.blat.psl | gal.filter.ortho.pl | gal2tbl.pl -o 09.tbl");
-#runCmd("sort -k1,1 09.tbl -o 09.tbl");
-### run comp.ortho.R create 11.*.tbl 15.no.ortho.tbl
-
-
-#get_seq_by_org("15.no.ortho.tbl", "15.fas");
-#parallel_blat_8("15.fas", "15.fas", "16_blat", "16.blat.psl");
-#runCmd("psl2gal.pl -i 16.blat.psl | gal.filter.ortho.pl | gal2mcl.pl -o 16.tbl");
-#runCmd("\$soft/mcl/bin/mcl 16.tbl -te 4 -I 5.0 --abc -o 16.mcl");
-#parse_mcl("16.mcl", "17.group.tbl", \@orgs);
-### run comp.ortho.R create 21.*.tbl
-
-#ortho_group_cat("21.gid.tbl", "22.cat.tbl");
-#ortho_aln_prep("21.gid.tbl", "25.aln.cmd", "25_seq", "25_aln");
-runCmd("parallel -j 16 --no-notice < 25.aln.cmd");
-
-### run comp.ortho.R generate 28.dist.tbl
-##get_seq_by_org("29.singleton.tbl", "29.fas");
-
-#pull_orph_loc("31.ortho.tbl", "36.loc", "36.loc.cmd", \@qrys, $tgt);
-#runCmd("parallel -j 16 --no-notice < 36.loc.cmd");
-#pull_orph_loc_2("31.ortho.tbl", "36.loc", "36.loc.tbl");
-
-sub get_seq_by_org {
-  my ($fi, $fo) = @_;
-  my $hi;
+sub make_ins_fas {
+  my ($fi, $do, $qrys) = @_;
+  -d $do || make_path($do);
+  my $hdb;
+  for my $org (@$qrys) {
+    my $db = Bio::DB::Fasta->new("$ENV{'genome'}/$org/51.fas");
+    $hdb->{$org} = $db;
+  }
   my $ti = readTable(-in => $fi, -header => 1);
   for my $i (0..$ti->lastRow) {
-    my ($org, $gid, $idx) = $ti->row($i);
-    $hi->{$org} ||= [];
-    push @{$hi->{$org}}, [$gid, $idx];
-  }
+    my ($idx, $chr, $pos, $note) = $ti->row($i);
+    my @ary = split(" ", $note);
+    @ary > 1 || next;
 
-  my $seqHO = Bio::SeqIO->new(-file => ">$fo", -format => 'fasta');
-  my @orgs = sort(keys(%$hi));
-  for my $org (@orgs) {
-    my $fs = "$ENV{'genome'}/$org/51.fas";
-    my $db = Bio::DB::Fasta->new($fs);
-    for (@{$hi->{$org}}) {
-      my ($gid, $idx) = @$_;
-      my $seq = $db->seq($gid);
-      my $nid = defined($idx) ? "$org-$gid-$idx" : "$org-$gid";
-      $seqHO->write_seq(Bio::Seq->new(-id => $nid, -seq => $seq));
+    my $id = sprintf("$do/%06d", $idx);
+    open(my $fhs, ">$id.fas") or die "cannot write to $id.fas\n";
+    for (@ary) {
+      my ($org, $gid, $len) = split "-";
+      my $seq = $hdb->{$org}->seq($gid);
+      print $fhs join("\n", ">$org-$gid", $seq)."\n";
     }
-  }
-  $seqHO->close();
-}
-sub parallel_blat_8 {
-  my ($fi, $db, $do, $fo) = @_;
-  runCmd("qsub.blat.pl -i $fi -o $do");
-  runCmd("seq 0 7 | xargs -i printf \"%02d\\n\" {} | parallel --no-notice -j 8 blat -prot $db $do/part.{}.fas $do/part.{}.tbl");
-  runCmd("seq 8 15 | xargs -i printf \"%02d\\n\" {} | parallel --no-notice -j 8 blat -prot $db $do/part.{}.fas $do/part.{}.tbl");
-  runCmd("cat $do/part.*.tbl > $fo");
-}
-sub write_one_hit {
-  my ($tid, $h, $fho) = @_;
-  for my $org (keys(%$h)) {
-    my ($qid, $score) = @{$h->{$org}};
-    print $fho join("\t", $tid, $qid, $score)."\n";
+    close $fhs;
+#    runCmd("muscle -quiet -in $do/$kid.fas -out $do/$kid.aln.fas");
   }
 }
-sub get_best_hit {
-  my ($fi, $fo) = @_;
-  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+sub grouping_seq {
+  my ($fi, $di, $fo, $orgs) = @_;
+  my $ti = readTable(-in => $fi, -header => 1);
   open(my $fho, ">$fo") or die "cannot write $fo\n";
-  my $h;
-  my $ptid = "";
-  while(<$fhi>) {
-    chomp;
-    my ($tid, $qid, $torg, $qorg, $e1, $e2, $ident, $cov) = split "\t";
-    next if $torg eq $qorg || $cov < 0.5;
-    my $score = $ident * $cov / 10000;
-    if($ptid ne $tid && $ptid ne "") {
-      write_one_hit($ptid, $h, $fho);
-      $h = {$qorg => [$qid, $score]};
-    } else {
-      $h->{$qorg} ||= [$qid, $score];
-      $h->{$qorg} = [$qid, $score] if $score > $h->{$qorg}->[1];
-    }
-    $ptid = $tid;
-  }
-  write_one_hit($ptid, $h, $fho);
-  close $fhi;
-  close $fho;
-}
-sub parse_mcl {
-  my ($fi, $fo, $orgs) = @_;
-  open(my $fhi, "<$fi") or die "cannot read $fi\n";
-  open(my $fho, ">$fo") or die "cannot write $fo\n";
-  print $fho join("\t", @$orgs)."\n";
-  while(<$fhi>) {
-    chomp;
-    my @ps = split "\t";
-    my $h = { map {$_ => []} @$orgs };
-    my $hn = { map {$_ => 0} @$orgs };
-    for (@ps) {
-      my ($org, $id) = split /\-/;
-      push @{$h->{$org}}, $id;
-      $hn->{$org} ++;
-    }
-    my $n = max(values(%$hn));
-    for my $i (1..$n) {
-      my @ort;
-      for my $org (@$orgs) {
-        if($hn->{$org} >= $i) {
-          push @ort, $h->{$org}->[$i-1];
-        } else {
-          push @ort, '';
-        }
+  print $fho join("\t", qw/idx chr pos/, @$orgs)."\n";
+  for my $i (0..$ti->lastRow) {
+    my ($idx, $chr, $pos, $note) = $ti->row($i);
+    my @ary = split(" ", $note);
+    @ary > 1 || next;
+    
+#    next unless $idx == 14;
+    my $fs = sprintf("$di/%06d.fas", $idx);
+    runCmd("blat -prot $fs $fs x.psl");
+    runCmd("psl2gal.pl -i x.psl | gal2mcl.pl -o x.txt");
+    runCmd("\$soft/mcl/bin/mcl x.txt -te 4 -I 5.0 --abc -o x.mcl");
+    my $groups = read_mcl("x.mcl");
+    if(@$groups == 0) {
+      for (@ary) {
+        my ($org, $gid, $len) = split "-";
+        push @$groups, ["$org-$gid"];
       }
-      print $fho join("\t", @ort)."\n";
     }
-  }
-  close $fhi;
+    my $ary = partition_record($groups, $orgs);
+    for (@$ary) {
+      my @orts = @$_;
+      print $fho join("\t", $idx, $chr, $pos, @orts)."\n";
+    }
+  } 
+  runCmd("rm x.psl x.txt x.mcl");
   close $fho;
 }
+
 sub ortho_group_refine {
   my ($fi, $fr, $fo, $orgs) = @_;
   my %hi = map {$_ => $orgs->[$_]} (0..@$orgs-1);
@@ -232,30 +170,27 @@ sub ortho_group_refine {
   close $fho;
 }
 sub ortho_group_cat {
-  my ($fi, $fo) = @_;
+  my ($fi, $fo, $orgs) = @_;
   my $ti = readTable(-in => $fi, -header => 1);
-  my @cnames = $ti->header;
-  my @orgs = @cnames[1..$#cnames];
-  
   my $h;
-  for my $org (@orgs) {
+  for my $org (@$orgs) {
     my $fg = "$ENV{'genome'}/$org/51.gtb";
     my $tg = readTable(-in => $fg, -header => 1);
     my %hg = map {$tg->elm($_, 'id') => 
       [$tg->elm($_, 'cat2'), $tg->elm($_, 'cat3')]} (0..$tg->lastRow);
     $h->{$org} = \%hg;
   }
-  
+
   my (@cats2, @cats3);
   for my $i (0..$ti->lastRow) {
-    my ($idx, @gids) = $ti->row($i);
+    my @ps = $ti->row($i);
     my $hc;
-    for my $j (0..$#gids) {
-      my $gid = $gids[$j];
-      my $org = $orgs[$j];
-      if($gid ne '' && $gid ne '-') {
-        my ($cat2, $cat3) = @{$h->{$org}->{$gid}};
-        die "$org $gid\n" if !$cat2;
+    for my $j (0..@$orgs-1) {
+      if($ps[$j] ne '' && $ps[$j] ne 'NA') {
+        my $org = $orgs->[$j];
+        my $cat2 = $h->{$org}->{$ps[$j]}->[0];
+        my $cat3 = $h->{$org}->{$ps[$j]}->[1];
+        die "$org $ps[$j]\n" if !$cat2;
         $hc->{$cat2} ||= [0, ''];
         $hc->{$cat2}->[0] ++;
         $hc->{$cat2}->[1] = $cat3;
@@ -269,18 +204,16 @@ sub ortho_group_cat {
   }
   $ti->addCol(\@cats2, 'cat2');
   $ti->addCol(\@cats3, 'cat3');
-  $ti->delCols(\@orgs);
   open(my $fho, ">$fo") or die "cannot write $fo\n";
   print $fho $ti->tsv(1);
   close $fho;
 }
 sub ortho_aln_prep {
-  my ($fi, $fo, $ds, $da) = @_;
-  -d $ds || make_path($ds);
-  -d $da || make_path($da);
+  my ($fi, $fo) = @_;
+  -d "42.seq" || make_path("42.seq");
+  -d "42.aln" || make_path("42.aln");
   my $ti = readTable(-in => $fi, -header => 1);
-  my @cnames = $ti->header;
-  my @orgs = @cnames[1..$#cnames];
+  my @orgs = $ti->header;
 
   my $h;
   for my $org (@orgs) {
@@ -290,23 +223,21 @@ sub ortho_aln_prep {
 
   open(my $fho, ">$fo") or die "cannot write $fo\n";
   for my $i (0..$ti->lastRow) {
-    my ($idx, @gids) = $ti->row($i);
-    my (@nids, @seqs);
-    for my $j (0..$#gids) {
-      my $gid = $gids[$j];
-      ($gid eq "" || $gid eq "-") && next;
+    my @ps = $ti->row($i);
+    my (@ids, @seqs);
+    for my $j (0..$#ps) {
+      $ps[$j] eq '' && next;
       my $org = $orgs[$j];
-      push @nids, "$org-$gid";
-      my $seq = $h->{$org}->seq($gid);
-      $seq =~ s/X//ig;
-      push @seqs, $seq;
+      push @ids, "$org|$ps[$j]";
+      push @seqs, $h->{$org}->seq($ps[$j]);
     }
-    if(@nids > 1) {
-      open(my $fhs, ">$ds/$idx.fas") or die "cannot write $idx\n";
-      print $fhs join("\n", map {">".$nids[$_]."\n".$seqs[$_]} 0..$#nids);
+    if(@ids > 1) {
+      my $fn = sprintf("%06d", $i);
+      open(my $fhs, ">42.seq/$fn.fas") or die "cannot write $fn\n";
+      print $fhs join("\n", map {">".$ids[$_]."\n".$seqs[$_]} 0..$#ids);
       close $fhs;
 
-      print $fho "clustalo -i $ds/$idx.fas -o $da/$idx.fas --outfmt=fasta --force --full --full-iter\n";
+      print $fho "clustalo -i 42.seq/$fn.fas -o 42.aln/$fn.fas --outfmt=fasta --force --full --full-iter\n";
     }
   }
   close $fho;

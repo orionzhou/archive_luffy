@@ -1,11 +1,7 @@
 require(seqinr)
+source('comp.fun.R')
 
-tname = "HM101"
-qnames = c(
-  "HM058", "HM125", "HM056.AC", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340.AC"
-)
+qnames = get_orgs()
 diro = file.path(Sys.getenv("misc3"), "comp.ortho")
 
 fi = file.path(diro, "33.ortho.cat.tbl")
@@ -21,6 +17,9 @@ ids = c('Medtr4g020620.1', 'Medtr8g060730.1', 'Medtr5g088410.1', 'Medtr2g020630.
 
 to = ti[ti[,tname] %in% ids,]
 rownames(to) = to[,tname]
+
+fo = sprintf("%s/cases/ids.tbl", diro)
+write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 fass = list()
 for (org in c(tname, qnames)) {

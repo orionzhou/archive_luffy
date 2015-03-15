@@ -17,6 +17,7 @@
     -i (--in)     input (Gtb) file
     -o (--out)    output (Gtb) file
     -l (--len)    minimum CDS length (default: 30)
+    -c (--chr)    file with Chr IDs
 
 =cut
   
@@ -33,7 +34,7 @@ use Gtb;
 use Common;
 use Location;
 
-my ($fi, $fo) = ('') x 2;
+my ($fi, $fo, $fc) = ('') x 3;
 my $min_len = 30;
 my $help_flag;
 
@@ -43,6 +44,7 @@ GetOptions(
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
   "len|l=i"  => \$min_len,
+  "chr|c=s"  => \$fc,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
@@ -59,6 +61,17 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open($fho, ">$fo") or die "cannot write $fo\n";
 }
 
+my $hc;
+if($fc) {
+  open(my $fhc, "<$fc") or die "cannot read $fc\n";
+  while(<$fhc>) {
+    chomp;
+    /(^\#)|(^\s*$)/ && next;
+    $hc->{$_} = 1;
+  }
+  close $fhc;
+}
+
 my ($cntf, $cnta) = (0, 0);
 print $fho join("\t", @HEAD_GTB)."\n";
 while( <$fhi> ) {
@@ -70,6 +83,7 @@ while( <$fhi> ) {
   my $flag = 1;
 
   $flag = 0 if $conf < $min_len;
+  $flag = 0 if $fc && exists $hc->{$chr};
 
   $cnta ++;
   $cntf ++ if $flag == 0;

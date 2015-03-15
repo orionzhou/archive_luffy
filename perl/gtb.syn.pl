@@ -6,11 +6,11 @@
   
 =head1 NAME
   
-  gtb2tbl.pl - convert a Gtb file to Tbl (location) file
+  gtb.syn.pl - extract synonymous positions from a Gtb file
 
 =head1 SYNOPSIS
   
-  gtb2tbl.pl [-help] [-in input-file] [-out output-file]
+  gtb.syn.pl [-help] [-in input-file] [-out output-file]
 
   Options:
     -h (--help)   brief help message
@@ -64,32 +64,27 @@ while(<$fhi>) {
   my $ps = [ split("\t", $_, -1) ];
   @$ps >= 18 || die "not 19 fileds:\n$_\n";
   my ($id, $par, $chr, $beg, $end, $srd, 
-    $locES, $locIS, $locCS, $loc5S, $loc3S, $phase, 
+    $locES, $locIS, $locCS, $loc5S, $loc3S, $phaseS,
     $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
   $cat1 eq "mRNA" || next;
   die "no CDS-loc for $id\n" unless $locCS;
-  my $len = $end - $beg + 1;
-  my $hl = {
-    'mrna' => "1-$len",
-    'cds'  => $locCS,
-    'utr5' => $loc5S,
-    'utr3' => $loc3S,
-    'intron' => $locIS,
-  };
-  for my $type (keys(%$hl)) {
-    my $rloc = locStr2Ary($hl->{$type});
-    my $loc = $srd eq "-" ?
-      [ map {[$end - $_->[1] + 1, $end - $_->[0] + 1]} @$rloc ] :
-      [ map {[$beg + $_->[0] - 1, $beg + $_->[1] - 1]} @$rloc ];
-    for (@$loc) {
-      print $fho join("\t", $chr, @$_, $srd, $id, $type, $cat2)."\n";
+  my $rloc = locStr2Ary($locCS);
+  my @phases = split(",", $phaseS);
+  @$rloc == @phases || die "not enough phases: $locCS, $phaseS\n";
+  my $spos = $rloc->[-1]->[1];
+  for my $i (0..$#phases) {
+    my $phase = $phases[$i];
+    my ($rb, $re) = @{$rloc->[$i]};
+    for my $j ($rb..$re) {
+      my $rpos = (3-$phase)%3 + $j-$rb+1;
+      $rpos % 3 == 0 || next;
+      $j == $spos && next;
+      my $pos = $srd eq "-" ? $end - $j + 1 : $beg + $j - 1;
+      print $fho join("\t", $chr, $pos)."\n";
     }
   }
 }
 close $fhi;
 close $fho;
-runCmd("sort -k1,1 -k2,2n -k3,3n $fo -o $fo");
-runCmd("bgzip -c $fo > $fo.gz");
-runCmd("tabix -s 1 -b 2 -e 3 -f $fo.gz");
 
 __END__

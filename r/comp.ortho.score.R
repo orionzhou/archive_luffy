@@ -1,6 +1,8 @@
 require(rtracklayer)
 require(plyr)
 require(seqinr)
+source("Align.R")
+source("comp.fun.R")
 
 #args <- commandArgs(trailingOnly = TRUE)
 #print(args)
@@ -17,11 +19,7 @@ clusterCall(cl, cluster_fun)
 
 ##### determine ortholog identity using pairwise alignment
 tname = "HM101"
-qnames = c(
-  "HM058", "HM125", "HM056", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340"
-)
+qnames = get_orgs()
 
 for (qname in qnames) {
 #qname = "HM004"

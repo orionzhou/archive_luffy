@@ -1,11 +1,31 @@
 require(plyr)
 require(rtracklayer)
+require(rbamtools)
 require(Rsamtools)
 
-get_genome_cfg <- function(org) {
-  gdir = file.path(Sys.getenv("genome"), toupper(org))
+get_orgs <- function(opt = 1) {
+  orgs = c(
+    "HM058", "HM056", "HM125", "HM129", "HM034", 
+    "HM095", "HM060", "HM185", "HM004", "HM050", 
+    "HM023", "HM010", "HM022", "HM340", "HM324"
+  )
+  if(opt == 'ingroup') {
+    orgs[1:12]
+  } else {
+    orgs
+  }
+}
+read_seqinfo <- function(fsize) {
+  tsize = read.table(fsize, header = F, sep = "\t",  as.is = T, 
+    col.names = c("id", "size"))
+  Seqinfo(tsize$id, seqlengths = tsize$size)
+}
+get_genome_cfg <- function(org, tname = "HM101") {
+  org = toupper(org)
+  gdir = file.path(Sys.getenv("genome"), org)
   
   size = file.path(gdir, "15.sizes")
+  seqinfo = read_seqinfo(file.path(gdir, "15.sizes"))
   
   gap = file.path(gdir, "16.gap.bed")
   gapz = file.path(gdir, "16.gap.bed.gz")
@@ -15,32 +35,22 @@ get_genome_cfg <- function(org) {
 
   dna = file.path(gdir, '11_genome.fas')
   protein = file.path(gdir, '51.fas')
-
-  list(size = size, gap = gap, gapz = gapz, gene = gene, genez = genez,
-    dna = dna, protein = protein)
-}
-read_seqinfo <- function(fsize) {
-  tsize = read.table(fsize, header = F, sep = "\t",  as.is = T, 
-    col.names = c("id", "size"))
-  Seqinfo(tsize$id, seqlengths = tsize$size)
-}
-get_comp_cfg <- function(tname, qnames) {
-  cfgs = list()
   
-  gdir = file.path(Sys.getenv("genome"), toupper(tname))
-  seqinfo = read_seqinfo(file.path(gdir, "15.sizes"))
-  gap = file.path(gdir, "16.gap.bed.gz")
-  gene = file.path(gdir, "51.tbl.gz")
-  cfgs[[tname]] = list(seqinfo = seqinfo, gap = gap, gene = gene)
-  
-  for (qname in qnames) {
-    gdir = file.path(Sys.getenv("genome"), toupper(qname))
-    seqinfo = read_seqinfo(file.path(gdir, "15.sizes"))
-    gap = file.path(gdir, "16.gap.bed.gz")
-    gene = file.path(gdir, "51.tbl.gz")
+  mapp = file.path(gdir, "18_stat_k60/15_mapp.bw")
 
-    cdir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), 
-      toupper(qname), toupper(tname))
+  cfg = list(gdir = gdir, size = size, seqinfo = seqinfo, 
+    gap = gap, gapz = gapz, 
+    gene = gene, genez = genez,
+    dna = dna, protein = protein, mapp = mapp)
+  
+  f_pacbio = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), org, org)
+  if(file.exists(f_pacbio)) cfg[['pacbio']] = bamReader(f_pacbio, idx = T)
+
+  f_rnaseq = sprintf("%s/rnaseq/mt/22_tophat/%s_%s/accepted_hits.bam", Sys.getenv("misc2"), org, org)
+  if(file.exists(f_rnaseq)) cfg[['rnaseq']] = bamReader(f_rnaseq, idx = T)
+  
+  if(org != tname) {
+    cdir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), org, tname)
     tgal = sprintf("%s/31.9/gal.gz", cdir)
     qgal = sprintf("%s/41.9/gal.gz", cdir)
     tgax = sprintf("%s/31.9/gax.gz", cdir)
@@ -48,20 +58,77 @@ get_comp_cfg <- function(tname, qnames) {
     tsnp = sprintf("%s/31.9/snp.gz", cdir)
     qsnp = sprintf("%s/41.9/snp.gz", cdir)
     
-    vdir = sprintf("%s/hapmap_40/30_vnt/%s", Sys.getenv("misc3"), toupper(qname))
-    fsnp = sprintf("%s/snp.gz", vdir)
-    fidm = sprintf("%s/idm.gz", vdir)
-    fhet = sprintf("%s/het.gz", vdir)
-    fcov = sprintf("%s/../../11_pipe_mapping/35_cov/%s.bw", vdir, toupper(qname))
-    fcovab = sprintf("%s/../../40_sv/01_ab/%s.bw", vdir, toupper(qname))
+    vdir = sprintf("%s/hapmap_mt40/12_ncgr", Sys.getenv("misc3"))
+    fsnp = sprintf("%s/44_snp/%s.tbl.gz", vdir, org)
+    fcov = sprintf("%s/35_cov/%s.bw", vdir, org)
+    fcovab = sprintf("%s/36_abcov/%s.bw", vdir, org)
     
-    cfgs[[qname]] = list(seqinfo = seqinfo, gap = gap, gene = gene,
-      cdir = cdir, 
+    ccfg = list(cdir = cdir, 
       tgal = tgal, qgal = qgal, tgax = tgax, tsnp = tsnp, qsnp = qsnp,
-      vdir = vdir)
+      vdir = vdir, vsnp = fsnp, vcov = fcov)
+    cfg = c(cfg, ccfg)
+  }
+  cfg
+}
+get_genome_cfgs <- function(orgs, tname = "HM101") {
+  cfgs = list()
+  for (org in orgs) {
+    cfgs[[org]] = get_genome_cfg(org)
   }
   cfgs
 }
+get_genome_composition <- function(org, utr.merge = F) {
+  dirw = file.path(Sys.getenv("genome"), org)
+  fsize = file.path(dirw, "15.sizes")
+  fgap = file.path(dirw, "16.gap.bed")
+  stopifnot(file.exists(fsize) & file.exists(fgap))
+  
+  tlen = read.table(fsize, sep = "\t", header = F, as.is = T)
+  grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
+
+  tgap = read.table(fgap, sep = "\t", header = F, as.is = T)
+  grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+  gra = GenomicRanges::setdiff(grt, grp)
+
+  f1 = file.path(dirw, "51.tbl")
+  f2 = file.path(dirw, "51.syn.tbl")
+  stopifnot(file.exists(f1) & file.exists(f2))
+  
+  t1 = read.table(f1, header = F, sep = "\t", as.is = T)
+  colnames(t1) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+
+  tt = t1[t1$type == 'cds',]
+  gcds = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  gcds = GenomicRanges::intersect(gra, reduce(gcds))
+
+  tt = t1[t1$type == 'intron',]
+  gito = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  gito = GenomicRanges::intersect(GenomicRanges::setdiff(gra, gcds), reduce(gito))
+
+  tt = t1[t1$type == 'utr5',]
+  gut5 = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  gut5 = GenomicRanges::intersect(GenomicRanges::setdiff(gra, c(gcds, gito)), reduce(gut5))
+
+  tt = t1[t1$type == 'utr3',]
+  gut3 = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  gut3 = GenomicRanges::intersect(GenomicRanges::setdiff(gra, c(gcds, gito,   gut5)), reduce(gut3))
+
+  gutr = GenomicRanges::union(gut5, gut3)
+  gitr = GenomicRanges::setdiff(gra, c(gcds, gito, gut5, gut3))
+
+  t2 = read.table(f2, header = F, sep = "\t", as.is = T)
+  gsyn = with(t2, GRanges(seqnames = V1, ranges = IRanges(V2, end = V2)))
+  gsyn = GenomicRanges::intersect(gra, reduce(gsyn))
+  grpl = GenomicRanges::setdiff(gcds, gsyn)
+
+  if(utr.merge) {
+    list(cds = gcds, synonymous = gsyn, replacement = grpl, intron = gito, utr = gutr, intergenic = gitr)
+  } else {
+    list(cds = gcds, synonymous = gsyn, replacement = grpl, intron = gito, utr5 = gut5, utr3 = gut3, intergenic = gitr)
+  }
+}
+
 
 parse_tabix <- function(txt) 
   read.csv(textConnection(txt), sep = "\t", header = F, stringsAsFactors = F)
@@ -86,7 +153,34 @@ trim_gax <- function(ds, beg, end) {
   }
   ds
 }
-read_gax <- function(fgal, fgax, fsnp, gr) {
+read_gax_simple <- function(fgax, gr) {
+  gr = reduce(gr)
+  
+  tg = data.frame()
+  
+  gax = open(TabixFile(fgax))
+  grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(gax)]
+  if(length(grs) == 0) return(NULL)
+  x = scanTabix(gax, param = grs)
+  close(gax)
+  
+  txts = rapply(x, c)
+  if(length(txts) == 0) return(NULL)
+  
+  lc = list()
+  for (i in 1:length(grs)) {
+    if(length(x[[i]]) == 0) next
+    df1 = parse_tabix(x[[i]])
+    colnames(df1) = c('tid', 'tbeg', 'tend', 'tsrd', 
+      'qid', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
+    tgs = trim_gax(df1, start(grs)[i], end(grs)[i])
+    tgs = cbind(tgs, len = tgs$qend - tgs$qbeg + 1)
+    
+    tg = rbind(tg, tgs)
+  }
+  tg
+}
+read_gax <- function(fgal, fgax, gr) {
   gr = reduce(gr)
   
   tg = data.frame()
@@ -129,20 +223,6 @@ read_gax <- function(fgal, fgax, fsnp, gr) {
     tg = rbind(tg, tgs)
     tc = rbind(tc, tcs)
   }
-  
-  tc = cbind(tc, mis = 0)
-  snp = open(TabixFile(fsnp))
-  for (i in 1:nrow(tc)) {
-    tid = as.character(tc$tid[i]); tbeg = tc$tbeg[i]; tend = tc$tend[i]
-    if(! tid %in% seqnamesTabix(snp)) next
-    grs = GRanges(seqname = tid, ranges = IRanges(tbeg, end = tend))
-    x = scanTabix(snp, param = grs)[[1]]
-    if(length(x) == 0) next
-    tso = parse_tabix(x)
-    colnames(tso) = c('tid', 'tpos', 'ref', 'alt', 'qid', 'qpos', 'cid', 'lev')
-    tc$mis[i] = nrow(tso)
-  }
-  close(snp)
 
 #   gal = open(TabixFile(fgal))
 #   grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(gal)]
@@ -153,6 +233,7 @@ read_gax <- function(fgal, fgax, fsnp, gr) {
 #       'lev', 'ali', 'mat', 'mis', 'qN', 'tN', 'ident', 'score')
 #   close(gal)
 
+  tc = cbind(tc, mis = 0)
   qgap = tc$qend - tc$qbeg + 1 - tc$ali
   tgap = tc$tend - tc$tbeg + 1 - tc$ali
   score = tc$ali * 1 + tc$mis * (-2) + tc$gapo * (-5) + 
@@ -164,7 +245,7 @@ read_gax <- function(fgal, fgax, fsnp, gr) {
   cids = tc$cid[idxs]
   list(tg = tg[tg$cid %in% cids,], tc = tc[idxs,])
 }
-read_gap <- function(ftbx, gr) {
+read_tabix <- function(ftbx, gr) {
   gr = reduce(gr)
   tbx = open(TabixFile(ftbx))
   grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(tbx)]
@@ -174,21 +255,61 @@ read_gap <- function(ftbx, gr) {
   close(tbx)
   if(length(txts) == 0) return(NULL)
   res = parse_tabix(txts)
-  colnames(res) = c('chr', 'beg', 'end')
+#  colnames(res) = c('tid', 'tpos', 'ref', 'alt', 'qid', 'qpos', 'cid', 'lev')
+#  colnames(res) = c('chr', 'pos', 'alt', 'gt', 'rd', 'qual', 'mapqual')
+#  colnames(res) = c('chr', 'beg', 'end')
+#  colnames(res) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
   res
 }
-read_gene <- function(ftbx, gr) {
-  gr = reduce(gr)
-  tbx = open(TabixFile(ftbx))
-  grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(tbx)]
-  if(length(grs) == 0) return(NULL)
-  x = scanTabix(tbx, param = grs)
-  txts = rapply(x, c)
-  close(tbx)
-  if(length(txts) == 0) return(NULL)
-  res = parse_tabix(txts)
-  colnames(res) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+pileupReads <- function(dr){
+    dr <- dr[order(dr$beg),]
+    minbeg <- min(dr$beg); maxend <- max(dr$end)
+
+    yread <- c(); ypos <- c()
+    yread[1] <- minbeg - 1
+    for (i in 1:nrow(dr)){
+        beg <- dr$beg[i]
+        placed <- F
+        y <- 1
+        while(!placed){
+            if(yread[y] < beg){
+                ypos[i] <- y
+                yread[y] <- dr$end[i]
+                placed <- T
+            }
+            y <- y + 1
+            if(y > length(yread)){
+                yread[y] <- minbeg - 1
+            }
+        }
+    }
+    ypos
+}
+read_bam <- function(bam, gr, pileup = F) {
+  seqmap = getRefData(bam)
+  
+  res = data.frame()
+  for (i in 1:length(gr)) {
+    chr = as.character(seqnames(gr))[i]; beg = start(gr)[i]; end = end(gr)[i]
+    refid = seqmap$ID[seqmap$SN == chr]
+    reads = bamRange(bam, c(refid, beg, end))
+    td <- as.data.frame(reads)
+    if(is.null(td) | nrow(td) == 0) next
+    tr = data.frame(chr = chr, beg = td$position + 1, end = NA, 
+      len = nchar(td$seq), srd = "+", 
+      #id = td$name, cigar = td$cigar, seq = td$seq, 
+      stringsAsFactors = F)
+    tr$end = tr$beg + tr$len - 1
+    tr$srd[which(td$revstrand)] = "-"
+    if(pileup) tr = cbind(tr, y = pileupReads(tr))
+    res = rbind(res, tr)
+  }
   res
 }
 
-
+tname = "HM101"
+qnames_all = get_orgs()
+orgs = c(tname, qnames_all)
+cfgs = get_genome_cfgs(orgs)
+tcfg = cfgs[[tname]]
+qnames = qnames_all

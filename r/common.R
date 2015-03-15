@@ -58,3 +58,10 @@ get_mt_ids <- function(opt) {
   idt = read.table(f_id, sep="\t", header=T, stringsAsFactors=F)
   idt$id[which(idt[,opt]==1)]
 }
+
+sortC <- function(...) {
+    a <- Sys.getlocale("LC_COLLATE")
+    on.exit(Sys.setlocale("LC_COLLATE", a))
+    Sys.setlocale("LC_COLLATE", "C")
+    sort(...)
+}

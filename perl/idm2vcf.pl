@@ -32,6 +32,7 @@ use Data::Dumper;
 use Common;
 use Location;
 use Seq;
+use Vcfhead;
 use List::Util qw/min max sum/;
 
 my ($qry, $tgt) = ('HM056', 'HM101');
@@ -60,13 +61,8 @@ my $fo = "$dir/31.9/idm.vcf";
 open(my $fhi, "<$fi") or die "cannot read $fi\n";
 open(my $fho, ">$fo") or die "cannot write $fo\n";
 
-print $fho "##fileformat=VCFv4.1
-##INFO=<ID=SVTYPE,Number=1,Type=String,Description=\"Type of structural variant\">
-##FILTER=<ID=q10,Description=\"Quality below 10\">
-##FILTER=<ID=s50,Description=\"Less than 50% of samples have data\">
-##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n";
-print $fho join("\t", "#CHROM", qw/POS ID REF ALT QUAL FILTER INFO FORMAT/,
-  $qry)."\n";
+print $fho $vcfhead."\n";
+print $fho "#".join("\t", @colhead, $qry)."\n";
 
 while( <$fhi> ) {
   chomp;

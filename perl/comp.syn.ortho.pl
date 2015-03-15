@@ -69,12 +69,63 @@ my $tdb = Bio::DB::Fasta->new("$tdir/51.fas");
 
 my $qgene = Tabix->new(-data => "$qdir/51.tbl.gz");
 
-syn_ortho_raw($fgq, $fgt, $gax, $qgene, "01.ortho.tbl");
+syn_ortho($fgq, $fgt, $gax, $qgene, "01.ortho.tbl");
 #runCmd("blat -prot $tdir/51.fas $qdir/51.fas 11.psl");
 #runCmd("psl2gal.pl -i 11.psl | gal.filter.ortho.pl -o 12.gal");
 #syn_ortho_refine("01.ortho.tbl", "12.gal", "21.ortho.tbl");
 #ortho_combine("21.ortho.tbl", $fgq, $fgt,  "12.gal", "31.ortho.tbl");
 
+sub syn_ortho {
+  my ($fgq, $fgt, $gax, $qgene, $fo) = @_;
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho join("\t", qw/idx tid tlen qid qlen slen cid lev qstr/)."\n";
+
+  my $tq = readTable(-in => $fgq, -header => 1);
+  my $hq;
+  for my $i (0..$tq->lastRow) {
+    my ($qid, $qpar, $qchr, $qb, $qe, $qsrd, 
+      $elocS, $ilocS, $clocS, $flocS, $tlocS, $phase) = $tq->row($i);
+    my $qloc = locStr2Ary($clocS);
+    $hq->{$qid} = ['', locAryLen($qloc)];
+  }
+
+  my $tt = readTable(-in => $fgt, -header => 1);
+  for my $i (1..$tt->nofRow) {
+    my ($tid, $tpar, $tchr, $tb, $te, $tsrd, 
+      $elocS, $ilocS, $clocS, $flocS, $tlocS, $phase, 
+      $src, $conf, $cat1, $cat2, $cat3, $note) = $tt->row($i - 1);
+    my $tloc = locStr2Ary($clocS); 
+    $tloc = $tsrd eq "+" ? [ map {[$tb+$_->[0]-1, $tb+$_->[1]-1]} @$tloc ]
+      : [ map {[$te-$_->[1]+1, $te-$_->[0]+1]} @$tloc ];
+    my $tlen = locAryLen($tloc);
+    
+    my $h;
+    for (@$tloc) {
+      my ($tbeg, $tend) = @$_;
+      my $ary = read_gax($gax, $tchr, $tbeg, $tend);
+      for (@$ary) {
+        my ($cid, $tid1, $tb1, $te1, $tsrd1, $qid, $qb, $qe, $qsrd, $lev) = @$_;
+        my $ary2 = read_cds($qgene, $qid, $qb, $qe);
+        for (@$ary2) {
+          my ($chr, $beg, $end, $srd, $gene) = @$_;
+          $h->{$gene} ||= [0, $cid, $lev];
+          $h->{$gene}->[0] += $end - $beg + 1;
+        }
+      }
+    }
+    if(!defined($h)) {
+      print $fho join("\t", $i, $tid, $tlen, ('') x 6)."\n";
+    } else {
+      my @qids = sort {$h->{$b}->[0] <=> $h->{$a}->[0]} keys(%$h);
+      my $qid = $qids[0];
+      my ($slen, $cid, $lev) = @{$h->{$qid}};
+      my $qlen = $hq->{$qid}->[1];
+      my $str = join(",", map {$_."/".$hq->{$_}->[1]."/".$h->{$_}->[0]} keys(%$h));
+      print $fho join("\t", $i, $tid, $tlen, $qid, $qlen, $slen, $cid, $lev, $str)."\n";
+    }
+  }
+  close $fho;
+}
 sub syn_ortho_raw {
   my ($fgq, $fgt, $gax, $qgene, $fo) = @_;
 

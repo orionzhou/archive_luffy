@@ -2,359 +2,336 @@ require(plyr)
 require(ggplot2)
 require(GenomicRanges)
 require(grid)
+require(reshape2)
 require(RColorBrewer)
 require(ape)
+require(bios2mds)
 require(gridBase)
 require(colorRamps)
+source("comp.fun.R")
 
-tname = "HM101"
-qnames = c(
-  "HM058", "HM125", "HM056.AC", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340.AC"
-)
-diro = file.path(Sys.getenv("misc3"), "comp.ortho")
+dirw = file.path(Sys.getenv("misc3"), "comp.ortho")
 
-##### create raw ortholog groups for 16 accessions & write un-ortholog seqs
-f_tgene = file.path(Sys.getenv("genome"), tname, "51.gtb")
-tgene = read.table(f_tgene, header = T, sep = "\t", as.is = T)[,c(1,16:17)]
+### run comp.ortho.ins.R to generate comp.ortho.ins/08.tbl
+#### create 01.tbl   HM101+del+ins ortho-map
+fg = file.path(tcfg$dir, "51.tbl")
+tg = read.table(fg, sep = "\t", header = F, as.is = T)
+colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+tg = tg[tg$type == 'mrna', c('chr','beg','id')]
 
-to = tgene[,1:2]
-colnames(to) = c(tname, 'cat')
-i = 1
+tl = data.frame()
 for (qname in qnames) {
-  fi = sprintf("%s/%s_%s/51_ortho/05.score.tbl", Sys.getenv("misc3"), qname, tname)
-  ti = read.table(fi, sep = "\t", as.is = T, header = T)
-  ti = cbind(ti, tcov = (ti$mat+ti$mis)/ti$tlen, qcov = (ti$mat+ti$mis)/ti$qlen)
-  idxs = (ti$qcov>=0.5 | ti$tcov>=0.5)
-  n_pass = sum(idxs)
-  n_fail = nrow(ti) - n_pass
-  cat(sprintf("%s: %5d filtered, %5d passed\n", qname, n_fail, n_pass))
-  tis = ti[idxs,c('tid','qid')]
-  
-  to = merge(to, tis, by.x = tname, by.y = 'tid', all.x = T)
-  colnames(to)[2+i] = qname
-  i = i + 1
+  ccfg = ccfgs[[qname]]
+
+  fi = file.path(ccfg$cdir, "../51_ortho/03.ortho.indel.tbl")
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)
+  tls = cbind(qry = qname, ti[ti$tst == 'x', c('tid','qid')])
+  tl = rbind(tl, tls)
 }
-
-n_org = apply(to, 1, function(z) sum(!is.na(z[c(-1,-2)])))
-tt = cbind(to, n_org = n_org)
-ft = file.path(diro, "01.ortho.tbl")
-write.table(tt, ft, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
-
-
-ids = tt[tt$n_org != length(qnames), tname]
-tp = data.frame(org = tname, id = ids)
-cat(sprintf("%s: %5d added\n", tname, length(ids)))
-
-for (qname in qnames) {
-  f_qgene = file.path(Sys.getenv("genome"), qname, "51.gtb")
-  qgenes = read.table(f_qgene, header = T, sep = "\t", as.is = T)[1]$id
-
-  ids_o = tt[!is.na(tt[qname]), qname]
-  ids = qgenes[!qgenes %in% ids_o]
-  
-  tps = data.frame(org = qname, id = ids)
-  tp = rbind(tp, tps)
-  cat(sprintf("%s: %5d added\n", qname, length(ids)))
-}
-fp = file.path(diro, "06.no.ortho.tbl")
-write.table(tp, fp, sep = "\t", row.names = F, col.names = T, quote = F)
+tw1 = reshape(tl, direction = 'wide', timevar = 'qry', idvar = 'tid',
+  times = list(qnames = qnames))
+tw1 = tw1[,c('tid', paste("qid", qnames, sep="."))]
+tw1 = merge(tg, tw1, by.x = 'id', by.y = 'tid')
+colnames(tw1)[1:3] = c('tid','chr','pos')
+tw1 = cbind(idx = NA, tw1[,c(2:3,1,4:ncol(tw1))])
+colnames(tw1)[4:ncol(tw1)] = c(tname, qnames)
 
 
-##### generate final score matrix of ortho groups
-fi = file.path(diro, "31.ortho.tbl")
-ti = read.table(fi, sep = "\t", header = T, stringsAsFactors = F)
-ti[is.na(ti)] = ''
+fi = file.path(Sys.getenv("misc3"), "comp.ortho.ins", "08.tbl")
+tw2 = read.table(fi, header = T, sep = "\t", as.is = T)
 
-ma = matrix(NA, nrow(ti), ncol(ti))
-colnames(ma) = colnames(ti)
-ma[ti[,tname] != '', tname] = 1
-ma[ti[,tname] == '', tname] = 0
+stopifnot(colnames(tw1) == colnames(tw2))
+tw = rbind(tw1, tw2)
+tw = tw[order(tw$chr, tw$pos, tw$idx),]
+tw$idx = 1:nrow(tw)
+norgs = apply(tw[,orgs], 1, function(x) sum(!x %in% c('','-')))
+table(norgs)
 
-for (qname in qnames) { 
-  fr = sprintf("%s/%s_%s/51_ortho/05.score.tbl", Sys.getenv("misc3"), qname, tname)
-  tr = read.table(fr, header = T, sep = "\t", stringsAsFactors = F)
-  tr = cbind(tr, score = tr$mat / tr$len)
-  
-  tis = cbind(idx = 1:nrow(ti), ti[,c(tname, qname)], stringsAsFactors = F)
-  tx = merge(tis, tr[,c('tid','qid','score')], 
-    by.x = c(tname, qname), by.y = c('tid', 'qid'), all.x = T)
-  ma[,qname] = tx$score[order(tx$idx)]
-  ma[ti[,qname] == '', qname] = 0
-  ma[ti[,tname] == '' & ti[,qname] != '', qname] = 1
-}
-sum(is.na(ma))
-
-fo = file.path(diro, "35.ortho.score.tbl")
-write.table(ma, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo = file.path(dirw, "01.tbl")
+write.table(tw, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
 
-##### CRP ortho-map hclust
-fi = file.path(diro, "33.ortho.cat.tbl")
+##### create 05.ortho.tbl and 06.no.ortho.tbl 
+fi = file.path(dirw, "01.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-ti[is.na(ti)] = ''
+norgs = apply(ti[,orgs], 1, function(x) sum(!x %in% c('','-')))
+table(norgs)
 
-fr = file.path(diro, "35.ortho.score.tbl")
-tr = read.table(fr, sep = "\t", header = T, stringsAsFactors = F)
+cnames = colnames(ti)
+lst = apply(ti, 1, function(x, cnames) {
+  idx = which(! x[4:length(cnames)] %in% c('', '-'))[1] + 4 - 1
+  list('org'=cnames[idx], 'gid'=x[idx])
+}, cnames)
+to = as.data.frame(do.call(rbind, lst), stringsAsFactors = F)
+to = data.frame(org = as.character(to[,1]), gid = as.character(to[,2]), idx = ti$idx)
 
-fam = "CRP"
-idxs = ti$cat2 == "CRP"
-tis = ti[idxs,]
-trs = tr[idxs,]
-idxs = order(tis$cat2, tis$cat3, tis[,tname])
-ti = tis[idxs,]
-tr = trs[idxs,]
-ti = cbind(ti, x = 1:nrow(ti), stringsAsFactors = F)
-
-### hclust
-cordist <- function(x) as.dist(1-cor(t(x), method="pearson"))
-r.dist <- cordist(t(tr))
-r.hc <- hclust(r.dist, method='ward.D')
-r.dendro <- as.dendrogram(r.hc)
+fo = file.path(dirw, "05.ortho.tbl")
+write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
 
-ff = '/home/youngn/zhoup/Data/misc2/genefam/crp.info'
-tf = read.table(ff, sep = "\t", as.is = T, header = T)
-tf = merge(ti[,c('cat3','x')], tf, by.x = 'cat3', by.y = 'id')
-tx = ddply(tf, .(cat), summarise, bed = min(x), end = max(x), mid = as.integer(mean(x)))
+til = melt(ti, id.vars = c('idx','chr','pos'), measure.vars = orgs,
+  variable.name = 'org', value.name = 'gid')
+tort = til[til$gid != '' & til$gid != '-',]
 
-tp = data.frame(org = tname, x = ti$x, fam = ti$cat3, score = tr[,tname])
+tg = data.frame()
+for (org in orgs) {
+  cfg = cfgs[[org]]
+  fg = file.path(cfg$dir, "51.gtb")
+  gids = read.table(fg, header = T, sep = "\t", as.is = T)[,1]
+  tgs = data.frame(org = org, gid = gids, stringsAsFactors = F)
+  tg = rbind(tg, tgs)
+}
+tm = merge(tg, tort[,c('org','gid','idx')], by = c("org", "gid"), all = T)
+stopifnot(nrow(tm) == nrow(tg))
+
+tsg = tm[is.na(tm$idx),]
+fo = file.path(dirw, "06.no.ortho.tbl")
+write.table(tsg[,1:2], fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+
+### run comp.ortho.pl to create 09.tbl (blat no.ortho.fas against ortho.fas)
+##### fill in 01.tbl with 09.tbl blat result
+fw = file.path(dirw, "01.tbl")
+tw = read.table(fw, header = T, sep = "\t", as.is = T)
+stopifnot(sum(tw$idx - 1:nrow(tw)) == 0)
+
+tl = melt(tw, id.vars = c('idx','chr','pos'), measure.vars = orgs,
+  variable.name = 'org', value.name = 'gid')
+tsg = tl[tl$gid == '',]
+
+
+fi = file.path(dirw, "09.tbl")
+ti = read.table(fi, sep = "\t", header = F, stringsAsFactors = F)
+colnames(ti) = c("tid", "qid", "tcov", "qcov", "score")
+ti = within(ti, {
+  idx = as.numeric(sapply(strsplit(tid, "-"), function(x) x[[3]][1]))
+  org = sapply(strsplit(qid, "-"), function(x) x[[1]][1])
+  gid = sapply(strsplit(qid, "-"), function(x) x[[2]][1])
+  rm(tid, qid)
+})
+
+tid = tw[,c('idx',orgs)]
+tlo = tw[,1:3]
+tst = tid[,-1]
+tst[tst != '' & tst != '-'] <- 'syn'
+tst = cbind(idx = tid$idx, tst)
+
+qname = 'HM340'
 for (qname in qnames) {
-  tps = data.frame(org = qname, x = ti$x, fam = ti$cat3, score = tr[,qname])
-  tp = rbind(tp, tps)
-}
-
-orgs = labels(r.dendro)
-tp$org = factor(tp$org, levels = orgs)
-p = ggplot(tp, aes(x = x, y = org, fill = score)) +
-  geom_tile(stat = 'identity', position = "identity") + 
-  scale_fill_gradientn(colours = matlab.like2(20)) +
-#  labs(fill = "Pariwise AA distance") +
-  scale_x_discrete(name = '', breaks = tx$mid, labels = tx$cat) +
-  scale_y_discrete(name = '') +
-  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.1, 'lines')) +
-  theme(legend.position = "right", legend.key.size = unit(1, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
-  theme(plot.margin = unit(c(0,0,0,0), "lines")) +
-  theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 45, hjust = 1, vjust = 1)) +
-  theme(axis.text.y = element_text(size = 10, colour = "blue", angle = 0, hjust = 0))
-
-gt <- ggplot_gtable(ggplot_build(p))
-gt$layout$clip[gt$layout$name == "panel"] <- "off"
-
-fp = sprintf("%s/61.heatmap.%s.pdf", diro, fam)
-pdf(file = fp, width = 15, height = 6, bg = 'transparent')
-plot.new()
-
-vl <- viewport(x = 0, y = 0, 
-  width = unit(0.1, 'npc'), height = unit(1, 'npc'), 
-  just = c('left', 'bottom'), name = 'left')
-pushViewport(vl)
-par(new = T, fig = gridFIG(), mar=c(4.3,0.4,0.2,0))
-plot.phylo(as.phylo(r.hc), no.margin = F, show.tip.label = F)
-upViewport()
-
-vr <- viewport(x = unit(1, 'npc'), y = 0, 
-  width = unit(0.9, 'npc'), height = unit(1, 'npc'), 
-  just = c('right', 'bottom'), name = 'right')
-pushViewport(vr)
-grid.draw(gt)
-upViewport()
-
-dev.off()
-
-
-##### plot NBS-LRR ortholog map
-ft = file.path(diro, "01.ortho.tbl")
-tt = read.table(ft, header = T, sep = "\t", as.is = T)
-
-ti = tt[tt$cat == 'NBS-LRR',]
-ti = merge(ti, tgene[,c(1,3)], by.x = tname, by.y = 'id')
-ti = ti[order(ti$cat3, ti[,tname]),]
-ti = cbind(ti, x = 1:nrow(ti))
-tp = data.frame(org = tname, x = ti$x, fam = ti$cat3, refid = ti[,tname], score = 1)
-
-for (qname in qnames) {
-  fc = sprintf("%s/%s_%s/51_ortho/05.score.tbl", Sys.getenv("misc3"), qname, tname)
-  tc = read.table(fc, sep = "\t", as.is = T, header = T)
-  tc = cbind(tc[,c('tid','qid')], score = tc$mat/tc$len, stringsAsFactors = F)
+  tss = tl[tl$gid == '' & tl$org == qname,]
+  tis = ti[ti$idx %in% tss$idx & ti$org == qname,]
+  tis = tis[order(tis$idx),]
   
-  tis = ti[!is.na(ti[,qname]), c(tname, qname, 'x', 'cat3')]
-  tps = merge(tis, tc, by.x = c(tname, qname), by.y = c('tid', 'qid'))
-  tps = cbind(org = qname, tps[,c('x','cat3',tname,'score')])
-  colnames(tps)[3:4] = c('fam', 'refid')
-  tp = rbind(tp, tps)
-}
-
-tx = ddply(ti[,c('cat3','x')], .(cat3), summarise, bed = min(x), end = max(x), mid = as.integer(mean(x)))
-
-tp$org = factor(tp$org, levels = rev(c(tname, qnames)))
-p = ggplot(tp, aes(x = x, y = org, fill = score)) +
-  geom_tile(stat = 'identity', position = "identity") + 
-  scale_x_discrete(name = '', breaks = tx$mid, labels = tx$cat) +
-  scale_y_discrete(name = '') +
-  theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 45, hjust = 1, vjust = 1)) +
-  theme(axis.text.y = element_text(size = 10, colour = "blue", angle = 0))
-
-fp = sprintf("%s/nbs.pdf", diro)
-ggsave(p, filename = fp, width = 15, height = 6)
-
-##### plot misc GeneFam ortholog map
-fams = c('2OG-FeII_Oxy', 'Peroxidase', 'Cytochrome', 'Hydrolase', 'Peptidase')
-ft = file.path(diro, "01.ortho.tbl")
-tt = read.table(ft, header = T, sep = "\t", as.is = T)
-
-ti = tt[tt$cat %in% fams,]
-ti = merge(ti, tgene[,c(1,3)], by.x = tname, by.y = 'id')
-ti = ti[order(ti$cat3, ti[,tname]),]
-ti = cbind(ti, x = 1:nrow(ti))
-tp = data.frame(org = tname, x = ti$x, fam = ti$cat3, refid = ti[,tname], score = 1)
-
-for (qname in qnames) {
-  fc = sprintf("%s/%s_%s/51_ortho/05.score.tbl", Sys.getenv("misc3"), qname, tname)
-  tc = read.table(fc, sep = "\t", as.is = T, header = T)
-  tc = cbind(tc[,c('tid','qid')], score = tc$mat/tc$len, stringsAsFactors = F)
+  gids = unique(tis$gid)
+  hs = rep(0, length(gids))
+  names(hs) = gids
   
-  tis = ti[!is.na(ti[,qname]), c(tname, qname, 'x', 'cat3')]
-  tps = merge(tis, tc, by.x = c(tname, qname), by.y = c('tid', 'qid'))
-  tps = cbind(org = qname, tps[,c('x','cat3',tname,'score')])
-  colnames(tps)[3:4] = c('fam', 'refid')
-  tp = rbind(tp, tps)
-}
-
-tx = ddply(ti[,c('cat','x')], .(cat), summarise, bed = min(x), end = max(x), mid = as.integer(mean(x)))
-
-tp$org = factor(tp$org, levels = rev(c(tname, qnames)))
-p = ggplot(tp, aes(x = x, y = org, fill = score)) +
-  geom_tile(stat = 'identity', position = "identity") + 
-  scale_x_discrete(name = '', breaks = tx$mid, labels = tx$cat) +
-  scale_y_discrete(name = '') +
-  theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 45, hjust = 1, vjust = 1)) +
-  theme(axis.text.y = element_text(size = 10, colour = "blue", angle = 0))
-
-fp = sprintf("%s/%s.pdf", diro, fams[1])
-ggsave(p, filename = fp, width = 15, height = 6)
-
-##### plot proteome diversity
-qname = "HM058"
-tname = "HM101"
-dir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), qname, tname)
-
-fi = file.path(dir, "ortho.2.tbl")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
-
-  tdir = sprintf("%s/%s", Sys.getenv("genome"), tname)
-  fg = file.path(tdir, "51.gtb")
-  tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1,16)]
-
-tu = merge(ti, tg, by.x = 'tid', by.y = 'id', all.x = T)
-colnames(tu)[7] = 'fam'
-
-breaks = c(0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1)
-tu = cbind(tu, dis = cut(tu$ident, breaks, include.lowest = T))
-to = ddply(tu, .(fam, dis), summarise, cnt = length(fam))
-to2 = ddply(tu, .(fam), summarise, cnt_fam = length(fam))
-to = merge(to, to2, by = 'fam')
-to = cbind(to, pct = to$cnt / to$cnt_fam)
-
-tos = to[to$dis == '[0,0.01]',]
-fams = tos$fam[order(tos$pct)]
-to$fam = factor(to$fam, levels = fams)
-
-x = as.numeric(to2$cnt_fam)
-names(x) = to2$fam
-cnts =  format(x[fams], big.mark = ",")
-
-labs = unique(to$dis)
-cols = rainbow(11)
-
-
-p = ggplot(to, aes(x = fam, y = pct, fill = dis)) +
-  geom_bar(stat = 'identity') + 
-  scale_fill_manual(name = "AA distance:", breaks = labs, labels = labs, values = cols, guide = guide_legend(nrow = 2, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-#  labs(fill = "Pariwise AA distance") +
-  coord_flip() +
-  scale_y_continuous(name = '', expand = c(0, 0)) +
-  scale_x_discrete(name = '', expand = c(0, 0), labels = cnts) +
-#  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0, 'lines')) +
-  theme(legend.position = "bottom", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(2,2,0,5), "lines")) +
-  theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0)) +
-  annotation_custom(grob = textGrob(label = "Gene Family | #", just = c('right', 'bottom'), gp = gpar(fontsize = 8)), ymin = -0.05, ymax = -0.05, xmin = length(fams)+1, xmax = length(fams)+1)
-
-for (i in 1:length(fams)) {
-  p <- p + annotation_custom(grob = textGrob(label = fams[i], just = c('right'), gp = gpar(fontsize = 8)), ymin = -0.08, ymax = -0.08, xmin = i, xmax = i)
-}
+  x = Rle(tis$idx)
+  ibeg = start(x); iend = end(x); idxs = runValue(x)
+  ogids = c(); oidxs = c()
+  for (i in 1:length(ibeg)) {
+    ds = tis[ibeg[i]:iend[i],]
+    ds = cbind(ds, sta = as.numeric(hs[ds$gid]))
+    ds = ds[ds$sta == 0,]
+    if(nrow(ds) > 0) {
+      ds = ds[order(ds$score, decreasing = T),]
+      hs[ds$gid[1]] = 1
+      ogid = ds$gid[1]
+      
+      oidxs = c(oidxs, idxs[i])
+      ogids = c(ogids, ogid)
+    }
+  }
+  stopifnot(sum(tid[oidxs, qname] != '') == 0)
+  tid[oidxs, qname] = ogids
+  tst[oidxs, qname] = 'rbh'
   
-gt <- ggplot_gtable(ggplot_build(p))
-gt$layout$clip[gt$layout$name == "panel"] <- "off"
-
-fp = sprintf("%s/compstat/%s.pdf", Sys.getenv("misc3"), tolower(qname))
-pdf(file = fp, width = 8, height = 10, bg = 'transparent')
-grid.newpage()
-grid.draw(gt)
-dev.off()
-
-##### plot NBS-LRR / CRP diversity
-qname = "HM004"
-tname = "HM101"
-dir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), qname, tname)
-
-fi = file.path(dir, "ortho.2.tbl")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
-
-  tdir = sprintf("%s/%s", Sys.getenv("genome"), tname)
-  fg = file.path(tdir, "51.gtb")
-  tg = read.table(fg, sep = "\t", header = T, as.is = T)
-  tgs = tg[tg$cat2 == 'CRP' | tg$cat2 == 'NBS-LRR', c('id','cat3')]
-
-tu = merge(ti, tgs, by.x = 'tid', by.y = 'id', all.x = F)
-colnames(tu)[7] = 'fam'
-
-breaks = c(0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1)
-tu = cbind(tu, dis = cut(tu$ident, breaks, include.lowest = T))
-to = ddply(tu, .(fam, dis), summarise, cnt = length(fam))
-to2 = ddply(tu, .(fam), summarise, cnt_fam = length(fam))
-to = merge(to, to2, by = 'fam')
-to = cbind(to, pct = to$cnt / to$cnt_fam)
-to = to[to$cnt_fa >= 10,]
-
-#tos = ddply(to, .(fam), summarise, pct_median = median(pct))
-#fams = tos$fam[order(tos$pct_median)]
-fams = sort(unique(to$fam))
-to$fam = factor(to$fam, levels = fams)
-
-x = as.numeric(to2$cnt_fam)
-names(x) = to2$fam
-cnts =  format(x[fams], big.mark = ",")
-
-labs = unique(to$dis)
-cols = rainbow(11)
-
-p = ggplot(to, aes(x = fam, y = pct)) +
-  geom_boxplot() + 
-  coord_flip() +
-  scale_y_continuous(name = '', expand = c(0, 0), limits = c(0,1)) +
-  scale_x_discrete(name = '', expand = c(0, 0), labels = cnts) +
-  theme(legend.position = "bottom", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(2,2,0,5), "lines")) +
-  theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0)) +
-  annotation_custom(grob = textGrob(label = "Gene Family | #", just = c('right', 'bottom'), gp = gpar(fontsize = 8)), ymin = -0.05, ymax = -0.05, xmin = length(fams)+1, xmax = length(fams)+1)
-
-for (i in 1:length(fams)) {
-  p <- p + annotation_custom(grob = textGrob(label = fams[i], just = c('right'), gp = gpar(fontsize = 8)), ymin = -0.08, ymax = -0.08, xmin = i, xmax = i)
-}
   
-gt <- ggplot_gtable(ggplot_build(p))
-gt$layout$clip[gt$layout$name == "panel"] <- "off"
+  tss = tl[tl$gid == '-' & tl$org == qname,]
+  tis = ti[ti$idx %in% tss$idx & ti$org == qname,]
+  tis = tis[order(tis$idx),]
+  
+  gids = unique(tis$gid)
+  hs = rep(0, length(gids))
+  names(hs) = gids
+  
+  x = Rle(tis$idx)
+  ibeg = start(x); iend = end(x); idxs = runValue(x)
+  ogids = c(); oidxs = c()
+  for (i in 1:length(ibeg)) {
+    ds = tis[ibeg[i]:iend[i],]
+    ds = cbind(ds, sta = as.numeric(hs[ds$gid]))
+    ds = ds[ds$sta == 0,]
+    if(nrow(ds) > 0) {
+      ds = ds[order(ds$score, decreasing = T),]
+      hs[ds$gid[1]] = 1
+      ogid = ds$gid[1]
+      
+      oidxs = c(oidxs, idxs[i])
+      ogids = c(ogids, ogid)
+    }
+  }
+  stopifnot(sum(tid[oidxs, qname] != '-') == 0)
+  tid[oidxs, qname] = ogids
+  tst[oidxs, qname] = '-|rbh'
+  
+  
+  x = table(tst[,qname])
+  cat(qname, x['syn'], x['rbh'], x['-|rbh'], x['-'], x[1], "\n")
+}
+stopifnot(sum(tid=='')==sum(tst==''))
+norgs = apply(tst[,orgs], 1, function(x) sum(!x %in% c('','-')))
+table(norgs)
 
-fp = sprintf("%s/compstat/%s.crp+nbs.pdf", Sys.getenv("misc3"), tolower(qname))
-pdf(file = fp, width = 8, height = 10, bg = 'transparent')
-grid.newpage()
-grid.draw(gt)
-dev.off()
+fo = file.path(dirw, "11.loc.tbl")
+write.table(tlo, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo = file.path(dirw, "11.gid.tbl")
+write.table(tid, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo = file.path(dirw, "11.sta.tbl")
+write.table(tst, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+## output no-ortho
+fi = file.path(dirw, "11.gid.tbl")
+tid = read.table(fi, header = T, sep = "\t", as.is = T)
+
+tg = data.frame()
+for (org in orgs) {
+  cfg = cfgs[[org]]
+  fg = file.path(cfg$dir, "51.gtb")
+  gids = read.table(fg, header = T, sep = "\t", as.is = T)[,1]
+  sgids = gids[!gids %in% unique(tid[,org])]
+  if(org == tname) {
+    stopifnot(length(sgids) == 0)
+  } else {
+    tgs = data.frame(org = org, gid = sgids, stringsAsFactors = F)
+    tg = rbind(tg, tgs)
+    cat(org, nrow(tgs), "\n")
+  }
+}
+
+fo = file.path(dirw, "15.no.ortho.tbl")
+write.table(tg, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+## run comp.ortho.pl to generate 17.group.tbl
+##### add grouped-RBH ortho
+fi = file.path(dirw, "11.gid.tbl")
+tid = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "11.loc.tbl")
+tlo = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "11.sta.tbl")
+tst = read.table(fi, header = T, sep = "\t", as.is = T)
+stopifnot(sum(tid$idx - 1:nrow(tid)) == 0)
+stopifnot(sum(tlo$idx - 1:nrow(tid)) == 0)
+stopifnot(sum(tst$idx - 1:nrow(tid)) == 0)
+
+fi = file.path(dirw, "17.group.tbl")
+tgr = read.table(fi, header = T, sep = "\t", as.is = T)
+stopifnot(sum(!is.na(tgr$HM101)) == 0)
+tgr$HM101 = ''
+tgr = tgr[,orgs]
+
+norgs = apply(tgr, 1, function(x) sum(x[2:length(x)] != ''))
+table(norgs)
+
+fi = file.path(dirw, "15.no.ortho.tbl")
+tn = read.table(fi, header = T, sep = "\t", as.is = T)
+tsg = data.frame()
+for (org in qnames) {
+  ids_no = tn$gid[tn$org == org]
+  ids_gr = unique(tgr[,org])
+  ids_sg = ids_no[!ids_no %in% ids_gr]
+  cat(org, length(ids_sg), "\n")
+  tz = matrix("", ncol = length(orgs), nrow = length(ids_sg))
+  colnames(tz) = orgs
+  tz[,org] = ids_sg
+  tsg = rbind(tsg, data.frame(tz, stringsAsFactors = F))
+}
+tz = rbind(tgr, tsg)
+
+ctid = cbind(idx = nrow(tid)+(1:nrow(tz)), tz)
+ctst = ctid[,2:ncol(ctid)]
+ctst[ctst != ''] = 'rbh'
+ctst = cbind(idx = ctid$idx, ctst)
+ctlo = data.frame(idx = nrow(tid)+(1:nrow(tz)), chr = 'chrZ', pos = 10000*(1:nrow(ctid)), stringsAsFactors = F)
+
+tid = rbind(tid, ctid); tlo = rbind(tlo, ctlo); tst = rbind(tst, ctst)
+fo = file.path(dirw, "21.loc.tbl")
+write.table(tlo, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo = file.path(dirw, "21.gid.tbl")
+write.table(tid, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo = file.path(dirw, "21.sta.tbl")
+write.table(tst, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+norgs = apply(tst[,orgs], 1, function(x) sum(!x %in% c('','-')))
+table(norgs)
+
+
+tl = melt(tsg, id.vars = NULL, measure.vars = orgs,
+  variable.name = 'org', value.name = 'gid')
+tl = tl[tl$gid != '',]
+
+fo = file.path(dirw, "29.singleton.tbl")
+write.table(tl, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+### run comp.ortho.pl to create 22.cat.tbl
+
+##### generate final score matrix
+fi = file.path(dirw, "21.gid.tbl")
+tid = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "21.loc.tbl")
+tlo = read.table(fi, header = T, sep = "\t", as.is = T)
+fi = file.path(dirw, "21.sta.tbl")
+tst = read.table(fi, header = T, sep = "\t", as.is = T)
+stopifnot(sum(tid$idx - 1:nrow(tid)) == 0)
+stopifnot(sum(tlo$idx - 1:nrow(tid)) == 0)
+stopifnot(sum(tst$idx - 1:nrow(tid)) == 0)
+norgs = apply(tst, 1, function(x) sum(x[2:length(x)] %in% c('syn','rbh')))
+table(norgs)
+
+get_pw_comps <- function(ids) {
+  comps = c()
+  for (i in 1:(length(ids)-1)) {
+    id1 = ids[i]
+    for (j in (i+1):length(ids)) {
+      id2 = ids[j]
+      comps = c(comps, sprintf("%s-%s", id1, id2))
+    }
+  }
+  comps
+}
+comps = get_pw_comps(orgs)
+
+get_pd <- function(idx, norgs, orgs, comps, dira, get_pw_comps) {
+  res = rep(NA, length(comps))
+  names(res) = comps
+  norg = norgs[idx]
+  if(norg > 1) {
+    fa = sprintf("%s/%d.fas", dira, idx)
+    aln = import.fasta(fa)
+    dis = mat.dis(aln, aln)
+    orgs1 = sapply(strsplit(rownames(dis), "[-]"), "[[", 1)
+    rownames(dis) = orgs1; colnames(dis) = orgs1
+    corgs = orgs[orgs %in% orgs1]
+    dis = dis[corgs, corgs]
+    ccomps = get_pw_comps(corgs)
+    cvals = dis[lower.tri(dis)]
+    res[ccomps] = cvals
+  }
+  res
+}
+dira = file.path(dirw, "25_aln")
+
+cl = makeCluster(detectCores())
+cluster_fun <- function() { 
+  require(bios2mds)
+}
+clusterCall(cl, cluster_fun)
+
+ptm <- proc.time()
+#y = sapply(1:5, get_pd, norgs, orgs, comps, dira, get_pw_comps)
+#y = parSapply(cl, 1:1000, get_pd, norgs, orgs, comps, dira, get_pw_comps)
+y = parSapply(cl, 1:nrow(tid), get_pd, norgs, orgs, comps, dira, get_pw_comps)
+proc.time() - ptm
+
+to = t(y)
+fo = file.path(dirw, "28.dist.tbl")
+write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')

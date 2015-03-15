@@ -6,17 +6,16 @@
   
 =head1 NAME
   
-  snp2vcf.pl - convert Snp file to Vcf file
+  gal2mcl.pl - convert Gal file to Mcl input
 
 =head1 SYNOPSIS
   
-  snp2vcf.pl [-help] [-in input-file] [-out output-file]
+  gal2mcl.pl [-help] [-in input-file] [-out output-file]
 
   Options:
-    -help   brief help message
-    -in     input (SNP) file
-    -out    output (VCF) file
-    -sample sample ID 
+    -h (--help)   brief help message
+    -i (--in)     input file (Gal)
+    -o (--out)    output tabular file (tid qid score)
 
 =cut
   
@@ -29,11 +28,12 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Getopt::Long;
 use Pod::Usage;
+use Location;
 use Common;
-use Vcfhead;
+use Seq;
+use Gal;
 
 my ($fi, $fo) = ('') x 2;
-my $sample = "";
 my ($fhi, $fho);
 my $help_flag;
 
@@ -42,38 +42,35 @@ GetOptions(
   "help|h"   => \$help_flag,
   "in|i=s"   => \$fi,
   "out|o=s"  => \$fo,
-  "sample|s=s"  => \$sample,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
-pod2usage(2) if !$fi || !$fo || !$sample;
+#pod2usage(2) if !$fi || !$fo;
 
-if ($fi eq "stdin" || $fi eq "-") {
+if ($fi eq "" || $fi eq "stdin" || $fi eq "-") {
   $fhi = \*STDIN;
 } else {
-  open ($fhi, "<$fi") || die "cannot read $fi\n";
+  open ($fhi, $fi) || die "cannot read $fi\n";
 }
 
-if ($fo eq "stdout" || $fo eq "-") {
+if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   $fho = \*STDOUT;
 } else {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-print $fho $vcfhead."\n";
-print $fho "#".join("\t", @colhead, $sample)."\n";
-
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^id)|(^\s*$)/s;
-  my ($chr, $pos, $tBase, $qBase, $qid, $qpos, $cid, $lev) = split "\t";
-  $lev == 1 || next;
-  print $fho join("\t", $chr, $pos, ".", $tBase, $qBase, 50, '.',
-    '.', 'GT', '1/1')."\n";
+  next if /(^id)|(^\#)|(^\s*$)/;
+  my $ps = [ split "\t" ];
+  next unless @$ps == 21;
+  my ($cid, $tId, $tBeg, $tEnd, $tSrd, $tSize, 
+    $qId, $qBeg, $qEnd, $qSrd, $qSize,
+    $lev, $ali, $mat, $mis, $qN, $tN, $ident, $score, $tlS, $qlS) = @$ps;
+  $tId lt $qId || next;
+  print $fho join("\t", $tId, $qId, $score)."\n";
 }
 close $fhi;
 close $fho;
-#runCmd("bgzip -f $fo");
-#runCmd("tabix -p vcf $fo.gz");
 
 
 __END__

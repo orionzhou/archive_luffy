@@ -13,9 +13,9 @@ use Time::HiRes qw/gettimeofday tv_interval/;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 sub test_time {
-    my $t0 = [gettimeofday];
-    my $t1 = [gettimeofday];
-    printf "***%.01f min\n", tv_interval($t0, $t1) / 60;
+  my $t0 = [gettimeofday];
+  my $t1 = [gettimeofday];
+  printf "***%.01f min\n", tv_interval($t0, $t1) / 60;
 }
 sub gmSnp {
     my $dir = "$DIR_data/misc2/gm_snp2";

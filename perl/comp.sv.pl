@@ -36,6 +36,8 @@ use Location;
 use Gtb;
 use Gal;
 use Bed;
+use Seq;
+use Vcfhead;
 use List::Util qw/min max sum/;
 
 my $help_flag;
@@ -68,26 +70,24 @@ my $qdb = Bio::DB::Fasta->new("$qdir/51.fas");
 my $tgene = Tabix->new(-data => "$tdir/51.tbl.gz");
 my $qgene = Tabix->new(-data => "$qdir/51.tbl.gz");
 
-#cat_var($tdir, $qdir, $cdir, "01.stb", "01.tlc");
-#runCmd("sort.header.pl -f stb -i 01.stb -o 02.sort.stb");
-#runCmd("sort.header.pl -f tlc -i 01.tlc -o 02.sort.tlc");
-#refine_tlc("02.sort.tlc", "05.refine.tlc");
-#stb2vcf("02.sort.stb", "11.stb.vcf");
-#tlc2vcf("05.refine.tlc", "12.tlc.vcf");
+#runCmd("rm *");
+#cat_var($tdir, $qdir, $cdir, "01.stb");
+#stb_filt("01.stb", "05.stb");
+#stb2stx("05.stb", "05.stx");
+#stb2vcf("05.stb", "10.raw.vcf");
+sv_vcf_refine("10.raw.vcf", "11_refine", "11.sv.vcf");
+runCmd("vcf.svtbl.py 11.sv.vcf 11.sv.tbl");
 
+##refine_tlc("01.stb", "05.refine.stb");
+##stb_ovlp_cds("02.sort.stb", "11.cds.tbl");
 
-#stb_ovlp_cds("02.sort.stb", "11.cds.tbl");
-
-sub cat_var {
-  my ($tdir, $qdir, $dir, $fos, $fot) = @_;
+sub cat_var { # only call SVs in first level alignments
+  my ($tdir, $qdir, $dir, $fo) = @_;
   my $fi = "$dir/31.9/idm";
   open(my $fhi, "<$fi") || die "cannot read $fi\n";
-  open(my $fhs, ">$fos") || die "cannot write $fos\n";
-  open(my $fht, ">$fot") || die "cannot write $fot\n";
-  print $fhs join("\t", qw/tchr tbeg tend btbeg btend type 
-    qchr qbeg qend bqbeg bqend/)."\n";
-  print $fht join("\t", qw/tdchr tdbeg tdend tichr tibeg 
-    qdchr qdbeg qdend qichr qibeg type/)."\n";
+  open(my $fho, ">$fo") || die "cannot write $fo\n";
+  print $fho join("\t", qw/id tchr tbeg tend tlen tinfo srd
+    qchr qbeg qend qlen qinfo/)."\n";
 
   my $gta = Tabix->new(-data => "$dir/31.5/gax.gz");
   my $gqa = Tabix->new(-data => "$dir/41.5/gax.gz");
@@ -97,70 +97,46 @@ sub cat_var {
   my $gapt = Tabix->new(-data => "$tdir/16.gap.bed.gz");
   my $gapq = Tabix->new(-data => "$qdir/16.gap.bed.gz");
 
+  my $id = 1;
   while( <$fhi> ) {
     chomp;
     next if /(^\#)|(^\s*$)/;
     my ($tid, $tbeg, $tend, $tsrd, $qid, $qbeg, $qend, $qsrd, $cid, $lev) 
       = split "\t";
     $lev == 1 || next;
+    $tsrd eq "+" or die "$tid:$tbeg-$tend not +\n";
+    my $srd = $qsrd;
     my $tlen = $tend - $tbeg - 1;
     my $qlen = $qend - $qbeg - 1;
    
     my ($flagt, $flagq) = (0, 0);
     if($tlen > 0) {
       my $ary = read_gap($gapt, $tid, $tbeg + 1, $tend - 1);
-      $flagt = @$ary == 0 ? 1 : 0;
-      $flagq = @$ary == 0 ? $flagq : 0;
+      $flagt = 1 if @$ary > 0;
     }
     if($qlen > 0) {
       my $ary = read_gap($gapq, $qid, $qbeg + 1, $qend - 1);
-      $flagq = @$ary == 0 ? 1 : 0;
-      $flagt = @$ary == 0 ? $flagt : 0;
+      $flagq = 1 if @$ary > 0;
     }
-    if($flagt) {
-      my $stats = idm_cat($tid, $tbeg+1, $tend-1, $lev, $gtr, $gta, $gqr);
-      for (@$stats) {
-        my ($tb, $te, $type, $qi, $qb, $qe) = @$_;
-        if($type eq "del") {
-          print $fhs join("\t", $tid, $tb, $te, $tbeg, $tend, 
-            'DEL', $qid, $qbeg, $qbeg, $qbeg, $qend)."\n";
-        } elsif($type eq "cnv") {
-          print $fhs join("\t", $tid, $tb, $te, $tbeg, $tend, 
-            'CNL', $qid, $qbeg, $qbeg, $qbeg, $qend)."\n";
-        } else {
-          $type eq "tlc" || die "unknown type: $type\n";
-          print $fht join("\t", $tid, $tb, $te, '', '', 
-            $qi, $qb, $qe, $qid, $qbeg, 'tTLC')."\n";
-        }
-      }
-    }
-    if($flagq) {
-      my $stats = idm_cat($qid, $qbeg+1, $qend-1, $lev, $gqr, $gqa, $gtr);
-      for (@$stats) {
-        my ($qb, $qe, $type, $ti, $tb, $te) = @$_;
-        if($type eq "del") {
-          print $fhs join("\t", $tid, $tbeg, $tbeg, $tbeg, $tend, 
-            'INS', $qid, $qb, $qe, $qbeg, $qend)."\n";
-        } elsif($type eq "cnv") {
-          print $fhs join("\t", $tid, $tbeg, $tbeg, $tbeg, $tend, 
-            'CNG', $qid, $qb, $qe, $qbeg, $qend)."\n";
-        } else {
-          $type eq "tlc" || die "unknown type: $type\n";
-          print $fht join("\t", $ti, $tb, $te, $tid, $tbeg, 
-            $qid, $qb, $qe, '', '', 'qTLC')."\n";
-        }
-      }
-    }
+    next if $flagt || $flagq;
+
+    my $tstats = $tlen > 0 ? 
+      idm_cat($tid, $tbeg+1, $tend-1, $lev, $gtr, $gta, $gqr) : [];
+    my $tinfo = join(",", map {join("-", @$_)} @$tstats);
+    my $qstats = $qlen > 0 ? 
+      idm_cat($qid, $qbeg+1, $qend-1, $lev, $gqr, $gqa, $gtr) : [];
+    my $qinfo = join(",", map {join("-", @$_)} @$qstats);
+    print $fho join("\t", $id++, $tid, $tbeg, $tend, $tlen, $tinfo, $srd,
+      $qid, $qbeg, $qend, $qlen, $qinfo)."\n";
   }
   close $fhi;
-  close $fhs;
-  close $fht;
+  close $fho;
 }
 sub idm_cat {
   my ($id, $beg, $end, $lev, $gr, $ga, $gqr) = @_;
   my @stats;
   if($end - $beg + 1 < 30) {
-    push @stats, [$beg, $end, 'del'];
+    push @stats, [$beg, $end, 'pav'];
     return \@stats;
   }
   
@@ -192,14 +168,73 @@ sub idm_cat {
   my ($locd) = posDiff([[$beg, $end]], $locp);
   for (@$locd) {
     my ($tb, $te) = @$_;
-    push @stats, [$tb, $te, 'del'];
+    push @stats, [$tb, $te, 'pav'];
   }
   my $locu = posSubtract($locp, $loct);
   for (@$locu) {
     my ($tb, $te) = @$_;
     push @stats, [$tb, $te, 'cnv'];
   }
-  return \@stats;
+  return [sort {$a->[0] <=> $b->[0]} @stats];
+}
+sub stb_filt {
+  my ($fi, $fo) = @_;
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  my $t = readTable(-in => $fi, -header => 1);
+
+  my @idxs;
+  for my $i (0..$t->lastRow) {
+    my ($id, $tchr, $tbeg, $tend, $tlen, $tinfo, $srd,,
+      $qchr, $qbeg, $qend, $qlen, $qinfo) = $t->row($i);
+    my ($ref, $alt);
+    if($tlen > 0) {
+      $ref = $tref->seq($tchr, $tbeg, $tend - 1);
+    } else {
+      $ref = $tref->seq($tchr, $tbeg, $tbeg);
+    }
+    $alt = substr($ref, 0, 1);
+    if($qlen > 0) {
+      $alt .= seqret_simple($qref, $qchr, $qbeg+1, $qend-1, $srd); 
+    }
+    push @idxs, $i if $ref eq $alt;
+  }
+  $t->delRows(\@idxs);
+  print $fho $t->tsv(1);
+  close $fho;
+}
+sub stb2stx {
+  my ($fi, $fo) = @_;
+  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho join("\t", qw/id tchr tbeg tend srd qchr qbeg qend type/)."\n";
+  while(<$fhi>) {
+    chomp;
+    /^(id)|(\#)/ && next;
+    my ($id, $tchr, $tbeg, $tend, $tlen, $tinfo, $srd, 
+      $qchr, $qbeg, $qend, $qlen, $qinfo) = split "\t";
+    my @tinfos = split(",", $tinfo);
+    my @qinfos = split(",", $qinfo);
+    for (@tinfos) {
+      my ($tb, $te, $type, $qi, $qb, $qe) = split "-";
+      my $line = $type eq "pav" ?
+        join("\t", $id, $tchr, $tb, $te, $srd, $qchr, $qbeg, '', 'DEL') :
+          $type eq "cnv" ?
+        join("\t", $id, $tchr, $tb, $te, $srd, $qchr, $qbeg, '', 'CNL') :
+        join("\t", $id, $tchr, $tb, $te, $srd, $qi, $qb, $qe, 'TLC:DEL');
+      print $fho $line."\n";
+    }
+    for (@qinfos) {
+      my ($qb, $qe, $type, $ti, $tb, $te) = split "-";
+      my $line = $type eq "pav" ?
+        join("\t", $id, $tchr, $tbeg, '', $srd, $qchr, $qb, $qe, 'INS') :
+          $type eq "cnv" ?
+        join("\t", $id, $tchr, $tbeg, '', $srd, $qchr, $qb, $qe, 'CNG') :
+        join("\t", $id, $ti, $tb, $te, $srd, $qchr, $qb, $qe, 'TLC:INS');
+      print $fho $line."\n";
+    }
+  }
+  close $fhi;
+  close $fho;
 }
 sub refine_tlc {
   my ($fi, $fo) = @_;
@@ -296,48 +331,78 @@ sub stb2vcf {
   my ($fi, $fo) = @_;
   my $t = readTable(-in => $fi, -header => 1);
   open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho $vcfhead."\n";
+  print $fho "#".join("\t", @colhead, $qry)."\n";
   for my $i (0..$t->lastRow) {
-    my ($tchr, $tbeg, $tend, $btbeg, $btend, $type,
-      $qchr, $qbeg, $qend, $bqbeg, $bqend) = $t->row($i);
-    my ($ref, $alt, $svtype);
-    if($type eq "INS" || $type eq "CNG") {
-      $ref = $tref->seq($tchr, $btbeg, $btbeg);
-      $alt = $ref . $qref->seq($qchr, $qbeg, $qend);
-      $svtype = $type eq "INS" ? "INS" : "INS:CNG";
-    } elsif($type eq "DEL" || $type eq "CNL") {
-      $ref = $tref->seq($tchr, $btbeg, $tend);
-      $alt = substr($ref, 0, 1);
-      $svtype = $type eq "DEL" ? "DEL" : "DEL:CNL";
+    my ($id, $tchr, $tbeg, $tend, $tlen, $tinfo, $srd,,
+      $qchr, $qbeg, $qend, $qlen, $qinfo) = $t->row($i);
+    my ($ref, $alt);
+    if($tlen > 0) {
+      $ref = $tref->seq($tchr, $tbeg, $tend - 1);
     } else {
-      die "unknonw type: $type\n";
+      $ref = $tref->seq($tchr, $tbeg, $tbeg);
     }
-    print $fho join("\t", $tchr, $btbeg, ".", $ref, $alt, 50, '.',
-      "SVTYPE=$svtype", 'GT', '1/1')."\n";
-  }
-  close $fho;
-}
-sub tlc2vcf {
-  my ($fi, $fo) = @_;
-  my $t = readTable(-in => $fi, -header => 1);
-  open(my $fho, ">$fo") or die "cannot write $fo\n";
-  for my $i (0..$t->lastRow) {
-    my ($tdchr, $tdbeg, $tdend, $tichr, $tibeg, 
-        $qdchr, $qdbeg, $qdend, $qichr, $qibeg, $type) = $t->row($i);
-    my ($ref, $alt, $svtype);
-    $svtype = $type eq "tTLC" ? "TLC1" : $type eq "qTLC" ? "TLC2" : "TLC3";
-    $ref = $tref->seq($tdchr, $tdbeg-1, $tdend);
     $alt = substr($ref, 0, 1);
-    print $fho join("\t", $tdchr, $tdbeg-1, ".", $ref, $alt, 50, '.',
-      "SVTYPE=DEL:$svtype", 'GT', '1/1')."\n";
-    
-    $type eq "tTLC" && next;
-    $ref = $tref->seq($tichr, $tibeg, $tibeg);
-    $alt = $ref . $qref->seq($qdchr, $qdbeg, $qdend);
-    print $fho join("\t", $tichr, $tibeg, ".", $ref, $alt, 50, '.',
-      "SVTYPE=INS:$svtype", 'GT', '1/1')."\n";
+    if($qlen > 0) {
+      $alt .= seqret_simple($qref, $qchr, $qbeg+1, $qend-1, $srd); 
+    }
+    print $fho join("\t", $tchr, $tbeg, ".", $ref, $alt, 50, '.',
+      ".", 'GT', '1/1')."\n";
   }
   close $fho;
 }
+sub sv_vcf2bed {
+  my ($fi, $fo) = @_;
+  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  while(<$fhi>) {
+    chomp;
+    next if /(^\#)|(^\s*$)/s;
+    my ($chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @sams) = 
+      split "\t";
+    my @alts = split(",", $alt);
+    substr($ref, 0, 1) eq substr($alts[0], 0, 1) || die "chr:$pos $ref $alt\n";
+    print $fho join("\t", $chr, $pos - 1, $pos)."\n";
+  }
+  close $fhi;
+  close $fho;
+}
+sub refine_vcf {
+  my ($fi, $fr, $fo) = @_;
+
+  open(my $fhi, "<$fi") or die "cannot read $fi\n";
+  open(my $fhr, "<$fr") or die "cannot read $fr\n";
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  while( <$fhi> ) {
+    chomp;
+    if(/(^\#)|(^\s*$)/s) {
+      print $fho $_."\n";
+      next;
+    }
+    my ($chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @gts) = 
+      split "\t";
+    my $line = <$fhr>;
+    chomp($line);
+    my @stas = split("\t", $line);
+    my ($chr2, $pos2, $snp) = @stas[0,2,6];
+    "$chr:$pos" eq "$chr2:$pos2" || die "sync error: $chr:$pos $chr2:$pos2\n";
+    
+    $alt = $snp.substr($alt, 1) if($snp ne ".");
+    print $fho join("\t", $chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @gts)."\n"; 
+  }
+  close $fhi;
+  close $fho;
+}
+sub sv_vcf_refine {
+  my ($fi, $do, $fo) = @_;
+  -d $do || make_path($do);
+#  sv_vcf2bed($fi, "$do/01.bed");
+  my $f_snp = "$cdir/31.9/snp.bed";
+#  runCmd("intersectBed -wao -a $do/01.bed -b $f_snp > $do/03.ovlp.bed");
+#  refine_vcf($fi, "$do/03.ovlp.bed", "$do/05.vcf");
+  runCmd("bcftools norm -f $tdir/11_genome.fas -O v -o $fo $do/05.vcf");
+}
+
 
 sub read_cds {
   my ($con, $chr, $beg, $end) = @_;

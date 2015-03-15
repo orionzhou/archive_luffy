@@ -55,25 +55,69 @@ my @qrys = qw/
 
 #merge_vcfs(\@qrys);
 #vcf2tbl("01.raw.vcf", "05.bed");
-#get_ref_allele();
+#get_ref_allele("05.bed", "11.impute", "12.ref.tbl", \@qrys);
 #vcf_fill_missing("01.raw.vcf", "12.ref.tbl", "21.vcf");
-#runCmd("bcftools view -v snps -R 81.cvg.tbl -O v 21.vcf.gz | vcf.addref.pl -i - -o 23.snp.vcf");
-#runCmd("vcf.stat.py 23.snp.vcf 25.stat.tbl");
-#runCmd("bgzip -c 25.stat.tbl > 25.stat.tbl.gz");
-#runCmd("tabix -s 1 -b 2 -e 2 25.stat.tbl.gz");
 
+#call_snp();
+#call_indel();
+merge_sv_vcfs("51.sv.vcf", "50_sv", \@qrys, $tgt);
+
+sub merge_sv_vcfs {
+  my ($fo, $do, $qrys, $tgt) = @_;
+  -d $do || make_path($do);
+  chdir $do || die "cannot chdir to $do\n";
+ 
+  my $d01 = "01.raw";
+  -d $d01  || make_path($d01);
+  my @vcfs;
+  for my $qry (@qrys) {
+    my $di = "$ENV{'misc3'}/$qry\_$tgt/31_sv";
+    runCmd("bgzip -c $di/11.sv.vcf > $d01/$qry.vcf.gz");
+    runCmd("bcftools index $d01/$qry.vcf.gz");
+    push @vcfs, "$d01/$qry.vcf.gz";
+  }
+  my $vcf_str = join(" ", @vcfs);
+  runCmd("bcftools merge -m none -O v $vcf_str -o 02.vcf");
+
+  vcf2tbl("02.vcf", "05.bed");
+ 
+  my $d11 = "11_ref";
+  -d $d11 || make_path($d11);
+  for my $qry (@$qrys) {
+    my $fg = "$ENV{'misc3'}/$qry\_$tgt/23_blat/31.9/gax.bed";
+    my $ftb = "$d11/$qry.bp.bed";
+    my $ftc = "$d11/$qry.cnt.bed";
+    runCmd("bedtools intersect -wao -a 05.bed -b $fg > $ftb");
+    runCmd("bedtools intersect -c -a 05.bed -b $fg > $ftc");
+    bed_intersect($ftb, $ftc, "$d11/$qry.bed");
+    call_ref("$d11/$qry.bed", "$d11/$qry.txt");
+  }
+  my $fstr = join(" ", map {$d11."/".$_.".txt"} @$qrys);
+  runCmd("paste $fstr > 12.ref.tbl");
+  vcf_fill_missing("02.vcf", "12.ref.tbl", "15.vcf");
+
+  chdir ".." || die "cannot chdir to ..\n";
+  runCmd("bcftools norm -m +any $do/15.vcf -O v -o $fo");
+}
+sub call_indel {
+  runCmd("bcftools view -v indels,mnps,other 21.vcf.gz | bcftools norm -m +any -O v -o 31.indel.vcf");
+}
+sub call_snp { ### run comp.vcf.R to generate 81.cvg.tbl
+  runCmd("bcftools view -v snps -R 81.cvg.tbl -O v 21.vcf.gz | vcf.addref.pl -i - -o 23.snp.vcf");
+  runCmd("vcf.stat.py 23.snp.vcf 25.stat.tbl");
+}
 sub merge_vcfs {
   my ($qrys) = @_;
+  -d "00.raw" || make_path("00.raw");
   my @vcfs;
   for my $qry (@qrys) {
     my $di = "$ENV{'misc3'}/$qry\_$tgt/23_blat/31.9";
-    runCmd("bgzip -c $di/vnt.vcf > 00.$qry.vcf.gz");
-    runCmd("bcftools index 00.$qry.vcf.gz");
-    push @vcfs, "00.$qry.vcf.gz";
+#    runCmd("bgzip -c $di/vnt.vcf > 00.raw/00.$qry.vcf.gz");
+#    runCmd("bcftools index 00.raw/00.$qry.vcf.gz");
+    push @vcfs, "00.raw/00.$qry.vcf.gz";
   }
   my $vcf_str = join(" ", @vcfs);
-  runCmd("bcftools merge -m none -O u $vcf_str | \\
-    bcftools norm -m +snps -O v -o 01.raw.vcf");
+  runCmd("bcftools merge -m none -O u $vcf_str | bcftools norm -m +snps -O v -o 01.raw.vcf");
   runCmd("bgzip -c 01.raw.vcf > 01.raw.vcf.gz");
   runCmd("tabix -p vcf 01.raw.vcf.gz");
 }
@@ -158,16 +202,18 @@ sub call_ref {
   close $fho;
 }
 sub get_ref_allele {
-  for my $qry (@qrys) {
+  my ($fi, $do, $fo, $qrys) = @_;
+  -d $do || make_path($do);
+  for my $qry (@$qrys) {
     my $fg = "$ENV{'misc3'}/$qry\_$tgt/23_blat/31.9/gax.bed";
-    my $ftb = "11.$qry.bp.bed";
-    my $ftc = "11.$qry.cnt.bed";
+    my $ftb = "$do/$qry.bp.bed";
+    my $ftc = "$do/$qry.cnt.bed";
     runCmd("bedtools intersect -wao -a 05.bed -b $fg > $ftb");
     runCmd("bedtools intersect -c -a 05.bed -b $fg > $ftc");
-    bed_intersect($ftb, $ftc, "11.$qry.bed");
-    call_ref("11.$qry.bed", "11.$qry.txt");
+    bed_intersect($ftb, $ftc, "$do/$qry.bed");
+    call_ref("$do/$qry.bed", "$do/$qry.txt");
   }
-  my $fstr = join(" ", map {"11.".$_.".txt"} @qrys);
+  my $fstr = join(" ", map {"$do/".$_.".txt"} @$qrys);
   runCmd("paste $fstr > 12.ref.tbl");
 }
 sub vcf_fill_missing {

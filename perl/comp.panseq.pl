@@ -44,7 +44,7 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my $dir = "$ENV{'misc3'}/panseq";
+my $dir = "$ENV{'misc3'}/comp.panseq";
 chdir $dir || die "cannot chdir to $dir\n";
 
 my @orgs = qw/
@@ -75,7 +75,7 @@ my $f_tmpl = "\$soft/paramugsy/pm_qsub_template.sh";
 #runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
 #  -out-maf 21.maf -tmp-dir $dir_tmp -template-file $f_tmpl");
 
-maf2tbl('21.maf', '22.tbl');
+#maf2tbl('21.maf', '22.tbl');
 sub maf2tbl {
   my ($fi, $fo) = @_;
   my $ai = Bio::AlignIO->new(-file => $fi, -format => 'maf');

@@ -4,338 +4,303 @@ require(rtracklayer)
 require(Rsamtools)
 require(ggplot2)
 require(grid)
+source('Location.R')
+source('comp.fun.R')
+require(VennDiagram)
 
-orgs = c(
-  "HM058", "HM125", "HM056", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340"
+orgs = get_orgs()
+orgs = get_orgs('ingroup')
+orgs = c("HM004", "HM010", "HM023")
+chrs = sprintf("chr%s", 1:8)
+
+tt = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
+tt = data.frame(chr = tt$V1, beg = 1, end = tt$V2)
+tt = tt[tt$chr %in% chrs,]
+grt = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+tp = read.table(tcfg$gap, sep = "\t", header = F, as.is = T)
+colnames(tp) = c("chr", "beg", "end")
+tp = tp[tp$chr %in% chrs,]
+grp = with(tp, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+grf = GenomicRanges::setdiff(grt, grp)
+
+org = orgs[3]
+
+##### venn diagram
+dirm = file.path(Sys.getenv('misc3'), "hapmap/12_ncgr")
+fm = sprintf("%s/44_snp/%s.tbl", dirm, org)
+tm = read.table(fm, sep = '\t', header = T, as.is = T)
+grm1 = with(tm[tm$gt == 1,], GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+grm2 = with(tm[tm$gt == 2,], GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+
+dirv = sprintf("%s/%s_HM101/23_blat", Sys.getenv("misc3"), org)
+fv = sprintf("%s/31.9/snp", dirv)
+tv = read.table(fv, sep = '\t', header = F, as.is = T)
+colnames(tv) = c("chr", "pos", "ref", "alt", "qid", "qpos", "cid", "lev")
+tv = tv[tv$lev == 1 & tv$chr %in% chrs, c(1:2,4)]
+grv = with(tv, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+
+
+  tc = merge(tm[tm$gt==2,], tv, by = c('chr', 'pos'), all = T)
+  tc = cbind(tc, type = NA)
+  tc$type[!is.na(tc$alt.x) & !is.na(tc$alt.y)] = 'ovl'
+  tc$type[is.na(tc$alt.x) & !is.na(tc$alt.y)] = 'anm'
+  tc$type[!is.na(tc$alt.x) & is.na(tc$alt.y)] = 'mna'
+  
+  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_anm = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
+  t_mna = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
+  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
+  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
+
+  n_dis / (n_con + n_dis)
+
+gr_ovl = with(t_ovl, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+gr_mna = with(t_mna, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+gr_anm = with(t_anm, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+
+summary(t_ovl$qual)
+summary(t_mna$qual)
+summary(t_ovl$rd)
+summary(t_mna$rd)
+
+a1 = sum(tm$gt == 2)
+a2 = nrow(tv) 
+cr = nrow(t_ovl) 
+venn.plot <- draw.pairwise.venn(area1 = a1, area2 = a2, cross.area = cr, 
+  category = c("Mapping-based Calls", "Assembly-based Calls"),
+  fill = c("dodgerblue", "firebrick"), lty = "solid",
+  cex = 1, cat.cex = 1, cat.pos = c(200, 20), cat.dist = 0.04,
+#  cat.just = list(c(-1, -1), c(1, 1)),
 )
-chrs = sprintf("chr%s", 1:8)
+
+# enrichment of mapping-only calls in SV regions
+fs = sprintf("%s/%s_HM101/31_sv/11.sv.tbl", Sys.getenv("misc3"), org)
+ts = read.table(fs, sep = '\t', header = T, as.is = T)
+ts = ts[ts$chr %in% chrs,]
+gr_sv = with(ts, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+fx = sprintf("%s/%s_HM101/23_blat/31.9/gax", Sys.getenv("misc3"), org)
+tx = read.table(fx, sep = '\t', header = F, as.is = T)
+tx = tx[tx$V1 %in% chrs,]
+gr_gax = with(tx[tx$V10==1,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+gr_var = with(tx[tx$V10>1,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
 
 
-##### Mapping-based approach
+grv = reduce(c(gr_sv, gr_var))
+gru = GenomicRanges::setdiff(grf, reduce(c(gr_gax, grv)))
 
-dirr = file.path(Sys.getenv('genome'), "HM101")
-fa = file.path(dirr, '15.sizes')
-fg = file.path(dirr, '16.gap.bed')
-ta = read.table(fa, sep = '\t', header = F, as.is = T)
-tg = read.table(fg, sep = '\t', header = F, as.is = T)
-ta = ta[ta$V1 %in% chrs,]
-tg = tg[tg$V1 %in% chrs,]
-ga = GRanges(seqnames = ta$V1, ranges = IRanges(1, end = ta$V2))
-gg = GRanges(seqnames = tg$V1, ranges = IRanges(tg$V2+1, end = tg$V3))
-gr = setdiff(ga, gg)
+tpc1 = data.frame(type = 'genome', cla = c('synteny', 'sv', 'uncovered'), 
+  cnt = c(sum(width(gr_gax)), sum(width(grv)), sum(width(gru))), 
+  total = sum(width(grf)))
+tpc2 = data.frame(type = 'mna', cla = c('synteny', 'sv', 'uncovered'), 
+  cnt = c(sum(width(GenomicRanges::intersect(gr_mna, gr_gax))), 
+  sum(width(GenomicRanges::intersect(gr_mna, grv))), 
+  sum(width(GenomicRanges::intersect(gr_mna, gru)))), 
+  total = sum(width(gr_mna)))
+tpc = rbind(tpc1, tpc2)
+tpc = cbind(tpc, pct = tpc$cnt / tpc$total)
 
-ff = file.path(dirr, "51.tbl")
-tf = read.table(ff, sep = '\t', header = F, as.is = T)
-colnames(tf) = c("chr", "beg", "end", "srd", "id", "type", "cat")
-
-fc = file.path(dirr, "51.merged.tbl")
-tc = read.table(fc, sep = '\t', header = T, as.is = T)
-gc = GRanges(seqnames = tc$chr, ranges = IRanges(tc$beg, end = tc$end))
-
-dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr")
-
-### generate coverage BED file (takes long time - run with caution)
-for (org in orgs) {
-fcov = sprintf("%s/35_cov/%s.bw", dirm, org)
-
-bw = import(fcov, which = gr, asRangedData = F)
-chrs = seqnames(bw)
-poss = start(bw)
-idxs = bw$score >= 1
-rm(bw)
-gm = GRanges(seqnames = chrs[idxs], ranges = IRanges(poss[idxs], 
-  end = poss[idxs]))
-gm = reduce(gm)
-rm(chrs, poss, idxs)
-
-tm = data.frame(chr = seqnames(gm), beg = start(gm) - 1, end = end(gm))
-fo = sprintf("%s/38_covered/%s.bed", dirm, org)
-write.table(tm, fo, row.names = F, col.names = F, sep = "\t", quote = F)
-}
-
-### SNP density
-tr = data.frame()
-
-for (org in orgs) {
-#org = "HM004"
-
-fs = file.path(dirm, "42_vnt", org, "snp")
-ts = read.table(fs, sep = "\t", header = F, as.is = T)
-colnames(ts) = c("chr", "pos", "ref", "alt")
-gs = GRanges(seqnames = ts$chr, ranges = IRanges(ts$pos, end = ts$pos))
-
-fv = sprintf("%s/38_covered/%s.bed", dirm, org)
-tv = read.table(fv, sep = "\t", header = F, as.is = T)
-gv = GRanges(seqnames = tv$V1, ranges = IRanges(tv$V2+1, end = tv$V3))
-
-for (type in unique(tc$type)) {
-  gcs = gc[tc$type == type]
-  gsi = intersect(gs, gcs)
-  nsnp = sum(width(gsi))
-  
-  gvi = intersect(gv, gcs)
-  bcov = sum(width(gvi))
-  trs = data.frame(org = org, type = type, bcov = bcov, nsnp = nsnp)
-  tr = rbind(tr, trs)
-}
-}
-
-tr = cbind(tr, subrate = tr$nsnp / tr$bcov)
-
-##### Assembly-based approach
-### SNP density
-ta = data.frame()
-
-for (org in orgs) {
-#org = "HM034"
-dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
-
-fs = file.path(dira, "snp")
-ts = read.table(fs, sep = "\t", header = F, as.is = T)
-colnames(ts) = c("chr", "pos", "ref", "alt", "qid", "qpos", "cid", "lev")
-ts = ts[ts$lev <= 2,]
-gs = GRanges(seqnames = ts$chr, ranges = IRanges(ts$pos, end = ts$pos))
-
-fv = file.path(dira, "gax")
-tv = read.table(fv, sep = "\t", header = F, as.is = T)
-colnames(tv) = c("chr", "beg", "end", "srd", "qid", "qbeg", "qend", "qsrd",
-  "cid", "lev")
-tv = tv[tv$lev <= 2,]
-gv = GRanges(seqnames = tv$chr, ranges = IRanges(tv$beg, end = tv$end))
-
-for (type in unique(tc$type)) {
-  gcs = gc[tc$type == type]
-  gsi = intersect(gs, gcs)
-  nsnp = sum(width(gsi))
-  
-  gvi = intersect(gv, gcs)
-  bcov = sum(width(gvi))
-  tas = data.frame(org = org, type = type, bcov = bcov, nsnp = nsnp)
-  ta = rbind(ta, tas)
-}
-}
-
-ta = cbind(ta, subrate = ta$nsnp / ta$bcov)
-
-
-##### compare SNP density estimates from two sources
-to = rbind(cbind(method = 'mapping', tr), cbind(method = 'assembly', ta))
-fo = file.path(Sys.getenv("misc3"), "compstat", "snp.pdf")
-
-to$type = factor(to$type, levels = c('CDS', 'Intron', 'UTR', 'Intergenic'))
-to$method = factor(to$method, levels = c("mapping", "assembly"))
-p = ggplot(to) +
-  geom_bar(mapping = aes(x = type, y = subrate, fill = method), 
-    stat = 'identity', position = 'dodge', geom_params=list(width = 0.5)) +
-  scale_fill_brewer(palette='Set2', name = '',
-#    breaks = c('assembly', 'mapping'), 
-    labels = c("Mapping-based", "Assembly-based")) +
-  scale_x_discrete(name = '') +
-  scale_y_continuous(name = 'SNP density (/bp)') +
-  facet_wrap( ~ org, nrow = 5) +
-  coord_flip() +
+p_mna_sv = ggplot(tpc) + 
+  geom_bar(aes(x = type, y = pct, fill = cla), position = 'fill', stat = 'identity', width = 0.8) +
+#  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon', 'burlywood1')) +
+  scale_fill_brewer(palette = "Pastel1", breaks = c("synteny", "sv", "uncovered"), labels = c("synteny regions (conserved)", "SV / fragile regions", "regions not covered by alignment")) +
+  scale_x_discrete(name = 'proportion', expand = c(0, 0), labels = c("genome total", "mapping-only calls")) +
+  scale_y_continuous(name = '', expand = c(0, 0)) +
+  coord_polar(theta = 'y') +
   theme_bw() +
-  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
-  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0)) +
-  theme(panel.margin = unit(0.6, 'lines'))
-ggsave(p, filename = fo, width = 6, height = 6)
+  theme(legend.position = "top", legend.direction = "vertical", legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.8, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
+  theme(plot.margin = unit(c(1,1,1,0), "lines")) +
+  theme(axis.title = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 60))
+p_mna_sv
 
-
-##### compare SNPs/Indels called by two approaches
-do = data.frame()
-for (org in orgs) {
-#org = "HM034"
-  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
-  fa = file.path(dira, "vnt.tbl")
-  ta = read.table(fa, sep = "\t", header = F, as.is = T)
-  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
-
-  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
-  fm = sprintf("%s/%s.tbl", dirm, org)
-  tm = read.table(fm, sep = "\t", header = F, as.is = T)
-  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
-
-  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
-  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
-  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
+# enrichment of hets in mna sets
+  htc = merge(tm[tm$gt<=2,], tv, by = c('chr', 'pos'), all = T)
   
-  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
-  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
-  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
+  ht_ovl = htc[!is.na(htc$alt.x) & !is.na(htc$alt.y),]
+  ht_anm = htc[is.na(htc$alt.x) & !is.na(htc$alt.y),]
+  ht_mna = htc[!is.na(htc$alt.x) & is.na(htc$alt.y),]
 
-  d1 = data.frame(org = org, vnt_type = 'snp', type = c("Assembly-Only", 
-    "Assembly+Mapping:Concordant", "Assembly+Mapping:Discordant", 
-    "Mapping-Only"), cnt = c(nrow(t_anm), n_con, n_dis, nrow(t_mna)))
-  
-  tms = tm[tm$chr %in% chrs & (nchar(tm$ref) != 1 | nchar(tm$alt) != 1), ]
-  tas = ta[ta$chr %in% chrs & (nchar(ta$ref) != 1 | nchar(ta$alt) != 1), ]
-  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
-  
-  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
-  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  n_con = sum(t_ovl$ref.x == t_ovl$ref.y & t_ovl$alt.x == t_ovl$alt.y)
-  n_dis = sum(t_ovl$ref.x != t_ovl$ref.y | t_ovl$alt.x != t_ovl$alt.y)
+tmp1 = table(ht_ovl$gt)
+tmp2 = table(ht_mna$gt)
+tht = data.frame('snptype' = rep(c('het', 'hom'), 2), 
+  'valid' = rep(c('ovl', 'mna'), each = 2),
+  cnt = as.numeric(c(tmp1, tmp2)),
+  total = rep(c(sum(tm$gt==1), sum(tm$gt==2)), 2))
+tht = cbind(tht, pct = tht$cnt / tht$total)
 
-  d2 = data.frame(org = org, vnt_type = 'indel', type = c("Assembly-Only", 
-    "Assembly+Mapping:Concordant", "Assembly+Mapping:Discordant", 
-    "Mapping-Only"), cnt = c(nrow(t_anm), n_con, n_dis, nrow(t_mna)))
-  do = rbind(do, d1, d2)
-}
-
-fo = file.path(Sys.getenv("misc3"), "compstat", "comp_vnt.pdf")
-
-do$org = factor(do$org, levels = orgs)
-#do$type = factor(do$type, levels = c('CDS', 'Intron', 'UTR', 'Intergenic'))
-p = ggplot(do) +
-  geom_bar(mapping = aes(x = org, y = cnt, fill = type), 
-    stat = 'identity', position = 'stack', geom_params=list(width = 0.5)) +
-  scale_fill_manual(values = c('skyblue1', 'firebrick1', 'orchid', 'palegreen'), name = '', guide = guide_legend(nrow = 2, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-  scale_x_discrete(name = '') +
-  scale_y_continuous(name = 'Variant #') +
-  facet_wrap( ~ vnt_type, ncol = 1) +
-  coord_flip() +
+p_het_ovl = ggplot(tht) + 
+  geom_bar(aes(x = snptype, y = pct, fill = valid), position = 'fill', stat = 'identity', width = 0.8) +
+#  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon', 'burlywood1')) +
+  scale_fill_brewer(palette = "Pastel1", breaks = c("ovl", "mna"), labels = c("Validated by Assembly-based approach", "Not validated by Assembly-based approach")) +
+  scale_x_discrete(name = 'proportion', expand = c(0, 0), labels = c("heterozygous calls", "homozygous calls")) +
+  scale_y_continuous(name = '', expand = c(0, 0)) +
+  coord_polar(theta = 'y') +
   theme_bw() +
-  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
-  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
+  theme(legend.position = "top", legend.direction = "vertical", legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.8, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
+  theme(plot.margin = unit(c(1,1,1,0), "lines")) +
+  theme(axis.title = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 60))
+p_het_ovl
+
+# enrichment of het calls (mna) in high-divergence regions
+x = tt$end
+names(x) = tt$chr
+gr = tileGenome(x, tilewidth = 1000, cut.last.tile.in.chrom = T)
+
+tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
+  len = width(gr), stringsAsFactors = F)
+
+bp_gap = intersect_basepair(gr, grp)
+cnt_het = intersect_count(gr, grm1)
+cnt_hom = intersect_count(gr, grm2)
+
+to = cbind(tw, len_ng = tw$len - bp_gap, cnt_het = cnt_het, cnt_hom = cnt_hom)
+to = to[to$len_ng >= to$len * 0.4,]
+to = cbind(to, snpd = (to$cnt_het+to$cnt_hom)/to$len_ng, prop_het = to$cnt_het / (to$cnt_het+to$cnt_hom) * 100)
+to = to[!is.na(to$prop_het),]
+intvs = c(seq(0, 0.1, 0.005), Inf)
+labs = 100 - 100 * intvs[-1]
+labs[length(labs)] = "<90.0"
+to = cbind(to, snpd2 = cut(to$snpd, intvs))
+levs = sort(unique(to$snpd2))
+
+tx = ddply(to, .(snpd2), summarise, q25 = quantile(prop_het, 0.25), q50 = quantile(prop_het, 0.5), q75 = quantile(prop_het, 0.75))
+
+p_het_idty = ggplot(tx) +
+  geom_crossbar(aes(x = snpd2, y = q50, ymin = q25, ymax = q75), 
+    geom_params = list(width = 0.8)) + 
+  scale_x_discrete(name = 'Percent Identify', expand = c(0, 0), breaks = levs[seq(1,41,5)], labels = labs[seq(1,41,5)]) +
+  scale_y_continuous(name = '% heterozygous calls', expand = c(0.02, 0)) +
+  theme_bw() +
+#  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
+  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
+  theme(axis.title = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 90, hjust = 0.5))
+p_het_idty
+
+# plot rd and qual distribution for mna/ovl calls
+intvs = c(seq(0,60,2), Inf)
+tmp1 = table(cut(t_ovl$rd, breaks = intvs))
+tmp2 = table(cut(t_mna$rd, breaks = intvs))
+to1 = data.frame(intv = names(tmp1), cnt = as.numeric(tmp1), type = 'ovl', stringsAsFactors = F)
+to1 = cbind(to1, dens = to1$cnt/sum(to1$cnt))
+to2 = data.frame(intv = names(tmp2), cnt = as.numeric(tmp2), type = 'mna', stringsAsFactors = F)
+to2 = cbind(to2, dens = to2$cnt/sum(to2$cnt))
+to = rbind(to1, to2)
+to$intv = factor(to$intv, levels = names(tmp1))
+levs = sort(unique(to$intv))
+labs = intvs[-1]
+labs[length(labs)] = "60+"
+
+p_rd = ggplot(to) +
+  geom_bar(aes(x = intv, y = dens, fill = type), 
+    position = 'dodge', stat = 'identity', geom_params = list(width = 0.9)) + 
+  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon'), labels = c("mapping-only calls", "overlapping calls")) +
+#  scale_fill_brewer(palette = "Accent") +
+  scale_x_discrete(name = 'Read Depth', expand = c(0, 0), breaks = levs[seq(1,41,5)], labels = labs[seq(1,41,5)]) +
+  scale_y_continuous(name = 'Density', expand = c(0, 0)) +
+  theme_bw() +
+  theme(legend.position = c(0.7, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
+  theme(axis.title = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
-ggsave(p, filename = fo, width = 6, height = 6)
+p_rd
 
 
-##### show variant quality score distribution of mapping/assembly
-org = "HM034"
-  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
-  fa = file.path(dira, "vnt.tbl")
-  ta = read.table(fa, sep = "\t", header = F, as.is = T)
-  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
-
-  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
-  fm = sprintf("%s/%s.tbl", dirm, org)
-  tm = read.table(fm, sep = "\t", header = F, as.is = T)
-  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
-
-  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
-  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
-  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
-  
-  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  t_anm = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
-  t_mna = tc[is.na(tc$alt.x) & !is.na(tc$alt.y),]
-
-to = rbind(cbind(t_ovl, type = 'Assembly+Mapping'), 
-  cbind(t_mna, type = 'Mapping-Only'))
-
-fo = sprintf("%s/compstat/comp_snp_%s.pdf", Sys.getenv("misc3"), org)
-p = ggplot(to) +
-  geom_histogram(mapping = aes(x = score, fill = type), 
-    position = "dodge", geom_params=list(width = 0.5, alpha = 0.8)) +
-  scale_fill_manual(values = c('skyblue1', 'firebrick1', 'orchid', 'palegreen'), name = '', guide = guide_legend(nrow = 1, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-  scale_x_continuous(name = 'variant score', limits = c(0, 60000)) +
-  scale_y_continuous(name = 'count') +
+intvs = c(seq(3, 14, 0.5), Inf)
+tmp1 = table(cut(log(t_ovl$qual), breaks = intvs))
+tmp2 = table(cut(log(t_mna$qual), breaks = intvs))
+to1 = data.frame(intv = names(tmp1), cnt = as.numeric(tmp1), type = 'ovl', stringsAsFactors = F)
+to1 = cbind(to1, dens = to1$cnt/sum(to1$cnt))
+to2 = data.frame(intv = names(tmp2), cnt = as.numeric(tmp2), type = 'mna', stringsAsFactors = F)
+to2 = cbind(to2, dens = to2$cnt/sum(to2$cnt))
+to = rbind(to1, to2)
+to$intv = factor(to$intv, levels = names(tmp1))
+p_qual = ggplot(to) +
+  geom_bar(aes(x = intv, y = dens, fill = type), 
+    position = 'dodge', stat = 'identity', geom_params = list(width = 0.9)) + 
+  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon')) +
+#  scale_fill_brewer(palette = "Accent") +
+  scale_x_discrete(name = 'qual', expand = c(0, 0)) +
+  scale_y_continuous(name = '# SNPs', expand = c(0, 0)) +
   theme_bw() +
-  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+#  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+  theme(axis.title = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
-ggsave(p, filename = fo, width = 6, height = 6)
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 90))
+p_qual
 
+# look at sequence percent identity around called SNPs
+x = tt$end
+names(x) = tt$chr
+gr = tileGenome(x, tilewidth = 1000, cut.last.tile.in.chrom = T)
 
-##### compare InDels
-chrs = sprintf("chr%s", 1:8)
+tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
+  len = width(gr), stringsAsFactors = F)
 
-do = data.frame()
-for (org in c("HM058", "HM060", "HM095", "HM034")) {
-#org = "HM034"
-  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
-  fa = file.path(dira, "vnt.tbl")
-  ta = read.table(fa, sep = "\t", header = F, as.is = T)
-  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
+bp_gap = intersect_basepair(gr, grp)
+bp_gax = intersect_basepair(gr, gr_gax)
+cnt_ovl = intersect_count(gr, gr_ovl)
+cnt_anm = intersect_count(gr, gr_anm)
 
-  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
-  fm = sprintf("%s/%s.tbl", dirm, org)
-  tm = read.table(fm, sep = "\t", header = F, as.is = T)
-  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
+to = cbind(tw, len_ng = tw$len - bp_gap, len_gax = bp_gax, cnt_ovl = cnt_ovl, cnt_anm = cnt_anm)
+to = to[to$len_gax > to$len * 0.3,]
+to = cbind(to, snpd = (to$cnt_ovl+to$cnt_anm)/to$len_gax, pct_anm = to$cnt_anm / (to$cnt_anm+to$cnt_ovl) * 100)
+to = to[!is.na(to$pct_anm),]
+intvs = c(seq(0, 0.2, 0.005), Inf)
+labs = 100 - 100 * intvs[-1]
+labs[length(labs)] = "<80.0"
+to = cbind(to, snpd2 = cut(to$snpd, intvs))
+levs = sort(unique(to$snpd2))
 
-  tms = tm[tm$chr %in% chrs & (nchar(tm$ref) != 1 | nchar(tm$alt) != 1), ]
-  tas = ta[ta$chr %in% chrs & (nchar(ta$ref) != 1 | nchar(ta$alt) != 1), ]
-#  tc = merge(tas[,1:4], tms, by = c('chr', 'pos'), all = T)
-  
-  x = c(-49:-1, 1:49)
-  
-  tb = table(nchar(tms$alt) - nchar(tms$ref))
-  y = tb[as.character(x)]
-  y[is.na(y)] = 0
-  df1 = data.frame(type = 'Mapping-based', len = x, cnt = y)
+tx = ddply(to, .(snpd2), summarise, q25 = quantile(pct_anm, 0.25), q50 = quantile(pct_anm, 0.5), q75 = quantile(pct_anm, 0.75))
 
-  tb = table(nchar(tas$alt) - nchar(tas$ref))
-  y = tb[as.character(x)]
-  y[is.na(y)] = 0
-  df2 = data.frame(type = 'Assembly-based', len = x, cnt = y)
+p_pct_idt = ggplot(tx) +
+  geom_crossbar(aes(x = snpd2, y = q50, ymin = q25, ymax = q75), 
+    geom_params = list(width = 0.7, size = 0.3)) + 
+  scale_x_discrete(name = 'Percent Identify', expand = c(0, 0), breaks = levs[seq(1,41,5)], labels = labs[seq(1,41,5)]) +
+  scale_y_continuous(name = '% assembly-only calls', expand = c(0.02, 0)) +
+  theme_bw() +
+#  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
+  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
+  theme(axis.title = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 90, hjust = 0.5))
+#p_pct_idt
 
-  dos = cbind(rbind(df1, df2), org = org)
-  do = rbind(do, dos)
+### combined plot
+fo = sprintf("%s/compstat/snp_%s.pdf", Sys.getenv("misc3"), org)
+pdf(file = fo, width = 6, height = 9, bg = 'transparent')
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(3, 2)))
+
+vlt <- viewport(layout.pos.row = 1, layout.pos.col = 1)
+pushViewport(vlt)
+grid.draw(venn.plot)
+popViewport()
+
+print(p_mna_sv, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(p_rd, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+print(p_pct_idt, vp = viewport(layout.pos.row = 2, layout.pos.col = 2))
+print(p_het_ovl, vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+print(p_het_idty, vp = viewport(layout.pos.row = 3, layout.pos.col = 2))
+
+dco = data.frame(x = rep(1:3, each = 2), y = rep(1:2, 3), lab = LETTERS[1:6])
+for (i in 1:nrow(dco)) {
+  x = dco$x[i]; y = dco$y[i]; lab = dco$lab[i]
+  grid.text(lab, x = 0, y = unit(1, 'npc'), just = c('left', 'top'), gp = gpar(col = "black", fontface = 2, fontsize = 20),
+    vp = viewport(layout.pos.row = x, layout.pos.col = y))
 }
-#  do$cnt = log(do$cnt)
-
-fo = sprintf("%s/compstat/comp_idm_size.pdf", Sys.getenv("misc3"))
-p = ggplot(do) +
-  geom_bar(mapping = aes(x = len, y = cnt, fill = type), 
-    stat = 'identity', position = 'dodge', 
-    geom_params=list(width = 0.8, alpha = 0.8)) +
-  scale_fill_brewer(palette='Set1', name = '', guide = guide_legend(nrow = 1, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-  scale_x_continuous(name = 'Indel Size (bp)') +
-  scale_y_continuous(name = '# events (log)') +
-  facet_wrap( ~ org, nrow = 2) +
-  theme_bw() +
-  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
-  theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
-ggsave(p, filename = fo, width = 6, height = 6)
-
-##### validate SNP calling set
-org = "HM340"
-  dira = sprintf("%s/%s_HM101/23_blat/31.9", Sys.getenv('misc3'), org)
-  fa = file.path(dira, "vnt.tbl")
-  ta = read.table(fa, sep = "\t", header = F, as.is = T)
-  colnames(ta) = c("chr", "pos", "ref", "alt", "score")
-
-  dirm = file.path(Sys.getenv("misc3"), "hapmap", "12_ncgr", "44_tbl")
-  fm = sprintf("%s/%s.tbl", dirm, org)
-  tm = read.table(fm, sep = "\t", header = F, as.is = T)
-  colnames(tm) = c("chr", "pos", "ref", "alt", "score")
-
-  tms = tm[tm$chr %in% chrs & nchar(tm$ref) == 1 & nchar(tm$alt) == 1, ]
-  tas = ta[ta$chr %in% chrs & nchar(ta$ref) == 1 & nchar(ta$alt) == 1, ]
-
-dir = file.path(Sys.getenv("misc3"), "seqvalidation")
-fg = file.path(dir, "16.snp")
-tg = read.table(fg, sep = "\t", header = F, as.is = T)[,1:4]
-colnames(tg) = c("chr", "pos", "ref", "alt")
-tg = tg[order(tg$chr, tg$pos),]
-tg = unique(tg)
-tg = cbind(tg, id = paste(tg$chr, tg$pos, sep = ":"))
-dup_ids = tg$id[duplicated(tg$id)]
-tg = tg[!tg$id %in% dup_ids,1:4]
+dev.off()
 
 
-  tc = merge(tg, tas, by = c('chr', 'pos'), all.x = T)
-  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  t_mis = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
-  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
-  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
-  n_con
-  n_dis
-  nrow(t_mis)
 
-  tc = merge(tg, tms, by = c('chr', 'pos'), all.x = T)
-  t_ovl = tc[!is.na(tc$alt.x) & !is.na(tc$alt.y),]
-  t_mis = tc[!is.na(tc$alt.x) & is.na(tc$alt.y),]
-  n_con = sum(t_ovl$alt.x == t_ovl$alt.y)
-  n_dis = sum(t_ovl$alt.x != t_ovl$alt.y)
-  n_con
-  n_dis
-  nrow(t_mis)
+
+

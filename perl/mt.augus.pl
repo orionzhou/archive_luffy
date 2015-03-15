@@ -84,6 +84,7 @@ sub get_hints_rnaseq {
 
   runCmd("samtools sort 11.f.bam 14.sf");
   runCmd("bam2hints --intronsonly --in=14.sf.bam --out=15.rnaseq.gff");
+#  runCmd("bam2wig $bam_in | \$soft/augustus/scripts/wig2hints.pl > 15.ep.gff");
 
   runCmd("rm 11.f.bam 12.header.txt 14.sf.bam");
 }

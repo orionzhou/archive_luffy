@@ -44,27 +44,34 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my ($qry, $tgt) = qw/HM340 HM340/;
+my @params = (
+  ['HM034', 'HM034'],
+  ['HM056', 'HM056'],
+  ['HM340', 'HM340']
+);
 
-my $dir = "$ENV{'misc3'}/pacbio/$qry\_$tgt";
--d $dir || make_path($dir);
-chdir $dir || die "cannot chdir to $dir\n";
+for (@params) {
+  my ($qry, $tgt) = @$_;
+  my $dir = "$ENV{'misc3'}/pacbio/$qry\_$tgt";
+  -d $dir || make_path($dir);
+  chdir $dir || die "cannot chdir to $dir\n";
 
-if($stat_flag) {
-  exit;
+  if($stat_flag) {
+    exit;
+  }
+  my $f_tgt = "$ENV{'genome'}/$tgt/11_genome.fas";
+
+  my $f_lst = "$dir/../reads/$qry.list";
+  merge_seq_file($f_lst, "05.all.fastq");
+
+  my $cmd = "blasr -nproc 16 -minReadLength 500 -minMatch 14 -bestn 1 \\
+    -noSplitSubreads -clipping soft -sam \\
+    -out 11.sam 05.all.fastq $f_tgt";
+  runCmd($cmd);
+  runCmd("samtools sort 11.sam 15");
+  runCmd("samtools index 15.bam");
 }
-my $f_tgt = "$ENV{'genome'}/$tgt/11_genome.fas";
 
-#merge_seq_file("01.seq.list", "05.all.fastq");
-
-my $cmd = "blasr -nproc 16 -minReadLength 500 -minMatch 14 -bestn 1 \\
-  -noSplitSubreads -clipping soft -sam \\
-  -out 11.sam 05.all.fastq $f_tgt";
-#runCmd($cmd);
-runCmd("samtools sort 11.sam 15");
-runCmd("samtools index 15.bam");
-
-# bedtools bamtofastq -i hm340_blasr/pb_blasr_ALPACA_sorted.bam -fq HM340_HM340/05.all.fastq
 sub merge_seq_file {
   my ($fi, $fo) = @_;
   my @ary;
@@ -86,3 +93,5 @@ sub merge_seq_file {
   }
 }
 
+__END__;
+bedtools bamtofastq -i hm340_blasr/pb_blasr_ALPACA_sorted.bam -fq HM340_HM340/05.all.fastq

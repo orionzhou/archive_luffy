@@ -30,7 +30,7 @@ elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
 elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node ]]; then
   export soft_msi=/soft
   for subpath in blat/34 usearch/7.0 muscle/3.8.31 \
-    augustus/3.0.2 exonerate/2.2.0 structure/2.3.3
+    exonerate/2.2.0 structure/2.3.3
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then
       export PATH=$soft_msi/$subpath/bin:$PATH

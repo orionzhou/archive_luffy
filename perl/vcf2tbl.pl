@@ -58,7 +58,7 @@ if ($fo eq "stdout" || $fo eq "-") {
 
 while( <$fhi> ) {
   chomp;
-  next if /(^\#)|(^\s*$)/s;
+  next if /(^\#)|(^\s*$)/;
   my ($chr, $pos, $id, $ref, $alt, $qual, $fil, $info, $fmt, @sams) = 
     split "\t";
   my @alts = split(",", $alt);

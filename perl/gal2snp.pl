@@ -96,7 +96,7 @@ while( <$fhi> ) {
       my $tNt = uc(substr($tSeq, $len+$j, 1));
       my $qNt = uc(substr($qSeq, $len+$j, 1));
       my $tPos = $tSrd eq "-" ? $tEnd-($rtb+$j)+1 : $tBeg+($rtb+$j)-1;
-      my $qPos = $qSrd eq "-" ? $qEnd-($rqb+$j)+1 : $qBeg+($rtb+$j)-1;
+      my $qPos = $qSrd eq "-" ? $qEnd-($rqb+$j)+1 : $qBeg+($rqb+$j)-1;
       if($tNt ne "N" && $qNt ne "N" && $tNt ne $qNt) {
         push @tNts, $tNt;
         push @qNts, $qNt;
@@ -108,7 +108,7 @@ while( <$fhi> ) {
   }
   @tPoss == $mis || die "$cid not $mis SNPs: ".scalar(@tPoss)."\n";
   
-  for my $i (0..@qPoss-1) {
+  for my $i (0..$#qPoss) {
     my ($qPos, $tPos, $qNt, $tNt) = 
       ($qPoss[$i], $tPoss[$i], $qNts[$i], $tNts[$i]);
     print $fho join("\t", $tId, $tPos, $tNt, $qNt, 

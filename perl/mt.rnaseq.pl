@@ -79,6 +79,7 @@ sub run_tophat {
       --min-segment-intron 45 --max-segment-intron 5000 \\
       -o $dir \$data/db/bowtie2/$org \\
       $str_fn");
+    runCmd("samtools index $dir/accepted_hits.bam");
   }
 }
 sub merge_bam_genome {

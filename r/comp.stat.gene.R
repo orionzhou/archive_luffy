@@ -9,7 +9,7 @@ require(gtable)
 source('Location.R')
 source('comp.fun.R')
 
-diro = file.path(Sys.getenv("misc3"), "compstat")
+diro = file.path(Sys.getenv("misc3"), "comp.stat")
 
 qname = 'HM004'
 cfg = cfgs[[qname]]

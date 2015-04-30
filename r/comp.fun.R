@@ -43,10 +43,11 @@ get_genome_cfg <- function(org, tname = "HM101") {
     gene = gene, genez = genez,
     dna = dna, protein = protein, mapp = mapp)
   
-  f_pacbio = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), org, org)
+  orgp = gsub(".AC", "", org)
+  f_pacbio = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), orgp, org)
   if(file.exists(f_pacbio)) cfg[['pacbio']] = bamReader(f_pacbio, idx = T)
 
-  f_rnaseq = sprintf("%s/rnaseq/mt/22_tophat/%s_%s/accepted_hits.bam", Sys.getenv("misc2"), org, org)
+  f_rnaseq = sprintf("%s/rnaseq/mt/22_tophat/%s_%s/accepted_hits.bam", Sys.getenv("misc2"), orgp, org)
   if(file.exists(f_rnaseq)) cfg[['rnaseq']] = bamReader(f_rnaseq, idx = T)
   
   if(org != tname) {
@@ -57,6 +58,7 @@ get_genome_cfg <- function(org, tname = "HM101") {
     qgax = sprintf("%s/41.9/gax.gz", cdir)
     tsnp = sprintf("%s/31.9/snp.gz", cdir)
     qsnp = sprintf("%s/41.9/snp.gz", cdir)
+    fpct = sprintf("%s/31.9/pct.bw", cdir)
     
     vdir = sprintf("%s/hapmap_mt40/12_ncgr", Sys.getenv("misc3"))
     fsnp = sprintf("%s/44_snp/%s.tbl.gz", vdir, org)
@@ -64,7 +66,7 @@ get_genome_cfg <- function(org, tname = "HM101") {
     fcovab = sprintf("%s/36_abcov/%s.bw", vdir, org)
     
     ccfg = list(cdir = cdir, 
-      tgal = tgal, qgal = qgal, tgax = tgax, tsnp = tsnp, qsnp = qsnp,
+      tgal = tgal, tgax = tgax, tsnp = tsnp, qsnp = qsnp, tpct = fpct,
       vdir = vdir, vsnp = fsnp, vcov = fcov)
     cfg = c(cfg, ccfg)
   }
@@ -76,6 +78,12 @@ get_genome_cfgs <- function(orgs, tname = "HM101") {
     cfgs[[org]] = get_genome_cfg(org)
   }
   cfgs
+}
+granges2df <- function(gr) {
+  ds = data.frame(chr = as.character(seqnames(gr)), beg = start(gr), 
+    end = end(gr), srd = as.character(strand(gr)), stringsAsFactors = F)
+  ds$srd[ds$srd == "*"] = "+"
+  ds
 }
 get_genome_composition <- function(org, utr.merge = F) {
   dirw = file.path(Sys.getenv("genome"), org)
@@ -92,12 +100,11 @@ get_genome_composition <- function(org, utr.merge = F) {
   gra = GenomicRanges::setdiff(grt, grp)
 
   f1 = file.path(dirw, "51.tbl")
-  f2 = file.path(dirw, "51.syn.tbl")
-  stopifnot(file.exists(f1) & file.exists(f2))
+  stopifnot(file.exists(f1))
   
   t1 = read.table(f1, header = F, sep = "\t", as.is = T)
   colnames(t1) = c("chr", "beg", "end", "srd", "id", "type", "fam")
-
+  
   tt = t1[t1$type == 'cds',]
   gcds = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
   gcds = GenomicRanges::intersect(gra, reduce(gcds))
@@ -117,15 +124,19 @@ get_genome_composition <- function(org, utr.merge = F) {
   gutr = GenomicRanges::union(gut5, gut3)
   gitr = GenomicRanges::setdiff(gra, c(gcds, gito, gut5, gut3))
 
-  t2 = read.table(f2, header = F, sep = "\t", as.is = T)
-  gsyn = with(t2, GRanges(seqnames = V1, ranges = IRanges(V2, end = V2)))
-  gsyn = GenomicRanges::intersect(gra, reduce(gsyn))
-  grpl = GenomicRanges::setdiff(gcds, gsyn)
-
   if(utr.merge) {
-    list(cds = gcds, synonymous = gsyn, replacement = grpl, intron = gito, utr = gutr, intergenic = gitr)
+    rbind( cbind(granges2df(gcds), type = 'cds'),
+      cbind(granges2df(gito), type = 'intron'),
+      cbind(granges2df(gutr), type = 'utr'),
+      cbind(granges2df(gitr), type = 'intergenic')
+    )
   } else {
-    list(cds = gcds, synonymous = gsyn, replacement = grpl, intron = gito, utr5 = gut5, utr3 = gut3, intergenic = gitr)
+    rbind( cbind(granges2df(gcds), type = 'cds'),
+      cbind(granges2df(gito), type = 'intron'),
+      cbind(granges2df(gut5), type = 'utr5'),
+      cbind(granges2df(gut3), type = 'utr3'),
+      cbind(granges2df(gitr), type = 'intergenic')
+    )
   }
 }
 

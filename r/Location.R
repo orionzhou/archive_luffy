@@ -114,6 +114,7 @@ intersect_score <- function(gr1, gr2) {
 
   t3 = read.table(fres, sep = "\t", header = F, as.is = T)
   colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'score', 'olen')
+  t3$score[t3$olen == 0] = NA
   system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
 
   gp = group_by(t3, idx)

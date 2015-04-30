@@ -4,49 +4,78 @@ source("comp.fun.R")
 source("comp.plot.fun.R")
 
 dirw = file.path(Sys.getenv("misc3"), 'comp.stat', 'figs')
+fl = file.path(dirw, 'loci.xlsx')
 
 ##### experimental
 source("comp.plot.fun.R")
-fl = file.path(dirw, 'loci.xlsx')
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('qgene', 'qaxis', 'qgap', 'link', 'tgap', 'taxis', 'tgene')
-#for (i in 80:80) {
-  i = 16
-  tls = tl[tl$i == i,]
-  
-  qnames = sprintf("HM%03d", c(58, 34, 129, 185, 4, 23, 340))
-#  qnames = qnames_all
-  
-  gro =  GRanges(seqnames = tls$chr, ranges = IRanges(tls$beg, end = tls$end))
-  fn = sprintf("%s/fig%03d.pdf", dirw, i)
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
+i = 39
+tls = tl[tl$i == i,]
 
+gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+
+cfgs = get_genome_cfgs(c(tname, qnames))
 dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
-res = comp.plot(dats, tname, qnames, tracks, draw.title = F)
+res = comp.plot(dats, tname, qnames, tracks, draw.legend.gene = T, scale.ht  = unit(0.8, 'npc'))
 
-pdf(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+fn = sprintf("%s/fig%03d.pdf", dirw, i)
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 dev.off()
-#}
 
-##### production
-fl = file.path(dirw, 'loci.xlsx')
-tl = read.xlsx(fl, sheetIndex = 2, header = T)
+#### chr4-8 translocation
+qnames = c("HM004", "HM034", "HM185", "HM340")
+qnames = c("HM004", "HM034", "HM185")
+gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(37000000,33000000), end = c(42000000, 36000000)))
 
-for (i in 1:nrow(tl)) {
-  tls = tl[i,]
+tracks = c('taxis', 'link', 'qaxis')
 
-  nums = strsplit(as.character(tls$orgs), split = ' ')[[1]]
-  qnames = sprintf("HM%03d", as.numeric(nums))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.85, 'npc'))
 
-  gr =  GRanges(seqnames = tls$chr, ranges = IRanges(tls$beg, end = tls$end))
-  fn = sprintf("%s/r.%03d.pdf", dirw, i)
+fn = sprintf("%s/illus_A17_TLC.pdf", dirw)
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+grid.newpage()
+grid.draw(res$grobs)
 
-  dats = prep_plot_data(gr, ccfgs, tname, qnames)
-  comp.plot(fn, dats, tname, qnames, 1000, subtitle = "")
-}
+xsu = c(165, 340, 315)
+ysu = c(1:3) * 105 - 30
+xs = rep(xsu, length(ysu))
+ys = rep(ysu, each = length(xsu))
+grid.text(rep("x", length(xs)), x = unit(xs, 'points'), y = unit(ys, 'points'), 
+  just = c('left', 'bottom'), 
+  gp = gpar(col = "navy", fontface = 1, fontsize = 8)
+)
+dev.off()
 
+## zoom in
+qnames = c("HM004", "HM034", "HM185", "HM340")
+qnames = c("HM004", "HM034", "HM185")
+gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(38900000,33800000), end = c(39100000, 34400000)))
+
+tracks = c('tgene', 'taxis', 'link', 'qaxis', 'qgene')
+
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
+res = comp.plot(dats, tname, qnames, tracks, draw.legend.gene = T, scale.ht  = unit(0.95, 'npc'))
+
+fn = sprintf("%s/illus_A17_TLC2.pdf", dirw)
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+grid.newpage()
+grid.draw(res$grobs)
+
+xsu = c(141, 280, 410)
+ysu = c(1:3) * 135 - 45
+xs = rep(xsu, length(ysu))
+ys = rep(ysu, each = length(xsu))
+grid.text(rep("x", length(xs)), x = unit(xs, 'points'), y = unit(ys, 'points'), 
+  just = c('left', 'bottom'), 
+  gp = gpar(col = "navy", fontface = 1, fontsize = 8)
+)
+dev.off()
 
 ### tandem duplication illustration
 chr = "chr8"
@@ -60,32 +89,61 @@ qnames = c("HM034")
 tracks = c('tgene', 'trnaseq', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene', 'qpacbio', 'qrnaseq')
   
 dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
-res = comp.plot(dats, tname, qnames, tracks, draw.title = T)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = T)
 
 fn = sprintf("%s/illus_tandup.pdf", dirw)
-pdf(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 dev.off()
 
 ### SNP calling inconsistency illustration
+source("comp.plot.fun.R")
 chr = "chr5"
 beg = 1555000
 end = 1605000
 gro =  GRanges(seqnames = chr, ranges = IRanges(beg, end = end))
-source("comp.plot.fun.R")
 
 qnames = c("HM125")
 tracks = c('qgene', 'qaxis', 'qgap', 'link', 'tgap', 'taxis', 'tgene', 'tmapp', 'mcov', 'msnp', 'tsnp')
+
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
+res1 = comp.plot(dats, tname, qnames, tracks, scale.ht = unit(0.9, 'npc'))
+
+chr = "chr3"
+beg = 2900000
+end = 2925000
+gro =  GRanges(seqnames = chr, ranges = IRanges(beg, end = end))
+source("comp.plot.fun.R")
+
+qnames = c("HM034")
+tracks = c('qgene', 'qaxis', 'qgap', 'link', 'tgap', 'taxis', 'tgene', 'tmapp', 'mcov', 'msnp', 'tsnp', 'tpct')
   
 dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
-res = comp.plot(dats, tname, qnames, tracks, draw.title = F)
+res2 = comp.plot(dats, tname, qnames, tracks, scale.ht = unit(0.9, 'npc'))
+
+numrow = 4; numcol = 3
+ress = list(res1, res2)
+htt = 15; htm = 5; wdm = 5
+ht = res1$ht + res2$ht + htt + htm
 
 fn = sprintf("%s/illus_snpcall.pdf", dirw)
-pdf(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+CairoPDF(file = fn, width = 7.15, height = ht/72, bg = 'transparent')
 grid.newpage()
-grid.draw(res$grobs)
 
+pushViewport(viewport(layout = grid.layout(numrow, numcol, 
+  heights = c(htt, res1$ht, htm, res2$ht),
+  widths = unit.c(unit(wdm, 'points'), unit(1, 'npc') - unit(wdm*2, 'points'), unit(wdm, 'points')))
+))
+
+pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
+grid.draw(plot_legend_gene())
+popViewport()
+for (i in 1:length(ress)) {
+  pushViewport(viewport(layout.pos.row = 1+i*2-1, layout.pos.col = 2))
+  grid.draw(ress[[i]]$grobs)
+  
+  if(i == 1) {
 xs = c(88, 250, 407)
 wds = c(155, 63, 35)
 ys = rep(3, 3)
@@ -100,6 +158,24 @@ grid.text(labs, x = unit(xs, 'points'), y = unit(ys+hts, 'points'),
   just = c('left', 'top'), 
   gp = gpar(col = "dodgerblue3", fontface = 2, fontsize = 13)
 )
+  } else {
+xs = c(390)
+wds = c(80)
+ys = rep(1, length(xs))
+hts = rep(123, length(xs))
+grid.rect(x = unit(xs, 'points'), width = unit(wds, 'points'), 
+  y = unit(ys, 'points'), height = unit(hts, 'points'),
+  just = c('left', 'bottom'),
+  gp = gpar(lwd = 1, col = 'dodgerblue3', fill = NA)
+)
+labs = LETTERS[4:(3+length(xs))]
+grid.text(labs, x = unit(xs, 'points'), y = unit(ys+hts, 'points'), 
+  just = c('left', 'top'), 
+  gp = gpar(col = "dodgerblue3", fontface = 2, fontsize = 13)
+)
+  }
+  popViewport()
+}
 dev.off()
 
 ##### SV illustration
@@ -130,48 +206,80 @@ for (i in 1:(nrow(to)-1)) {
   }
 }
 
-fl = file.path(dirw, 'loci.xlsx')
+
+## simple SV
+tl = read.xlsx(fl, sheetIndex = 2, header = T)
+fn = sprintf("%s/illus_sv.pdf", dirw)
+scale.hts = c(0.8, 0.2, 0.26, 0.7)
+
+## NBS SV
 tl = read.xlsx(fl, sheetIndex = 3, header = T)
+fn = sprintf("%s/illus_sv_nbs.pdf", dirw)
+scale.hts = c(0.9, 0.8, 0.85)
 
-idxs = sort(unique(tl$idx))
-tracks = c('qgene', 'qaxis', 'qgap', 'link', 'tgap', 'taxis', 'tgene')
+## CRP SV
+tl = read.xlsx(fl, sheetIndex = 4, header = T)
+fn = sprintf("%s/illus_sv_crp.pdf", dirw)
+scale.hts = c(0.9, 0.8, 0.85, 0.2, 0.2)
+
+## plotting
+source("comp.plot.fun.R")
+idxs = sort(unique(tl$i))
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
 ress = list()
-for (idx in idxs) {
-  tls = tl[tl$idx == idx,]
-
-  nums = strsplit(as.character(tls$org), split = ' ')[[1]]
-  qnames = sprintf("HM%03d", as.numeric(nums))
-
+hts = c()
+for (i in idxs) {
+  tls = tl[tl$i == i,]
+  qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
   gro =  GRanges(seqnames = tls$chr, ranges = IRanges(tls$beg, end = tls$end))
 
   dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
-  res = comp.plot(dats, tname, qnames, tracks, draw.title = F)
-  ress[[idx]] = res
+  res = comp.plot(dats, tname, qnames, tracks, scale.ht = unit(scale.hts[i], 'npc'))
+  ress[[i]] = res
+  hts = c(hts, res$ht)
 }
-ht = ress[[1]]$ht
-htm = 15
 
 nplot = length(idxs)
-fn = sprintf("%s/illus_sv.pdf", dirw)
-pdf(file = fn, width = 7, height = (ht+htm)*nplot/72, bg = 'transparent')
-  
-numrow = nplot*2; numcol = 3
+numrow = nplot*2+1; numcol = 3
+
+htt = 15; htm = 5; wdm = 15
+
+CairoPDF(file = fn, width = 7, height = (htt+sum(hts)+htm*nplot)/72, bg = 'transparent')
 grid.newpage()
-  
+
 pushViewport(viewport(layout = grid.layout(numrow, numcol, 
-  heights = rep(c(htm, ht), nplot),
-  widths = unit.c(unit(htm, 'points'), unit(1, 'npc') - unit(htm*2, 'points'), unit(htm, 'points')))
+  heights = c(htt, as.vector(rbind(rep(htm, nplot), hts))),
+  widths = unit.c(unit(wdm, 'points'), unit(1, 'npc') - unit(wdm*2, 'points'), unit(wdm, 'points')))
 ))
 
-for (idx in idxs) {
-  pushViewport(viewport(layout.pos.row = idx*2, layout.pos.col = 2))
-  grid.draw(ress[[idx]]$grobs)
+pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
+grid.draw(plot_legend_gene())
+popViewport()
+for (i in idxs) {
+  pushViewport(viewport(layout.pos.row = 1+i*2, layout.pos.col = 2))
+  grid.draw(ress[[i]]$grobs)
   popViewport()
 }
 labs = LETTERS[1:nplot]
 grid.text(labs, x = unit(2, 'points'), 
-  y = unit(c(nplot:1) * (ht+htm), 'points'), 
+  y = unit(c(nplot:1) * htm + rev(cumsum(rev(hts))), 'points'), 
   just = c('left', 'top'), 
   gp = gpar(col = "black", fontface = 2, fontsize = 16)
 )
 dev.off()
+
+#### NBS SV illustration 1
+qnames = c("HM058", 'HM129', 'HM004')
+gro = GRanges(seqnames = c('chr2'), ranges = IRanges(25741000, end = 25746500))
+
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
+
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
+res = comp.plot(dats, tname, qnames, tracks, draw.legend.gene = T, scale.ht  = unit(0.85, 'npc'))
+
+fn = sprintf("%s/illus_nbs.pdf", dirw)
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+grid.newpage()
+grid.draw(res$grobs)
+dev.off()
+

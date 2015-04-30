@@ -49,6 +49,11 @@ my @params = (
   ['HM056', 'HM056'],
   ['HM340', 'HM340']
 );
+@params = (
+  ['HM034', 'HM034.AC'],
+  ['HM056', 'HM056.AC'],
+  ['HM340', 'HM340.AC']
+);
 
 for (@params) {
   my ($qry, $tgt) = @$_;

@@ -6,6 +6,7 @@ source('Location.R')
 source('comp.fun.R')
 
 dirw = sprintf("%s/comp.stat", Sys.getenv("misc3"))
+diro = sprintf("%s/comp.stat", Sys.getenv("misc3"))
 
 tlen = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
 grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
@@ -18,15 +19,15 @@ tsize = sum(width(grt))
 tsize2 = sum(width(grnp))
 
 tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
-colnames(tg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+colnames(tg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
 tg = tg[tg$type == 'cds',]
-#tg_size = ddply(tg, .(id, cat), summarise, size = sum(end - beg + 1))
+gb = group_by(tg, id)
+tg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
 grgt = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
-##### SV impact on gene families
+##### SV impact on genome and proteome
 qname = "HM004"
 for (qname in qnames_all) {
-
 cfg = cfgs[[qname]]
 
 tlen = read.table(cfg$size, sep = "\t", header = F, as.is = T)
@@ -40,9 +41,10 @@ qsize = sum(width(grt))
 qsize2 = sum(width(grnp))
 
 qg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
-colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
 qg = qg[qg$type == 'cds',]
-#qg_size = ddply(qg, .(id, cat), summarise, size = sum(end - beg + 1))
+gb = group_by(qg, id)
+qg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
 grgq = with(qg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 cdir = cfg$cdir
@@ -81,21 +83,79 @@ cat(sprintf("%s: genome [tgt %.03f qry %.03f] gene [tgt %.03f qry %.03f]\n", qna
 
 }
 
-fo = sprintf("%s/comp_genesv_%s.pdf", dirw)
-p = ggplot(do) +
-  geom_bar(mapping = aes(x = cat, y = mean), 
-    stat = 'identity', geom_params=list(width = 0.8, alpha = 0.8)) +
-  geom_errorbar(mapping = aes(x = cat, ymin = mean-std, ymax = mean+std), 
-    stat = 'identity', geom_params=list(width = 0.4, alpha = 0.8)) +
-#  scale_fill_brewer(palette='Set1', name = '', guide = guide_legend(nrow = 1, byrow = T, label.position = "right", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
+#### SV impact on gene family
+do = data.frame()
+for (qname in qnames_all[1:12]) {
+cfg = cfgs[[qname]]
+
+tlen = read.table(cfg$size, sep = "\t", header = F, as.is = T)
+grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
+
+tgap = read.table(cfg$gap, sep = "\t", header = F, as.is = T)
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+grnp = GenomicRanges::setdiff(grt, grp)
+qsize = sum(width(grt))
+qsize2 = sum(width(grnp))
+
+qg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
+colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
+qg = qg[qg$type == 'cds',]
+gb = group_by(qg, id)
+qg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
+grgq = with(qg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+cdir = cfg$cdir
+#fy = file.path(cdir, "31.9/idm")
+#ty = read.table(fy, header = F, sep = "\t", as.is = T)
+#colnames(ty) = c("tchr", 'tbeg', 'tend', 'tsrd', 'qchr', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
+#ty = ty[ty$lev == 1,]
+fv = file.path(cdir, "../31_sv/05.stb")
+tv = read.table(fv, header = T, sep = "\t", as.is = T)[,c('id','tchr','tbeg','tend','tlen','srd','qchr','qbeg','qend','qlen')]
+
+gsvt = with(tv[tv$tend-tv$tbeg>1,], GRanges(seqnames = tchr, ranges = IRanges(tbeg+1, end = tend-1)))
+gsvq = with(tv[tv$qend-tv$qbeg>1,], GRanges(seqnames = qchr, ranges = IRanges(qbeg+1, end = qend-1)))
+
+olens = intersect_basepair(grgt, gsvt)
+gb = group_by(cbind(tg, olen = olens), id)
+ds1 = summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
+ds = ddply(ds1, .(fam), summarise, cnt = length(pct), prop = sum(pct>0.5)/cnt)
+#ds[order(ds$prop, decreasing=T),][1:30,]
+
+olens = intersect_basepair(grgq, gsvq)
+gb = group_by(cbind(qg, olen = olens), id)
+ds1 = summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
+ds = ddply(ds1, .(fam), summarise, cnt = length(pct), prop = sum(pct>0.5)/cnt)
+#ds[order(ds$prop, decreasing=T),][1:30,]
+
+ds = cbind(ds, org = qname)
+do = rbind(do, ds)
+}
+
+to = ddply(do, .(fam), summarise, q25 = quantile(prop, 0.25), q50 = quantile(prop, 0.5), q75 = quantile(prop, 0.75))
+
+ffam = file.path(diro, "41.gene.fams.tbl")
+fams = read.table(ffam, header = F, sep = "\t", as.is = T)[,1]
+
+ti = to
+tis = ti[ti$fam %in% fams,]
+tis = tis[order(tis$q50, decreasing = T),]
+tis$fam = factor(tis$fam, levels = tis$fam)
+p4 = ggplot(tis) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.7, size = 0.3)) + 
   coord_flip() +
-  scale_x_discrete(name = 'fam') +
-  scale_y_continuous(name = 'pct') +
-  facet_wrap( ~ type, ncol = 4) +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01)) +
+  scale_y_continuous(name = 'Proportion SV', expand = c(0, 0)) +
   theme_bw() +
-  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
-  theme(axis.text.x = element_text(size = 7, colour = "gray", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
-ggsave(p, filename = fo, width = 8, height = 10)
+#  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
+  theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+
+fp = file.path(dirw, "19_sv_genefam.pdf")
+ggsave(p4, filename = fp, width = 5, height = 4)
 
 

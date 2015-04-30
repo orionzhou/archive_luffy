@@ -1,19 +1,60 @@
+require(plyr)
+require(ggplot2)
+require(GenomicRanges)
+require(grid)
+require(RColorBrewer)
+require(gtable)
+source('comp.fun.R')
+
+diro = file.path(Sys.getenv("misc3"), "comp.stat")
+
 ##### compare InDels
 chrs = sprintf("chr%s", 1:8)
 
 dirm = file.path(Sys.getenv('misc3'), "hapmap/12_ncgr")
 fm = sprintf("%s/52.stat.tbl", dirm)
 tm = read.table(fm, sep = '\t', header = T, as.is = T)
-tm = tm[tm$chr %in% chrs,]
+tms = tm[tm$chr %in% chrs & (tm$rsize == 1 | tm$asize == 1) & tm$rsize <= 50 & tm$asize <= 50,]
 
 dirv = sprintf("%s/comp.vnt", Sys.getenv("misc3"))
 fv = sprintf("%s/52.stat.tbl", dirv)
 tv = read.table(fv, sep = '\t', header = T, as.is = T)
-tv = tv[tv$chr %in% chrs,]
 tv = cbind(tv, size = (tv$rsize + tv$asize - 2))
-tvs = tv[tv$size < 50,]
-tvl = tv[tv$size >= 50,]
+tvs = tv[tv$chr %in% chrs & (tv$rsize == 1 | tv$asize == 1) & tv$rsize <= 50 & tv$asize <= 50 & tv$rsize != tv$asize,]
 
+x = c(-49:-1, 1:49)
+  
+tb = table(tms$asize - tms$rsize)
+y = tb[as.character(x)]
+y[is.na(y)] = 0
+df1 = data.frame(type = 'Mapping-based', len = x, cnt = y)
+
+tb = table(tvs$asize - tvs$rsize)
+y = tb[as.character(x)]
+y[is.na(y)] = 0
+df2 = data.frame(type = 'Assembly-based', len = x, cnt = y)
+
+do = cbind(rbind(df1, df2))
+do$cnt = log10(do$cnt)
+do$cnt[!is.finite(do$cnt)] = 0
+
+p = ggplot(do) +
+  geom_bar(mapping = aes(x = len, y = cnt, fill = type), 
+    stat = 'identity', position = 'dodge', 
+    geom_params=list(width = 0.8, alpha = 0.8)) +
+  scale_fill_brewer(palette='Set1', name = '', labels = c("Reference mapping-based calls", "Synteny-base calls")) +
+  scale_x_continuous(name = 'Indel Size (bp)', expand = c(0, 0), breaks = seq(-40, 40, by = 10)) +
+  scale_y_continuous(name = '# events (log10)', limits = c(0, 6), expand = c(0, 0), breaks = 0:6)+#, labels = expression(10[])) +
+  theme_bw() +
+  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line"), plot.margin = unit(c(0,1,1,0), "lines")) +
+  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
+
+fo = file.path(diro, "comp_idm_size.pdf")
+ggsave(p, filename = fo, width = 5, height = 4)
 
 
 do = data.frame()

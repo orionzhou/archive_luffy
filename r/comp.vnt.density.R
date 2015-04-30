@@ -111,13 +111,13 @@ summary(fit)
 #### global comparison plot
 fw = file.path(dirw, "31.win.tbl")
 tw = read.table(fw, header = T, sep = "\t", as.is = T)
-tw = tw[tw$chr != 'chrU',]
+tw = tw[tw$chr != 'chrU' & tw$len_ng >= 50000,]
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 goff = cumsum(tt$end + 5000000) + 1
 goff = c(1, goff[1:(length(goff)-1)])
-names(goff) = tx$chr
-tx = cbind(tt, gpos = goff + (tx$beg + tx$end) / 2)
+names(goff) = tt$chr
+tx = cbind(tt, gpos = goff + (tt$beg + tt$end) / 2)
 
 tw = cbind(tw, gbeg = tw$beg + goff[tw$chr] - 1, gend = tw$end + goff[tw$chr] - 1)
 
@@ -125,12 +125,14 @@ to = data.frame()
 for (qname in qnames) {
   dirc = sprintf("%s/%s_%s", Sys.getenv("misc3"), qname, tname)
   
-  fa = file.path(dirc, '23_blat/31.9/gal')
-  ta = read.table(fa, header = T, sep = "\t", as.is = T)[,c(1:17)]
-  gra = with(ta[ta$lev==1,], GRanges(seqnames = tId, ranges = IRanges(tBeg, end = tEnd)))
-  pc = intersect_basepair(gr, reduce(gra)) / tw$len
+  fa = file.path(dirc, '23_blat/31.9/gax')
+  ta = read.table(fa, header = T, sep = "\t", as.is = T)
+  colnames(ta) = c('tchr','tbeg','tend','tsrd','qchr','qbeg','qend','qsrd','cid','lev')
+  gra = with(ta[ta$lev<=20,], GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
+  len_syn = intersect_basepair(gr, reduce(gra))
+  pc = len_syn / tw$len_ng
   
-  to = rbind(to, cbind(tw, org = qname, pc = pc))
+  to = rbind(to, cbind(tw, org = qname, len_syn = len_syn, pc = pc))
 }
 to$org = factor(to$org, levels = rev(qnames))
 
@@ -236,47 +238,38 @@ grid.newpage()
 grid.draw(gt)
 dev.off()
 
-## Gviz plot (obsolete)
-options(ucscChromosomeNames = FALSE)
-axisTrack <- GenomeAxisTrack(cex = 0.8, exponent = 6, labelPos = "below")
-nogapTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt",  name = "nogap", data = nogap/to$len, type = "histogram")
-gdTrack1 <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt",  name = "Gene/TE", data = gd1, groups = cats1, 
-  col = c('palegreen', 'royalblue2'), col.histogram = 'red', lwd = 0,
-  type = "histogram", stackedBars = F, legend = F, cex.legend = 0.7)
-gdTrack2 <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt",  name = "NBS/CRP", data = gd2, groups = cats2, 
-  col = c('orangered', 'royalblue2'), col.histogram = 'red', lwd = 0,
-  type = "histogram", stackedBars = F, legend = F, cex.legend = 0.7)
+## calculate SNP density tracks
+x = tt$end
+names(x) = tt$chr
+gr = tileGenome(x, tilewidth = 100, cut.last.tile.in.chrom = T)
 
-gaxTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "gax", data = to$lenc, type = 'histogram',
-  lwd = 0.5, legend = T, cex.legend = 0.7)
-piTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "Pi", data = to$pi, type = 'histogram',
-  lwd = 0.5)
-sidTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "sid", data = sid[,idxs], groups = qnames, type = 'a',
-  lwd = 0.5)
-lidTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "lid", data = lid[,idxs], groups = qnames, type = 'a',
-  lwd = 0.5)
-cnvTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "cnv", data = cnv[,idxs], groups = qnames, type = 'a',
-  lwd = 0.5)
-tlcTrack <- DataTrack(chromosome = chr, start = to$beg, end = to$end, 
-  genome = "Mt", name = "tlc", data = tlc[,idxs], groups = qnames, type = 'a',
-  lwd = 0.5)
+bp_gap = intersect_basepair(gr, grp)
+tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
+  len = width(gr), stringsAsFactors = F)
 
-fo = sprintf("%s/gd.pdf", diro)
-pdf(file = fo, width = 8, height = 6, bg = 'transparent')
-plotTracks(
-  list(axisTrack, nogapTrack, gdTrack1, gdTrack2,
-    gaxTrack, piTrack, sidTrack, lidTrack, cnvTrack, tlcTrack),
-  chromosome = chr, from = 1, to = tt$end[tt$chr == chr],
-  sizes = c(0.5, 0.7, 0.8, 0.8,
-    0.7, 1, 1, 1, 1, 1)
-)
-dev.off()
+org = "HM034"
+
+dirv = sprintf("%s/%s_HM101/23_blat", Sys.getenv("misc3"), org)
+fv = sprintf("%s/31.9/snp", dirv)
+tv = read.table(fv, sep = '\t', header = F, as.is = T)
+colnames(tv) = c("chr", "pos", "ref", "alt", "qid", "qpos", "cid", "lev")
+tv = tv[tv$lev == 1, c(1:2,4)]
+grv = with(tv, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
+
+fx = sprintf("%s/%s_HM101/23_blat/31.9/gax", Sys.getenv("misc3"), org)
+tx = read.table(fx, sep = '\t', header = F, as.is = T)
+gr_gax = with(tx[tx$V10==1,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+bp_gax = intersect_basepair(gr, gr_gax)
+cnt_snp = intersect_count(gr, grv)
+
+to = cbind(tw, len_ng = tw$len - bp_gap, len_gax = bp_gax, snpc = cnt_snp)
+to = to[to$len_gax > to$len * 0.3,]
+to = cbind(to, snpd = to$snpc / to$len_gax)
+
+ton = within(to, { beg = beg - 1; rm(len, len_ng, len_gax, snpc) })
+fo = sprintf("%s/31.9/pct.bg", dirv)
+options(scipen = 999)
+write.table(ton, file = fo, sep = "\t", row.names = F, col.names = F, quote = F, na = '')
+options(scipen = 0)
 

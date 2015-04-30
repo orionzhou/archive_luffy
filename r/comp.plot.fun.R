@@ -1,6 +1,6 @@
 require(plyr)
 require(rtracklayer)
-#require(Cairo)
+require(Cairo)
 require(grid)
 require(Rsamtools)
 require(rbamtools)
@@ -196,12 +196,6 @@ coord_mapping_bw <- function(fbw, dmap) {
   dm
 }
 
-granges2df <- function(gr) {
-  ds = data.frame(chr = as.character(seqnames(gr)), beg = start(gr), 
-    end = end(gr), srd = as.character(strand(gr)), stringsAsFactors = F)
-  ds$srd[ds$srd == "*"] = "+"
-  ds
-}
 prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
   tcfg = cfgs[[tname]]
   tmap = prep_coord_mapping(granges2df(gro), tcfg$seqinfo)
@@ -235,8 +229,10 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
   ttik = prep_ticks(tmap, tick_itv)
   tgap = coord_mapping(read_tabix(tcfg$gapz, gr), tmap)
   tgene = read_tabix(tcfg$genez, gr)
-  colnames(tgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
-  tgene = coord_mapping(tgene, tmap)
+  if(!is.null(tgene)) {
+    colnames(tgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+    tgene = coord_mapping(tgene, tmap)
+  }
   if('tmapp' %in% tracks) tmapp = coord_mapping_bw(tcfg$mapp, tmap)
   if('trnaseq' %in% tracks) {
     tr = read_bam(tcfg$rnaseq, gr, pileup = T)
@@ -259,8 +255,10 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     qgap = read_tabix(cfg$gapz, grq)
     qgap = coord_mapping(qgap, qmap)
     qgene = read_tabix(cfg$genez, grq)
-    colnames(qgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
-    qgene = coord_mapping(qgene, qmap)
+    if(!is.null(qgene)) {
+      colnames(qgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
+      qgene = coord_mapping(qgene, qmap)
+    }
 
     tdcoo = coord_mapping(tg[,1:4], tmap)
     qdcoo = coord_mapping(tg[,5:8], qmap)
@@ -275,7 +273,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
       snp = read_tabix(cfg$tsnp, gr)
       snp = snp[snp$V8 == 1,]
       if(!is.null(snp) & nrow(snp) == 0) snp = NULL
-      if(is.null(snp)) next
+      if(!is.null(snp)) {
     colnames(snp) = c('tid', 'tpos', 'ref', 'alt', 'qid', 'qpos', 'cid', 'lev')
     tsnp = coord_mapping(snp[,c(1,2,2)], tmap)
     qsnp = coord_mapping(snp[,c(5,6,6)], qmap)
@@ -285,6 +283,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     colnames(qsnp) = c("qid", 'qpos', 'qpos.a', 'qsrd.a')
     snp = merge(snp[,c(1:2,5:8)], tsnp, by = c('tid', 'tpos'))
     snp = merge(snp, qsnp, by = c('qid', 'qpos'))
+      }
     }
     
     dat = list(tmap = tmap, grt = gr, qmap = qmap, grq = grq, 
@@ -305,20 +304,29 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
       dat[['msnp']] = msnp
     }
     if('tsnp' %in% tracks) {
+      tsnp = NULL
+      if(!is.null(snp)) {
       tsnp = snp[,c('tid','tpos','tpos.a')]
       colnames(tsnp) = c('chr','pos','pos.a')
+      }
       dat[['tsnp']] = tsnp
+    }
+    if('tpct' %in% tracks) {
+      tpct = coord_mapping_bw(cfg$tpct, tmap)
+      dat[['tpct']] = tpct
     }
     if('mcov' %in% tracks) {
       mcov = coord_mapping_bw(cfg$vcov, tmap)
       dat[['mcov']] = mcov
     }
     if('qpacbio' %in% tracks) {
-      tr = read_bam(cfg$pacbio, grq, pileup = T)
       dat[['qpacbio']] = NULL
+      if(!is.null(cfg$pacbio)) {
+      tr = read_bam(cfg$pacbio, grq, pileup = T)
       if(nrow(tr) > 0) {
         tr2 = coord_mapping(tr[,c('chr','beg','end','srd')], qmap)
         dat[['qpacbio']] = merge(tr, tr2, by = c('chr', 'beg', 'end', 'srd'))
+      }
       }
     }
     if('qrnaseq' %in% tracks) {
@@ -334,60 +342,66 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
   dats$max_len = max_len
   dats
 }
-comp.plot <- function(dats, tname, qnames, tracks, draw.title = T) {
-  max_len = dats$max_len
+comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = F) {
+  ## some default plotting parameters
   tracktypes = c('tgene' = 'gene', 'taxis' = 'axis',  'tgap' = 'gap', 
     'qgap' = 'gap', 'qaxis' = 'axis', 'qgene' = 'gene',
-    'link' = 'link', 'tmapp' = 'mapp',
-    'mcov' = 'mcov', 'msnp' = 'snp', 'tsnp' = 'snp', 
+    'link' = 'link', 'tmapp' = 'mapp', 
+    'mcov' = 'mcov', 'msnp' = 'snp', 'tsnp' = 'snp', 'tpct' = 'tpct', 
     'qpacbio' = 'bam', 'qrnaseq' = 'bam', 'trnaseq' = 'bam')
 
-  main = sprintf("%s compare to %d accessions", tname, length(qnames))
-  fillg = c('TE' = 'slategray3', 'Coding_Gene' = 'tan', 
-    'NBS-LRR' = 'forestgreen', 'CRP' = 'dodgerblue')
-
   trackheight = c('axis' = 30, 'gap' = 10, 'gene' = 15, 'link' = 45,
-    'snp' = 10, 'mcov' = 20, 'mapp' = 20, 'bam' = 30)
-  
-  lwidth = 80
-  hheight = ifelse(draw.title, 50, 0)
+    'snp' = 10, 'mcov' = 20, 'mapp' = 20, 'tpct' = 20, 'bam' = 30)
+
+  fillg = c('TE' = 'slategray3', 'Coding_Gene' = 'brown4', 
+    'CC-NBS-LRR' = 'forestgreen', 'TIR-NBS-LRR' = 'forestgreen', 
+    'CRP0000-1030' = 'dodgerblue', 'NCR' = 'dodgerblue', 'CRP1600-6250' = 'dodgerblue')
+
+  left.wd = 80 # left (legend) panel width
+  top.ht = 15 # top (title) panel height (if to draw)
+  top.ht = ifelse(draw.legend.gene, top.ht, 0)
+
+  max_len = dats$max_len
+  main = sprintf("%s compare to %d accessions", tname, length(qnames))
   qheight = sum(trackheight[tracktypes[tracks]])
-  height = hheight + length(qnames) * qheight
+  height = top.ht + length(qnames) * qheight
   
   idx_cmp = which(tracks == 'link')
   qhtb = 0; qhte = sum(trackheight[tracktypes[tracks[1:(idx_cmp-1)]]])
   thtb = sum(trackheight[tracktypes[tracks[1:idx_cmp]]]); thte = qheight
   
-  vtr <- viewport(x = unit(lwidth, 'points'), y = unit(1, 'npc'), 
-    width = unit(1, 'npc') - unit(lwidth, 'points'), 
-    height = unit(hheight, 'points'), xscale = c(1, max_len), 
+  vtr <- viewport(x = unit(left.wd, 'points'), y = unit(1, 'npc'), 
+    width = unit(1, 'npc') - unit(left.wd, 'points'), 
+    height = unit(top.ht, 'points'), xscale = c(1, max_len), 
     just = c('left', 'top'), name = 'headr')
   
-  vbl <- viewport(x = 0, y = unit(1, 'npc') - unit(hheight, 'points'), 
-    width = unit(lwidth, 'points'), 
-    height = unit(1, 'npc') - unit(hheight, 'points'), 
+  vbl <- viewport(x = 0, y = unit(1, 'npc') - unit(top.ht, 'points'), 
+    width = unit(left.wd, 'points'), 
+    height = unit(1, 'npc') - unit(top.ht, 'points'), 
     just = c('left', 'top'), name = 'left')
 
-  vbr <- viewport(x = unit(lwidth, 'points'), 
-    y = unit(1, 'npc') - unit(hheight, 'points'), 
-    width = unit(1, 'npc') - unit(lwidth, 'points'), 
-    height = unit(1, 'npc') - unit(hheight, 'points'), 
+  vbr <- viewport(x = unit(left.wd, 'points'), 
+    y = unit(1, 'npc') - unit(top.ht, 'points'), 
+    width = unit(1, 'npc') - unit(left.wd, 'points'), 
+    height = unit(1, 'npc') - unit(top.ht, 'points'), 
     xscale = c(1, max_len), 
     just = c('left', 'top'), name = 'right')
   
   vl <- viewport(x = 0, y = unit(1, 'npc'), 
-    width = unit(lwidth, 'points'), height = unit(1, 'npc'), 
+    width = unit(left.wd, 'points'), height = unit(1, 'npc'), 
     just = c('left', 'top'), name = 'left')
   
-  vr <- viewport(x = unit(lwidth, 'points'), y = unit(1, 'npc'), 
-    width = unit(1, 'npc') - unit(lwidth, 'points'), height = unit(1, 'npc'), 
+  vr <- viewport(x = unit(left.wd, 'points'), y = unit(1, 'npc'), 
+    width = unit(1, 'npc') - unit(left.wd, 'points'), height = unit(1, 'npc'), 
     xscale = c(1, max_len), 
     just = c('left', 'top'), name = 'right')
   
-  grob_title = plot_title(main = '', subtitle = '', fillg, max_len, vp = vtr)
-  if(draw.title) {grobs = gList(grob_title)} else {grobs = gList()}
+  if(draw.legend.gene) {
+    grobs = gList(plot_legend_gene(x = unit(0, 'npc'), vp = vtr))
+#    grob_title = plot_title(main = '', subtitle = '', vp = vtr)
+  } else {grobs = gList()}
   
-  os = hheight
+  os = top.ht
   for (name in qnames) {
     pht = sum(trackheight[tracktypes[tracks]])
     grob_q = rectGrob(x = 0, width = 1, 
@@ -409,7 +423,7 @@ comp.plot <- function(dats, tname, qnames, tracks, draw.title = T) {
   grobs = gList(grobs, grob_grid)
   
   tgt.up = which(tracks == 'taxis') < which(tracks == 'link')
-  os = hheight
+  os = top.ht
   for (name in qnames) {
     dat = dats[[name]]
     pht = sum(trackheight[tracktypes[tracks]])
@@ -442,7 +456,7 @@ comp.plot <- function(dats, tname, qnames, tracks, draw.title = T) {
         grob_ri = plot_link(dat$comp, dat$snp, y = y, height = tht, tgt.up = tgt.up, vp = vr)
       } else if(tracktype == "snp") {
         stopifnot(track %in% c("msnp", "tsnp"))
-        lab = ifelse(track == 'msnp', "Mapping", "Assembly")
+        lab = ifelse(track == 'msnp', "Mapping", "Synteny")
         if(track == 'msnp') {snp = dat$msnp} else {snp = dat$tsnp}
         grob_le = plot_legend(sprintf("%s SNP", lab), y = y, vp = vl)
         grob_ri = plot_snp(snp, y = y, vp = vr)
@@ -456,30 +470,40 @@ comp.plot <- function(dats, tname, qnames, tracks, draw.title = T) {
           lab = "RNA-Seq"; tr = dat$trnaseq
         }
         grob_le = plot_legend(lab, y = y, vp = vl)
+        if(is.null(tr)) { grob_ri = NA; next }
         tr = tr[tr$y <= 20,]
-        vd <- viewport(x = unit(lwidth, 'points'), y = y, 
-          width = unit(1, 'npc') - unit(lwidth, 'points'), 
+        vd <- viewport(x = unit(left.wd, 'points'), y = y, 
+          width = unit(1, 'npc') - unit(left.wd, 'points'), 
           height = unit(tht - 3, 'points'), 
           xscale = c(1, max_len), 
           yscale = c(min(tr$y), max(tr$y)),
           just = c('left', 'center'))
         grob_ri = plot_reads(tr, vp = vd)
       } else if(tracktype == "mcov") {
-        grob_le = plot_legend("Coverage", y = y, vp = vl)
-        vd <- viewport(x = unit(lwidth, 'points'), y = y, 
-          width = unit(1, 'npc') - unit(lwidth, 'points'), 
+        grob_le = plot_legend("MappingCoverage", y = y, vp = vl)
+        vd <- viewport(x = unit(left.wd, 'points'), y = y, 
+          width = unit(1, 'npc') - unit(left.wd, 'points'), 
           height = unit(tht - 3, 'points'), 
           xscale = c(1, max_len), 
           yscale = c(min(dat$mcov$val), max(dat$mcov$val)),
           just = c('left', 'center'))
         grob_ri = plot_hist(dat$mcov, vp = vd)
+      } else if(tracktype == "tpct") {
+        grob_le = plot_legend("SNPdensity", y = y, vp = vl)
+        vd <- viewport(x = unit(left.wd, 'points'), y = y, 
+          width = unit(1, 'npc') - unit(left.wd, 'points'), 
+          height = unit(tht - 3, 'points'), 
+          xscale = c(1, max_len), 
+          yscale = c(0, 1),
+          just = c('left', 'center'))
+        grob_ri = plot_hist_rect(dat$tpct, vp = vd)
       } else if(tracktype == "mapp") {
         lab = ifelse(track == 'tmapp', tname, name)
         grob_le = plot_legend("Mappability", y = y, vp = vl)
         stopifnot(track == 'tmapp')
         mapp = dat$tmapp
-        vd <- viewport(x = unit(lwidth, 'points'), y = y, 
-          width = unit(1, 'npc') - unit(lwidth, 'points'), 
+        vd <- viewport(x = unit(left.wd, 'points'), y = y, 
+          width = unit(1, 'npc') - unit(left.wd, 'points'), 
           height = unit(tht - 3, 'points'), 
           xscale = c(1, max_len), yscale = c(0, 1),
           just = c('left', 'center'))
@@ -492,6 +516,7 @@ comp.plot <- function(dats, tname, qnames, tracks, draw.title = T) {
     }
     os = os + pht
   }
+  grobs = gList(grobs, plot_scale(max_len, y = scale.ht, vp = vbr))
   list(ht = height, grobs = grobs)
 }
 
@@ -612,18 +637,19 @@ plot_gene <- function(dgen, fillg, y = unit(0.5, 'npc'), text.show = F,
       dfm = dfp[dfp$type == 'mrna' & dfp$cat == cat,]
       dfc = dfp[dfp$type == 'cds' & dfp$cat == cat,]
       if(!empty(dfm)) {
+        cols = fillg[dfm$cat]; cols[is.na(cols)] = 'darkorchid'
         rnagrob = segmentsGrob(
           x0 = unit(dfm$beg, 'native'), x1 = unit(dfm$end, 'native'),
-          y0 = yp, y1 = yp, 
-          gp = gpar(col = fillg[dfm$cat]), vp = vp)
+          y0 = yp, y1 = yp, gp = gpar(col = cols), vp = vp)
         grobs = gList(rnagrob, grobs)
       }
       if(!empty(dfc)) {
+        cols = fillg[dfc$cat]; cols[is.na(cols)] = 'darkorchid'
         cdsgrob = rectGrob( 
           x = unit(dfc$beg, 'native'), y = yp,
           width = unit(dfc$end - dfc$beg, 'native'), 
           height = unit(height, 'points'), just = c('left', 'center'),
-          gp = gpar(lwd = 0.1, fill = fillg[dfc$cat], alpha = 0.9), vp = vp)
+          gp = gpar(lwd = 0, fill = cols, alpha = 0.9), vp = vp)
         grobs = gList(cdsgrob, grobs)
       }
     }
@@ -634,18 +660,19 @@ plot_gene <- function(dgen, fillg, y = unit(0.5, 'npc'), text.show = F,
       dfm = dfn[dfn$type == 'mrna' & dfn$cat == cat,]
       dfc = dfn[dfn$type == 'cds' & dfn$cat == cat,]
       if(!empty(dfm)) {
+        cols = fillg[dfm$cat]; cols[is.na(cols)] = 'darkorchid'
         rnagrob = segmentsGrob(
           x0 = unit(dfm$beg, 'native'), x1 = unit(dfm$end, 'native'),
-          y0 = yn, y1 = yn, 
-          gp = gpar(col = fillg[dfm$cat]), vp = vp)
+          y0 = yn, y1 = yn, gp = gpar(col = cols), vp = vp)
         grobs = gList(rnagrob, grobs)
       }
       if(!empty(dfc)) {
+        cols = fillg[dfc$cat]; cols[is.na(cols)] = 'darkorchid'
         cdsgrob = rectGrob( 
           x = unit(dfc$beg, 'native'), y = yn,
           width = unit(dfc$end - dfc$beg, 'native'), 
           height = unit(height, 'points'), just = c('left', 'center'),
-          gp = gpar(lwd = 0.1, fill = fillg[dfc$cat], alpha = 0.9), vp = vp)
+          gp = gpar(lwd = 0, fill = cols, alpha = 0.9), vp = vp)
         grobs = gList(cdsgrob, grobs)
       }
     }
@@ -687,16 +714,8 @@ plot_link <- function(dcmp, dsnp, y = unit(0.5, 'npc'), height = 30, tgt.up = T,
   
   if(tgt.up) {
     link.y = c(1,1,-1,-1)
-    tsnp.y0 = y + unit(rep(height/2, nrow(snp)), 'points')
-    tsnp.y1 = y + unit(rep(height/2-1, nrow(snp)), 'points')
-    qsnp.y0 = y - unit(rep(height/2, nrow(snp)), 'points')
-    qsnp.y1 = y - unit(rep(height/2-1, nrow(snp)), 'points')
   } else {
     link.y = c(-1,-1,1,1)
-    tsnp.y0 = y - unit(rep(height/2, nrow(snp)), 'points')
-    tsnp.y1 = y - unit(rep(height/2-1, nrow(snp)), 'points')
-    qsnp.y0 = y + unit(rep(height/2, nrow(snp)), 'points')
-    qsnp.y1 = y + unit(rep(height/2-1, nrow(snp)), 'points')
   }
   tmp = rep(link.y, nrow(comp))
   
@@ -706,9 +725,21 @@ plot_link <- function(dcmp, dsnp, y = unit(0.5, 'npc'), height = 30, tgt.up = T,
     id = comp.ids,
     gp = gpar(fill = comp.fills, alpha = alpha, lwd = 0, col = NA),
     vp = vp)
+  snp = NULL ### do not plot SNPs
   if(is.null(snp)) {
     gList(linkgrob)
   } else {
+  if(tgt.up) {
+    tsnp.y0 = y + unit(rep(height/2, nrow(snp)), 'points')
+    tsnp.y1 = y + unit(rep(height/2-1, nrow(snp)), 'points')
+    qsnp.y0 = y - unit(rep(height/2, nrow(snp)), 'points')
+    qsnp.y1 = y - unit(rep(height/2-1, nrow(snp)), 'points')
+  } else {
+    tsnp.y0 = y - unit(rep(height/2, nrow(snp)), 'points')
+    tsnp.y1 = y - unit(rep(height/2-1, nrow(snp)), 'points')
+    qsnp.y0 = y + unit(rep(height/2, nrow(snp)), 'points')
+    qsnp.y1 = y + unit(rep(height/2-1, nrow(snp)), 'points')
+  }
     gList(linkgrob,
   segmentsGrob(
     x0 = unit(snp$tpos.a, 'native'), x1 = unit(snp$tpos.a, 'native'), 
@@ -729,6 +760,14 @@ plot_hist <- function(ds, col = 'grey', vp = NULL) {
     y0 = 0, y1 = unit(ds$score, 'native'), 
     gp = gpar(lwd = 0.1, col = col, alpha = 1), vp = vp)
 }
+plot_hist_rect <- function(ds, col = 'grey20', vp = NULL) {
+  ds = ds[,c('beg.a', 'end.a', 'val')]
+  colnames(ds)[1:3] = c("beg", "end", "score")
+  rectGrob( 
+    x = unit(ds$beg, 'native'), width = unit(ds$beg-ds$end, 'native'), 
+    y = 0, height = unit(ds$score, 'native'),  just = c('left', 'bottom'),
+    gp = gpar(col = NA, fill = col, lwd = 0, alpha = 1), vp = vp)
+}
 plot_snp <- function(ds, y = unit(0.5, 'npc'), col = 'black', vp = NULL) {
   if(is.null(ds)) {return(NULL)}
   segmentsGrob( 
@@ -741,7 +780,7 @@ plot_reads <- function(ds, col.p = 'navy', col.n = 'salmon', vp = NULL) {
   ds = ds[,c('beg.a', 'end.a', 'srd', 'y')]
   dsp = ds[ds$srd == '+',]
   dsn = ds[ds$srd == '-',]
-  lwd = ifelse(max(ds$y) <= 15, 1, 0.5)
+  lwd = ifelse(max(ds$y) <= 15, 1, 0.8)
   
   grobs = gList()
   if(nrow(dsp) > 0) {
@@ -762,7 +801,44 @@ plot_reads <- function(ds, col.p = 'navy', col.n = 'salmon', vp = NULL) {
   }
   grobs
 }
-plot_title <- function(main = '', subtitle = '', fill, max_len, vp = NULL) {
+plot_scale <- function(max_len, x = unit(0.98, 'npc'), y = unit(0.2, 'npc'), vp = NULL) {
+  len = diff( pretty(1:max_len, 20)[1:2] )
+  name = sprintf("%gkb", len / 1000)
+  scalegrob1 = segmentsGrob( 
+    x0 = x - unit(len, 'native'), x1 = x, y0 = y, y1 = y, 
+    vp = vp)
+  scalegrob2 = segmentsGrob( 
+    x0 = unit.c(x - unit(len, 'native'), x),
+    x1 = unit.c(x - unit(len, 'native'), x),
+    y0 = rep(y, 2), 
+    y1 = rep(y + unit(3, 'points'), 2),
+    vp = vp)
+  scalegrob3 = textGrob( name,
+    x = x - unit(len / 2, 'native'), 
+    y = y + unit(5, 'points'), 
+    just = c("center", "bottom"), 
+    gp = gpar(cex = 0.75, fontfamily = "serif"), vp = vp)
+  gList(scalegrob1, scalegrob2, scalegrob3)
+}
+plot_legend_gene <- function(x = unit(0.2, 'npc'), vp = NULL) {
+  fill = c('TE' = 'slategray3', 'Non-TE Gene' = 'brown4',
+    'NBS-LRR' = 'forestgreen', 'CRP' = 'dodgerblue')
+  n = length(fill)
+  ds = data.frame(fam = names(fill), col = as.character(fill), as.is = T)
+  wds = nchar(as.character(ds$fam)) * 6
+  xs = x + unit(c(1:n)*15 + c(0,cumsum(wds)[1:(n-1)]), 'points')
+  rects = rectGrob( 
+    x = xs, y = unit(0.5, 'npc'),
+    width = unit(10, 'points'), height = unit(5, 'points'),
+    just = c('left', 'center'),
+    gp = gpar(lwd = 0, fill = as.character(ds$col), col = NA, alpha = 0.9), vp = vp)
+  texts = textGrob( ds$fam, 
+    x = xs + unit(15, 'points'), y = unit(0.5, 'npc'), 
+    just = c("left", "center"), 
+    gp = gpar(cex = 0.7, fontfamily = "serif"), vp = vp)
+  gList(rects, texts)
+}
+plot_title <- function(main = '', subtitle = '', vp = NULL) {
   maingrob = textGrob(main, 
     x = unit(0.5, 'npc'), y = unit(0.7, 'npc'), 
     gp = gpar(fontface = 'bold', fontfamily = 'serif'),
@@ -773,40 +849,7 @@ plot_title <- function(main = '', subtitle = '', fill, max_len, vp = NULL) {
     gp = gpar(fontface = 'bold', fontfamily = 'serif'),
     just = c("center", "top"), 
     vp = vp)
-  
-  n = length(fill)
-  fill.labels = names(fill)
-  legendgrob1 = rectGrob( 
-    x = rep(unit(0.02, 'npc'), n), 
-    y = unit(0.1, 'npc') + unit(seq(0, by = 10, length.out = n), 'points'),
-    width = unit(15, 'points'), height = unit(5, 'points'),
-    just = c('left', 'bottom'),
-    gp = gpar(lwd = 0, fill = fill, alpha = 0.9), vp = vp)
-  legendgrob2 = textGrob( fill.labels, 
-    x = unit(0.02, 'npc') + unit(20, 'points'), 
-    y = unit(0.1, 'npc') + unit(seq(0, by = 10, length.out = n), 'points'), 
-    just = c("left", "bottom"), 
-    gp = gpar(cex = 0.75, fontfamily = "serif"), vp = vp)
-
-  len = diff( pretty(1:max_len, 20)[1:2] )
-  name = sprintf("%.0fkb", len/1000)
-  scalegrob1 = segmentsGrob( 
-    x0 = unit(0.98, 'npc') - unit(len, 'native'), x1 = unit(0.98, 'npc'),
-    y0 = 0.2, y1 = 0.2, 
-    vp = vp)
-  scalegrob2 = segmentsGrob( 
-    x0 = unit.c(unit(0.98, 'npc') - unit(len, 'native'), unit(0.98, 'npc')),
-    x1 = unit.c(unit(0.98, 'npc') - unit(len, 'native'), unit(0.98, 'npc')),
-    y0 = rep(0.2, 2), 
-    y1 = rep(unit(0.2, 'npc') + unit(3, 'points'), 2),
-    vp = vp)
-  scalegrob3 = textGrob( name,
-    x = unit(0.98, 'npc') - unit(len / 2, 'native'), 
-    y = unit(0.2, 'npc') + unit(5, 'points'), 
-    just = c("center", "bottom"), 
-    gp = gpar(cex = 0.75, fontfamily = "serif"), vp = vp)
-  
-  gList(maingrob, subgrob, legendgrob1, legendgrob2, scalegrob1, scalegrob2, scalegrob3)
+  gList(maingrob, subgrob)
 }
 
 

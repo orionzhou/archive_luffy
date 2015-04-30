@@ -26,8 +26,17 @@ tca = read.table(fi, header = T, sep = "\t", as.is = T)
 fams = c("Peroxidase", "Hydrolase", "Auxin_inducible", "Deaminase",
   "tnl0850", "tnl0480", "cnl0950",
   "CRP0010", "CRP0110", "CRP0355", "CRP0675", "CRP1430", "CRP1520")
-for (fam in fams) {
-fam = "CRP1440"
+fams = c("Auxin_inducible", "Deaminase", "Peroxidase")
+pname = 'fams1'
+#fams = c("CRP0110", "CRP0355", "CRP1430", "CRP1520")
+#pname = 'fams2'
+#fams = c("tnl0850", "tnl0480", "cnl0950")
+#pname = 'fams3'
+
+
+plots = list()
+for (i in 1:length(fams)) {
+fam = fams[i]
 idxs = tca$idx[tca$cat3 == fam | tca$cat2 == fam]
 tm = tst[idxs, orgs]
 tm[tm == ''] = 'na'
@@ -49,24 +58,49 @@ tx = tx[tx$end > tx$beg,]
 tc = ddply(tw, .(clu), summarise, beg = min(x), end = max(x))
 tc = tc[tc$end > tc$beg,]
 
-p <- ggplot(data = to) +
+ty = ddply(to, .(org), summarise, cnt = sum(! sta %in% c('', '-')))
+ty$org = factor(ty$org, levels = rev(orgs))
+ty = ty[order(ty$org),]
+ty = cbind(ty, lab = sprintf("%s | %3d", ty$org, ty$cnt))
+
+p1 <- ggplot(data = to) +
   geom_tile(mapping = aes(x = x, y = org, fill = sta), height = 0.6, width = 0.8) +
   scale_x_continuous(name = '', limits = c(0, max(to$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$chr) +
-  scale_y_discrete(name='', expand=c(0.03, 0)) +
+  scale_y_discrete(name='', expand=c(0.03, 0), breaks = ty$org, labels = ty$lab) +
 #  scale_fill_gradient(name = "Sharing accessions", guide = guide_legend(label.position = "right", direction = "vertical", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
   scale_fill_manual(name = "Status", labels = c('syntenic ortholog', 'RBH ortholog', 'translocated', 'deleted', 'NA (missing data)'), values = c('dodgerblue1', 'deepskyblue', 'cyan2', 'brown', 'azure2')) +
   theme_bw() +
-  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
-  theme(legend.position = "top", legend.direction = 'horizontal', legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.5, 'lines')) +
-  theme(axis.text.x = element_text(size=8, angle=30)) +
-  theme(axis.text.y = element_text(size=8, angle=0), axis.ticks = element_blank()) +
+  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
+  theme(plot.margin = unit(c(0,0.5,0,0), "lines")) +
+  theme(axis.text.x = element_text(size=7, angle=0)) +
+  theme(axis.text.y = element_text(size=7, angle=0)) +
   annotate('segment', x = tx$beg, xend = tx$end, y = 0.3, yend = 0.3, size = 0.6, color = 'darkgreen') +
   annotate('segment', x = tc$beg, xend = tc$end, y = length(orgs)+0.7, yend = length(orgs)+0.7, size = 0.6, color = "blueviolet")
 
-fo = sprintf("%s/%s.pdf", diro, fam)
-ggsave(p, filename = fo, width = 6, heigh = 4)
-
+  if(i == 1) {
+    p1 = p1 + theme(legend.position = "top", legend.direction = 'horizontal', legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.5, 'lines'))
+  } else {
+    p1 = p1 + theme(legend.position = "none")
+  }
+  plots[[fam]] = p1
 }
+
+numrow = length(fams)
+
+fo = sprintf("%s/%s.pdf", diro, pname)
+pdf(file = fo, width = 6, height = 2*numrow+0.5, bg = 'transparent')
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(numrow, 1, height = c(2.5,rep(2, numrow-1)))))
+
+dco = data.frame(x = 1:numrow, y = rep(1,numrow), lab = LETTERS[1:numrow])
+for (i in 1:nrow(dco)) {
+  x = dco$x[i]; y = dco$y[i]; lab = dco$lab[i]
+  print(plots[[fams[i]]], vp = viewport(layout.pos.row = x, layout.pos.col = y))
+  grid.text(lab, x = 0, y = unit(1, 'npc'), just = c('left', 'top'), 
+    gp =  gpar(col = "black", fontface = 2, fontsize = 20),
+    vp = viewport(layout.pos.row = x, layout.pos.col = y))
+}
+dev.off()
 
 
 ##### find tan-dup

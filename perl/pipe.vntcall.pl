@@ -48,10 +48,10 @@ my @orgs = qw/
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010 HM022 HM324 HM340
 /;
-@orgs = qw/
-  HM058 HM125 HM056 HM129 HM060
-  HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010/;
+#@orgs = qw/
+#  HM058 HM125 HM056 HM129 HM060
+#  HM095 HM185 HM034 HM004 HM050 
+#  HM023 HM010/;
 
 my $dir = "$ENV{'misc3'}/hapmap_mt40/12_ncgr";
 -d $dir || make_path($dir);
@@ -67,7 +67,8 @@ my $fv = "$dir/../30_vnt/acc319.vcf.gz";
 
 #call_vcf();
 #call_vnt_org();
-call_indel();
+#call_indel();
+call_cvg();
 
 sub call_vcf {
   my @norgs;
@@ -89,10 +90,10 @@ sub call_vnt_org {
   for my $org (@orgs) {
     my $orgi = $org;
     $orgi =~ s/^HM0((17)|(20)|(22))$/HM0$1-I/;
-#    runCmd("bcftools view \\
-#      --exclude-uncalled --min-ac 1:alt1 --trim-alt-alleles \\
-#      -s $orgi -O v 43.snp.vcf -o 44_snp/$org.vcf");
-#    runCmd("vcf2tbl.py 44_snp/$org.vcf 44_snp/$org.tbl");
+    runCmd("bcftools view \\
+      --exclude-uncalled --min-ac 1:alt1 --trim-alt-alleles \\
+      -s $orgi -O v 43.snp.vcf -o 44_snp/$org.vcf");
+    runCmd("vcf2tbl.py 44_snp/$org.vcf 44_snp/$org.tbl");
     runCmd("bgzip -c 44_snp/$org.tbl > 44_snp/$org.tbl.gz");
     runCmd("tabix -s 1 -b 2 -e 2 -S 1 44_snp/$org.tbl.gz");
   }
@@ -111,16 +112,16 @@ sub call_indel {
 sub call_cvg {
   for my $org (@orgs) {
     my $orgi = $org;
-    $orgi = "$org-I" if $org =~ /^HM0(17)|(20)|(22)$/;
+    $orgi =~ s/^HM0((17)|(20)|(22))$/HM0$1-I/;
     
     my $fb = "01_raw/$orgi.recalibrated.bam";
     -s $fb || die "cannot find $fb\n";
    
-#  runCmd("bamtools filter -in $fb -mapQuality \">=20\" \\
-#    -isDuplicate \"false\" | samtools depth /dev/stdin | \\
-#    cov2bed.pl | grep -P \"^chr[1-8]\" > 35_cov/$org.bed");
-#  runCmd("bedGraphToBigWig 35_cov/$org.bed $fs 35_cov/$org.bw");
-#  runCmd("rm 35_cov/$org.bed");
+  runCmd("bamtools filter -in $fb -mapQuality \">=20\" \\
+    -isDuplicate \"false\" | samtools depth /dev/stdin | \\
+    cov2bed.pl --chr-only -o 35_cov/$org.raw.bed");
+  runCmd("bedGraphToBigWig 35_cov/$org.raw.bed $fs 35_cov/$org.bw");
+  runCmd("mergeBed -i 35_cov/$org.raw.bed > 35_cov/$org.bed");
 
 #  runCmd("bamFilterAb -i $fb -o 36_abcov/$org.bam");
 #  runCmd("bamtools filter -in 36_abcov/$org.bam -mapQuality \">=20\" \\

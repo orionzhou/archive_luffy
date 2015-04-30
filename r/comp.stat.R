@@ -444,7 +444,7 @@ p = ggplot(to) +
   stat_smooth(aes(x = wt, y = tspanr), method = 'lm', fill = 'azure3', size = 0.5) +
 #  scale_shape(name = "", solid = FALSE, guide = F) +
 #  scale_color_manual(name = "", labels = c('Core-genome', 'Pan-genome'), values = c("dodgerblue", "firebrick1"), guide = guide_legend(label.position = "left", direction = "horizontal", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-  scale_x_continuous(name = 'Genome size estimate (experimental)') +
+  scale_x_continuous(name = 'Genome size estimate (fluorometry)') +
   scale_y_continuous(name = 'AllPaths assembly size (normailized)', expand = c(0.02, 0)) + 
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.2, 'lines')) +

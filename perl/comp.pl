@@ -65,9 +65,8 @@ chdir $dir || die "cannot chdir to $dir\n";
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-#process_blat2();
-#process_vnt();
-  pipe_gal("31", $qry_fas, $tgt_fas, $qry_2bit, $tgt_2bit, $qry_size, $tgt_size);
+process_blat2();
+process_vnt();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
@@ -157,15 +156,15 @@ sub pipe_chain_net {
 }
 sub pipe_gal {
   my ($pre, $qFas, $tFas, $q2bit, $t2bit, $qSize, $tSize) = @_;
-#  runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
-#    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
-#    gal.addlev.pl -i - -n $pre.5.net -o $pre.5.gal");
-#  gal_expand("$pre.5.gal", "$pre.5", $qFas, $tFas, $qSize, $tSize);
+  runCmd("chain2gal.pl -i $pre.5.chain -o - | \\
+    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
+    gal.addlev.pl -i - -n $pre.5.net -o $pre.5.gal");
+  gal_expand("$pre.5.gal", "$pre.5", $qFas, $tFas, $qSize, $tSize);
 
-#  runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
-#    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
-#    gal.addlev.pl -i - -n $pre.8.net -o $pre.8.gal");
-#  runCmd("gal.filter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
+  runCmd("chain2gal.pl -i $pre.8.chain -o - | \\
+    gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
+    gal.addlev.pl -i - -n $pre.8.net -o $pre.8.gal");
+  runCmd("gal.filter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
   gal_expand("$pre.9.gal", "$pre.9", $qFas, $tFas, $qSize, $tSize);
 }
 sub gal_expand {

@@ -80,7 +80,7 @@ my @orgs = ($tgt, @qrys);
 
 #ortho_group_cat("21.gid.tbl", "22.cat.tbl");
 #ortho_aln_prep("21.gid.tbl", "25.aln.cmd", "25_seq", "25_aln");
-runCmd("parallel -j 16 --no-notice < 25.aln.cmd");
+#runCmd("parallel -j 16 --no-notice < 25.aln.cmd");
 
 ### run comp.ortho.R generate 28.dist.tbl
 ##get_seq_by_org("29.singleton.tbl", "29.fas");

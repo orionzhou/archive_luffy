@@ -10,7 +10,7 @@ require(VennDiagram)
 
 orgs = get_orgs()
 orgs = get_orgs('ingroup')
-orgs = c("HM004", "HM010", "HM023")
+orgs = c("HM010", "HM004", "HM023")
 chrs = sprintf("chr%s", 1:8)
 
 tt = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
@@ -69,7 +69,7 @@ a1 = sum(tm$gt == 2)
 a2 = nrow(tv) 
 cr = nrow(t_ovl) 
 venn.plot <- draw.pairwise.venn(area1 = a1, area2 = a2, cross.area = cr, 
-  category = c("Mapping-based Calls", "Assembly-based Calls"),
+  category = c("Mapping-based Calls", "Synteny-based Calls"),
   fill = c("dodgerblue", "firebrick"), lty = "solid",
   cex = 1, cat.cex = 1, cat.pos = c(200, 20), cat.dist = 0.04,
 #  cat.just = list(c(-1, -1), c(1, 1)),
@@ -105,17 +105,17 @@ tpc = cbind(tpc, pct = tpc$cnt / tpc$total)
 p_mna_sv = ggplot(tpc) + 
   geom_bar(aes(x = type, y = pct, fill = cla), position = 'fill', stat = 'identity', width = 0.8) +
 #  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon', 'burlywood1')) +
-  scale_fill_brewer(palette = "Pastel1", breaks = c("synteny", "sv", "uncovered"), labels = c("synteny regions (conserved)", "SV / fragile regions", "regions not covered by alignment")) +
-  scale_x_discrete(name = 'proportion', expand = c(0, 0), labels = c("genome total", "mapping-only calls")) +
+  scale_fill_brewer(palette = "Pastel1", breaks = c("synteny", "sv", "uncovered"), labels = c("regions covered by synteny", "regions affected by SV (resolved)", "other regions")) +
+  scale_x_discrete(name = 'proportion', expand = c(0, 0), labels = c("genome-wide total", "Mapping-based SNP calls")) +
   scale_y_continuous(name = '', expand = c(0, 0)) +
   coord_polar(theta = 'y') +
   theme_bw() +
   theme(legend.position = "top", legend.direction = "vertical", legend.title = element_blank(), legend.text = element_text(size = 8), legend.key.size = unit(0.8, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
-  theme(plot.margin = unit(c(1,1,1,0), "lines")) +
+  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
   theme(axis.title = element_blank()) +
   theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 60))
-p_mna_sv
+#p_mna_sv
 
 # enrichment of hets in mna sets
   htc = merge(tm[tm$gt<=2,], tv, by = c('chr', 'pos'), all = T)
@@ -135,7 +135,7 @@ tht = cbind(tht, pct = tht$cnt / tht$total)
 p_het_ovl = ggplot(tht) + 
   geom_bar(aes(x = snptype, y = pct, fill = valid), position = 'fill', stat = 'identity', width = 0.8) +
 #  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon', 'burlywood1')) +
-  scale_fill_brewer(palette = "Pastel1", breaks = c("ovl", "mna"), labels = c("Validated by Assembly-based approach", "Not validated by Assembly-based approach")) +
+  scale_fill_brewer(palette = "Pastel1", breaks = c("ovl", "mna"), labels = c("Validated by synteny-based approach", "Not validated by synteny-based approach")) +
   scale_x_discrete(name = 'proportion', expand = c(0, 0), labels = c("heterozygous calls", "homozygous calls")) +
   scale_y_continuous(name = '', expand = c(0, 0)) +
   coord_polar(theta = 'y') +
@@ -145,7 +145,7 @@ p_het_ovl = ggplot(tht) +
   theme(axis.title = element_blank()) +
   theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 60))
-p_het_ovl
+#p_het_ovl
 
 # enrichment of het calls (mna) in high-divergence regions
 x = tt$end
@@ -182,7 +182,7 @@ p_het_idty = ggplot(tx) +
   theme(axis.title = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 90, hjust = 0.5))
-p_het_idty
+#p_het_idty
 
 # plot rd and qual distribution for mna/ovl calls
 intvs = c(seq(0,60,2), Inf)
@@ -201,17 +201,17 @@ labs[length(labs)] = "60+"
 p_rd = ggplot(to) +
   geom_bar(aes(x = intv, y = dens, fill = type), 
     position = 'dodge', stat = 'identity', geom_params = list(width = 0.9)) + 
-  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon'), labels = c("mapping-only calls", "overlapping calls")) +
+  scale_fill_manual(values = c('mediumseagreen', 'lightsalmon'), labels = c("SNPs called only by reference mapping", "SNPs called by both approaches")) +
 #  scale_fill_brewer(palette = "Accent") +
   scale_x_discrete(name = 'Read Depth', expand = c(0, 0), breaks = levs[seq(1,41,5)], labels = labs[seq(1,41,5)]) +
   scale_y_continuous(name = 'Density', expand = c(0, 0)) +
   theme_bw() +
-  theme(legend.position = c(0.7, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.5, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(0,1,0,0), "lines")) +
   theme(axis.title = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "brown", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 0))
-p_rd
+#p_rd
 
 
 intvs = c(seq(3, 14, 0.5), Inf)
@@ -235,7 +235,7 @@ p_qual = ggplot(to) +
   theme(axis.title = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "grey", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "blue", angle = 90))
-p_qual
+#p_qual
 
 # look at sequence percent identity around called SNPs
 x = tt$end
@@ -266,7 +266,7 @@ p_pct_idt = ggplot(tx) +
   geom_crossbar(aes(x = snpd2, y = q50, ymin = q25, ymax = q75), 
     geom_params = list(width = 0.7, size = 0.3)) + 
   scale_x_discrete(name = 'Percent Identify', expand = c(0, 0), breaks = levs[seq(1,41,5)], labels = labs[seq(1,41,5)]) +
-  scale_y_continuous(name = '% assembly-only calls', expand = c(0.02, 0)) +
+  scale_y_continuous(name = '% synteny-only calls', expand = c(0.02, 0)) +
   theme_bw() +
 #  theme(legend.position = "top", legend.key.size = unit(0.5, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,1,0,0), "lines")) +
@@ -276,10 +276,10 @@ p_pct_idt = ggplot(tx) +
 #p_pct_idt
 
 ### combined plot
-fo = sprintf("%s/compstat/snp_%s.pdf", Sys.getenv("misc3"), org)
-pdf(file = fo, width = 6, height = 9, bg = 'transparent')
+fo = sprintf("%s/comp.stat/snp_%s.pdf", Sys.getenv("misc3"), org)
+pdf(file = fo, width = 6, height = 8, bg = 'transparent')
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(3, 2)))
+pushViewport(viewport(layout = grid.layout(3, 2, heights = c(3,2.5,2.5))))
 
 vlt <- viewport(layout.pos.row = 1, layout.pos.col = 1)
 pushViewport(vlt)
@@ -299,8 +299,5 @@ for (i in 1:nrow(dco)) {
     vp = viewport(layout.pos.row = x, layout.pos.col = y))
 }
 dev.off()
-
-
-
 
 

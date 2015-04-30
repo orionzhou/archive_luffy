@@ -4,4 +4,4 @@
 #PBS -q sb
 
 mt.rnaseq.pl
-comp.rnaseq.pl
+#comp.rnaseq.pl

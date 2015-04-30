@@ -62,24 +62,15 @@ my $cdir = "$ENV{'misc3'}/$qry\_$tgt/23_blat";
 my $tref = Bio::DB::Fasta->new("$tdir/11_genome.fas");
 my $qref = Bio::DB::Fasta->new("$qdir/11_genome.fas");
 
-my $fgt = "$tdir/51.gtb";
-my $fgq = "$qdir/51.gtb";
-my $tdb = Bio::DB::Fasta->new("$tdir/51.fas");
-my $qdb = Bio::DB::Fasta->new("$qdir/51.fas");
-
-my $tgene = Tabix->new(-data => "$tdir/51.tbl.gz");
-my $qgene = Tabix->new(-data => "$qdir/51.tbl.gz");
-
-#runCmd("rm *");
-#cat_var($tdir, $qdir, $cdir, "01.stb");
-#stb_filt("01.stb", "05.stb");
-#stb2stx("05.stb", "05.stx");
-#stb2vcf("05.stb", "10.raw.vcf");
+runCmd("rm *");
+cat_var($tdir, $qdir, $cdir, "01.stb");
+stb_filt("01.stb", "05.stb");
+stb2stx("05.stb", "05.stx");
+stb2vcf("05.stb", "10.raw.vcf");
 sv_vcf_refine("10.raw.vcf", "11_refine", "11.sv.vcf");
 runCmd("vcf.svtbl.py 11.sv.vcf 11.sv.tbl");
 
 ##refine_tlc("01.stb", "05.refine.stb");
-##stb_ovlp_cds("02.sort.stb", "11.cds.tbl");
 
 sub cat_var { # only call SVs in first level alignments
   my ($tdir, $qdir, $dir, $fo) = @_;
@@ -396,76 +387,11 @@ sub refine_vcf {
 sub sv_vcf_refine {
   my ($fi, $do, $fo) = @_;
   -d $do || make_path($do);
-#  sv_vcf2bed($fi, "$do/01.bed");
+  sv_vcf2bed($fi, "$do/01.bed");
   my $f_snp = "$cdir/31.9/snp.bed";
-#  runCmd("intersectBed -wao -a $do/01.bed -b $f_snp > $do/03.ovlp.bed");
-#  refine_vcf($fi, "$do/03.ovlp.bed", "$do/05.vcf");
+  runCmd("intersectBed -wao -a $do/01.bed -b $f_snp > $do/03.ovlp.bed");
+  refine_vcf($fi, "$do/03.ovlp.bed", "$do/05.vcf");
   runCmd("bcftools norm -f $tdir/11_genome.fas -O v -o $fo $do/05.vcf");
-}
-
-
-sub read_cds {
-  my ($con, $chr, $beg, $end) = @_;
-  my $iter = $con->query($chr, $beg - 1, $end);
-  my @ary;
-  return \@ary if ! $iter->get();
-  while (my $line = $con->read($iter)) {
-    my @ps = split("\t", $line);
-    my ($chr, $beg1, $end1, $srd, $id, $type, $cat) = @ps;
-    $type eq "cds" || next;
-    push @ary, [$chr, max($beg, $beg1), min($end, $end1), $srd, $id];
-  }
-  return \@ary;
-}
-sub stb_ovlp_cds {
-  my ($fi, $fo) = @_;
-
-  my ($hq, $ht);
-  my $tq = readTable(-in => $fgq, -header => 1);
-  my $tt = readTable(-in => $fgt, -header => 1);
-  for my $i (0..$tq->lastRow) {
-    my ($id, $clocS) = map {$tq->elm($i, $_)} qw/id cloc/;
-    my $len = locAryLen(locStr2Ary($clocS));
-    $hq->{$id} = $len;
-  }
-  for my $i (0..$tt->lastRow) {
-    my ($id, $clocS) = map {$tt->elm($i, $_)} qw/id cloc/;
-    my $len = locAryLen(locStr2Ary($clocS));
-    $ht->{$id} = $len;
-  }
-
-  my $t = readTable(-in => $fi, -header => 1);
-  open(my $fho, ">$fo") or die "cannot write $fo\n";
-  print $fho join("\t", $t->header, qw/svlen gid glen gslen/)."\n";
-  my ($hg, $con, $chr, $beg, $end);
-  for my $i (0..$t->lastRow) {
-    my ($tchr, $tbeg, $tend, $btbeg, $btend, $type,
-      $qchr, $qbeg, $qend, $bqbeg, $bqend) = $t->row($i);
-    if($type eq "INS" || $type eq "CNG") {
-      ($hg, $con, $chr, $beg, $end) = ($hq, $qgene, $qchr, $qbeg, $qend);
-    } elsif($type eq "DEL" || $type eq "CNL") {
-      ($hg, $con, $chr, $beg, $end) = ($ht, $tgene, $tchr, $tbeg, $tend);
-    } else {
-      die "unknown type: $type\n";
-    }
-    
-    my $svlen = $end - $beg + 1;
-    my $ary = read_cds($con, $chr, $beg, $end);
-    next if(@$ary == 0);
-    my $h;
-    for (@$ary) {
-      my ($chr, $beg, $end, $srd, $id) = @$_;
-      $h->{$id} ||= 0;
-      $h->{$id} += $end - $beg + 1;
-    }
-    my @notes;
-    for my $id (keys(%$h)) {
-      exists $hg->{$id} || die "no len for $id\n";
-      my $glen = $hg->{$id};
-      my $gslen = $h->{$id};
-      print $fho join("\t", $t->row($i), $svlen, $id, $glen, $gslen)."\n";
-    }
-  }
 }
 
 __END__

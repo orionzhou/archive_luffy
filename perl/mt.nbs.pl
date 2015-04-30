@@ -56,7 +56,7 @@ my $fm = "$ENV{'misc2'}/nbs/mt_40/30.all.hmm";
 runCmd("hmmsearch.pl -i ../augustus/31.fas -m $fm -o 01.tbl");
 build_nbs_gtb("01.tbl", $fg, "11.gtb");
 runCmd("gtb.pickalt.pl -i 11.gtb -o 12.gtb");
-if($org ne "HM101") {
+if($org eq "HM1010") {
   runCmd("liftover.gene.pl -i 12.gtb -o 16.liftover.tbl \\
     -r $ENV{'genome'}/HM101/11_genome.fas \\
     -g $ENV{'genome'}/HM101/51.gtb \\
@@ -76,7 +76,16 @@ sub build_nbs_gtb {
     my ($id, $par, $chr, $beg, $end, $srd, $locE, $locI, $locC, $loc5, $loc3, $phase, $src, $conf, $cat1, $cat2, $cat3, $note) = $tg->row($i);
     exists $h{$id} || next;
     push @idxs, $i;
-    $tg->setElm($i, "cat3", $h{$id});
+    $cat3 = $h{$id};
+    $cat2 = '';
+    if($cat3 =~ /^tnl/i) {
+      $cat2 = "TIR-NBS-LRR";
+    } else {
+      $cat3 =~ /^cnl/i || die "unknown cat: $cat3\n";
+      $cat2 = "CC-NBS-LRR";
+    }
+    $tg->setElm($i, "cat2", $cat2);
+    $tg->setElm($i, "cat3", $cat3);
     $h{$id} = 0;
   }
   printf "found %d | %d ids\n", scalar(@idxs), $ti->nofRow;

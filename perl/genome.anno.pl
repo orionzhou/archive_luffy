@@ -46,8 +46,9 @@ pod2usage(2) if !$org;
 my $fg = "$ENV{'genome'}/$org/11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
+### needs to run mt.rnaseq.pl on Itasca first
 ### needs to be run on Itasca
-runCmd("mt.augus.pl -g $org");
+#runCmd("mt.augus.pl -g $org");
 runCmd("mt.nbs.pl -g $org");
 runCmd("spada.pl --cfg \$spada/cfg.txt \\
   --dir \$misc4/spada.crp.$org \\

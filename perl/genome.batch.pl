@@ -44,16 +44,17 @@ my @orgs = qw/
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010 HM022 HM324 HM340
 /;
+@orgs = qw/HM034.AC HM056.AC HM340.AC/;
 
 print "qsub rnaseq\n";
 
 for my $org (@orgs) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
-  runCmd("mt.anno.pl -g $org");
 #  runCmd("genome.fas.pl -g $org");
 #  runCmd("genome.db.pl -g $org");
 #  print "qsub rm -N rm.$org -v ORG=$org -l qos=weightlessqos\n";
+  runCmd("mt.anno.pl -g $org");
 #  print "qsub mtanno -N mtanno.$org -v ORG=$org -l qos=weightlessqos");
 #  runCmd("gff.rename.pl -i \$genome/$org/51.gff -m \$genome/$org/raw.fix.fas.map -o \$misc2/coge/$org.gff");
 }

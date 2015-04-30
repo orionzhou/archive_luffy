@@ -45,18 +45,13 @@ my @qrys = qw/
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010 HM022 HM324 HM340
 /;
-@qrys = qw/
-  HM058 HM125 HM056 HM129 HM060
-  HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010 HM022 HM324 HM340
-/;
 
 for my $qry (@qrys) {
   my $tag = $qry;
   $tag =~ s/HM//i;
   my $dir = "$ENV{'misc3'}/$qry\_$tgt/23_blat";
   chdir $dir || die "cannot chdir to $dir\n";
-  runCmd("comp.pl -q $qry -t $tgt");
+#  runCmd("comp.pl -q $qry -t $tgt");
 #  runCmd("comp.novseq.pl -q $qry -t $tgt");
 #  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
 #  runCmd("comp.sv.pl -q $qry");

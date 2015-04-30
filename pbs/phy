@@ -3,6 +3,6 @@
 #PBS -M zhoux379@umn.edu
 #PBS -q lab
 
-phy_mt.pl
+phy.mt.pl
 #pipe_fastq.pl
 #mt.rnaseq.pl

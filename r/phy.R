@@ -407,7 +407,7 @@ node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
 
 tree$tip.label = paste(labs, notes, sep = "       ")
 #tree = root(tree, 4)
-pdf(file = fo, width = 6, height = 7, bg = 'transparent')
+pdf(file = fo, width = 6, height = 7.5, bg = 'transparent')
 plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.67,
   tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 0.9)
 nodelabels(pch = 22, bg = node.labels.bg)
@@ -415,6 +415,10 @@ tiplabels(pch = 22, col = NA, bg = label1.bg, adj = 0.573, cex = 1.5)
 tiplabels(pch = 22, col = NA, bg = label2.bg, adj = 0.587, cex = 1.5)
 #par(family = "Courier New")
 add.scale.bar(x = 0, y = 16, lcol = 'black')
+rect(0.1, 25, 0.113, 25.6, col = 'red', border = NA)
+rect(0.1, 24, 0.113, 24.6, col = 'forestgreen', border = NA)
+text(0.12, 25.3, labels = "ALLPATHS-LG", cex = 0.7, adj = c(0, 0.5))
+text(0.12, 24.3, labels = "RNA-Seq", cex = 0.7, adj = c(0, 0.5))
 dev.off()
 
 ### compare sv phylogeny with chr5 phylogeny

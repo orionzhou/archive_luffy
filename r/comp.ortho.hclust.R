@@ -3,6 +3,8 @@ require(plyr)
 require(ggplot2)
 require(reshape2)
 require(Biostrings)
+require(colorRamps)
+require(gridBase)
 source("Align.R")
 source("Location.R")
 source("comp.fun.R")
@@ -38,7 +40,7 @@ for (id in ids) {
 }
 
 ##### CRP ortho-map hclust
-idxs = which(tca$cat2 == 'CRP' & norgs >= 1)
+idxs = which(tca$cat2 %in% c("CRP0000-1030", "NCR", "CRP1600-6250") & norgs >= 1)
 ti = matrix(NA, nrow = length(idxs), ncol = length(orgs), dimnames = list(NULL, orgs))
 
 for (i in 1:length(idxs)) {
@@ -68,17 +70,21 @@ tree = rotate(tree, 20)
 tree = reorder.phylo(tree, order = 'postorder')
 plot(tree)
 
+tw = cbind(i = 1:length(idxs), tlo[idxs, c('chr','pos')], fam = tca$cat3[idxs], fam2 = tca$cat2[idxs])
+#tw$fam = factor(tw$fam, levels = c("CRP0000-1030", "NCR", "CRP1600-6250"))
+tw = tw[order(tw$fam, tw$chr, tw$pos), ]
+tf = cbind(x = 1:nrow(tw), tw)
+tx = ddply(tf, .(fam2), summarise, beg = min(x), end = max(x), mid = as.integer(mean(x)))
+
 #ff = '/home/youngn/zhoup/Data/misc2/genefam/crp.info'
 #tf = read.table(ff, sep = "\t", as.is = T, header = T)
-#tf = merge(ti[,c('cat3','x')], tf, by.x = 'cat3', by.y = 'id')
-#tx = ddply(tf, .(cat), summarise, bed = min(x), end = max(x), mid = as.integer(mean(x)))
+#tf = merge(tw[,c('cat3','x')], tf, by.x = 'cat3', by.y = 'id')
 
-tw = cbind(x = 1:length(idxs), tlo[idxs,])
-tx = ddply(tw, .(chr), summarise, beg = min(x), end = max(x))
+#tx = ddply(tw, .(chr), summarise, beg = min(x), end = max(x))
 tx = tx[tx$end > tx$beg,]
 
-tp = cbind(x = 1:length(idxs), fam = tca$cat3[idxs], as.data.frame(ti))
-tp = melt(tp, id.vars = c('x', 'fam'), variable.name = 'org', value.name = 'score')
+tp = cbind(tf, ti[tf$i,])
+tp = melt(tp[,c('x','fam',orgs)], id.vars = c('x', 'fam'), variable.name = 'org', value.name = 'score')
 
 tp$org = factor(tp$org, levels = rev(tree$tip.label))
 
@@ -86,7 +92,7 @@ p = ggplot(tp, aes(x = x, y = org, fill = score)) +
   geom_tile(stat = 'identity', position = "identity") + 
   scale_fill_gradientn(colours = matlab.like2(20)) +
 #  labs(fill = "Mean Pariwise AA distance") +
-  scale_x_continuous(name = '', limits = c(0, max(tp$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$chr) +
+  scale_x_continuous(name = '', limits = c(0, max(tp$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = as.character(tx$fam)) +
   scale_y_discrete(name = '') +
   theme(legend.position = "right", legend.key.size = unit(1, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,0,0,0), "lines")) +
@@ -95,8 +101,8 @@ p = ggplot(tp, aes(x = x, y = org, fill = score)) +
   theme(axis.text.x = element_text(size = 8, color = "brown")) +
   theme(axis.text.y = element_text(size = 9, color = "black")) +
   annotate('segment', x = tx$beg, xend = tx$end, y = 0.3, yend = 0.3, size = 0.6, color = 'darkgreen') +
-  annotate('segment', x = tx$beg, xend = tx$beg, y = 0.2, yend = 0.4, size = 0.1, color = 'darkgreen') +
-  annotate('segment', x = tx$end, xend = tx$end, y = 0.2, yend = 0.4, size = 0.1, color = 'darkgreen')
+  annotate('segment', x = tx$beg, xend = tx$beg, y = 0.2, yend = 0.4, size = 0.5, color = 'darkgreen') +
+  annotate('segment', x = tx$end, xend = tx$end, y = 0.2, yend = 0.4, size = 0.5, color = 'darkgreen')
 
 gt <- ggplot_gtable(ggplot_build(p))
 gt$layout$clip[gt$layout$name == "panel"] <- "off"
@@ -124,8 +130,8 @@ dev.off()
 
 
 ##### plot NBS-LRR ortholog map
-idxs = which(tca$cat2 == 'NBS-LRR' & norgs >= 1)
-idxs = which(tca$cat2 %in% c('2OG-FeII_Oxy', 'Peroxidase', 'Cytochrome', 'Hydrolase', 'Peptidase'))
+idxs = which(tca$cat2 %in% c('TIR-NBS-LRR', 'CC-NBS-LRR') & norgs >= 1)
+#idxs = which(tca$cat2 %in% c('2OG-FeII_Oxy', 'Peroxidase', 'Cytochrome', 'Hydrolase', 'Peptidase'))
 
 ti = matrix(NA, nrow = length(idxs), ncol = length(orgs), dimnames = list(NULL, orgs))
 
@@ -151,12 +157,15 @@ r.dist <- cordist(t(ti))
 r.hc <- hclust(r.dist, method='ward.D')
 tree = as.phylo(r.hc)
 
-tw = cbind(x = 1:length(idxs), tlo[idxs,])
-tx = ddply(tw, .(chr), summarise, beg = min(x), end = max(x))
+tw = cbind(i = 1:length(idxs), tlo[idxs, c('chr','pos')], fam = tca$cat3[idxs], fam2 = tca$cat2[idxs])
+#tw$fam = factor(tw$fam, levels = c("CRP0000-1030", "NCR", "CRP1600-6250"))
+tw = tw[order(tw$fam, tw$chr, tw$pos), ]
+tf = cbind(x = 1:nrow(tw), tw)
+tx = ddply(tf, .(fam2), summarise, beg = min(x), end = max(x), mid = as.integer(mean(x)))
 tx = tx[tx$end > tx$beg,]
 
-tp = cbind(x = 1:length(idxs), fam = tca$cat3[idxs], as.data.frame(ti))
-tp = melt(tp, id.vars = c('x', 'fam'), variable.name = 'org', value.name = 'score')
+tp = cbind(tf, ti[tf$i,])
+tp = melt(tp[,c('x','fam',orgs)], id.vars = c('x', 'fam'), variable.name = 'org', value.name = 'score')
 
 tp$org = factor(tp$org, levels = rev(tree$tip.label))
 
@@ -164,7 +173,7 @@ p = ggplot(tp, aes(x = x, y = org, fill = score)) +
   geom_tile(stat = 'identity', position = "identity") + 
   scale_fill_gradientn(colours = matlab.like2(20)) +
 #  labs(fill = "Mean Pariwise AA distance") +
-  scale_x_continuous(name = '', limits = c(0, max(tp$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$chr) +
+  scale_x_continuous(name = '', limits = c(0, max(tp$x)+1), expand=c(0, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$fam) +
   scale_y_discrete(name = '') +
   theme(legend.position = "right", legend.key.size = unit(1, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,0,0,0), "lines")) +
@@ -180,7 +189,7 @@ gt <- ggplot_gtable(ggplot_build(p))
 gt$layout$clip[gt$layout$name == "panel"] <- "off"
 
 fp = sprintf("%s/81.nbs.pdf", diro)
-fp = sprintf("%s/81.misc.pdf", diro)
+#fp = sprintf("%s/81.misc.pdf", diro)
 pdf(file = fp, width = 10, height = 5, bg = 'transparent')
 plot.new()
 

@@ -67,7 +67,7 @@ fo = file.path(dirw, "81.cvg.tbl")
 write.table(tcvg, fo, sep = "\t", row.names = F, col.names = F, quote = F)
 
 ##### creating sliding window statistics
-fw = file.path(Sys.getenv("misc3"), "compstat", "31.win.tbl")
+fw = file.path(Sys.getenv("misc3"), "comp.stat", "31.win.tbl")
 tw = read.table(fw, header = T, sep = "\t", as.is = T)
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
@@ -259,9 +259,45 @@ p2 = ggplot(do) +
 ggsave(p2, filename = fo, width = 5, height = 5)
 
 
-##### SNP ThetaPi ThetaW for different categories
-  pi = sum(tn$nucdiv) / sum(width(gra))
-  tw = table(tn$nsam)
+##### SNP ThetaPi ThetaW for cds/intron/intergenic/utr/syn/nonsyn
+fa = file.path(dirw, "81.cvg.tbl")
+ta = read.table(fa, header = F, sep = "\t", as.is = T)
+gra = with(ta, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+f1 = file.path(Sys.getenv("genome"), "HM101", "51.tbl")
+t1 = read.table(f1, header = F, sep = "\t", as.is = T)
+colnames(t1) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+
+tt = t1[t1$type == 'cds',]
+gcds = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+gcds = GenomicRanges::intersect(gra, reduce(gcds))
+
+tt = t1[t1$type == 'intron',]
+gito = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+gito = GenomicRanges::intersect(GenomicRanges::setdiff(gra, gcds), reduce(gito))
+
+tt = t1[t1$type == 'utr5',]
+gut5 = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+gut5 = GenomicRanges::intersect(GenomicRanges::setdiff(gra, c(gcds, gito)), reduce(gut5))
+
+tt = t1[t1$type == 'utr3',]
+gut3 = with(tt, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+gut3 = GenomicRanges::intersect(GenomicRanges::setdiff(gra, c(gcds, gito, gut5)), reduce(gut3))
+
+gitr = GenomicRanges::setdiff(gra, reduce(c(gcds, gito, gut5, gut3)))
+
+# reading the huge file is very slow
+f2 = file.path(Sys.getenv("genome"), "HM101", "51.codon.degen.tbl")
+t2 = read.table(f2, header = F, sep = "\t", as.is = T)
+gsyn = with(t2[t2$V3 == 4,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V2)))
+gsyn = GenomicRanges::intersect(gra, reduce(gsyn))
+grpl = with(t2[t2$V3 == 0,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V2)))
+grpl = GenomicRanges::intersect(gra, reduce(grpl))
+
+grl = GRangesList(cds = gcds, synonymous = gsyn, replacement = grpl, intron = gito, utr5 = gut5, utr3 = gut3, intergenic = gitr)
+
+  pi = sum(tv$nucdiv) / sum(width(gra))
+  tw = table(tv$nsam)
   ans = sapply(as.numeric(names(tw)), get_har <- function(x) sum(1 / 1:(x-1)))
   thetaw = sum(as.numeric(tw) / ans) / sum(width(gra))
 
@@ -269,7 +305,7 @@ stats = list()
 stats[["Total"]] = matrix(c(
     format(sum(width(gra)), big.mark = ","), 
     '-', 
-    format(nrow(tn), big.mark = ","),
+    format(nrow(tv), big.mark = ","),
     sprintf("%.04f", pi), 
     sprintf("%.04f", thetaw)), nrow = 1, 
     dimnames = list(NULL, c("Covered bases", "Percent",
@@ -277,14 +313,14 @@ stats[["Total"]] = matrix(c(
 for (i in 1:length(grl)) {
   ma = as.matrix(findOverlaps(gsnp, grl[i]))
   idxs = ma[,1]
-  tns = tn[idxs,]
+  tvs = tv[idxs,]
   
   bp = sum(width(grl[[i]]))
   pct = bp / sum(width(gra))
-  n_snp = nrow(tns)
-  pi = sum(tns$nucdiv) / bp
+  n_snp = nrow(tvs)
+  pi = sum(tvs$nucdiv) / bp
   
-  tw = table(tns$nsam)
+  tw = table(tvs$nsam)
   ans = sapply(as.numeric(names(tw)), get_har <- function(x) sum(1 / 1:(x-1)))
   thetaw = sum(as.numeric(tw) / ans) / bp
 

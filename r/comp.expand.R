@@ -32,7 +32,8 @@ pname = 'fams1'
 #pname = 'fams2'
 #fams = c("tnl0850", "tnl0480", "cnl0950")
 #pname = 'fams3'
-
+fams = c("Auxin_inducible", "tnl0850", "CRP1520")
+pname = 'fams0'
 
 plots = list()
 for (i in 1:length(fams)) {

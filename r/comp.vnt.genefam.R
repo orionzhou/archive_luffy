@@ -55,11 +55,15 @@ bps = intersect_basepair(grg, gra)
 tg2 = cbind(tg, nd = nds, bp = bps)
 gb = group_by(tg2, id)
 dg = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1), lenc = sum(bp), nd = sum(nd))
+famcnt = ddply(dg, .(fam), summarise, famcnt = length(id))
 
 dg = dg[dg$lenc / dg$len >= 0.8,]
 genes_covered = dg$id
 dg = cbind(dg, pi = dg$nd / dg$lenc)
 to = ddply(dg, .(fam), summarise, cnt = length(id), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
+to = merge(to, famcnt, by = 'fam')
+to = cbind(to, pct = to$cnt / to$famcnt)
+to[order(to$q50, decreasing = T), c(1,2,4)][1:10,]
 
 fo = file.path(diro, "42.genefam.pi.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
@@ -114,6 +118,7 @@ dg = dg[dg$lenc / dg$len >= 0.8,]
 genes_covered = dg$id
 dg = cbind(dg, pi = dg$nd / dg$lenc)
 to = ddply(dg, .(fam), summarise, cnt = length(id), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
+to[order(to$q50, decreasing = T), c(1,2,4)][1:10,]
 
 fo = file.path(diro, "42.genefam.pi.refmap.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
@@ -129,9 +134,10 @@ cat(sum(width(gry)), "\n")
 cat(sum(width(GenomicRanges::intersect(gra, gry))), "\n")
 
 gra = GenomicRanges::intersect(gra, gry)
-gsnp = GenomicRanges::intersect(gsnp, gry)
+snpidxs = intersect_idx1(gsnp, gry)
+#gsnp2 = GenomicRanges::intersect(gsnp, gry)
 
-nds = intersect_score(grg, gsnp)
+nds = intersect_score(grg, gsnp[snpidxs])
 bps = intersect_basepair(grg, gra)
 
 tg2 = cbind(tg, nd = nds, bp = bps)
@@ -142,6 +148,7 @@ dg = dg[dg$lenc / dg$len >= 0.8,]
 genes_covered = dg$id
 dg = cbind(dg, pi = dg$nd / dg$lenc)
 to = ddply(dg, .(fam), summarise, cnt = length(id), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
+to[order(to$q50, decreasing = T), c(1,2,4)][1:10,]
 
 fo = file.path(diro, "42.genefam.pi.refmap.syn.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)

@@ -27,7 +27,7 @@ if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
   export git=$home/git
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
   export git=$home/git
-elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node ]]; then
+elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^lc ]]; then
   export soft_msi=/soft
   for subpath in blat/34 usearch/7.0 muscle/3.8.31 \
     exonerate/2.2.0 structure/2.3.3
@@ -49,7 +49,7 @@ if [[ -d $soft ]]; then
   for subpath in zlib gcc boost libsequence \
     samtools bamtools bedtools vcftools bedops \
     hdf tabix bwa bowtie2 sra blast bwtool\
-    clustalw clustalo \
+    clustalw clustalo paml4.8 \
     parallel blast CAP3 cmake cufflinks \
     augustus maker ocaml opam \
     emboss gd geco genometools gmap hmmer mysql \
@@ -69,7 +69,7 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan-5.4-47.0 \
-    lastz snap trimal phyml paramugsy blasr
+    lastz snap trimal phyml paramugsy blasr pal2nal
   do
     export PATH=$soft/$subpath:$PATH
   done

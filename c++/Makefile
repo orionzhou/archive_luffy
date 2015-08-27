@@ -24,7 +24,7 @@ SRCDIR   = src
 OBJDIR   = obj
 BINDIR   = bin
 
-BINNAMES = test seqgc msConvert readGz blastTiling galTiling \
+BINNAMES = test seqgc msConvert readGz codonDegen blastTiling galTiling \
   snpSum snpStat snpDiff snpFilter snpSample snpSlide snpSubset\
   bamViewRead bamPreprocess bamCheck \
   bamFilterAb bamPickStretched bamPickOrphan bamPickBpReads \

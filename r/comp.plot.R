@@ -11,7 +11,7 @@ source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
-i = 39
+i = 1
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -42,7 +42,7 @@ CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 
-xsu = c(165, 340, 315)
+xsu = c(165, 328, 333, 340)
 ysu = c(1:3) * 105 - 30
 xs = rep(xsu, length(ysu))
 ys = rep(ysu, each = length(xsu))
@@ -67,7 +67,7 @@ CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 
-xsu = c(141, 280, 410)
+xsu = c(141, 286, 331, 409)
 ysu = c(1:3) * 135 - 45
 xs = rep(xsu, length(ysu))
 ys = rep(ysu, each = length(xsu))
@@ -226,6 +226,7 @@ scale.hts = c(0.9, 0.8, 0.85, 0.2, 0.2)
 source("comp.plot.fun.R")
 idxs = sort(unique(tl$i))
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
+tracks = c('taxis', 'link','qaxis')
 ress = list()
 hts = c()
 for (i in idxs) {

@@ -79,16 +79,17 @@ p3 = ggplot(tls) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_blank())
 
-fo = file.path(diro, "43.genefam.pdf")  
-numcol = 3
-wds = c(4, 3, 2.5)
-pdf(file = fo, width = sum(wds), height = 4, bg = 'transparent')
+fo = file.path(diro, "43.genefam.pdf")
+numcol = 2
+wds = c(4, 3)#, 2.5)
+#pdf(file = fo, width = sum(wds), height = 4, bg = 'transparent')
+tiff(file = fo, width = sum(wds), height = 4, units = 'in', bg = 'white')
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(1, numcol, width = wds)))
 
 print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-print(p3, vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
+#print(p3, vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
 
 dco = data.frame(x = rep(1,numcol), y = 1:numcol, lab = LETTERS[1:numcol])
 for (i in 1:nrow(dco)) {

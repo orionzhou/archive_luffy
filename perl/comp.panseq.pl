@@ -53,11 +53,17 @@ my @orgs = qw/
   HM023 HM010 HM022 HM324 HM340
 /;
 
-if($stat_flag) {
-  exit;
-}
+if($stat_flag) {exit;}
 
 #write_file_list("01_files", "02.file.list", \@orgs);
+
+my $dir_tmp = "/lustre/zhoup/tmp_paramugsy";
+my $f_tmpl = "\$soft/paramugsy/pm_qsub_template.sh";
+#runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
+#  -out-maf 21.maf -tmp-dir $dir_tmp -template-file $f_tmpl");
+
+#maf2tbl('21.maf', '22.tbl');
+restore_coordinate("31.refined.tbl", "32.global.tbl");
 sub write_file_list {
   my ($do, $fl, $orgs) = @_;
   -d $do || make_path($do);
@@ -69,13 +75,6 @@ sub write_file_list {
   }
   close $fhl;
 }
-
-my $dir_tmp = "/lustre/zhoup/tmp_paramugsy";
-my $f_tmpl = "\$soft/paramugsy/pm_qsub_template.sh";
-#runCmd("paramugsy local -cores 16 -seq-list 01.filelist.txt \\
-#  -out-maf 21.maf -tmp-dir $dir_tmp -template-file $f_tmpl");
-
-#maf2tbl('21.maf', '22.tbl');
 sub maf2tbl {
   my ($fi, $fo) = @_;
   my $ai = Bio::AlignIO->new(-file => $fi, -format => 'maf');
@@ -99,6 +98,25 @@ sub maf2tbl {
     }
     $i ++;
   }
+  close $fho;
+}
+sub restore_coordinate {
+  my ($fi, $fo) = @_;
+  my $ti = readTable(-in => $fi, -header => 1);
+  for my $i (0..$ti->lastRow) {
+    my ($cid, $alen, $org, $sid, $rb, $re, $srd) = $ti->row($i);
+    my ($chr, $bb, $be) = split("_", $sid);
+#    my $beg = $srd eq "-" ? $be - $re + 1 : $bb + $rb - 1;
+#    my $end = $srd eq "-" ? $be - $rb + 1 : $bb + $re - 1;
+    my ($beg, $end) = ($bb + $rb - 1, $bb + $re - 1);
+    $beg < $bb && die "error: $sid:$rb-$re => $chr:$beg:$end\n";
+    $end > $be && die "error: $sid:$rb-$re => $chr:$beg:$end\n";
+    $ti->setElm($i, "chr", $chr);
+    $ti->setElm($i, "beg", $beg);
+    $ti->setElm($i, "end", $end);
+  }
+  open(my $fho, ">$fo") or die "cannot write $fo\n";
+  print $fho $ti->tsv(1);
   close $fho;
 }
 

@@ -94,7 +94,7 @@ testplot <- function(testtree,thresh,plotfile=NULL){
 ## Return
 ##   median pairwise patristic distance (MPPD) of its leaves
 get.node.leaf.MPPD <- function(node,tree,distmat){
-  nlist <- node.leaves(tree,node)
+  nlist <- tips(tree,node)
   foo <- distmat[nlist,nlist] 
   return(median(foo[upper.tri(foo,diag=FALSE)]))
 }
@@ -105,7 +105,7 @@ get.node.leaf.MPPD <- function(node,tree,distmat){
 ## Return
 ##   median pairwise patristic distance (MPPD) of all of its decendants
 get.node.full.MPPD <- function(node,tree,distmat){
-  nlist <- node.leaves(tree,node)
+  nlist <- tips(tree,node)
   elist <- tree$edge[which.edge(tree,nlist),2]
   foo <- distmat[elist,elist] 
   return(median(foo[upper.tri(foo,diag=FALSE)]))

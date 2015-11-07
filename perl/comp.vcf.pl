@@ -43,7 +43,7 @@ GetOptions(
 pod2usage(1) if $help_flag;
 #pod2usage(2) if !$qry || !$tgt;
 
-my $dir = "$ENV{'data'}/misc3/comp.vnt";
+my $dir = "$ENV{'data'}/misc3/comp.vnt/acc4";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
@@ -52,6 +52,7 @@ my @qrys = qw/
   HM058 HM125 HM056 HM129 HM060
   HM095 HM185 HM034 HM004 HM050 
   HM023 HM010/;
+@qrys = qw/HM056 HM034 HM340/;
 
 #merge_vcfs(\@qrys);
 #vcf2tbl("01.raw.vcf", "05.bed");

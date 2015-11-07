@@ -63,16 +63,16 @@ chdir $dir || die "cannot chdir to $dir\n";
 
 #prepare_blat();
 ##### qsub itasca
-process_blat1();
+#process_blat1();
 ##### qsub itasca
-#process_blat2();
+process_blat2();
 #process_vnt();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
   runCmd("breakseq.bygap.pl -i $qry_fas -o 00.fas -g 1000");
   runCmd("seq.splitlarge.py 00.fas 00.even.fas");
-  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 10 -t $tgt -g $qry");
+  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 8 -t $tgt -g $qry");
 }
 sub process_blat1 {
   runCmd("cat 01_seq/part.*.psl > 11.psl");

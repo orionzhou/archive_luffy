@@ -9,37 +9,55 @@ source('comp.fun.R')
 dirw = file.path(Sys.getenv("misc3"), "comp.ortho")
 diro = file.path(Sys.getenv("misc3"), "comp.stat")
 
-ffam = file.path(diro, "41.gene.fams.tbl")
-fams = read.table(ffam, header = F, sep = "\t", as.is = T)[,1]
+ffam = "/home/youngn/zhoup/Data/db/pfam/genefam.tbl"
+tfam = read.table(ffam, header = T, sep = "\t", as.is = T)[,1:2]
 
-##### genefam three-panel plot: thetaPi + largeEff + cdslen
-fi = file.path(diro, "42.genefam.pi.tbl")
-ti = read.table(fi, header = T, sep = "\t", as.is = T)
+fams = c("CC-NBS-LRR", "TIR-NBS-LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
+fams = c(fams, "CRP0000-1030", "CRP1600-6250", "RLK")
 
-tis = ti[ti$fam %in% fams,]
-tis = tis[order(tis$q50, decreasing = T),]
-fams = tis$fam
+tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
+colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+tg = tg[tg$type == 'cds',]
 
-tis$fam = factor(tis$fam, levels = fams)
-p1 = ggplot(tis) +
+##### genefam three-panel plot: thetaPi + largeEff + cdslen + mpd + cnv
+# pi
+ff = file.path(diro, "42.pi.tbl")
+tf = read.table(ff, header = T, sep = "\t", as.is = T)
+
+to = tf
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+
+tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(pi, 0.25, na.rm = T), q50 = median(pi, na.rm = T), q75 = quantile(pi, 0.75, na.rm = T))
+famsf = as.character(tp$fam[order(tp$q50, decreasing = T)])
+tp$fam = factor(tp$fam, levels = famsf)
+labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
+
+p1 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
     stat = 'identity', position = 'dodge', geom_params = list(width = 0.7)) + 
   coord_flip() +
-  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tis$fam, tis$cnt)) +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
   scale_y_continuous(name = 'ThetaPi', expand = c(0, 0), limits = c(0, 0.02)) +
   theme_bw() +
-  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
 
-fi = file.path(diro, "42.genefam.largeeff.tbl")
+# largeeff
+fi = file.path(diro, "43.largeeff.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 
-tis = ti[ti$fam %in% fams,]
-tis$fam = factor(tis$fam, levels = fams)
-p2 = ggplot(tis) +
+to = ti
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+
+tp = ddply(to, .(fam, eff), summarise, prop = sum(cnt > 0) / length(cnt))
+tp$fam = factor(tp$fam, levels = famsf)
+
+p2 = ggplot(tp) +
   geom_bar(aes(x = fam, y = prop, fill = eff),
     stat = 'identity', position = 'stack', geom_params = list(width = 0.7)) + 
   coord_flip() +
@@ -48,24 +66,25 @@ p2 = ggplot(tis) +
   theme_bw() +
   theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
   theme(legend.position = c(0.7, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.7, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
-  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
 #  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
   theme(axis.text.y = element_blank())
 
-
-tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
-colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
-tg = tg[tg$type == 'cds',]
+# protein length
 gb = dplyr::group_by(tg, id)
-dg = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1))
-tl = ddply(dg, .(fam), summarise, q25 = quantile(len, 0.25), q50 = quantile(len, 0.5), q75 = quantile(len, 0.75))
+to = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1))
 
-tls = tl[tl$fam %in% fams,]
-tls$fam = factor(tls$fam, levels = fams)
-p3 = ggplot(tls) +
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+
+tp = ddply(to, .(fam), summarise, q25 = quantile(len, 0.25), q50 = quantile(len, 0.5), q75 = quantile(len, 0.75))
+tp$fam = factor(tp$fam, levels = famsf)
+labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
+
+p3 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50/3, ymin = q25/3, ymax = q75/3),
     stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
   coord_flip() +
@@ -73,23 +92,78 @@ p3 = ggplot(tls) +
   scale_y_continuous(name = 'Protein Length', expand = c(0, 0), limits = c(0, 1300)) +
   theme_bw() +
   theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
-  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_blank())
 
-fo = file.path(diro, "43.genefam.pdf")
-numcol = 2
-wds = c(4, 3)#, 2.5)
-#pdf(file = fo, width = sum(wds), height = 4, bg = 'transparent')
-tiff(file = fo, width = sum(wds), height = 4, units = 'in', bg = 'white')
+# mpd
+fi = file.path(diro, "46.mpd.tbl")
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+
+to = ti
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+
+tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(mpd, 0.25), q50 = quantile(mpd, 0.5), q75 = quantile(mpd, 0.75))
+tp$fam = factor(tp$fam, levels = famsf)
+labs = sprintf("%d", tp$cnt[match(famsf, tp$fam)])
+
+p4 = ggplot(tp) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
+  scale_y_continuous(name = 'Mean Pariwise Protein Distance', expand = c(0,0), limits = c(0, 0.2)) +
+  theme_bw() +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+
+# cnv
+fi = file.path(diro, "48.cnv.tbl")
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+
+to = ti
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+
+tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(cv, 0.25), q50 = quantile(cv, 0.5), q75 = quantile(cv, 0.75))
+tp$fam = factor(tp$fam, levels = famsf)
+labs = sprintf("%d", tp$cnt[match(famsf, tp$fam)])
+tp = rbind(tp, data.frame(fam = 'TE', cnt = 0, q25 = NA, q50 = NA, q75 = NA, stringsAsFactors = F))
+
+p5 = ggplot(tp) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', geom_params = list(width = 0.5)) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
+  scale_y_continuous(name = 'C.V. of cluster size') +
+  theme_bw() +
+#  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+  
+
+fo = file.path(diro, "49.genefam.pdf")
+numcol = 5
+wds = c(4, 3, 2.5, 3,3)
+pdf(file = fo, width = sum(wds), height = 3.2, bg = 'transparent')
+#tiff(file = fo, width = sum(wds), height = 4, units = 'in', bg = 'white')
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(1, numcol, width = wds)))
 
 print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-#print(p3, vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
+print(p3, vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
+print(p4, vp = viewport(layout.pos.row = 1, layout.pos.col = 4))
+print(p5, vp = viewport(layout.pos.row = 1, layout.pos.col = 5))
 
 dco = data.frame(x = rep(1,numcol), y = 1:numcol, lab = LETTERS[1:numcol])
 for (i in 1:nrow(dco)) {
@@ -112,11 +186,11 @@ tca = read.table(fi, header = T, sep = "\t", as.is = T)
 fi = file.path(dirw, "28.dist.tbl")
 tds = read.table(fi, header = T, sep = "\t", as.is = T)
 
-norgs = apply(tst[,orgs], 1, function(x) sum(!x %in% c('','-')))
+norgs = apply(tst[,qnames_15], 1, function(x) sum(!x %in% c('','-')))
 table(norgs)
 
 ##### gene fam mpd distribution 
-orgs_in = c(tname, get_orgs("ingroup"))
+orgs_in = c(tname, qnames_12)
   comps = c()
   ids = orgs_in
   for (i in 1:(length(ids)-1)) {
@@ -127,7 +201,40 @@ orgs_in = c(tname, get_orgs("ingroup"))
     }
   }
 
-## heatmap adopted from Arabidopsis paper
+#### cross-bar plot showing quantile
+norgs = apply(tst[,qnames_15], 1, function(x) sum(!x %in% c('','-')))
+idxs = which(norgs > 10)
+mpd = apply(tds[idxs,comps], 1, mean, na.rm = T)
+idxs = idxs[!is.na(mpd)]
+mpd = mpd[!is.na(mpd)]
+tu = data.frame(fam = tca$cat2[idxs], sfam = tca$cat3[idxs], mpd = mpd, stringsAsFactors = F)
+
+fo = file.path(diro, "46.mpd.tbl")
+write.table(tu, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+tis = ddply(tu, .(fam), summarise, cnt = length(fam), q25 = quantile(mpd, 0.25), q50 = quantile(mpd, 0.5), q75 = quantile(mpd, 0.75))
+tis = tis[order(tis$q50, decreasing = T),]
+fams = tis$fam
+
+tis$fam = factor(tis$fam, levels = fams)
+p1 = ggplot(tis) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tis$fam, tis$cnt)) +
+  scale_y_continuous(name = 'Mean Pariwise Protein Distance', expand = c(0,0), limits = c(0, 0.2)) +
+  theme_bw() +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+
+fp = file.path(diro, "46.mpd.pdf")
+ggsave(p1, filename = fp, width = 5, height = 8)
+
+
+## heatmap adopted from Arabidopsis paper (obsolete)
 norgs = apply(tst[,orgs], 1, function(x) sum(!x %in% c('','-')))
 idxs = which(norgs > 6)
 mpd = apply(tds[idxs,comps], 1, mean, na.rm = T)
@@ -181,36 +288,6 @@ pdf(file = fp, width = 6, height = 6, bg = 'transparent')
 grid.newpage()
 grid.draw(gt1)
 dev.off()
-
-## cross-bar plot showing quantile
-norgs = apply(tst[,orgs], 1, function(x) sum(!x %in% c('','-')))
-idxs = which(norgs > 5)
-mpd = apply(tds[idxs,comps], 1, mean, na.rm = T)
-idxs = idxs[!is.na(mpd)]
-mpd = mpd[!is.na(mpd)]
-tu = data.frame(fam = tca$cat2[idxs], mpd = mpd, stringsAsFactors = F)
-tu = tu[tu$fam %in% fams,]
-
-tis = ddply(tu, .(fam), summarise, cnt = length(fam), q25 = quantile(mpd, 0.25), q50 = quantile(mpd, 0.5), q75 = quantile(mpd, 0.75))
-tis = tis[order(tis$q50, decreasing = T),]
-fams = tis$fam
-
-tis$fam = factor(tis$fam, levels = fams)
-p1 = ggplot(tis) +
-  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
-  coord_flip() +
-  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tis$fam, tis$cnt)) +
-  scale_y_continuous(name = 'Mean Pariwise Protein Distance', expand = c(0,0), limits = c(0, 0.25)) +
-  theme_bw() +
-  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
-  theme(axis.title.y = element_blank()) +
-  theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
-
-fp = file.path(diro, "76.proteome.mpd.pdf")
-ggsave(p1, filename = fp, width = 5, height = 4)
 
 ##### gene fam AFS
 fam_cnt = table(tca$cat2)

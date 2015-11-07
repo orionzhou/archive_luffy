@@ -107,7 +107,9 @@ nrow(dg3)
 fo = sprintf("%s/%s.tbl", dirw, org)
 write.table(dg3, file = fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
-## 
+
+
+#####
 source("comp.plot.fun.R")
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene', 'qpacbio')
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')

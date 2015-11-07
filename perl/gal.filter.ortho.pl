@@ -71,6 +71,7 @@ while( <$fhi> ) {
   $ident >= $min_ident || next;
   my ($qcov, $tcov) = ($ali / $qSize, $ali / $tSize);
   ($qcov >= $min_qcov || $tcov >= $min_tcov) || next;
+  $tId ne $qId || next;
   print $fho join("\t", @$ps)."\n";
   $cnt ++;
 }

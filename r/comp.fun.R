@@ -3,18 +3,6 @@ require(rtracklayer)
 require(rbamtools)
 require(Rsamtools)
 
-get_orgs <- function(opt = 1) {
-  orgs = c(
-    "HM058", "HM056", "HM125", "HM129", "HM034", 
-    "HM095", "HM060", "HM185", "HM004", "HM050", 
-    "HM023", "HM010", "HM022", "HM340", "HM324"
-  )
-  if(opt == 'ingroup') {
-    orgs[1:12]
-  } else {
-    orgs
-  }
-}
 read_seqinfo <- function(fsize) {
   tsize = read.table(fsize, header = F, sep = "\t",  as.is = T, 
     col.names = c("id", "size"))
@@ -191,7 +179,7 @@ read_gax_simple <- function(fgax, gr) {
   }
   tg
 }
-read_gax <- function(fgal, fgax, gr) {
+read_gax <- function(fgal, fgax, gr, minp = 0.05) {
   gr = reduce(gr)
   
   tg = data.frame()
@@ -252,7 +240,7 @@ read_gax <- function(fgal, fgax, gr) {
   tc = cbind(tc, score = score)
   tc = tc[order(tc$tid, tc$tbeg, tc$tend),]
   
-  idxs = tc$ali >= sum(tc$ali) / 200
+  idxs = tc$ali >= sum(tc$ali) * 0.05
   cids = tc$cid[idxs]
   list(tg = tg[tg$cid %in% cids,], tc = tc[idxs,])
 }
@@ -319,8 +307,24 @@ read_bam <- function(bam, gr, pileup = F) {
 }
 
 tname = "HM101"
-qnames_all = get_orgs()
+qnames_all = c(
+  "HM058", "HM056", "HM125", "HM129", "HM034", 
+  "HM095", "HM060", "HM185", "HM004", "HM050", 
+  "HM023", "HM010", "HM022", "HM340", "HM324",
+  "HM056.AC", "HM034.AC", "HM340.AC"
+)
+qnames_12 = c(
+  "HM058", "HM056", "HM125", "HM129", "HM034", 
+  "HM095", "HM060", "HM185", "HM004", "HM050", 
+  "HM023", "HM010"
+)
+qnames_15 = c(
+  "HM058", "HM056", "HM125", "HM129", "HM034", 
+  "HM095", "HM060", "HM185", "HM004", "HM050", 
+  "HM023", "HM010", "HM022", "HM340", "HM324"
+)
+qnames_alpaca = c("HM056.AC", "HM034.AC", "HM340.AC")
+qnames_ingroup = qnames_12
 orgs = c(tname, qnames_all)
 cfgs = get_genome_cfgs(orgs)
 tcfg = cfgs[[tname]]
-qnames = qnames_all

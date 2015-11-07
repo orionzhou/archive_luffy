@@ -5,8 +5,19 @@ use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwi
 use vars qw/$VERSION @ISA @EXPORT @EXPORT_OK/;
 require Exporter;
 @ISA = qw/Exporter AutoLoader/;
-@EXPORT = qw/get_mt_ids/;
+@EXPORT = qw/get_mt_ids @qnames @qnames_15 @qnames_3 $tname/;
 @EXPORT_OK = qw//;
+
+our $tname = "HM101";
+our @qnames = qw/
+  HM058 HM125 HM056 HM129 HM060
+  HM095 HM185 HM034 HM004 HM050 
+  HM023 HM010 HM022 HM324 HM340
+  HM034.AC HM056.AC HM340.AC
+/;
+our @qnames_15 = qw/HM058 HM125 HM056 HM129 HM060 HM095 HM185 HM034 HM004 HM050  HM023 HM010 HM022 HM324 HM340/;
+our @qnames_3 = qw/HM034.AC HM056.AC HM340.AC/;
+
 sub get_mt_ids {
   my ($opt) = @_;
   my $fi = $ENV{"code"}."/conf/acc_ids.tbl";

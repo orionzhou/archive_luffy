@@ -142,6 +142,7 @@ ds = cbind(ds, pct_cov = ds$bp_cov / ungap, pct_cov_cds = ds$bp_cov_cds / sum(wi
 stats = list()
 statd = list()
 nstats = list()
+rstats = list()
 cstats = list()
 tstats = list()
 
@@ -151,13 +152,14 @@ fi = file.path(Sys.getenv("misc2"), "genefam", "nbs.info")
 nfams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
 fi = file.path(Sys.getenv("misc2"), "genefam", "crp.info")
 cfams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
+fi = file.path(Sys.getenv("misc2"), "genefam", "rlk.info")
+rfams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
 fi = file.path(Sys.getenv("data"), 'db', 'pfam', 'genefam.tbl')
-
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 tfams = ti$dom[ti$fam == 'TE']
 fams = unique(ti$fam[order(ti$pri)])
 
-for (qname in c(tname, qnames)) {
+for (qname in c(tname, qnames_15)) {
   dir = sprintf("%s/%s", Sys.getenv("genome"), qname)
   fg = file.path(dir, "51.gtb")
   tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,15:17)]
@@ -179,7 +181,7 @@ for (qname in c(tname, qnames)) {
   mean_prot = mean(lens)
   med_prot = median(lens)
     
-  tn = tg[tg$cat2 == 'NBS-LRR',]
+  tn = tg[tg$cat2 %in% c('CC-NBS-LRR', 'TIR-NBS-LRR'),]
   dtn = table(tn$cat3)
   x = c()
   x[nfams] = 0
@@ -187,16 +189,25 @@ for (qname in c(tname, qnames)) {
   nstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, nfams))
   n_nbs = nrow(tn)
   
-  tc = tg[tg$cat2 == 'CRP',]
+  tr = tg[tg$cat2 %in% c('RLK', 'LRR-RLK'),]
+  dtn = table(tr$cat3)
+  x = c()
+  x[rfams] = 0
+  x[names(dtn)] = dtn
+  rstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, rfams))
+  n_rlk = nrow(tr)
+  
+  tc = tg[tg$cat2 %in% c('CRP0000-1030','NCR','CRP1600-6250'),]
   dtn = table(tc$cat3)
   x = c()
   x[cfams] = 0
   x[names(dtn)] = dtn
   cstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, cfams))
-  n_crp = nrow(tc)
+  n_ncr = sum(tc$cat2 == 'NCR')
   
   tt = tg[tg$cat2 == 'TE',]
   dtn = table(tt$cat3)
+  dtn = dtn[names(dtn) != '']
   x = c()
   x[tfams] = 0
   x[names(dtn)] = dtn
@@ -224,9 +235,9 @@ for (qname in c(tname, qnames)) {
   }
   p_sup = sprintf("%.01f", length(unique(c(ids_rna, ids_hom))) / length(ids) * 100)
   
-  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_crp, med_prot, p_rna, p_hom, p_sup),
+  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_rlk, n_ncr, med_prot, p_rna, p_hom, p_sup),
     nrow = 1, dimnames = list(NULL, c("# Total Genes", 'TE', 'non-TE', 
-    'NBS-LRR','CRP',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
+    'NBS-LRR','RLK','NCR',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
 }
 ds = do.call(rbind.data.frame, stats)
 #for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }
@@ -243,6 +254,14 @@ do = ds[,colsums>0]
 do = t(do)
 do = cbind('sub-family' = rownames(do), do)
 fo = file.path(diro, "04.nbs.tbl")
+write.table(do, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+ds = do.call(rbind.data.frame, rstats)
+colsums = apply(ds, 2, sum)
+do = ds[,colsums>0]
+do = t(do)
+do = cbind('sub-family' = rownames(do), do)
+fo = file.path(diro, "04.rlk.tbl")
 write.table(do, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 ds = do.call(rbind.data.frame, cstats)

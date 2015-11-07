@@ -55,18 +55,33 @@ bps = intersect_basepair(grg, gra)
 tg2 = cbind(tg, nd = nds, bp = bps)
 gb = group_by(tg2, id)
 dg = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1), lenc = sum(bp), nd = sum(nd))
-famcnt = ddply(dg, .(fam), summarise, famcnt = length(id))
 
 dg = dg[dg$lenc / dg$len >= 0.8,]
 genes_covered = dg$id
-dg = cbind(dg, pi = dg$nd / dg$lenc)
-to = ddply(dg, .(fam), summarise, cnt = length(id), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
-to = merge(to, famcnt, by = 'fam')
-to = cbind(to, pct = to$cnt / to$famcnt)
-to[order(to$q50, decreasing = T), c(1,2,4)][1:10,]
+to = cbind(dg[,c('fam')], pi = dg$nd / dg$lenc)
 
-fo = file.path(diro, "42.genefam.pi.tbl")
+fo = file.path(diro, "42.pi.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
+fams = tp$fam[order(tp$q50, decreasing = T)]
+tp$fam = factor(tp$fam, levels = fams)
+
+p1 = ggplot(tp) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.7)) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tis$fam, tis$cnt)) +
+  scale_y_continuous(name = 'ThetaPi', expand = c(0, 0), limits = c(0, 0.02)) +
+  theme_bw() +
+  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+
+fp = file.path(diro, "42.pi.pdf")
+ggsave(p1, filename = fp, width = 5, height = 8)
 
 ### characterize large-effect SNPs by gene fam
 lefmap = c(
@@ -88,11 +103,9 @@ for (lef in lefmap) {
 }
 gb = group_by(dz, id, eff)
 dz2 = dplyr::summarize(gb, fam = fam[1], cnt = sum(cnt))
-dg = dz2[dz2$id %in% genes_covered,]
+to = dz2[dz2$id %in% genes_covered,]
 
-to = ddply(dg, .(fam, eff), summarise, prop = sum(cnt > 0) / length(cnt))
-
-fo = file.path(diro, "42.genefam.largeeff.tbl")
+fo = file.path(diro, "43.largeeff.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 ### Gene-Family Theta-Pi using reference mapping-based approach

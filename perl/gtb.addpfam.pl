@@ -98,10 +98,10 @@ while( <$fhi> ) {
     my $h2 = $h->{$id};
     my @doms = sort {$h2->{$a} <=> $h2->{$b}} keys(%$h2);
     $cat3 = $doms[0];
-    $cat2 = exists $hd->{$doms[0]} ? $hd->{$doms[0]} : 'Coding_Gene';
+    $cat2 = exists $hd->{$doms[0]} ? $hd->{$doms[0]} : 'Miscellaneous';
     $note = join(" ", @doms);
   } else {
-    $cat2 = 'Coding_Gene';
+    $cat2 = 'Unknown';
     $note = '';
   }
   $ps->[15] = $cat2;

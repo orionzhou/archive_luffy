@@ -4,8 +4,8 @@ require(grid)
 require(ggplot2)
 source('Location.R')
 source('comp.fun.R')
+source('comp.plot.fun.R')
 
-dirw = sprintf("%s/comp.stat", Sys.getenv("misc3"))
 diro = sprintf("%s/comp.stat", Sys.getenv("misc3"))
 
 tlen = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
@@ -22,7 +22,8 @@ tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
 colnames(tg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
 tg = tg[tg$type == 'cds',]
 gb = group_by(tg, id)
-tg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
+tg = summarise(gb, fam = fam[1], chr = chr[1], beg = min(beg), end = max(end), size = end - beg + 1)
+tg = cbind(idx = 1:nrow(tg), tg)
 grgt = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 ##### SV impact on genome and proteome
@@ -44,7 +45,7 @@ qg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
 colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
 qg = qg[qg$type == 'cds',]
 gb = group_by(qg, id)
-qg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
+qg = summarise(gb, fam = fam[1], chr = chr[1], beg = min(beg), end = max(end), size = end - beg + 1)
 grgq = with(qg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 cdir = cfg$cdir
@@ -56,8 +57,7 @@ ytlen = sum(width(reduce(gryt)))
 yqlen = sum(width(reduce(gryq)))
 
 fv = file.path(cdir, "../31_sv/05.stb")
-tv = read.table(fv, header = T, sep = "\t", as.is = T)
-tv = tv[,c('id','tchr','tbeg','tend','tlen','srd','qchr','qbeg','qend','qlen')]
+tv = read.table(fv, header = T, sep = "\t", as.is = T)[,c('id','tchr','tbeg','tend','tlen','srd','qchr','qbeg','qend','qlen')]
 tv = tv[tv$tlen+tv$qlen-2 >= 50,]
 tvt = tv[tv$tlen > 0, c('tchr','tbeg','tend')]
 grst = with(tvt, GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
@@ -83,9 +83,11 @@ cat(sprintf("%s: genome [tgt %.03f qry %.03f] gene [tgt %.03f qry %.03f]\n", qna
 
 }
 
-#### SV impact on gene family
+#### SV impact on genes / gene family
 do = data.frame()
 for (qname in qnames_all[1:12]) {
+
+qname = "HM340.AC"
 cfg = cfgs[[qname]]
 
 tlen = read.table(cfg$size, sep = "\t", header = F, as.is = T)
@@ -102,7 +104,8 @@ qg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
 colnames(qg) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'fam')
 qg = qg[qg$type == 'cds',]
 gb = group_by(qg, id)
-qg_size = summarise(gb, fam = fam[1], size = sum(end - beg + 1))
+qg = summarise(gb, fam = fam[1], chr = chr[1], beg = min(beg), end = max(end), size = end - beg + 1)
+qg = cbind(idx = 1:nrow(qg), qg)
 grgq = with(qg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 cdir = cfg$cdir
@@ -112,21 +115,28 @@ cdir = cfg$cdir
 #ty = ty[ty$lev == 1,]
 fv = file.path(cdir, "../31_sv/05.stb")
 tv = read.table(fv, header = T, sep = "\t", as.is = T)[,c('id','tchr','tbeg','tend','tlen','srd','qchr','qbeg','qend','qlen')]
+tv = tv[tv$tlen+tv$qlen-2 >= 50,]
+tvt = tv[tv$tlen > 0, c('tchr','tbeg','tend')]
+tvt = cbind(idx = 1:nrow(tvt), tvt)
+grst = with(tvt, GRanges(seqnames = tchr, ranges = IRanges(tbeg+1, end = tend-1)))
+tvq = tv[tv$qlen > 0, c('qchr','qbeg','qend','tchr','tbeg','tend')]
+tvq = cbind(idx = 1:nrow(tvq), tvq)
+grsq = with(tvq, GRanges(seqnames = qchr, ranges = IRanges(qbeg+1, end = qend-1)))
 
-gsvt = with(tv[tv$tend-tv$tbeg>1,], GRanges(seqnames = tchr, ranges = IRanges(tbeg+1, end = tend-1)))
-gsvq = with(tv[tv$qend-tv$qbeg>1,], GRanges(seqnames = qchr, ranges = IRanges(qbeg+1, end = qend-1)))
+x = intersect_idx(grst, grgt)
+y = merge(x, tg[,c('idx','id','fam','size')], by.x = 'qidx', by.y = 'idx')
+gb = group_by(y, idx)
+z = summarize(gb, ngene = n(), n2 = sum(fam %in% c("NCR","CRP0000-1030")))
+z = merge(z, tvt, by = 'idx')
+z[order(z$n2, decreasing = T), ][1:30,]
 
-olens = intersect_basepair(grgt, gsvt)
-gb = group_by(cbind(tg, olen = olens), id)
-ds1 = summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
-ds = ddply(ds1, .(fam), summarise, cnt = length(pct), prop = sum(pct>0.5)/cnt)
-#ds[order(ds$prop, decreasing=T),][1:30,]
+x = intersect_idx(grsq, grgq)
+y = merge(x, qg[,c('idx','id','fam','size')], by.x = 'qidx', by.y = 'idx')
+gb = group_by(y, idx)
+z = summarize(gb, ngene = n(), n2 = sum(fam %in% c("NCR","CRP0000-1030")))
+z = merge(z, tvq, by = 'idx')
+z[order(z$n2, decreasing = T), ][1:30,]
 
-olens = intersect_basepair(grgq, gsvq)
-gb = group_by(cbind(qg, olen = olens), id)
-ds1 = summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
-ds = ddply(ds1, .(fam), summarise, cnt = length(pct), prop = sum(pct>0.5)/cnt)
-#ds[order(ds$prop, decreasing=T),][1:30,]
 
 ds = cbind(ds, org = qname)
 do = rbind(do, ds)

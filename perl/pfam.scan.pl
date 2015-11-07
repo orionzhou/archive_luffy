@@ -46,7 +46,7 @@ pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$fo;
 
 my $fm = "$ENV{'data'}/db/pfam/Pfam-A.hmm";
-runCmd("hmmscan --cpu 8 -o $fo.1.txt $fm $fi");
+runCmd("hmmscan --cpu $ENV{'nproc'} -o $fo.1.txt $fm $fi");
 runCmd("hmmc2htb.pl -i $fo.1.txt -o $fo.2.htb -m $fm -s $fi");
 runCmd("htb.qtile.pl -i $fo.2.htb -o $fo.3.htb");
 runCmd("htb.filter.pl -i $fo.3.htb -l 10 -e 0.01 -o $fo.4.htb");

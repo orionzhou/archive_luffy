@@ -30,6 +30,7 @@ use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
 use File::Basename;
 use List::Util qw/min max sum/;
+use Medicago;
 
 my $help_flag;
 
@@ -39,21 +40,15 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my @orgs = qw/
-  HM058 HM125 HM056 HM129 HM060
-  HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010 HM022 HM324 HM340
-/;
-@orgs = qw/HM034.AC HM056.AC HM340.AC/;
+print "#qsub rnaseq\n";
 
-print "qsub rnaseq\n";
-
-for my $org (@orgs) {
+for my $org (@qnames) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
 #  runCmd("genome.fas.pl -g $org");
 #  runCmd("genome.db.pl -g $org");
 #  print "qsub rm -N rm.$org -v ORG=$org -l qos=weightlessqos\n";
+#  runCmd("mt.augus.pl -g $org");
   runCmd("mt.anno.pl -g $org");
 #  print "qsub mtanno -N mtanno.$org -v ORG=$org -l qos=weightlessqos");
 #  runCmd("gff.rename.pl -i \$genome/$org/51.gff -m \$genome/$org/raw.fix.fas.map -o \$misc2/coge/$org.gff");

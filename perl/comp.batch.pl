@@ -30,6 +30,7 @@ use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
 use File::Basename;
 use List::Util qw/min max sum/;
+use Medicago;
 
 my $help_flag;
 
@@ -39,13 +40,7 @@ GetOptions(
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 
-my $tgt = "HM101";
-my @qrys = qw/
-  HM058 HM125 HM056 HM129 HM060
-  HM095 HM185 HM034 HM004 HM050 
-  HM023 HM010 HM022 HM324 HM340
-/;
-
+my ($tgt, @qrys) = ($tname, @qnames);
 for my $qry (@qrys) {
   my $tag = $qry;
   $tag =~ s/HM//i;
@@ -53,7 +48,7 @@ for my $qry (@qrys) {
   chdir $dir || die "cannot chdir to $dir\n";
 #  runCmd("comp.pl -q $qry -t $tgt");
 #  runCmd("comp.novseq.pl -q $qry -t $tgt");
-#  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
+  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
 #  runCmd("comp.sv.pl -q $qry");
 }
 __END__

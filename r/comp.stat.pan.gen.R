@@ -10,52 +10,78 @@ source("comp.fun.R")
 dirw = file.path(Sys.getenv('misc3'), 'comp.panseq')
 diro = file.path(Sys.getenv("misc3"), "comp.stat")
 
-##### novel segments AFS
+
+tlen = read.table(cfgs[[tname]]$size, sep = "\t", as.is = T, header = F)
+tgap = read.table(cfgs[[tname]]$gap, sep = "\t", as.is = T, header = F)
+grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, V2)))
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, V3)))
+grs = setdiff(grt, grp)
+
+for (org in qnames_12) {
+  fgax = sprintf("%s/%s_HM101/23_blat/31.9/gax", Sys.getenv('misc3'), org)
+  tgax = read.table(fgax, sep = "\t", header = F, as.is = T)[,1:3]
+  gr = with(tgax, GRanges(seqnames = V1, ranges = IRanges(V2, V3)))
+  grs = c(grs, gr)
+}
+
+gro = as(coverage(grs), "GRanges")
+scores = mcols(gro)$score
+lens = width(gro)
+x = data.frame(n_org = scores, len = lens, stringsAsFactors = F)
+tx = ddply(x, .(n_org), summarise, size = sum(len), org = 'mixed')
+tx = tx[tx$n_org > 0,]
+tx$org[tx$n_org == 1] = "HM101"
+
+
+##### pan-genome AFS
 fi = file.path(dirw, '31.refined.tbl')
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-ddply(ti, .(org), summarise, len = sum(end - beg + 1))
+ti = ti[ti$org %in% qnames_12,]
+#ddply(ti, .(org), summarise, len = sum(end - beg + 1))
 
 gb = group_by(ti, cid)
 tu1 = summarise(gb, n_org = n(), 
   orgs = paste(sort(unique(as.character(org))), collapse = "_"),
   size = sum(end - beg + 1))
 
-orgs = c(tname, qnames)
+orgs = c(tname, qnames_12)
 tu2 = ddply(tu1, .(n_org), summarise, size = sum(size))
-dt1 = data.frame(n_org = tu2$n_org, size = tu2$size/tu2$n_org, org = 'mixed', stringsAsFactors = F)
+dt1 = data.frame(n_org = tu2$n_org, size = as.integer(tu2$size/tu2$n_org), org = 'mixed', stringsAsFactors = F)
 dt1 = dt1[dt1$n_org != 1,]
+dt1 = rbind(dt1, tx[tx$n_org != 1,])
+dt1 = ddply(dt1, .(n_org), summarise, size = sum(size), org = org[1])
 
 tus = tu1[tu1$n_org == 1,]
 dtt = ddply(tus, .(orgs), summarise, size = sum(size))
 dt2 = data.frame(n_org = 1, size = dtt$size, org = dtt$orgs, stringsAsFactors = F)
+dt2 = rbind(dt2, tx[tx$n_org == 1,])
 dt2$org = factor(dt2$org, levels = orgs)
 dt2 = dt2[order(dt2$org),]
 
 to = rbind(dt2, dt1)
-mxs = seq(20, length.out = 14, by = 5)
-to = cbind(to, x = c(1:15, mxs), wid = c(rep(1, 15), rep(2, 14)))
+to = cbind(to, x = 1:13, width = 1)
 
-cols = c(brewer.pal(11, 'Set3'), brewer.pal(4, 'Set1'), 'gray30')
+cols = c(brewer.pal(12, 'Set3'), brewer.pal(1, 'Set1')[1], 'gray30')
 labs = orgs
 
-#to$org = factor(to$org, levels = c(orgs, 'mixed'))
-#to$n_org = factor(to$n_org, levels = sort(as.numeric(unique(to$n_org))))
-p1 = ggplot(to, aes(x = x, y = size/1000000, fill = org, width = wid)) +
-  geom_bar(stat = 'identity') +
+to$org = factor(to$org, levels = c(orgs, 'mixed'))
+to$n_org = factor(to$n_org, levels = sort(as.numeric(unique(to$n_org))))
+p1 = ggplot(to, aes(x = n_org, y = size/1000000, fill = org)) +
+  geom_bar(stat = 'identity', position = "stack", geom_params=list(width=0.5)) +
   scale_fill_manual(name = "Accession-Specific", breaks = labs, labels = labs, values = cols) +
-  scale_x_continuous(name = '# Sharing Accession', breaks = c(8, mxs), labels = c('1(accession-specific)', 2:15), expand = c(0, 0), limits = c(-2, max(to$x) + 3)) +
-  scale_y_continuous(name = 'Sequences (Mbp)', expand = c(0, 0), limits = c(0, 8.5)) +
+  scale_x_discrete(name = '# Sharing Accessions') +
+  scale_y_continuous(name = 'Sequences (Mbp)', expand = c(0, 0), limits = c(0, 260)) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
-  theme(legend.position = c(0.7, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.5, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.3, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.5, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(0,0,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, colour = "blue")) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 1))
 
-#fp = sprintf("%s/61.pan.genome.afs.pdf", diro)
-#ggsave(p, filename = fp, width = 5, height = 5)
+fp = sprintf("%s/61.pan.genome.afs.pdf", diro)
+ggsave(p1, filename = fp, width = 5, height = 5)
 
 ##### pan/core-genome size curve
 fi = file.path(dirw, '31.refined.tbl')

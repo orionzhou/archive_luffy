@@ -86,12 +86,17 @@ sub process_crp {
   close $fho;
 }
 
+my $f_rlk = "44.rlk/11.gtb";
+-s $f_rlk or die "$f_rlk is not there\n";
+runCmd("ln -sf $f_rlk 44.rlk.gtb");
+
 runCmd("gtb.merge.pl -a 41.gtb -b 42.nbs.gtb -o 49.1.gtb");
-runCmd("gtb.merge.pl -a 49.1.gtb -b 43.crp.gtb -o 49.gtb");
+runCmd("gtb.merge.pl -a 49.1.gtb -b 43.crp.gtb -o 49.2.gtb");
+runCmd("gtb.merge.pl -a 49.2.gtb -b 44.rlk.gtb -o 49.gtb");
 runCmd("gtb.dedup.pl -i 49.gtb -o 50.1.dedup.gtb");
 runCmd("gtb.pickalt.pl -i 50.1.dedup.gtb -o 50.2.pickalt.gtb");
 
-my $f_ctm = "\$misc3/$org\_HM101/41_novseq/15.foreign.scf.txt";
+my $f_ctm = "$ENV{'misc3'}/$org\_HM101/41_novseq/15.foreign.scf.txt";
 if($org eq "HM101" | ! -s $f_ctm) {
   print "$f_ctm not there: skip contaminant_removal\n" if $org ne "HM101";
   runCmd("gtb.fill.len.pl -i 50.2.pickalt.gtb | gtb.filter.pl -l 30 -o 51.gtb");

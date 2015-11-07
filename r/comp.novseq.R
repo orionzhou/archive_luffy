@@ -44,30 +44,52 @@ write(fids, fo)
 
 ##### enrichment analysis (by proportion of gene family being novel)
 do = data.frame()
+fams = c("CC-NBS-LRR", "TIR-NBS-LRR", "F-box", "RLK", "LRR-RLK", "NCR", "CRP1600-6250", "TE", "Unknown")
 for (qname in qnames_all[1:12]) {
-cfg = cfgs[[qname]]
+  cfg = cfgs[[qname]]
 
-tg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
-colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
-tg = tg[tg$type == 'cds',]
-grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  tg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
+  colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+  tg = tg[tg$type == 'cds',]
+  tg$fam[!tg$fam %in% fams] = 'Pfam-Miscellaneous'
+  grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
-fn = file.path(cfg$cdir, "../41_novseq/21.bed")
-tn = read.table(fn, sep = "\t", header = F, as.is = T)
-grn = with(tn, GRanges(seqnames = V1, ranges = IRanges(V2+1, end = V3)))
 
-olens = intersect_basepair(grg, grn)
+
+  tz = read.table(cfg$size, sep = "\t", header = F, as.is = T)
+  grz = with(tz, GRanges(seqnames = V1, ranges = IRanges(1, end = V2)))
+  
+  tp = read.table(cfg$gap, sep = "\t", header = F, as.is = T)
+  grp = with(tp, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+  grb = GenomicRanges::setdiff(grz, grp)
+
+  ft = file.path(cfg$gdir, "12.rm.bed")
+  tt = read.table(ft, sep = "\t", header = F, as.is = T)
+  grt = with(tt, GRanges(seqnames = V1, ranges = IRanges(V2+1, end = V3)))
+  
+  fx = file.path(cfg$cdir, "41.9/gax")
+  tx = read.table(fx, sep = "\t", header = F, as.is = T)
+  grx = with(tx, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+
+  grn = GenomicRanges::setdiff(grb, grx)
+  grn = GenomicRanges::setdiff(grn, grt)
+
+#  fn = file.path(cfg$cdir, "../41_novseq/21.bed")
+#  tn = read.table(fn, sep = "\t", header = F, as.is = T)
+#  grn = with(tn, GRanges(seqnames = V1, ranges = IRanges(V2+1, end = V3)))
+
+  olens = intersect_basepair(grg, grn)
 #ds = ddply(cbind(tg, olen = olens), .(fam), summarise, olen = sum(olen), alen = sum(end - beg + 1))
 #ds = cbind(ds, prop = ds$olen / ds$alen, org = qname)
-gb = group_by(cbind(tg, olen = olens), id)
-dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
+  gb = group_by(cbind(tg, olen = olens), id)
+  dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
 
-ds = ddply(dx, .(fam), summarise, cnt = length(pct), prop = sum(pct>=0.5)/cnt)
-
-
-do = rbind(do, cbind(ds, org = qname))
+  ds = ddply(dx, .(fam), summarise, cnt = length(pct), nov_cnt = sum(pct >= 0.5), nov_prop = nov_cnt/cnt)
+  ds = cbind(ds, nov_comp = ds$nov_cnt / sum(ds$nov_cnt))
+  sum(ds$nov_comp[ds$fam %in% c("CC-NBS-LRR", "TIR-NBS-LRR", "F-box", "RLK", "LRR-RLK", "NCR")])
+  do = rbind(do, cbind(ds, org = qname))
 }
-to = ddply(do, .(fam), summarise, q25 = quantile(prop, 0.25), q50 = quantile(prop, 0.5), q75 = quantile(prop, 0.75))
+to = ddply(do, .(fam), summarise, q25 = quantile(nov_comp, 0.25), q50 = quantile(nov_comp, 0.5), q75 = quantile(nov_comp, 0.75))
 
 fo = file.path(diro, "42.genefam.novseq.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
@@ -76,15 +98,11 @@ write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 fi = file.path(diro, "42.genefam.novseq.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 
-ffam = file.path(diro, "41.gene.fams.tbl")
-fams = read.table(ffam, header = F, sep = "\t", as.is = T)[,1]
-
-tis = ti[ti$fam %in% fams,]
-tis = tis[order(tis$q50, tis$q25, tis$q75, decreasing = T),]
+tis = ti[order(ti$q50, ti$q25, ti$q75, decreasing = T),]
 tis$fam = factor(tis$fam, levels = tis$fam)
 p3 = ggplot(tis) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.7, size = 0.3)) + 
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.5, size = 0.3)) + 
   coord_flip() +
   scale_x_discrete(name = '', expand = c(0.01, 0.01)) +
   scale_y_continuous(name = 'Proportion novel (absent in HM101)', expand = c(0.002, 0.002)) +
@@ -93,11 +111,11 @@ p3 = ggplot(tis) +
   theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+  theme(axis.text.x = element_text(size = 9, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 9, colour = "royalblue", angle = 0, hjust = 1))
 
 fp = file.path(diro, "18_novseq_genefam.pdf")
-ggsave(p3, filename = fp, width = 5, height = 4)
+ggsave(p3, filename = fp, width = 4, height = 2.5)
 
 
 ##### enrichment anlaysis (old: quantile of 15 accessions)
@@ -214,14 +232,19 @@ ti = within(ti, {zchr = paste(org, chr, sep = "_")})
 grn = with(ti, GRanges(seqnames = zchr, ranges = IRanges(beg, end = end)))
 cat(sum(width(grn)), sum(width(reduce(grn))), "\n")
 
-gb = group_by(ti, cid)
+#tis = ti[ti$org %in% c("HM034", "HM340"),]
+tis = ti
+gb = group_by(tis, cid)
 dcl = dplyr::summarise(gb, n_org = n(), 
 #  orgs = paste(sort(unique(as.character(org))), collapse = "_"),
   size = sum(end - beg + 1))
 
+tis = tis[tis$cid %in% dcl$cid[dcl$n_org == 1],]
+tis = tis[tis$alen >= 10,]
+
 # read in all genes
 tg = data.frame()
-for (qname in qnames_all) {
+for (qname in qnames_15) {
   cfg = cfgs[[qname]]
   tg1 = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
   colnames(tg1) = c("chr", "beg", "end", "srd", "id", "type", "fam")
@@ -232,14 +255,12 @@ for (qname in qnames_all) {
   })
   tg = rbind(tg, tg1)
 }
-grg = with(tg, GRanges(seqnames = zchr, ranges = IRanges(beg, end = end)))
-tlen = sum(tg$end - tg$beg + 1)
-x1 = ddply(tg, .(fam), summarise, pct = sum(end-beg+1) / tlen)
 gb = group_by(tg, zid)
-x2 = dplyr::summarise(gb, fam = fam[1], glen = sum(end-beg+1))
-x3 = ddply(x2, .(fam), summarise, pct = length(zid) / nrow(x2))
+tgz = summarise(gb, size = sum(end - beg + 1), fam = fam[1])
+grg = with(tg, GRanges(seqnames = zchr, ranges = IRanges(beg, end = end)))
 
-  t1 = ti[,c('zchr','beg','end','cid')]
+
+  t1 = tis[,c('zchr','beg','end','cid')]
   t2 = tg[,c('zchr','beg','end','zid','fam')]
   t1$beg = t1$beg - 1
   t2$beg = t2$beg - 1
@@ -257,44 +278,32 @@ x3 = ddply(x2, .(fam), summarise, pct = length(zid) / nrow(x2))
   colnames(t3) = c('chr', 'beg1', 'end1', 'cid', 'chr2', 'beg2', 'end2', 'zid', 'fam', 'olen')
   system(sprintf("rm %s %s %s", fbd1, fbd2, fres))
 
-## contribution to novel sequence content (bps)
 to = within(t3, {
   beg = pmax(beg1, beg2);
   end = pmin(end1, end2);
-  rm(beg1, end1, chr2, beg2, end2)
+  rm(beg1, end1, chr2, beg2, end2, fam)
 })
-to = merge(to, dcl[,1:2], by = 'cid')
-to = within(to, {polen = olen / n_org})
+to = cbind(to, org = sapply(strsplit(to$chr, "_"), "[", 1))
+to = merge(to, tgz, by = 'zid')
+to = to[to$olen / to$size >= 0.5,]
 
-tlen = sum(to$polen)
-y1 = ddply(to, .(fam), summarise, pct = sum(polen) / tlen)
+fams = c("CC-NBS-LRR", "TIR-NBS-LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
+to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
 
-tp = merge(x1, y1, by = 'fam')
-colnames(tp) = c('fam', 'pct_total', 'pct_nov')
-tp = within(tp, {fold = pct_nov / pct_total})
-tp[order(tp$fold, decreasing = T), ][1:30,]
-
-## contribution to novel gene pool by count (gene number)
-to = within(t3, {
-  beg = pmax(beg1, beg2);
-  end = pmin(end1, end2);
-  rm(beg1, end1, chr2, beg2, end2)
-})
-to = merge(to, dcl[,1:2], by = 'cid')
-gb = group_by(to, cid, zid)
-to = dplyr::summarise(gb, olen = sum(olen), n_org = n_org[1])
-to = merge(to, x2, by = 'zid')
-to = to[to$olen / to$glen >= 0.5,]
-
-tcnt = nrow(to)#sum(1/to$n_org)
-y2 = ddply(to, .(fam), summarise, pct = length(zid) / tcnt)#sum(1/n_org) / tcnt)
-
-tp = merge(x3, y2, by = 'fam')
-colnames(tp) = c('fam', 'pct_total', 'pct_nov')
-tp = within(tp, {fold = pct_nov / pct_total})
-tp[order(tp$fold, decreasing = T), ][1:30,]
+x = table(to[,c('org','fam')])
+write.table(x, file.path(dirw, '51.nov.gene.tbl'), sep = "\t", row.names = T, col.names = T, quote = F)
 
 
+x = table(to$fam)
+tp = data.frame(fam = names(x), num = as.numeric(x), stringsAsFactors = T)
+tp = cbind(tp, prop = tp$num / sum(tp$num))
+labs = sprintf("%s (%.01f%%)", tp$fam, tp$prop * 100)
+
+fo = file.path(dirw, '51.novel.fam.pdf')
+pdf(file = fo, width = 8, height = 6)
+pie(tp$num, labels = labs, lwd = 1, cex = 0.7, main = sprintf("Composition of the accession-specific gene pool (%d)", nrow(to)))
+dev.off()
 
 ffam = file.path(diro, "41.gene.fams.tbl")
 fams = read.table(ffam, header = F, sep = "\t", as.is = T)[,1]

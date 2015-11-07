@@ -272,7 +272,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     if(max_len < 100000) {
       snp = read_tabix(cfg$tsnp, gr)
       snp = snp[snp$V8 == 1,]
-      if(!is.null(snp) & nrow(snp) == 0) snp = NULL
+      if(typeof(snp) == "list") if(nrow(snp) == 0) snp = NULL
       if(!is.null(snp)) {
     colnames(snp) = c('tid', 'tpos', 'ref', 'alt', 'qid', 'qpos', 'cid', 'lev')
     tsnp = coord_mapping(snp[,c(1,2,2)], tmap)
@@ -342,7 +342,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
   dats$max_len = max_len
   dats
 }
-comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = F) {
+comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = F, legend.opt = 'all') {
   ## some default plotting parameters
   tracktypes = c('tgene' = 'gene', 'taxis' = 'axis',  'tgap' = 'gap', 
     'qgap' = 'gap', 'qaxis' = 'axis', 'qgene' = 'gene',
@@ -397,7 +397,7 @@ comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), 
     just = c('left', 'top'), name = 'right')
   
   if(draw.legend.gene) {
-    grobs = gList(plot_legend_gene(x = unit(0, 'npc'), vp = vtr))
+    grobs = gList(plot_legend_gene(x = unit(0, 'npc'), opt = legend.opt, vp = vtr))
 #    grob_title = plot_title(main = '', subtitle = '', vp = vtr)
   } else {grobs = gList()}
   
@@ -820,9 +820,15 @@ plot_scale <- function(max_len, x = unit(0.98, 'npc'), y = unit(0.2, 'npc'), vp 
     gp = gpar(cex = 0.75, fontfamily = "serif"), vp = vp)
   gList(scalegrob1, scalegrob2, scalegrob3)
 }
-plot_legend_gene <- function(x = unit(0.2, 'npc'), vp = NULL) {
-  fill = c('TE' = 'slategray3', 'Non-TE Gene' = 'brown4',
-    'NBS-LRR' = 'forestgreen', 'CRP' = 'dodgerblue')
+plot_legend_gene <- function(x = unit(0.2, 'npc'), opt = 'all', vp = NULL) {
+  stopifnot(opt %in% c("all", "nocrp", "nonbs"))
+  if(opt == 'all') {
+    fill = c('TE' = 'slategray3', 'Non-TE Gene' = 'brown4', 'NBS-LRR' = 'forestgreen', 'CRP' = 'dodgerblue')
+  } else if(opt == 'nonbs') {
+    fill = c('TE' = 'slategray3', 'Non-TE Gene' = 'brown4', 'CRP' = 'dodgerblue')
+  } else {
+    fill = c('TE' = 'slategray3', 'Non-TE Gene' = 'brown4', 'NBS-LRR' = 'forestgreen')
+  }
   n = length(fill)
   ds = data.frame(fam = names(fill), col = as.character(fill), as.is = T)
   wds = nchar(as.character(ds$fam)) * 6

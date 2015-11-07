@@ -51,6 +51,8 @@ chdir $dir || die "cannot chdir $dir\n";
 my $fg = "../11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
+  runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
+__END__
 get_hints_ortholog();
 get_hints_rnaseq();
 run_aug();

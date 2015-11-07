@@ -10,8 +10,8 @@ fl = file.path(dirw, 'loci.xlsx')
 source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
-i = 1
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene', 'qpacbio')
+i = 5
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -222,17 +222,25 @@ tl = read.xlsx(fl, sheetIndex = 4, header = T)
 fn = sprintf("%s/illus_sv_crp.pdf", dirw)
 scale.hts = c(0.9, 0.8, 0.85, 0.2, 0.2)
 
+## ALPACA loci selection
+tl = read.xlsx(fl, sheetIndex = 5, header = T)
+fn = sprintf("%s/illus_alpaca.pdf", dirw)
+scale.hts = c(0.25, 0.25, 0.25)
+
 ## plotting
 source("comp.plot.fun.R")
 idxs = sort(unique(tl$i))
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
-tracks = c('taxis', 'link','qaxis')
+#tracks = c('taxis', 'link','qaxis')
 ress = list()
 hts = c()
-for (i in idxs) {
-  tls = tl[tl$i == i,]
-  qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+for (i in 1:length(idxs)) {
+  idx = idxs[i]
+  tls = tl[tl$i == idx,]
   gro =  GRanges(seqnames = tls$chr, ranges = IRanges(tls$beg, end = tls$end))
+  qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+  cfgs = get_genome_cfgs(c(tname, qnames))
+
 
   dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
   res = comp.plot(dats, tname, qnames, tracks, scale.ht = unit(scale.hts[i], 'npc'))
@@ -256,7 +264,7 @@ pushViewport(viewport(layout = grid.layout(numrow, numcol,
 pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
 grid.draw(plot_legend_gene())
 popViewport()
-for (i in idxs) {
+for (i in 1:length(idxs)) {
   pushViewport(viewport(layout.pos.row = 1+i*2, layout.pos.col = 2))
   grid.draw(ress[[i]]$grobs)
   popViewport()

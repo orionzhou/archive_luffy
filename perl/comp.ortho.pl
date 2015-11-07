@@ -78,7 +78,7 @@ my @orgs = ($tgt, @qrys);
 #parse_mcl("16.mcl", "17.group.tbl", \@orgs);
 ### run comp.ortho.R create 21.*.tbl
 
-#ortho_group_cat("21.gid.tbl", "22.cat.tbl");
+ortho_group_cat("21.gid.tbl", "22.cat.tbl");
 #ortho_aln_prep("21.gid.tbl", "25.aln.cmd", "25_seq", "25_aln");
 #runCmd("parallel -j 16 --no-notice < 25.aln.cmd");
 
@@ -254,7 +254,12 @@ sub ortho_group_cat {
       my $gid = $gids[$j];
       my $org = $orgs[$j];
       if($gid ne '' && $gid ne '-') {
-        my ($cat2, $cat3) = @{$h->{$org}->{$gid}};
+        my ($cat2, $cat3);
+        if(!exists $h->{$org}->{$gid}) {
+          ($cat2, $cat3) = ("Unknown", "");
+        } else {
+          ($cat2, $cat3) = @{$h->{$org}->{$gid}};
+        }
         die "$org $gid\n" if !$cat2;
         $hc->{$cat2} ||= [0, ''];
         $hc->{$cat2}->[0] ++;

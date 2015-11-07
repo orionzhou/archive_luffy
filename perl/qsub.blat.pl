@@ -39,6 +39,7 @@ use Data::Dumper;
 my ($fi, $dir) = ('') x 2;
 my ($n, $tgt) = (1, "HM101");
 my $tag = "pz";
+my $opt = "";
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -49,12 +50,14 @@ GetOptions(
   "num|n=i" => \$n,
   "tgt|t=s" => \$tgt,
   "tag|g=s" => \$tag,
+  "opt|p=s" => \$opt,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fi || !$dir;
 
 $fi = File::Spec->rel2abs($fi);
 $dir = File::Spec->rel2abs($dir);
+$tgt = File::Spec->rel2abs($tgt) if $opt eq "pro";
 
 runCmd("rm -rf $dir") if -d $dir;
 -d $dir || make_path($dir);
@@ -62,7 +65,8 @@ chdir $dir || die "cannot chdir to $dir\n";
 
 runCmd("ln -sf $fi part.fas");
 
-my $part = $n * 16;
+my $ppn = 24;
+my $part = $n * $ppn;
 my $digits = getDigits($part);
 runCmd("pyfasta split -n $part part.fas");
 runCmd("rm part.fas part.fas.*");
@@ -76,9 +80,10 @@ printf "range: %s  -  %s\n", $sizes[0], $sizes[$#sizes];
 print "##### stats end   #####\n\n";
 
 print "\n##### qsub command begins #####\n";
+my $prog = $opt eq "pro" ? "blat-pro" : "blat";
 for my $i (0..$n-1) {
-  my $beg = $i * 16;
-  print "qsub blat -N blat.$tag.$i -v PRE=$dir/part,SUF=fas,BEG=$beg,DIG=$digits,TGT=$tgt -l qos=weightlessqos\n";
+  my $beg = $i * $ppn;
+  print "qsub $prog -N blat.$tag.$i -v PRE=$dir/part,SUF=fas,BEG=$beg,DIG=$digits,TGT=$tgt\n";# -l qos=weightlessqos\n";
 }
 print "##### qsub command ends   #####\n\n";
 

@@ -61,7 +61,7 @@ dt2 = dt2[order(dt2$org),]
 to = rbind(dt2, dt1)
 to = cbind(to, x = 1:13, width = 1)
 
-cols = c(brewer.pal(12, 'Set3'), brewer.pal(1, 'Set1')[1], 'gray30')
+cols = c(brewer.pal(12, 'Set3'), brewer.pal(3, 'Set1')[1], 'gray30')
 labs = orgs
 
 to$org = factor(to$org, levels = c(orgs, 'mixed'))
@@ -74,7 +74,7 @@ p1 = ggplot(to, aes(x = n_org, y = size/1000000, fill = org)) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
   theme(legend.position = c(0.3, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.5, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
-  theme(plot.margin = unit(c(0,0,0,0), "lines")) +
+  theme(plot.margin = unit(c(1,0,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, colour = "blue")) +
@@ -97,15 +97,16 @@ grt2 = with(tt2, GRanges(seqnames = V1, ranges = IRanges(V2 + 1, end = V3)))
 grt = setdiff(grt1, grt2)
 
 grgs = list()
+qnames = qnames_12
 for (qname in qnames) {
-  fgax = sprintf("%s/%s_%s/23_blat/31.5/gax", Sys.getenv("misc3"), qname, tname)
+  fgax = sprintf("%s/%s_%s/23_blat/31.9/gax", Sys.getenv("misc3"), qname, tname)
   gax = read.table(fgax, header = F, sep = "\t", as.is = T)
   grg = with(gax, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
   grgs[[qname]] = grg
 }
 
 reps = 1:8
-n_orgs = 1:16
+n_orgs = 1:(1+length(qnames))
 tp = data.frame(rep = rep(reps, each = length(n_orgs)), 
   n_org = rep(n_orgs, length(rep)), core = NA, pan = NA)
   
@@ -161,7 +162,7 @@ p2 = ggplot(tp) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.2, 'lines')) +
   theme(legend.position = c(0.15, 0.2), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "line"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
-  theme(plot.margin = unit(c(0,1,0,0), "lines")) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, color = "blue")) +

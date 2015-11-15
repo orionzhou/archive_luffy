@@ -51,12 +51,10 @@ chdir $dir || die "cannot chdir $dir\n";
 my $fg = "../11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
-  runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
-__END__
-get_hints_ortholog();
-get_hints_rnaseq();
-run_aug();
-postprocess_aug();
+#get_hints_ortholog();
+#get_hints_rnaseq();
+#run_aug();
+#postprocess_aug();
 pipe_pfam();
 
 sub get_hints_ortholog {
@@ -117,9 +115,9 @@ sub postprocess_aug {
   runCmd("gff.augus.pl -i 21.gff -o - | gff2gtb.pl -i - -o 22.gtb");
   runCmd("gtb.rmutr.pl -i 22.gtb -o 23.gtb");
   runCmd("gtb.dedup.pl -i 23.gtb -o 25.dedup.gtb");
-  runCmd("ln -sf 25.dedup.gtb 31.gtb");
-  runCmd("gtb2gff.pl -i 31.gtb -o 31.gff");
-  runCmd("gtb2fas.pl -i 31.gtb -d $fg -o 31.fas");
+  runCmd("gtb2gtbx.pl -i 25.dedup.gtb -d $fg -o 31.gtbx");
+  runCmd("cut -f1-18 31.gtbx > 31.gtb");
+  runCmd("gtbx2fas.pl -i 31.gtbx -o 31.fas");
 }
 sub pipe_pfam {  
 ##runCmd("interproscan.sh -appl PfamA -dp -i 31.fas -f tsv -o 33.pfam.tsv");
@@ -128,7 +126,11 @@ sub pipe_pfam {
   runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
   runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
 }
-
+pipe_blastnr {
+#  runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {if(NR>1 && \$16 == \"Unknown\") print \$1}' 41.gtb > 42.unk.txt");
+#  runCmd("seqret.pl -d 31.fas -b 42.unk.txt -o 42.unk.fas");
+  runCmd("pro.blastnr.py 42.unk.fas 44");
+}
 
 
 __END__

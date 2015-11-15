@@ -9,8 +9,7 @@ use Data::Dumper;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index last_index insert_after apply indexes pairwise zip uniq/;
 
-my @orgs = qw/HM056 HM034 HM340/;
-@orgs = "HM056";
+my @orgs = qw/HM056 HM034 HM101 HM340/;
 
 for my $org (@orgs) {
 my $dir = "$ENV{'misc2'}/rnaseq/mt/31_cufflinks";
@@ -21,7 +20,8 @@ my $f_bam = "\$misc2/rnaseq/mt/22_tophat/$org\_$org/accepted_hits.bam";
 my $f_gff = "\$genome/$org/51.gff";
 
 make_path($org) unless -d $org;
-runCmd("cufflinks -p 16 -g $f_gff $f_bam -o $org");
+my $cmd = sprintf("cufflinks -p %d -g $f_gff $f_bam -o $org", $ENV{'nproc'});
+runCmd($cmd);
 }
 
 sub get_exp_support {

@@ -84,9 +84,11 @@ while( <$fhi> ) {
     my $seqstr = seqRet($loc, $chr, $srd, $fd);
     my @phases = split(",", $phaseS);
     my $seqpro = Bio::Seq->new(-seq=>$seqstr)->translate(-frame=>$phases[0])->seq;
-    
+   
     $cntp ++ if $seqpro =~ /\*[\w\*]/;
-    $seqpro =~ s/\*//g;
+    $seqpro =~ s/\*$//;
+    $seqpro =~ s/\*/X/;
+    die $id."\n" if !$seqpro || $seqpro =~ /^X*$/i;
     $seq = Bio::Seq->new(-id=>$id, -seq=>$seqpro);
   } elsif($opt =~ /^mrna$/) {
     $loc = [[$beg, $end]];

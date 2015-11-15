@@ -8,7 +8,7 @@ source("comp.fun.R")
 dirw = file.path(Sys.getenv("misc2"), "gene.cluster")
 dir.create(dirw)
 
-org = "HM058"
+org = "HM101"
 
 f_gen = file.path(Sys.getenv("genome"), org, "51.gtb")
 tg = read.table(f_gen, header = T, sep = "\t", as.is = T)[,c(1,3:5,16:17)]
@@ -84,7 +84,7 @@ fams = c("NBS-LRR", "F-box", "LRR-RLK", "NCR", "Unknown", "CRP0000-1030", "CRP16
 to$cat2[! to$cat2 %in% fams] = 'Pfam-Miscellaneous'
 
 do = data.frame()
-for (fam in c('NCR', 'NBS-LRR', 'CRP0000-1030', 'Pfam-Miscellaneous')) {
+for (fam in c('NCR', 'NBS-LRR', 'LRR-RLK', "F-box", 'Pfam-Miscellaneous')) {
   tm = to[to$cat2 == fam,]
   itvs = table(cut(tm$csize, breaks = brks))
   ds = data.frame(fam = fam, itv = labs, n = as.numeric(itvs), prop = as.numeric(itvs) / sum(itvs), stringsAsFactors = T)
@@ -96,23 +96,20 @@ fams = as.character(x$fam[order(x$prop, decreasing = T)])
 do$fam = factor(do$fam, levels = fams)
 
 p1 = ggplot(do) + 
-  geom_point(aes(x = itv, y = prop, color = fam, shape = fam),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.9)) + 
-  geom_line(aes(x = itv, y = prop, color = fam, group = fam)) + 
+  geom_bar(aes(x = itv, y = prop), stat = 'identity', geom_params = list(width = 0.8)) + 
   scale_x_discrete(name = 'Tandem array size') +
-  scale_y_continuous(name = 'Proportion in family', expand = c(0, 0.02)) +
-  scale_fill_brewer(palette = "Accent") +
+  scale_y_continuous(name = 'Proportion in family') +
+  facet_wrap(~ fam, scales = 'free', nrow = 2) +  
   theme_bw() +
-  theme(legend.position = c(0.8, 0.75), legend.title = element_blank(), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 9, angle = 0), legend.text = element_text(size = 9, angle = 0)) +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
-  theme(plot.margin = unit(c(0,0,0,0), "lines")) +
+  theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
-  theme(axis.text.x = element_text(size = 8, colour = "blue")) +
+  theme(axis.text.x = element_text(size = 8, angle = 60, colour = "blue", hjust = 1)) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 0.5))
 
 fo = sprintf("%s/12.tandem.plot/%s.pdf", dirw, org)
-ggsave(p1, filename = fo, width = 8, height = 5)
+ggsave(p1, filename = fo, width = 7, height = 5)
 
 
 ##### tandem array stats in  different genomes

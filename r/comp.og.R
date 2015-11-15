@@ -27,7 +27,7 @@ head(tc)
 table(tc$org)
 
 fo = file.path(dirw, "01.gid.tbl")
-write.table(tc, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+#write.table(tc, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 #### pan proteome revisited
 fi = file.path(dirw, "05.clu/32.tbl")
@@ -39,11 +39,17 @@ ti = ti[ti$org %in% c(tname,qnames_12),]
 ti = merge(ti, tc, by = c('org', 'gid'))
 
 gb = group_by(ti, grp)
-tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(cat2), decreasing = T))[1])
+tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(cat2), decreasing = T))[1], rid = id[1])
+ti = merge(ti, tr[,c('grp','size')], by = 'grp')
 
-tr$fam[tr$fam %in% c('CC-NBS-LRR','TIR-NBS-LRR')] = "NBS-LRR"
-tr$fam[tr$fam %in% c("NB-ARC", "TIR")] = "NB-ARC / TIR"
-fams = c("NBS-LRR", "NBS-LRR", "NB-ARC / TIR", "LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
+# output unknown cluster/ids for blastnr
+ids_unk = tr$rid[tr$fam == 'Unknown']
+fo = file.path(dirw, "31.unk.txt")
+#write(ids_unk, fo, sep = "\n")
+#seqret.pl -d 02.fas -b 31.unk.txt -o 32.unk.fas
+
+tr$fam[tr$fam %in% c("NB-ARC", "TIR", 'CC-NBS-LRR','TIR-NBS-LRR')] = "NBS-LRR"
+fams = c("NBS-LRR", "LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
 tr$fam[! tr$fam %in% fams] = 'Pfam-Miscellaneous'
 tr$fam = factor(tr$fam, levels = c(fams, 'Pfam-Miscellaneous'))
 
@@ -58,7 +64,7 @@ y[order(y, decreasing = T)][1:20]/sum(y)
 
 brks = as.character(1:13)
 
-famss = c('Pfam-Miscellaneous', 'NCR', 'NBS-LRR', 'Unknown')
+famss = c('Pfam-Miscellaneous', 'F-box', 'LRR-RLK', 'NCR', 'NBS-LRR', 'Unknown')
 do = data.frame()
 for (fam in famss) {
   x = table(tr$size[tr$fam == fam])
@@ -71,7 +77,7 @@ do$fam = factor(do$fam, levels = famss)
 p1 = ggplot(do, aes(x = size, y = cnt)) +
   geom_bar(stat = 'identity', geom_params=list(width = 0.8)) +
   scale_x_discrete(name = '', breaks = brks) +
-  scale_y_continuous(name = '# Groups') +
+  scale_y_continuous(name = '# Clusters') +
   facet_wrap(~ fam, scales = 'free', nrow = 2) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
@@ -82,41 +88,87 @@ p1 = ggplot(do, aes(x = size, y = cnt)) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 90, hjust = 1))
 
 fp = sprintf("%s/41.afs.pdf", dirw)
-ggsave(p1, filename = fp, width = 6, height = 5)
+ggsave(p1, filename = fp, width = 7, height = 5)
 
 
+##### double check unknown proteins
+fq = file.path(Sys.getenv("genome"), "HM101", "augustus", "31.gtb")
+tq = read.table(fq, sep = "\t", header = T, as.is = T)
 
-tab1 = table(tr$size)
-tab1 = tab1[names(tab1) != 1]
-dt1 = data.frame(norg = as.numeric(names(tab1)), cnt = as.numeric(tab1), org = 'mixed', stringsAsFactors = F)
+idxs = which(grepl("\\[\\w+\\]", tq$note))
+m = regexpr("\\[(\\w+)\\]", tq$note, perl = TRUE)
+x = regmatches(tq$note, m)
+stopifnot(length(x) == length(idxs))
+tqs = data.frame(id = tq$id[idxs], qual = x, note = tq$note[idxs])
+ids_hc = paste(tname, tqs$id[tqs$qual == '[HC]'], sep = "-")
+ids_lc = paste(tname, tqs$id[tqs$qual == '[LC]'], sep = "-")
 
-tab2 = table(tr$org[tr$size == 1])
-tab2 = tab2[tab2 > 0]
-dt2 = data.frame(norg = 1, cnt = as.numeric(tab2), org = names(tab2), stringsAsFactors = F)
+x = strsplit(tr$rid, "-")
+gids = sapply(x, "[", 2)
+#table(tqs$qual[tqs$id %in% gids[tr$org == 'HM101' & tr$size >1 & tr$fam != 'Unknown']])
 
-to = rbind(dt1, dt2)
 
-cols = c(brewer.pal(12, 'Set3'), brewer.pal(3, 'Set1')[1], 'gray30')
-labs = orgs
+ds = data.frame()
+for (qname in qnames_12) {
+  fq = file.path(Sys.getenv("genome"), qname, "augustus", "31.gtb")
+  tq = read.table(fq, sep = "\t", header = T, as.is = T)
+  dss = tq[,c('id','note')]
+  colnames(dss)[2] = 'qual'
+  dss = cbind(dss, rid = paste(qname, dss$id, sep = "-"), stringsAsFactors = F)
+  ds = rbind(ds, dss)
+}
+#hist(ds$qual[ds$rid %in% ti$id[ti$size == 1 & ti$cat2 == 'Unknown']])
+#hist(ds$qual[ds$rid %in% ti$id[ti$size == 1 & ti$cat2 != 'Unknown']])
+#hist(ds$qual[ds$rid %in% ti$id[ti$size == 13 & ti$cat2 == 'Unknown']])
+ids_hc = c(ids_hc, ds$rid[ds$qual >= 0.9])
+ids_lc = c(ids_lc, ds$rid[ds$qual < 0.9])
 
-to$org = factor(to$org, levels = c(orgs, 'mixed'))
-to$norg = factor(to$norg, levels = sort(as.numeric(unique(to$norg))))
-p1 = ggplot(to, aes(x = norg, y = cnt, fill = org, order = plyr:::desc(org))) +
-  geom_bar(stat = 'identity', position = "stack", geom_params=list(width = 0.5)) +
-  scale_fill_manual(name = "Accession-Specific", breaks = labs, labels = labs, values = cols, guide = guide_legend(ncol = 1, byrow = F, label.position = "right", direction = "vertical", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
-  scale_x_discrete(name = '# Sharing Accession') +
-  scale_y_continuous(name = '# Gene Models', expand = c(0, 0), limits = c(0, 30100)) +
+
+do = data.frame()
+for (qname in c("HM056")) {
+  fx = file.path(Sys.getenv("misc2"), "rnaseq/mt/31_cufflinks", qname, "isoforms.fpkm_tracking")
+  tx = read.table(fx, sep = "\t", header = T, as.is = T)
+  dos = data.frame(rid = paste(qname, tx$tracking_id, sep = "-"), fpkm = tx$FPKM, stringsAsFactors = F)
+  do = rbind(do, dos)
+}
+do$fpkm[do$fpkm > 0] = 1
+hist(do$fpkm[do$rid %in% ti$id[ti$size == 1 & ti$cat2 != 'Unknown']])
+hist(do$fpkm[do$rid %in% ti$id[ti$size == 1 & ti$cat2 == 'Unknown']])
+hist(do$fpkm[do$rid %in% ti$id[ti$size > 12 & ti$cat2 == 'Unknown']])
+
+
+t.unk = tr[tr$fam == 'Pfam-Miscellaneous',]
+t.unk = tr[tr$fam == 'Unknown',]
+t.unk.hc = t.unk[t.unk$rid %in% ids_hc,]
+t.unk.lc = t.unk[t.unk$rid %in% ids_lc,]
+
+brks = as.character(1:13)
+
+x = table(t.unk$size)
+do1 = data.frame(lab = 'All Unknown Proteins', size = brks, cnt = as.numeric(x[brks]), stringsAsFactors = F)
+x = table(t.unk.hc$size)
+do2 = data.frame(lab = 'High Confidence', size = brks, cnt = as.numeric(x[brks]), stringsAsFactors = F)
+x = table(t.unk.lc$size)
+do3 = data.frame(lab = 'Low Confidence', size = brks, cnt = as.numeric(x[brks]), stringsAsFactors = F)
+do = rbind(do2, do3)
+do$size = factor(do$size, levels = brks)
+
+p1 = ggplot(do, aes(x = size, y = cnt, fill = lab)) +
+  geom_bar(stat = 'identity', position = 'stack', geom_params=list(width = 0.8)) +
+  scale_x_discrete(name = '', breaks = brks) +
+  scale_y_continuous(name = '# Clusters') +
+  scale_fill_brewer(palette = "Set1") +
   theme_bw() +
+  theme(legend.position = c(0.6, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 9, angle = 0)) +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
-  theme(legend.position = c(0.3, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
-  theme(plot.margin = unit(c(0,0,0,0), "lines")) +
+  theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, colour = "blue")) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 90, hjust = 1))
 
-fp = sprintf("%s/40.pan.proteome.afs.pdf", dirw)
-ggsave(p1, filename = fp, width = 5, height = 5)
+fp = sprintf("%s/45.unk.pdf", dirw)
+ggsave(p1, filename = fp, width = 4, height = 4)
 
 
 ##### identify all novel / accession-specific genes
@@ -190,8 +242,9 @@ ti2 = merge(tt[tt$grp %in% grps,], tc, by = c('org', 'gid'))
 gb = group_by(ti2, grp)
 tr = summarise(gb, fam = names(sort(table(cat2), decreasing = T))[1], sfam = cat3[which(cat2==fam)[1]])
 
-tr$fam[tr$fam %in% c("NB-ARC", "TIR")] = "NB-ARC / TIR"
-fams = c("CC-NBS-LRR", "TIR-NBS-LRR", "NB-ARC / TIR", "LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
+
+tr$fam[tr$fam %in% c("NB-ARC", "TIR", 'CC-NBS-LRR','TIR-NBS-LRR')] = "NBS-LRR"
+fams = c("NCR", "NBS-LRR", "LRR", "F-box", "LRR-RLK", "TE", "Unknown")
 tr$fam[! tr$fam %in% fams] = 'Pfam-Miscellaneous'
 tr$fam = factor(tr$fam, levels = c(fams, 'Pfam-Miscellaneous'))
 
@@ -202,7 +255,7 @@ labs = sprintf("%s (%d : %.01f%%)", tp$fam, tp$num, tp$prop * 100)
 
 fo = file.path(dirw, '51.novel.fam.pdf')
 pdf(file = fo, width = 8, height = 6)
-pie(tp$num, labels = labs, lwd = 1, cex = 0.7, main = sprintf("Composition of accession-specific gene pool (%d)", nrow(tr)))
+pie(tp$num, labels = labs, lwd = 1, cex = 0.7, col = brewer.pal(8, 'Set3'), main = sprintf("Composition of accession-specific gene pool (%d)", nrow(tr)))
 dev.off()
 
 

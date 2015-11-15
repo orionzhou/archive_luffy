@@ -42,7 +42,7 @@ pod2usage(1) if $help_flag;
 
 print "#qsub rnaseq\n";
 
-for my $org (@qnames) {
+for my $org ($tname, @qnames) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
 #  runCmd("genome.fas.pl -g $org");

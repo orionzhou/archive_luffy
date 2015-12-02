@@ -113,48 +113,73 @@ ggsave(p1, filename = fo, width = 7, height = 5)
 
 
 ##### tandem array stats in  different genomes
-do = data.frame()
-
+to = data.frame()
+orgs = c(tname, "HM056", "HM056.AC", "HM034", "HM034.AC", "HM340", "HM340.AC")
 for (org in orgs) {
-#org = "HM101"
-fi = sprintf("%s/12_tandem/%s.tbl", dirw, org)
-ti = read.table(fi, header = F, sep = "\t", as.is = T)
-colnames(ti) = c('clu', 'id')
+fi = sprintf("%s/11.tandem/%s.tbl", dirw, org)
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+ti = ti[ti$cat2 != 'TE',]
+idx_single = which(is.na(ti$clu))
+ti$clu[idx_single] = seq(max(ti$clu, na.rm = T)+1, by = 1, length.out = length(idx_single))
 
-x = ddply(ti, .(clu), summarise, size = length(id))
-itvs = table(cut(x$size, breaks = c(seq(1.5, 10.5, by = 1), 15.5, 20.5, Inf)))
-labs = c(2:10, '11-15', '16-20', '21+')
+gb = group_by(ti, clu)
+tc = summarise(gb, csize = n())
+ti = merge(ti, tc, by = 'clu')
+
+brks = c(seq(0.5, 10.5, by = 1), 15.5, Inf)
+labs = c(1:10, '11-15', '16+')
 labs = factor(labs, levels = labs)
 
-ds = data.frame(org = org, itv = labs, n = as.numeric(itvs), stringsAsFactors = T)
-do = rbind(do, ds)
-}
-do$org = factor(do$org, levels = orgs)
+tx = ti
+tx$cat2[tx$cat2 %in% c("CC-NBS-LRR", "TIR-NBS-LRR")] = "NBS-LRR"
+fams = c("NBS-LRR", "F-box", "LRR-RLK", "NCR", "Unknown", "CRP0000-1030", "CRP1600-6250")
+tx$cat2[! tx$cat2 %in% fams] = 'Pfam-Miscellaneous'
 
-p1 = ggplot(do) + 
-  geom_bar(aes(x = itv, y = n, fill = org),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.8)) + 
-  scale_fill_manual(name = "", values = c("#E41A1C", "#A6CEE3","#1F78B4","#B2DF8A","#33A02C","#FDBF6F","#FF7F00")) +
-  scale_x_discrete(name = 'Size of tandem gene arrays') +
-  scale_y_continuous(name = 'Number of arrays') +
+do = data.frame()
+for (fam in c('NCR', 'NBS-LRR', 'LRR-RLK', "F-box", 'Pfam-Miscellaneous')) {
+  tm = tx[tx$cat2 == fam,]
+  tm2 = ddply(tm, .(csize), summarise, nc = length(csize), ng = sum(csize))
+  tm3 = cbind(tm2, itv = sapply(tm2$csize, toString), stringsAsFactors = F)
+  tm3$itv[tm3$csize>=11 & tm3$csize<=15] = '11-15'
+  tm3$itv[tm3$csize>=16] = '16+'
+  tm4 = ddply(tm3, .(itv), summarise, nc = sum(nc), ng = sum(ng))
+  ds = data.frame(org = org, fam = fam, tm4, prop = tm4$ng/sum(tm4$ng), stringsAsFactors = T)
+  do = rbind(do, ds)
+}
+to = rbind(to, do)
+}
+to$org = factor(to$org, levels = orgs)
+to$itv = factor(to$itv, levels = labs)
+x = to[to$itv == '1' & to$org == 'HM101',]
+fams = as.character(x$fam[order(x$prop, decreasing = T)])
+to$fam = factor(to$fam, levels = fams)
+
+tw = ddply(to, .(org, itv), summarise, ng = sum(ng))
+tw = reshape(tw, direction = 'wide', timevar = c('itv'), idvar = c('org'))
+fo = file.path(dirw, "51.tbl")
+write.table(tw, fo, col.names = T, row.names = F, sep = "\t", quote = F)
+
+p1 = ggplot(to) + 
+  geom_bar(aes(x = itv, y = prop), stat = 'identity', geom_params = list(width = 0.7)) + 
+  scale_x_discrete(name = 'Tandem array size') +
+  scale_y_continuous(name = 'Proportion in family') +
+  facet_grid(org ~ fam)+#, scales = 'free', nrow = 2) +  
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
-  theme(legend.position = c(0.8, 0.8), legend.title = element_blank(), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 9, angle = 0), legend.text = element_text(size = 9, angle = 0)) +
-  theme(plot.margin = unit(c(0,0,0,0), "lines")) +
+  theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
-  theme(axis.text.x = element_text(size = 8, colour = "blue")) +
-  theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(size = 8, angle = 60, colour = "blue", hjust = 1)) +
+  theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 0.5))
 
 fo = sprintf("%s/51.pdf", dirw)
-ggsave(p1, filename = fo, width = 7, height = 5)
+ggsave(p1, filename = fo, width = 8, height = 6)
 
 for (org in orgs) {
-
 f_gen = file.path(Sys.getenv("genome"), org, "51.gtb")
 tg = read.table(f_gen, header = T, sep = "\t", as.is = T)[,c(1,3:5,15:17)]
 
-fi = sprintf("%s/12_tandem/%s.tbl", dirw, org)
+fi = sprintf("%s/11_tandem/%s.tbl", dirw, org)
 ti = read.table(fi, header = F, sep = "\t", as.is = T)
 colnames(ti) = c('clu', 'id')
 

@@ -109,12 +109,22 @@ fit <- lm(tw$pi ~ tw$gen + tw$tre + tw$nbs + p_c2)
 summary(fit)
 
 #### global comparison plot
-fw = file.path(dirw, "31.win.tbl")
-tw = read.table(fw, header = T, sep = "\t", as.is = T)
-tw = tw[tw$chr != 'chrU' & tw$len_ng >= 50000,]
+x = tt$end
+names(x) = tt$chr
+gr = tileGenome(x, tilewidth = 200000, cut.last.tile.in.chrom = T)
+
+tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
+  len = width(gr), stringsAsFactors = F)
+  
+bp_gap = intersect_basepair(gr, grp)
+bp_nogap = tw$len - bp_gap
+
+tw = cbind(tw, len_ng = bp_nogap)
+
+tw = tw[tw$chr != 'chrU' & tw$len_ng/tw$len > 0.5,]
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
-goff = cumsum(tt$end + 5000000) + 1
+goff = cumsum(tt$end + 3000000) + 1
 goff = c(1, goff[1:(length(goff)-1)])
 names(goff) = tt$chr
 tx = cbind(tt, gpos = goff + (tt$beg + tt$end) / 2)
@@ -122,7 +132,7 @@ tx = cbind(tt, gpos = goff + (tt$beg + tt$end) / 2)
 tw = cbind(tw, gbeg = tw$beg + goff[tw$chr] - 1, gend = tw$end + goff[tw$chr] - 1)
 
 to = data.frame()
-for (qname in qnames) {
+for (qname in qnames_15) {
   dirc = sprintf("%s/%s_%s", Sys.getenv("misc3"), qname, tname)
   
   fa = file.path(dirc, '23_blat/31.9/gax')
@@ -134,14 +144,14 @@ for (qname in qnames) {
   
   to = rbind(to, cbind(tw, org = qname, len_syn = len_syn, pc = pc))
 }
-to$org = factor(to$org, levels = rev(qnames))
+to$org = factor(to$org, levels = rev(qnames_15))
 
 pb <- ggplot(to) +
   geom_tile(aes(x = gbeg, y = org, fill = 100*pc), height = 0.8) +
   theme_bw() + 
   scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
   scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_gradient(name = '% covered in synteny alignment') +
+  scale_fill_gradient(name = '% covered in synteny alignment', space = "Lab", low = 'firebrick1', high = 'dodgerblue') +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0, 1), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,1,0,0), "lines")) +
   theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +

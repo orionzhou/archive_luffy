@@ -98,7 +98,8 @@ export luffy=$git/luffy
 export code=$luffy
 export robin=$git/robin
 export spada=$git/spada
-export PATH=$spada:$PATH
+export rosar=$git/rgeneclust
+export PATH=$rosar:$spada:$PATH
 
 # Perl
 export PERL_HOME=$prefix/soft/perl

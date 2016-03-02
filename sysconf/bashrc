@@ -10,17 +10,18 @@ umask 022
 
 export system=$(uname -s)
 export arch=$(uname -m | tr ' ' '-')
-export nproc=`nproc`
 
 #color scheme for "ls" command
 if [ "$system" = "Linux" ]; then
   [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
   [ -e "$DIR_COLORS" ] || DIR_COLORS=""
   eval "`dircolors -b $DIR_COLORS`"
+  export nproc=`nproc`
 elif [ "$system" = "Darwin" ]; then
   export CLICOLOR=1
   export LSCOLORS=dxfxcxdxbxegedabagacad
   alias ls="ls -G"
+  export nproc=`sysctl -n hw.ncpu`
 fi
 
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"

@@ -109,9 +109,20 @@ fit <- lm(tw$pi ~ tw$gen + tw$tre + tw$nbs + p_c2)
 summary(fit)
 
 #### global comparison plot
+grl = list()
+for (qname in qnames_15) {
+  dirc = sprintf("%s/%s_%s", Sys.getenv("misc3"), qname, tname)
+  
+  fa = file.path(dirc, '23_blat/31.9/gax')
+  ta = read.table(fa, header = T, sep = "\t", as.is = T)
+  colnames(ta) = c('tchr','tbeg','tend','tsrd','qchr','qbeg','qend','qsrd','cid','lev')
+  gra = with(ta[ta$lev<=20,], GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
+  grl[[qname]] = gra
+}
+
 x = tt$end
 names(x) = tt$chr
-gr = tileGenome(x, tilewidth = 200000, cut.last.tile.in.chrom = T)
+gr = tileGenome(x, tilewidth = 1000000, cut.last.tile.in.chrom = T)
 
 tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
   len = width(gr), stringsAsFactors = F)
@@ -133,31 +144,32 @@ tw = cbind(tw, gbeg = tw$beg + goff[tw$chr] - 1, gend = tw$end + goff[tw$chr] - 
 
 to = data.frame()
 for (qname in qnames_15) {
-  dirc = sprintf("%s/%s_%s", Sys.getenv("misc3"), qname, tname)
-  
-  fa = file.path(dirc, '23_blat/31.9/gax')
-  ta = read.table(fa, header = T, sep = "\t", as.is = T)
-  colnames(ta) = c('tchr','tbeg','tend','tsrd','qchr','qbeg','qend','qsrd','cid','lev')
-  gra = with(ta[ta$lev<=20,], GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
-  len_syn = intersect_basepair(gr, reduce(gra))
+  len_syn = intersect_basepair(gr, reduce(grl[[qname]]))
   pc = len_syn / tw$len_ng
-  
   to = rbind(to, cbind(tw, org = qname, len_syn = len_syn, pc = pc))
 }
 to$org = factor(to$org, levels = rev(qnames_15))
 
+breaks = seq(max(to$pc), max(to$pc), length.out=12)
+to = cbind(to, pci = cut(to$pc, breaks, include.lowest = T))
+
+cols = rev(c("#282b68", "#324387", "#385193", "#498bbd", "#71c5cd", "#81c185", "#afcf45", "#faed29", "#ea862d", "#db382b", "#bb242a"))
+labs = sort(unique(to$pci))
+
 pb <- ggplot(to) +
-  geom_tile(aes(x = gbeg, y = org, fill = 100*pc), height = 0.8) +
+  geom_tile(aes(x = gbeg, y = org, fill = pci, height = 0.8)) +
   theme_bw() + 
   scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
   scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_gradient(name = '% covered in synteny alignment', space = "Lab", low = 'firebrick1', high = 'dodgerblue') +
-  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0, 1), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
+#  scale_fill_gradient(name = '% covered in synteny alignment', space = "Lab", low = 'firebrick1', high = 'dodgerblue') +
+#  scale_fill_distiller(name = '% covered in synteny alignment', type = "seq", space = "Lab", direction = 1, palette = "Spectral") +
+  scale_fill_manual(name = '% covered in synteny alignment', breaks = labs, labels = labs, values = cols, guide = guide_legend(nrow = 2, byrow = T)) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0, 1), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
   theme(plot.margin = unit(c(0,1,0,0), "lines")) +
   theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
   theme(axis.text.x = element_text(colour = "blue", size = 8)) +
   theme(axis.title.y = element_blank()) +
-  theme(axis.text.y = element_text(colour = "brown", size = 8)) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
 
 fo = file.path(dirw, "12.comp.pdf")

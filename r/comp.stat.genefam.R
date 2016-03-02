@@ -12,9 +12,6 @@ diro = file.path(Sys.getenv("misc3"), "comp.stat")
 ffam = "/home/youngn/zhoup/Data/db/pfam/genefam.tbl"
 tfam = read.table(ffam, header = T, sep = "\t", as.is = T)[,1:2]
 
-fams = c("CC-NBS-LRR", "TIR-NBS-LRR", "F-box", "LRR-RLK", "NCR", "TE", "Unknown")
-fams = c(fams, "CRP0000-1030", "CRP1600-6250", "RLK")
-
 tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
 colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
 tg = tg[tg$type == 'cds',]
@@ -23,10 +20,7 @@ tg = tg[tg$type == 'cds',]
 # pi
 ff = file.path(diro, "42.pi.tbl")
 tf = read.table(ff, header = T, sep = "\t", as.is = T)
-
-to = tf
-to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+to = rename_genefam(tf, fams)
 
 tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(pi, 0.25, na.rm = T), q50 = median(pi, na.rm = T), q75 = quantile(pi, 0.75, na.rm = T))
 famsf = as.character(tp$fam[order(tp$q50, decreasing = T)])
@@ -35,7 +29,7 @@ labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
 
 p1 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.7)) + 
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
   coord_flip() +
   scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
   scale_y_continuous(name = 'ThetaPi', expand = c(0, 0), limits = c(0, 0.02)) +
@@ -49,17 +43,14 @@ p1 = ggplot(tp) +
 # largeeff
 fi = file.path(diro, "43.largeeff.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-
-to = ti
-to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+to = rename_genefam(ti, fams)
 
 tp = ddply(to, .(fam, eff), summarise, prop = sum(cnt > 0) / length(cnt))
 tp$fam = factor(tp$fam, levels = famsf)
 
 p2 = ggplot(tp) +
   geom_bar(aes(x = fam, y = prop, fill = eff),
-    stat = 'identity', position = 'stack', geom_params = list(width = 0.7)) + 
+    stat = 'identity', position = 'stack', geom_params = list(width = 0.6)) + 
   coord_flip() +
   scale_x_discrete(name = '', expand = c(0.01, 0.01)) +
   scale_y_continuous(name = 'Proportion', expand = c(0, 0), limits = c(0, 1)) +
@@ -73,44 +64,16 @@ p2 = ggplot(tp) +
 #  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
   theme(axis.text.y = element_blank())
 
-# protein length
-gb = dplyr::group_by(tg, id)
-to = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1))
-
-to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
-
-tp = ddply(to, .(fam), summarise, q25 = quantile(len, 0.25), q50 = quantile(len, 0.5), q75 = quantile(len, 0.75))
-tp$fam = factor(tp$fam, levels = famsf)
-labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
-
-p3 = ggplot(tp) +
-  geom_crossbar(aes(x = fam, y = q50/3, ymin = q25/3, ymax = q75/3),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
-  coord_flip() +
-  scale_x_discrete(name = '', expand = c(0.01, 0.01)) +
-  scale_y_continuous(name = 'Protein Length', expand = c(0, 0), limits = c(0, 1300)) +
-  theme_bw() +
-  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
-  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
-  theme(axis.title.y = element_blank()) +
-  theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_blank())
-
 # mpd
 fi = file.path(diro, "46.mpd.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-
-to = ti
-to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+to = rename_genefam(ti, fams)
 
 tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(mpd, 0.25), q50 = quantile(mpd, 0.5), q75 = quantile(mpd, 0.75))
 tp$fam = factor(tp$fam, levels = famsf)
 labs = sprintf("%d", tp$cnt[match(famsf, tp$fam)])
 
-p4 = ggplot(tp) +
+p3 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
     stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
   coord_flip() +
@@ -126,19 +89,17 @@ p4 = ggplot(tp) +
 # cnv
 fi = file.path(diro, "48.cnv.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-
-to = ti
-to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+to = rename_genefam(ti, fams)
 
 tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(cv, 0.25), q50 = quantile(cv, 0.5), q75 = quantile(cv, 0.75))
+famsf = as.character(tp$fam[order(tp$q50, decreasing = T)])
 tp$fam = factor(tp$fam, levels = famsf)
-labs = sprintf("%d", tp$cnt[match(famsf, tp$fam)])
-tp = rbind(tp, data.frame(fam = 'TE', cnt = 0, q25 = NA, q50 = NA, q75 = NA, stringsAsFactors = F))
+labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
+#tp = rbind(tp, data.frame(fam = 'TE', cnt = 0, q25 = NA, q50 = NA, q75 = NA, stringsAsFactors = F))
 
-p5 = ggplot(tp) +
+p4 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
-    stat = 'identity', geom_params = list(width = 0.5)) + 
+    stat = 'identity', geom_params = list(width = 0.6)) + 
   coord_flip() +
   scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
   scale_y_continuous(name = 'C.V. of cluster size') +
@@ -150,24 +111,46 @@ p5 = ggplot(tp) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
   
+# protein length
+gb = dplyr::group_by(tg, id)
+to = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1))
+to = rename_genefam(to, fams)
 
+tp = ddply(to, .(fam), summarise, q25 = quantile(len, 0.25), q50 = quantile(len, 0.5), q75 = quantile(len, 0.75))
+tp = tp[tp$fam %in% famsf,]
+tp$fam = factor(tp$fam, levels = famsf)
+#labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
+
+p5 = ggplot(tp) +
+  geom_crossbar(aes(x = fam, y = q50/3, ymin = q25/3, ymax = q75/3),
+    stat = 'identity', position = 'dodge', geom_params = list(width = 0.6)) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01)) +
+  scale_y_continuous(name = 'Protein Length', expand = c(0, 0), limits = c(0, 1300)) +
+  theme_bw() +
+  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
+  theme(plot.margin = unit(c(1,1,0,0), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_blank())
+ 
+# multi-panel plot 
 fo = file.path(diro, "49.genefam.pdf")
-numcol = 5
-wds = c(4, 3, 2.5, 3,3)
-pdf(file = fo, width = sum(wds), height = 3.2, bg = 'transparent')
+numrow = 2; hts = c(2.7, 2.5)
+numcol = 3; wds = c(4, 3, 3)
+pdf(file = fo, width = sum(wds), height = sum(hts), bg = 'transparent')
 #tiff(file = fo, width = sum(wds), height = 4, units = 'in', bg = 'white')
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(1, numcol, width = wds)))
+pushViewport(viewport(layout = grid.layout(numrow, numcol, width = wds, heights = hts)))
 
-print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(p2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-print(p3, vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
-print(p4, vp = viewport(layout.pos.row = 1, layout.pos.col = 4))
-print(p5, vp = viewport(layout.pos.row = 1, layout.pos.col = 5))
-
-dco = data.frame(x = rep(1,numcol), y = 1:numcol, lab = LETTERS[1:numcol])
-for (i in 1:nrow(dco)) {
-  x = dco$x[i]; y = dco$y[i]; lab = dco$lab[i]
+ps = list(p1, p2, p3, p4, p5)
+xs = c(1,1,1,2,2)
+ys = c(1,2,3,1,2)
+ss = LETTERS[1:length(xs)]
+for (i in 1:length(xs)) {
+  x = xs[i]; y = ys[i]; lab = ss[i]
+  print(ps[[i]], vp = viewport(layout.pos.row = x, layout.pos.col = y))
   grid.text(lab, x = 0, y = unit(1, 'npc'), just = c('left', 'top'), gp = gpar(col = "black", fontface = 2, fontsize = 20),
     vp = viewport(layout.pos.row = x, layout.pos.col = y))
 }

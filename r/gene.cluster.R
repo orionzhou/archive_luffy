@@ -86,30 +86,55 @@ to$cat2[! to$cat2 %in% fams] = 'Pfam-Miscellaneous'
 do = data.frame()
 for (fam in c('NCR', 'NBS-LRR', 'LRR-RLK', "F-box", 'Pfam-Miscellaneous')) {
   tm = to[to$cat2 == fam,]
-  itvs = table(cut(tm$csize, breaks = brks))
-  ds = data.frame(fam = fam, itv = labs, n = as.numeric(itvs), prop = as.numeric(itvs) / sum(itvs), stringsAsFactors = T)
+  tm2 = ddply(tm, .(csize), summarise, nc = length(csize), ng = sum(csize))
+  tm3 = cbind(tm2, itv = sapply(tm2$csize, toString), stringsAsFactors = F)
+  tm3$itv[tm3$csize>=11 & tm3$csize<=15] = '11-15'
+  tm3$itv[tm3$csize>=16] = '16+'
+  tm4 = ddply(tm3, .(itv), summarise, nc = sum(nc), ng = sum(ng))
+  tm5 = merge(data.frame(itv = labs), tm4, all.x = T)
+  tm5$nc[is.na(tm5$nc)] = 0; tm5$ng[is.na(tm5$ng)] = 0
+  ds = data.frame(org = org, fam = fam, tm5, prop = tm5$ng/sum(tm5$ng), stringsAsFactors = T)
   do = rbind(do, ds)
 }
 
 x = do[do$itv == '1',]
 fams = as.character(x$fam[order(x$prop, decreasing = T)])
 do$fam = factor(do$fam, levels = fams)
+do$itv = factor(do$itv, levels = labs)
 
-p1 = ggplot(do) + 
-  geom_bar(aes(x = itv, y = prop), stat = 'identity', geom_params = list(width = 0.8)) + 
+p1 = ggplot(do[do$fam == 'Pfam-Miscellaneous',]) + 
+  geom_bar(aes(x = itv, y = ng), stat = 'identity', geom_params = list(width = 0.8)) + 
   scale_x_discrete(name = 'Tandem array size') +
-  scale_y_continuous(name = 'Proportion in family') +
-  facet_wrap(~ fam, scales = 'free', nrow = 2) +  
+  scale_y_continuous(name = '# Genes') +
+  facet_wrap(~ fam, scales = 'fixed', nrow = 1) +  
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
+#  theme(axis.title.x = element_text(size = 9, angle = 0)) +
+  theme(axis.title.x = element_blank()) +
+  theme(axis.title.y = element_text(size = 9, angle = 90)) +
+  theme(axis.text.x = element_text(size = 8, angle = 60, colour = "blue", hjust = 1)) +
+  theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 0.5))
+p2 = ggplot(do[do$fam != 'Pfam-Miscellaneous',]) + 
+  geom_bar(aes(x = itv, y = ng), stat = 'identity', geom_params = list(width = 0.8)) + 
+  scale_x_discrete(name = 'Tandem array size') +
+  scale_y_continuous(name = '# Genes') +
+  facet_wrap(~ fam, scales = 'fixed', nrow = 1) +  
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
+  theme(plot.margin = unit(c(0,0.5,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, angle = 60, colour = "blue", hjust = 1)) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 0.5))
 
 fo = sprintf("%s/12.tandem.plot/%s.pdf", dirw, org)
-ggsave(p1, filename = fo, width = 7, height = 5)
+pdf(file = fo, width = 8, height = 5, bg = 'transparent')
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 3, width = c(1,0.95,1), heights = c(1,1))))
+print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(p2, vp = viewport(layout.pos.row = 2, layout.pos.col = 1:3)) 
+dev.off()
 
 
 ##### tandem array stats in  different genomes
@@ -153,6 +178,9 @@ to$itv = factor(to$itv, levels = labs)
 x = to[to$itv == '1' & to$org == 'HM101',]
 fams = as.character(x$fam[order(x$prop, decreasing = T)])
 to$fam = factor(to$fam, levels = fams)
+
+fo1 = file.path(dirw, "50.tbl")
+write.table(to, fo1, col.names = T, row.names = F, sep = "\t", quote = F)
 
 tw = ddply(to, .(org, itv), summarise, ng = sum(ng))
 tw = reshape(tw, direction = 'wide', timevar = c('itv'), idvar = c('org'))

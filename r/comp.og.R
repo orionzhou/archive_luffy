@@ -252,9 +252,13 @@ x = table(tr$fam)
 tp = data.frame(fam = names(x), num = as.numeric(x), stringsAsFactors = T)
 tp = cbind(tp, prop = tp$num / sum(tp$num))
 labs = sprintf("%s (%d : %.01f%%)", tp$fam, tp$num, tp$prop * 100)
+tp = cbind(tp, label = labs)
 
-fo = file.path(dirw, '51.novel.fam.pdf')
-pdf(file = fo, width = 8, height = 6)
+fo = file.path(dirw, "51.novel.fam.tbl")
+write.table(tp, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+fp = file.path(dirw, '51.novel.fam.pdf')
+pdf(file = fp, width = 8, height = 6)
 pie(tp$num, labels = labs, lwd = 1, cex = 0.7, col = brewer.pal(8, 'Set3'), main = sprintf("Composition of accession-specific gene pool (%d)", nrow(tr)))
 dev.off()
 

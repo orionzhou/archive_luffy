@@ -6,7 +6,7 @@
   
 =head1 NAME
   
-  phy_mt.pl - extract SNPs and construct phylogeny
+  phy.mt.pl - extract SNPs and construct phylogeny
 
 =head1 SYNOPSIS
   
@@ -63,17 +63,18 @@ printf "minor allele count >= %d\n", $mac_min;
 print "==========================\n";
 
 my $reg = "chr5";
-runCmd("bcftools view -U -m2 -M2 -O u -v snps -s $sam $fv $reg | \\
+#runCmd("bcftools view -U -m2 -M2 -O u -v snps -s $sam $fv $reg | \\
+runCmd("bcftools view -U -m2 -M2 -O u -v snps -s $sam $fv | \\
   bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - | \\
   snpfilter.pl -n $na_max -m $mac_min | \\
   snp.fixid.pl -o 11.snp");
 
-runCmd("samplelines.pl -i 11.snp -o 31.snp -n 10000");
-runCmd("snp2phy.pl -i 31.snp -o 31.phy");
+#runCmd("samplelines.pl -i 11.snp -o 31.snp -n 10000");
+#runCmd("snp2phy.pl -i 31.snp -o 31.phy");
 
-runCmd("phyml -i 31.phy -d nt");
-runCmd("mv 31.phy_phyml_tree.txt 31.nwk");
-runCmd("rm 31.phy_phyml*");
+#runCmd("phyml -i 31.phy -d nt");
+#runCmd("mv 31.phy_phyml_tree.txt 31.nwk");
+#runCmd("rm 31.phy_phyml*");
 
 sub get_sample_ids {
   my ($opt) = @_;

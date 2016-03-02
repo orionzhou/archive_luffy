@@ -105,12 +105,12 @@ for (qname in qnames) {
   grgs[[qname]] = grg
 }
 
-reps = 1:8
+reps = 1:20
 n_orgs = 1:(1+length(qnames))
 tp = data.frame(rep = rep(reps, each = length(n_orgs)), 
   n_org = rep(n_orgs, length(rep)), core = NA, pan = NA)
   
-for (rep in 1:8) {
+for (rep in reps) {
   grc = grt
   grp = grt
   core = sum(width(grc))
@@ -149,27 +149,54 @@ fi = file.path(diro, "63.pan.genome.size.tbl")
 tp = read.table(fi, header = T, sep = "\t", as.is = T)
 
 tp$rep = factor(tp$rep, levels = 1:max(tp$rep))
+tp$pan = tp$pan / 1000000
+tp$core = tp$core / 1000000
+
+tt = ddply(tp, .(n_org), summarise, 
+  pan0 = min(pan), pan25 = quantile(pan, 0.25), pan50 = median(pan), pan75 = quantile(pan, 0.75), pan100 = max(pan),
+  core0 = min(core), core25 = quantile(core, 0.25), core50 = median(core), core75 = quantile(core, 0.75), core100 = max(core))
+tt$n_org = factor(tt$n_org)
+
+xs = 1:13
+xsp = 1:50
+
+fitl <- loess(pan ~ n_org, tp)
+ysl = predict(fitl, data.frame(n_org = xs), se = F)
+dft = data.frame(x = xs, y = ysl)
+fite = NLSstAsymptotic(sortedXyData(expression(x),expression(y), dft))
+b0 = fite['b0']; b1 = fite['b1']; lrc = fite['lrc']
+pansf = b0 + b1*(1-exp(-exp(lrc) * xsp))
+
+fitl <- loess(core ~ n_org, tp)
+ysl = predict(fitl, data.frame(n_org = xs), se = F)
+dft = data.frame(x = xs, y = ysl)
+fite = NLSstAsymptotic(sortedXyData(expression(x),expression(y), dft))
+b0 = fite['b0']; b1 = fite['b1']; lrc = fite['lrc']
+coresf = b0 + b1*(1-exp(-exp(lrc) * xsp))
+
+tf = data.frame(x=xsp, panf = pansf, coref = coresf)
+
 p2 = ggplot(tp) +
-  geom_point(aes(x = n_org, y = pan/1000000), shape = 1, size = 1) +
-  geom_point(aes(x = n_org, y = core/1000000), shape = 4, size = 1) +
-#  geom_text(aes(x = n_org, y = 0, label = org), geom_params=list(size = 2.5, vjust = 0, angle = 30)) +
-  stat_smooth(aes(x = n_org, y = pan/1000000, col = 'a'), fill = 'azure4', size = 0.3, se = F) +
-  stat_smooth(aes(x = n_org, y = core/1000000, col = 'b'), fill = 'azure4', size = 0.3, se = F) +
-#  scale_shape(name = "", solid = FALSE, guide = F) +
+  geom_linerange(data = tt, mapping = aes(x = n_org, y = pan50, ymin = pan0, ymax = pan100), col = 'darkorchid4', size = 0.5) +
+  geom_linerange(data = tt, mapping = aes(x = n_org, y = core50, ymin = core0, ymax = core100), col = 'darkorchid4', size = 0.5) +
+  geom_jitter(aes(x = n_org, y = pan), size = 0.2, width = 0.5) +
+  geom_jitter(aes(x = n_org, y = core), size = 0.2, width = 0.5) +
+  geom_line(data = tf, aes(x = x, y = panf, col = 'a'), size = 0.5) +
+  geom_line(data = tf, aes(x = x, y = coref, col = 'b'), size = 0.5) +
   scale_color_manual(name = "", labels = c('Pan-genome', 'Core-genome'), values = c("firebrick1", "dodgerblue")) +
-  scale_x_continuous(name = '# Genomes Sequenced') +
-  scale_y_continuous(name = 'Genome size (Mbp)', expand = c(0, 0), limits = c(0, 480)) + 
+  scale_x_discrete(name = '# Genomes Sequenced') +
+  scale_y_continuous(name = 'Genome size (Mbp)', expand = c(0, 0), limits = c(220, 450)) + 
   theme_bw() +
-  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.2, 'lines')) +
-  theme(legend.position = c(0.15, 0.2), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "line"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks = element_line(size=1)) +
+  theme(legend.position = c(0.85, 0.65), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "line"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, color = "blue")) +
   theme(axis.text.y = element_text(size = 8, color = "grey", angle = 90, hjust  = 0.5))
 
-#fp = sprintf("%s/63.pan.genome.size.pdf", dir)
-#ggsave(p, filename = fp, width = 5, height = 4)
+fp = sprintf("%s/63.pan.genome.size.pdf", diro)
+ggsave(p2, filename = fp, width = 5, height = 4)
 
 fo = sprintf("%s/63.pan.genome.pdf", diro)
 pdf(file = fo, width = 10, height = 5, bg = 'transparent')

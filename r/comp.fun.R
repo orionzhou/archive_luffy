@@ -306,6 +306,18 @@ read_bam <- function(bam, gr, pileup = F) {
   res
 }
 
+fams = c("NBS-LRR", "F-box", "LRR-RLK", "RLK", "TE", "Unknown", 'CRP-DEFL', 'CRP-NCR', 'CRP-Miscellaneous', 'Zinc-Finger')
+rename_genefam <- function(ti, fams) {
+  to = ti
+  to$fam[to$fam %in% c("CC-NBS-LRR", "TIR-NBS-LRR")] = "NBS-LRR"
+  to$fam[to$fam == 'CRP0000-1030'] = 'CRP-DEFL'
+  to$fam[to$fam == 'NCR'] = 'CRP-NCR'
+  to$fam[to$fam == 'CRP1600-6250'] = 'CRP-Miscellaneous'
+  to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
+  to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+  to
+}
+
 tname = "HM101"
 qnames_all = c(
   "HM058", "HM056", "HM125", "HM129", "HM034", 
@@ -324,6 +336,7 @@ qnames_15 = c(
   "HM023", "HM010", "HM022", "HM340", "HM324"
 )
 qnames_alpaca = c("HM056.AC", "HM034.AC", "HM340.AC")
+qnames_alpaca_comp = c("HM056", "HM056.AC", "HM034", "HM034.AC", "HM340", "HM340.AC", "HM101")
 qnames_ingroup = qnames_12
 orgs = c(tname, qnames_all)
 cfgs = get_genome_cfgs(orgs)

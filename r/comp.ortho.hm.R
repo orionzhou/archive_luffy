@@ -9,7 +9,7 @@ source("comp.fun.R")
 
 dirw = file.path(Sys.getenv("misc3"), "comp.ortho.hm")
 
-## run comp.ortho.score.R to create 05_score/*.tbl
+## run comp.ortho.score.R to create 05_score/xx.tbl
 fg = file.path(tcfg$gdir, "51.gtb")
 tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
 

@@ -180,7 +180,16 @@ for (qname in c(tname, qnames_15)) {
   lens = dl$V1[dl$.id %in% ids_nonte]
   mean_prot = mean(lens)
   med_prot = median(lens)
-    
+
+  tt = tg[tg$cat2 == 'TE',]
+  dtn = table(tt$cat3)
+  dtn = dtn[names(dtn) != '']
+  x = c()
+  x[tfams] = 0
+  x[names(dtn)] = dtn
+  tstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, tfams))
+  n_te = nrow(tt)
+  
   tn = tg[tg$cat2 %in% c('CC-NBS-LRR', 'TIR-NBS-LRR'),]
   dtn = table(tn$cat3)
   x = c()
@@ -189,7 +198,7 @@ for (qname in c(tname, qnames_15)) {
   nstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, nfams))
   n_nbs = nrow(tn)
   
-  tr = tg[tg$cat2 %in% c('RLK', 'LRR-RLK'),]
+  tr = tg[tg$cat2 %in% c('LRR-RLK'),]
   dtn = table(tr$cat3)
   x = c()
   x[rfams] = 0
@@ -205,14 +214,8 @@ for (qname in c(tname, qnames_15)) {
   cstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, cfams))
   n_ncr = sum(tc$cat2 == 'NCR')
   
-  tt = tg[tg$cat2 == 'TE',]
-  dtn = table(tt$cat3)
-  dtn = dtn[names(dtn) != '']
-  x = c()
-  x[tfams] = 0
-  x[names(dtn)] = dtn
-  tstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, tfams))
-  n_te = nrow(tt)
+  tf = tg[tg$cat2 %in% c('F-box'),]
+  n_fbx = nrow(tf)
   
   ids = ids_nonte
   ids_rna = c(); ids_hom = c()
@@ -235,9 +238,9 @@ for (qname in c(tname, qnames_15)) {
   }
   p_sup = sprintf("%.01f", length(unique(c(ids_rna, ids_hom))) / length(ids) * 100)
   
-  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_rlk, n_ncr, med_prot, p_rna, p_hom, p_sup),
+  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_fbx, n_rlk, n_ncr, med_prot, p_rna, p_hom, p_sup),
     nrow = 1, dimnames = list(NULL, c("# Total Genes", 'TE', 'non-TE', 
-    'NBS-LRR','RLK','NCR',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
+    'NBS-LRR','F-box','LRR-RLK','NCR',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
 }
 ds = do.call(rbind.data.frame, stats)
 #for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }

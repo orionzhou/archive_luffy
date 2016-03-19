@@ -1,0 +1,199 @@
+require(rtracklayer)
+require(plyr)
+require(dplyr)
+require(seqinr)
+require(GenomicRanges)
+require(ggplot2)
+require(gtable)
+require(grid)
+require(RColorBrewer)
+#require(Gviz)
+source('Location.R')
+source('comp.fun.R')
+
+
+prepare_data <- function(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl) {
+
+tw = data.frame(chr = chr, beg = seq(beg, by = 10000, length.out = 100), end = seq(beg+10000-1, by = 10000, length.out = 100), len = 10000, stringsAsFactors = F)
+gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  
+bp_gap = intersect_basepair(gr, grp)
+bp_nogap = tw$len - bp_gap
+
+tw = cbind(tw, len_ng = bp_nogap)
+#tw = tw[tw$chr != 'chrU' & tw$len_ng/tw$len > 0.5,]
+gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+### gene family stats - basepair %
+h = list('TE'='TE',
+  'NBS' = c('TIR-NBS-LRR', 'CC-NBS-LRR'),
+  'NCR' = 'NCR',
+  'LRR_RLK' = 'LRR-RLK', 
+  'F_box' = 'F-box'
+)
+
+dg = tw[,1:3]
+for (key in names(h)) {
+  tgs = tg[tg$cat %in% h[[key]],]
+  gs = with(tgs, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  gd = intersect_basepair(gr, reduce(gs)) / tw$len_ng
+  dg = cbind(dg, gd = gd)
+  colnames(dg)[length(dg)] = key
+}
+
+### proportion covered based in synteny
+dy = tw[,1:3]
+for (qname in qnames_15) {
+  len_syn = intersect_basepair(gr, grl[[qname]])
+  pc = len_syn / tw$len_ng
+  pc[tw$len_ng == 0] = 0
+  dy = cbind(dy, org = pc)
+  colnames(dy)[length(dy)] = qname
+}
+
+### theta-pi, covered bases in 9/12 accessions
+lenc = intersect_basepair(gr, grc)
+
+nds = intersect_score(gr, grn)
+pi_snp = nds / lenc
+
+ndi = intersect_score(gr, grvs)
+pi_indel = ndi / tw$len_ng
+ndv = intersect_score(gr, grvl)
+pi_sv = ndv / tw$len_ng
+
+pi_snp[is.infinite(pi_snp)] = NA
+pi_indel[is.infinite(pi_indel)] = NA
+pi_sv[is.infinite(pi_sv)] = NA
+ds = cbind(tw[,1:3], Gaps = 1-tw$len_ng/tw$len, Coverage = lenc/tw$len_ng, Pi_SNP = pi_snp, Pi_InDel = pi_indel, Pi_SV = pi_sv)
+
+  list(tw = tw, dg = dg, dy = dy, ds = ds)
+}
+
+sub_plots <- function(chr, beg, tw, dg, dy, ds) {
+title = sprintf("%s:%02dMb", chr, as.integer(beg/1000000))
+##### sliding window plot (100 x 10kb)
+dyw = cbind(dy[,c(-1:-3)], beg = dy[,2])
+dyl = reshape(dyw, direction = 'long', varying = list(1:15), idvar = c('beg'), timevar = 'org', v.names = 'syn', times = colnames(dyw)[1:15])
+dyl$org = factor(dyl$org, levels = rev(qnames_15))
+
+cols1 = rev(c("#282b68", "#324387", "#385193", "#498bbd", "#71c5cd", "#81c185", "#afcf45", "#faed29", "#ea862d", "#db382b", "#bb242a"))
+colsy = brewer.pal(11, "Spectral")
+
+vmin = min(dyl$syn, na.rm = T)
+vmax = max(dyl$syn, na.rm = T)
+breaks = seq(vmin, vmax, length.out = length(colsy) + 1)
+dyl = cbind(dyl, syn2 = cut(dyl$syn, breaks, include.lowest = T))
+
+labs = rep('', length(colsy))
+ltitle = sprintf("Coverage (%.03f-%.03f)", vmin, vmax)
+
+py <- ggplot(dyl) +
+  geom_tile(aes(x = beg, y = org, fill = syn2, height = 0.8)) +
+  theme_bw() + 
+  scale_x_continuous(name = title, expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0), name = '') +
+  scale_fill_manual(name = ltitle, labels = labs, values = colsy, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines")) +
+  theme(axis.title.x = element_text(colour = "blue", size = 8), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+
+#fo = file.path(dirw, "33.win.1.pdf")
+#ggsave(py, filename = fo, width = 4, height = 4)
+
+## gene fam density
+fams = colnames(dg)[-1:-3]
+
+lst = list(); lcol = list()
+for (fam in fams) {
+colsg = brewer.pal(9, "Greens")
+
+vmin = min(dg[,fam], na.rm = T); vmax = max(dg[,fam], na.rm = T)
+breaks = seq(vmin, vmax, length.out = length(colsg)+1)
+if(vmin == vmax) {
+	tg2 = cbind(dg, gd = vmin)
+	tg2$gd = factor(tg2$gd, levels = seq(vmin, by = 1, length.out = length(colsg)))
+} else {
+	tg2 = cbind(dg, gd = cut(dg[,fam], breaks, include.lowest = T))
+}
+
+nlev = length(unique(tg2$gd))
+if(nlev < 9) {
+	colsg = brewer.pal(nlev, "Greens")
+	tg2$gd = factor(tg2$gd, levels = sort(unique(tg2$gd)))
+}
+labg = rep('', length(colsg))
+ltitle = sprintf("%% bases (%.01f-%.01f)", vmin, vmax)
+
+tg2 = cbind(tg2, y = fam)
+pg1 <- ggplot(tg2) +
+  geom_tile(aes(x = beg, y = y, fill = gd, height = 1)) +
+  theme_bw() + 
+  scale_x_continuous(name = '', expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0), name = '') +
+  scale_fill_manual(name = ltitle, labels = labg, values = colsg, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
+  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) + 
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+lst[[fam]] = ggplotGrob(pg1)
+}
+
+## theta-pi stats
+keys = colnames(ds)[-1:-3]
+
+stats = list()
+for (key in keys) {
+colst = brewer.pal(9, "Purples")
+if(key == 'Coverage') {colst = brewer.pal(9, "Reds")}
+
+vmin = min(ds[,key], na.rm = T); vmax = max(ds[,key], na.rm = T)
+breaks = seq(vmin, vmax, length.out = length(colst)+1)
+if(vmin == vmax) {
+	ts2 = cbind(ds, val = vmin)
+	ts2$val = factor(ts2$val, levels = seq(vmin, by = 1, length.out = length(colst)))
+} else {
+	ts2 = cbind(ds, val = cut(ds[,key], breaks, include.lowest = T))
+}
+
+nlev = length(unique(ts2$val))
+if(nlev < 9) { 
+	colst = brewer.pal(nlev, "Purples")
+	ts2$val = factor(ts2$val, levels = sort(unique(ts2$val)))
+}
+labg = rep('', length(colst))
+labg[length(colst)] = sprintf("(%.03f-%.03f)", vmin, vmax)
+ltitle = sprintf("range: %.01f-%.01f", vmin, vmax)
+
+ts2 = cbind(ts2, y = key)
+ps <- ggplot(ts2) +
+  geom_tile(aes(x = beg, y = y, fill = val, height = 1)) +
+  theme_bw() + 
+  scale_x_continuous(name = '', expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0), name = '') +
+  scale_fill_manual(name = ltitle, labels = labg, values = colst, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
+  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+stats[[key]] = ggplotGrob(ps)
+}
+
+	list(cvg = py, gplots = lst, splots = stats)
+}
+
+
+

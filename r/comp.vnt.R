@@ -66,63 +66,6 @@ tcvg = data.frame(chr = seqnames(grc), beg = start(grc), end = end(grc))
 fo = file.path(dirw, "81.cvg.tbl")
 write.table(tcvg, fo, sep = "\t", row.names = F, col.names = F, quote = F)
 
-##### creating sliding window statistics
-fw = file.path(Sys.getenv("misc3"), "comp.stat", "31.win.tbl")
-tw = read.table(fw, header = T, sep = "\t", as.is = T)
-gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
-
-fc = file.path(dir, "81.cvg.tbl")
-tc = read.table(fc, header = F, sep = "\t", as.is = T)
-grc = with(tc, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
-
-lenc = intersect_basepair(gr, grc)
-
-### calc nuc-div for SNPs
-fn = file.path(Sys.getenv("misc3"), "comp.vnt", "25.stat.tbl")
-tn = read.table(fn, header = T, sep = "\t", as.is = T)
-grn = with(tn, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
-nucdivs = intersect_score(gr, grn)
-pi_snp = nucdivs / lenc
-
-# (obsolete!) calc nuc-div for SNPs - the hard way
-cl = makeCluster(detectCores())
-cluster_fun <- function() {}
-clusterCall(cl, cluster_fun)
-
-get_nuc_div <- function(rw, fs) {
-  chr = rw['chr']; beg = as.numeric(rw['beg']); end = as.numeric(rw['end'])
-  cmd = sprintf("tabix %s %s:%d-%d | cut -f6 | paste -sd+ | bc", fs, chr, beg, end)
-  ret = as.numeric(system(cmd, intern = T))
-  ifelse(is.numeric(ret), ret, NA)
-}
-fs = file.path(dirw, '25.stat.tbl.gz')
-
-ptm <- proc.time()
-pis = parApply(cl, tw, 1, get_nuc_div, fs)
-proc.time() - ptm
-
-### calc nuc-div for indels/sv
-fv = file.path(Sys.getenv("misc3"), "comp.vnt", "52.stat.tbl")
-tv = read.table(fv, header = T, sep = "\t", as.is = T)
-tv = cbind(tv, size = (tv$rsize + tv$asize - 2))
-tvs = tv[tv$size < 50,]
-tvl = tv[tv$size >= 50,]
-grvs = with(tvs, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
-grvl = with(tvl, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
-
-nucdivs = intersect_score(gr, grvs)
-pi_indel = nucdivs / tw$len_ng
-nucdivs = intersect_score(gr, grvl)
-pi_sv = nucdivs / tw$len_ng
-
-# output
-pi_snp[is.infinite(pi_snp)] = NA
-pi_indel[is.infinite(pi_indel)] = NA
-pi_sv[is.infinite(pi_sv)] = NA
-to = cbind(tw, lenc = lenc, pi_snp = pi_snp, pi_indel = pi_indel, pi_sv = pi_sv)
-fo = file.path(diro, "32.win.stat.tbl")
-write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
-
 ##### misc tests of packages
 #popgenome
 dv = file.path(dir, "xxx")

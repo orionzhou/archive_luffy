@@ -353,7 +353,7 @@ comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), 
   trackheight = c('axis' = 30, 'gap' = 10, 'gene' = 15, 'link' = 45,
     'snp' = 10, 'mcov' = 20, 'mapp' = 20, 'tpct' = 20, 'bam' = 30)
 
-  fillg = c('TE' = 'slategray3', 'Coding_Gene' = 'brown4', 
+  fillg = c('TE' = 'slategray3', 'Gene' = 'brown4', 
     'CC-NBS-LRR' = 'forestgreen', 'TIR-NBS-LRR' = 'forestgreen', 
     'CRP0000-1030' = 'dodgerblue', 'NCR' = 'dodgerblue', 'CRP1600-6250' = 'dodgerblue')
 
@@ -620,6 +620,7 @@ plot_gene <- function(dgen, fillg, y = unit(0.5, 'npc'), text.show = F,
   if(is.null(dgen)) { return(NULL) }
   dgen = dgen[,c('beg.a', 'end.a', 'srd.a', 'type', 'cat')]
   colnames(dgen) = c('beg', 'end', 'srd', 'type', 'cat')
+  dgen$cat[!dgen$cat %in% names(fillg)] = "Gene"
   
   linegrob1 = segmentsGrob(x0 = unit(min(dgen$beg), 'native'), 
     x1 = unit(max(dgen$end), 'native'), y0 = y, y1 = y, 

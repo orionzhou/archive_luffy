@@ -13,23 +13,31 @@ source("comp.fun.R")
 
 dirw = file.path(Sys.getenv("misc3"), "comp.og")
 
-##### dump all proteins
-tc = data.frame()
+## read all gene models
+tg = data.frame()
 for (qname in c(tname, qnames_15)) {
   gdir = cfgs[[qname]]$gdir
-
   fg = file.path(gdir, "51.gtb")
-  tg = read.table(fg, sep = "\t", header = T, as.is = T)
-
-  tc = rbind(tc, data.frame(org = qname, gid = tg$id, cat2 = tg$cat2, cat3 = tg$cat3, stringsAsFactors = F))
+  ti = read.table(fg, sep = "\t", header = T, as.is = T)
+  tg = rbind(tg, data.frame(org = qname, gid = ti$id, fam = ti$cat2, sfam = ti$cat3, stringsAsFactors = F))
 }
-head(tc)
-table(tc$org)
+table(tg$org)
+
+tg$fam[tg$fam %in% c("NB-ARC", "TIR", 'CC-NBS-LRR','TIR-NBS-LRR')] = "NBS-LRR"
+fams = c("NCR", "NBS-LRR", "LRR", "F-box", "LRR-RLK", "TE", "Unknown")
+tg$fam[! tg$fam %in% fams] = 'Pfam-Misc'
+tg$fam = factor(tg$fam, levels = unique(tg$fam))
 
 fo = file.path(dirw, "01.gid.tbl")
-#write.table(tc, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+#write.table(tg, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
-#### pan proteome revisited
+## read gene cluster information
+fi = file.path(dirw, "05.clu/32.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+x = strsplit(ti$id, "-")
+t_clu = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
+
+##### pan-proteome splited by gene-family
 fi = file.path(dirw, "05.clu/32.tbl")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 x = strsplit(ti$id, "-")
@@ -91,7 +99,7 @@ fp = sprintf("%s/41.afs.pdf", dirw)
 ggsave(p1, filename = fp, width = 7, height = 5)
 
 
-##### double check unknown proteins
+##### enrichment of unknown proteins in low-confidence calls
 fq = file.path(Sys.getenv("genome"), "HM101", "augustus", "31.gtb")
 tq = read.table(fq, sep = "\t", header = T, as.is = T)
 
@@ -171,55 +179,154 @@ fp = sprintf("%s/45.unk.pdf", dirw)
 ggsave(p1, filename = fp, width = 4, height = 4)
 
 
-##### identify all novel / accession-specific genes
-fi = file.path(Sys.getenv('misc3'), 'comp.panseq', '32.global.tbl')
-ti = read.table(fi, header = T, sep = "\t", as.is = T)
+##### accession-specific / core genes - pan-proteome approach
+ti = t_clu
+ti = ti[ti$org %in% c(tname,qnames_12),]
+ti = merge(ti, tg, by = c('org', 'gid'))
+#ids = sprintf("%s-%s", ti$org, ti$gid)
+#ti = ti[! ids %in% ids_low,]
 
-gb = group_by(ti, cid)
+gb = group_by(ti, grp)
+tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(fam), decreasing = T))[1], rid = id[1])
+ti = merge(ti, tr[,c('grp','size')], by = 'grp')
+
+# output unknown cluster/ids for blastnr
+ids_unk = tr$rid[tr$fam == 'Unknown']
+fo = file.path(dirw, "31.unk.txt")
+#write(ids_unk, fo, sep = "\n")
+#seqret.pl -d 02.fas -b 31.unk.txt -o 32.unk.fas
+
+tas = tr[tr$size==1,]
+tco = tr[tr$size==13,]
+table(tas$fam)/nrow(tas)
+table(tco$fam)/nrow(tco)
+
+fams = c("Unknown","TE","Pfam-Misc","NBS-LRR","LRR-RLK","LRR","F-box","NCR")
+
+x1 = table(tas$fam)
+num1 = as.numeric(x1[fams])
+pct1 = num1 / nrow(tas) * 100
+
+x2 = table(tco$fam)
+num2 = as.numeric(x2[fams])
+pct2 = num2 / nrow(tco) * 100
+
+tp = data.frame(fam = fams, acsp.num = num1, acsp.pct = pct1, core.num = num2, core.pct = pct2, stringsAsFactors = T)
+fo = file.path(dirw, "51.pro.acsp+core.tbl")
+write.table(tp, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+
+##### accession-specific / core genes - pan-genome approach
+## core-genome genes + HM101-specific genes
+tlen = read.table(cfgs[[tname]]$size, sep = "\t", as.is = T, header = F)
+tgap = read.table(cfgs[[tname]]$gap, sep = "\t", as.is = T, header = F)
+grt = with(tlen, GRanges(seqnames = V1, ranges = IRanges(1, V2)))
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, V3)))
+grs = setdiff(grt, grp)
+
+gr_core = grs; gr_as = grs
+for (org in qnames_12) {
+  fgax = sprintf("%s/%s_HM101/23_blat/31.9/gax", Sys.getenv('misc3'), org)
+  tgax = read.table(fgax, sep = "\t", header = F, as.is = T)[,1:3]
+  gr = with(tgax, GRanges(seqnames = V1, ranges = IRanges(V2, V3)))
+  gr_core = intersect(gr_core, gr)
+  gr_as = setdiff(gr_as, gr)
+}
+
+  td = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
+  colnames(td) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+  td = td[td$type == 'cds',]
+  grg = with(td, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+  olens = intersect_basepair(grg, gr_as)
+  gb = group_by(cbind(td, olen = olens), id)
+  dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len)
+  dy = dx[dx$pct >= 0.5,]
+t_asr = data.frame(org = tname, gid = dy$id)
+
+  olens = intersect_basepair(grg, gr_core)
+  gb = group_by(cbind(td, olen = olens), id)
+  dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len)
+  dy = dx[dx$pct >= 0.5,]
+t_core = data.frame(org = tname, gid = dy$id)
+
+## acc12-specific genes
+fi = file.path(Sys.getenv('misc3'), 'comp.panseq', '32.global.tbl')
+t_aln = read.table(fi, header = T, sep = "\t", as.is = T)
+
+gb = group_by(t_aln, cid)
 dcl = dplyr::summarise(gb, n_org = n(), size = sum(end - beg + 1))
 cids = dcl$cid[dcl$n_org == 1]
 
 do = data.frame()
-for (qname in qnames_15) {
+for (qname in qnames_12) {
   cfg = cfgs[[qname]]
 
-  tg = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
-  colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
-  tg = tg[tg$type == 'cds',]
-  grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+  td = read.table(cfg$gene, sep = "\t", header = F, as.is = T)
+  colnames(td) = c("chr", "beg", "end", "srd", "id", "type", "fam")
+  td = td[td$type == 'cds',]
+  grg = with(td, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
   fn = file.path(cfg$cdir, "../41_novseq/21.bed")
-  tn = read.table(fn, sep = "\t", header = F, as.is = T)
-  grn = with(tn, GRanges(seqnames = V1, ranges = IRanges(V2+1, end = V3)))
-#  tn = ti[ti$cid %in% cids & ti$org == qname,]
-#  grn = with(tn, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+#  tn = read.table(fn, sep = "\t", header = F, as.is = T)
+#  grn = with(tn, GRanges(seqnames = V1, ranges = IRanges(V2+1, end = V3)))
+  tn = t_aln[t_aln$cid %in% cids & t_aln$org == qname,]
+  grn = with(tn, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
   olens = intersect_basepair(grg, grn)
   #ds = ddply(cbind(tg, olen = olens), .(fam), summarise, olen = sum(olen), alen = sum(end - beg + 1))
   #ds = cbind(ds, prop = ds$olen / ds$alen, org = qname)
-  gb = group_by(cbind(tg, olen = olens), id)
-  dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len, fam = fam[1])
+  gb = group_by(cbind(td, olen = olens), id)
+  dx = dplyr::summarise(gb, len = sum(end-beg+1), olen = sum(olen), pct = olen/len)
 
   dy = dx[dx$pct >= 0.5,]
   do = rbind(do, cbind(dy, org = qname))
 }
-ids_nov = sprintf("%s-%s", do$org, do$id)
+t_nov = do[,c('org','id')]
+colnames(t_nov)[2] = 'gid'
 
+tas = merge(t_nov, tg, by = c('org', 'gid'))
+table(tas$fam)/nrow(tas)
+
+t2 = merge(t_clu, t_core, by = c('org','gid'))
+t3 = merge(t2, tg, by = c('org', 'gid'))
+gb = group_by(t3, grp)
+tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(fam), decreasing = T))[1], rid = id[1])
+tco = merge(t3, tr[,c('grp','size')], by = 'grp')
+table(tco$fam)/nrow(tco)
+
+
+fams = c("Unknown","TE","Pfam-Misc","NBS-LRR","LRR-RLK","LRR","F-box","NCR")
+
+x1 = table(tas$fam)
+num1 = as.numeric(x1[fams])
+pct1 = num1 / nrow(tas) * 100
+
+x2 = table(tco$fam)
+num2 = as.numeric(x2[fams])
+pct2 = num2 / nrow(tco) * 100
+
+tp = data.frame(fam = fams, acsp.num = num1, acsp.pct = pct1, core.num = num2, core.pct = pct2, stringsAsFactors = T)
+fo = file.path(dirw, "61.gen.acsp+core.tbl")
+write.table(tp, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+
+
+### obsolete ways to characterize novel gene pool
 x = ddply(do, .(fam), summarise, cnt = length(fam), prop = cnt / nrow(do))
 x[order(x$prop, decreasing = T), ][1:30,]
 
-fn = file.path(Sys.getenv("misc3"), "comp.ortho", "06.no.ortho.tbl")
-tn = read.table(fn, sep = "\t", header = T, as.is = T)
-ids2 = sprintf("%s-%s", tn$org, tn$gid)
-
-sum(ids_nov %in% ids2)
+#ids_nov = sprintf("%s-%s", do$org, do$id)
+#fn = file.path(Sys.getenv("misc3"), "comp.ortho", "06.no.ortho.tbl")
+#tn = read.table(fn, sep = "\t", header = T, as.is = T)
+#ids2 = sprintf("%s-%s", tn$org, tn$gid)
+#sum(ids_nov %in% ids2)
 
 to = data.frame(org = do$org, gid = do$id, stringsAsFactors = F)
 fo = file.path(dirw, "11.novel.gid.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
-
-##### run seq.cluster.py and characterize novel gene pool composition
+### run seq.cluster.py and characterize novel gene pool composition
 fi = file.path(dirw, "15.clu/32.tbl")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 x = strsplit(ti$id, "-")
@@ -240,13 +347,7 @@ grps = x$grp[x$size == 1]
 
 ti2 = merge(tt[tt$grp %in% grps,], tc, by = c('org', 'gid'))
 gb = group_by(ti2, grp)
-tr = summarise(gb, fam = names(sort(table(cat2), decreasing = T))[1], sfam = cat3[which(cat2==fam)[1]])
-
-
-tr$fam[tr$fam %in% c("NB-ARC", "TIR", 'CC-NBS-LRR','TIR-NBS-LRR')] = "NBS-LRR"
-fams = c("NCR", "NBS-LRR", "LRR", "F-box", "LRR-RLK", "TE", "Unknown")
-tr$fam[! tr$fam %in% fams] = 'Pfam-Miscellaneous'
-tr$fam = factor(tr$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+tr = summarise(gb, fam = names(sort(table(fam), decreasing = T))[1], sfam = sfam[which(fam==fam)[1]])
 
 x = table(tr$fam)
 tp = data.frame(fam = names(x), num = as.numeric(x), stringsAsFactors = T)
@@ -254,7 +355,7 @@ tp = cbind(tp, prop = tp$num / sum(tp$num))
 labs = sprintf("%s (%d : %.01f%%)", tp$fam, tp$num, tp$prop * 100)
 tp = cbind(tp, label = labs)
 
-fo = file.path(dirw, "51.novel.fam.tbl")
+fo = file.path(dirw, "51.gen.acsp+core.tbl")
 write.table(tp, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 fp = file.path(dirw, '51.novel.fam.pdf')
@@ -263,27 +364,3 @@ pie(tp$num, labels = labs, lwd = 1, cex = 0.7, col = brewer.pal(8, 'Set3'), main
 dev.off()
 
 
-fd = file.path(dirw, "01.gid.tbl.bak")
-td = read.table(fd, sep = "\t", header = T, as.is = T)
-ids_old = td$gid[td$org == 'HM056']
-ids_new = tc$gid[tc$org == "HM056"]
-ids_new[!ids_new %in% ids_old]
-
-t1 = read.table(file.path(dirw, "11.novel.gid.tbl"), sep = "\t", header = T, as.is = T)
-t2 = read.table(file.path(dirw, "16.len.tbl"), sep = "\t", header = F, as.is = T)
-t3 = read.table(file.path(dirw, "16.tbl"), sep = "\t", header = F, as.is = T)
-
-ids_all = paste(t1$org, t1$gid, sep = "-")
-ids_cen = t2$V1
-length(ids_all)
-length(ids_cen)
-sum(ids_cen %in% ids_all)
-
-ids_hit = t3$V1
-length(ids_hit)
-length(unique(ids_hit))
-
-length(unique(t3$V2))
-sum(unique(t3$V2) %in% ids_cen)
-
-ids_lef = ids_all[!ids_all %in% c(ids_hit, ids_cen)]

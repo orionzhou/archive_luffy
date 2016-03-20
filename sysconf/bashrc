@@ -100,6 +100,7 @@ export code=$luffy
 export robin=$git/robin
 export spada=$git/spada
 export rosar=$git/rgeneclust
+export urt=$git/soyurt
 export PATH=$rosar:$spada:$PATH
 
 # Perl

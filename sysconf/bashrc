@@ -31,7 +31,7 @@ elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
   export git=$home/git
 elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^ln|^cn ]]; then
   export soft_msi=/soft
-  for subpath in blat/34 usearch/8.0 muscle/3.8.31 \
+  for subpath in blat/34 muscle/3.8.31 \
     exonerate/2.2.0 structure/2.3.3
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then

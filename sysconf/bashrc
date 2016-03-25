@@ -97,6 +97,7 @@ export git=$home/git
 # repositories
 export luffy=$git/luffy
 export code=$luffy
+export conf=$luffy/sysconf
 export robin=$git/robin
 export spada=$git/spada
 export rosar=$git/rgeneclust

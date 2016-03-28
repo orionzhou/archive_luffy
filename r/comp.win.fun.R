@@ -95,8 +95,9 @@ py <- ggplot(dyl) +
   scale_y_discrete(expand = c(0, 0), name = '') +
   scale_fill_manual(name = ltitle, labels = labs, values = colsy, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines")) +
+  theme(panel.grid = element_blank()) + 
+  theme(panel.border = element_rect(fill=NA, linetype = 0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_text(colour = "blue", size = 8), axis.ticks.length = unit(0, 'lines')) +
   theme(axis.text.x = element_blank()) +
   theme(axis.title.y = element_blank()) +
@@ -145,7 +146,7 @@ pg1 <- ggplot(tg2) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-lst[[fam]] = ggplotGrob(pg1)
+lst[[fam]] = pg1
 }
 
 ## theta-pi stats
@@ -189,7 +190,7 @@ ps <- ggplot(ts2) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-stats[[key]] = ggplotGrob(ps)
+stats[[key]] = ps
 }
 
 	list(cvg = py, gplots = lst, splots = stats)

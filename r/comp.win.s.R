@@ -6,6 +6,7 @@ require(GenomicRanges)
 require(ggplot2)
 require(gtable)
 require(grid)
+require(gridExtra)
 require(RColorBrewer)
 #require(Gviz)
 source('Location.R')
@@ -65,26 +66,39 @@ res = prepare_data(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl)
 splots = sub_plots(chr, beg, res$tw, res$dg, res$dy, res$ds)
 
 ### multi-panel plot
-g1 = ggplotGrob(splots$cvg)
-#g1 = gtable_add_cols(g1, unit(0, "mm"))
-gs = list(g1)
+gp1 = splots$cvg + theme(axis.text.y = element_blank())
+gt1 = ggplotGrob(gp1)
+#gt1 = gtable_add_cols(gt1, unit(0, "mm"))
+gs = list(gt1)
 heis = c(15)
 for (key in names(splots$splots)) {
-	g2 = splots$splots[[key]]
-	g2$widths = g1$widths
-	gs = c(gs, list(g2))
+	gp2 = splots$splots[[key]] + theme(axis.text.y = element_blank())
+	gt2 = ggplotGrob(gp2)
+	gt2$widths = gt1$widths
+	gs = c(gs, list(gt2))
 	heis = c(heis, 1)
 }
 for (key in names(splots$gplots)) {
-	g3 = splots$gplots[[key]]
-	g3$widths = g1$widths
-	gs = c(gs, list(g3))
+	gp2 = splots$gplots[[key]] + theme(axis.text.y = element_blank())
+	gt2 = ggplotGrob(gp2)
+	gt2$widths = gt1$widths
+	gs = c(gs, list(gt2))
 	heis = c(heis, 1)
 }
 g <- gtable_matrix(name = 'demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
+pp <- gtable_matrix(name = 'demo', grobs = matrix(list(g, g), nrow = 1), widths = c(1, 1), heights = 1)
+
+bog <- rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
+bo <- gtable_matrix(name = 'demo', grobs = matrix(list(bog, bog), nrow = 1), widths = c(1, 1), heights = 1)
 
 fo = sprintf("%s/33.wins/%s.pdf", dirw, title)
-pdf(file = fo, width = 4, height = 6, bg = 'transparent')
+pdf(file = fo, width = 6, height = 6, bg = 'transparent')
 grid.newpage()
-grid.draw(g)
+grid.draw(pp)
+grid.draw(bo)
 dev.off()
+
+##### create multiple sliding-window plot
+chrs = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7')
+begs = c(16, 30, 5, 6, 28)
+

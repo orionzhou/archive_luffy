@@ -13,7 +13,7 @@ source('comp.fun.R')
 
 
 prepare_data <- function(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl) {
-
+beg = beg * 1000000 + 1
 tw = data.frame(chr = chr, beg = seq(beg, by = 10000, length.out = 100), end = seq(beg+10000-1, by = 10000, length.out = 100), len = 10000, stringsAsFactors = F)
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
   
@@ -71,7 +71,8 @@ ds = cbind(tw[,1:3], Gaps = 1-tw$len_ng/tw$len, Coverage = lenc/tw$len_ng, Pi_SN
 }
 
 sub_plots <- function(chr, beg, tw, dg, dy, ds) {
-title = sprintf("%s:%02dMb", chr, as.integer(beg/1000000))
+
+ptitle = sprintf("%s:%02dMb", chr, beg)
 ##### sliding window plot (100 x 10kb)
 dyw = cbind(dy[,c(-1:-3)], beg = dy[,2])
 dyl = reshape(dyw, direction = 'long', varying = list(1:15), idvar = c('beg'), timevar = 'org', v.names = 'syn', times = colnames(dyw)[1:15])
@@ -88,17 +89,16 @@ dyl = cbind(dyl, syn2 = cut(dyl$syn, breaks, include.lowest = T))
 labs = rep('', length(colsy))
 ltitle = sprintf("Coverage (%.03f-%.03f)", vmin, vmax)
 
-py <- ggplot(dyl) +
+p_cvg <- ggplot(dyl) +
   geom_tile(aes(x = beg, y = org, fill = syn2, height = 0.8)) +
   theme_bw() + 
-  scale_x_continuous(name = title, expand = c(0, 0)) + 
+  scale_x_continuous(name = '', expand = c(0, 0)) + 
   scale_y_discrete(expand = c(0, 0), name = '') +
   scale_fill_manual(name = ltitle, labels = labs, values = colsy, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
-  theme(legend.position = 'top', legend.direction = "horizontal", legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
-  theme(panel.grid = element_blank()) + 
-  theme(panel.border = element_rect(fill=NA, linetype = 0)) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.title = element_text(size = 7), legend.key.size = unit(0.3, 'lines'), legend.key.width = unit(0.3, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "cm")) +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='deeppink4', size=1)) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_text(colour = "blue", size = 8), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0,'cm')) +
   theme(axis.text.x = element_blank()) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
@@ -107,94 +107,58 @@ py <- ggplot(dyl) +
 #fo = file.path(dirw, "33.win.1.pdf")
 #ggsave(py, filename = fo, width = 4, height = 4)
 
-## gene fam density
-fams = colnames(dg)[-1:-3]
 
-lst = list(); lcol = list()
-for (fam in fams) {
-colsg = brewer.pal(9, "Greens")
+## different statistics (gene density + gap + coverage + theta-pi)
+dw = cbind(ds, dg[,-1:-3])
+opts = colnames(dw)[-1:-3]
+dcl = data.frame()
+for (opt in opts) {
+	cols = brewer.pal(9, "Greys")
+	vals = dw[,opt]
+	vmin = min(dw[,opt], na.rm = T); vmax = max(dw[,opt], na.rm = T)
+	breaks = seq(vmin, vmax, length.out = length(cols)+1)
+	if(vmin == vmax) {
+		itvs = rep(vmin, length(vals))
+		itvs = factor(itvs, levels = seq(vmin, by = 0.1, length.out = length(cols)))
+	} else {
+		itvs = cut(vals, breaks, include.lowest = T)
+	}
 
-vmin = min(dg[,fam], na.rm = T); vmax = max(dg[,fam], na.rm = T)
-breaks = seq(vmin, vmax, length.out = length(colsg)+1)
-if(vmin == vmax) {
-	tg2 = cbind(dg, gd = vmin)
-	tg2$gd = factor(tg2$gd, levels = seq(vmin, by = 1, length.out = length(colsg)))
-} else {
-	tg2 = cbind(dg, gd = cut(dg[,fam], breaks, include.lowest = T))
+	#levs = sort(unique(itvs))
+	#nlev = length(levs)
+	#itvs = factor(itvs, levels = levs)
+	#if(nlev == 1) {
+	#	cols = 'white'
+	#} else if(nlev == 2) {
+	#	cols = c('white', 'black')
+	#} else if(nlev < 9) {
+	#	cols = brewer.pal(max(3,nlev), "Greys")
+	#}
+	col_map = cols
+	names(col_map) = levels(itvs)
+	vals_mapped = as.character(col_map[itvs])
+	
+	labg = rep('', length(cols))
+	ltitle = sprintf("%% bases (%.01f-%.01f)", vmin, vmax)
+	dcl1 = cbind(tw[,1:2], opt = opt, col = vals_mapped)
+	dcl = rbind(dcl, dcl1)
 }
+dcl$opt = factor(dcl$opt, levels = rev(opts))
 
-nlev = length(unique(tg2$gd))
-if(nlev < 9) {
-	colsg = brewer.pal(nlev, "Greens")
-	tg2$gd = factor(tg2$gd, levels = sort(unique(tg2$gd)))
-}
-labg = rep('', length(colsg))
-ltitle = sprintf("%% bases (%.01f-%.01f)", vmin, vmax)
-
-tg2 = cbind(tg2, y = fam)
-pg1 <- ggplot(tg2) +
-  geom_tile(aes(x = beg, y = y, fill = gd, height = 1)) +
+p_sta <- ggplot(dcl) +
+  geom_tile(aes(x = beg, y = opt, fill = col, height = 0.8)) +
   theme_bw() + 
-  scale_x_continuous(name = '', expand = c(0, 0)) + 
+  scale_x_continuous(name = ptitle, expand = c(0, 0)) + 
   scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_manual(name = ltitle, labels = labg, values = colsg, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
-  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) + 
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
+  scale_fill_identity() +
+  theme(legend.position = 'none') + 
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='deeppink4', size=1)) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.title.x = element_text(colour = "blue", size = 8), axis.ticks.length = unit(0, 'lines')) +
   theme(axis.text.x = element_blank()) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-lst[[fam]] = pg1
+
+	list(cvg = p_cvg, sta = p_sta)
 }
-
-## theta-pi stats
-keys = colnames(ds)[-1:-3]
-
-stats = list()
-for (key in keys) {
-colst = brewer.pal(9, "Purples")
-if(key == 'Coverage') {colst = brewer.pal(9, "Reds")}
-
-vmin = min(ds[,key], na.rm = T); vmax = max(ds[,key], na.rm = T)
-breaks = seq(vmin, vmax, length.out = length(colst)+1)
-if(vmin == vmax) {
-	ts2 = cbind(ds, val = vmin)
-	ts2$val = factor(ts2$val, levels = seq(vmin, by = 1, length.out = length(colst)))
-} else {
-	ts2 = cbind(ds, val = cut(ds[,key], breaks, include.lowest = T))
-}
-
-nlev = length(unique(ts2$val))
-if(nlev < 9) { 
-	colst = brewer.pal(nlev, "Purples")
-	ts2$val = factor(ts2$val, levels = sort(unique(ts2$val)))
-}
-labg = rep('', length(colst))
-labg[length(colst)] = sprintf("(%.03f-%.03f)", vmin, vmax)
-ltitle = sprintf("range: %.01f-%.01f", vmin, vmax)
-
-ts2 = cbind(ts2, y = key)
-ps <- ggplot(ts2) +
-  geom_tile(aes(x = beg, y = y, fill = val, height = 1)) +
-  theme_bw() + 
-  scale_x_continuous(name = '', expand = c(0, 0)) + 
-  scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_manual(name = ltitle, labels = labg, values = colst, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
-  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.title.y = element_blank()) +
-  theme(axis.text.y = element_text(colour = "black", size = 8)) +
-  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-stats[[key]] = ps
-}
-
-	list(cvg = py, gplots = lst, splots = stats)
-}
-
-
-

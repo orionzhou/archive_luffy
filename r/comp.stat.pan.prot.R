@@ -97,7 +97,7 @@ p2 = ggplot(tp) +
   geom_errorbar(data = tp2, mapping = aes(x = n_org, ymin = corel, ymax = coreu), stat = 'identity', width = 0.3, lwd = 0.3) +
   stat_smooth(aes(x = n_org, y = pan, col = 'a'), size = 0.3, se = F) +
   stat_smooth(aes(x = n_org, y = core, col = 'b'), size = 0.3, se = F) +
-  scale_color_manual(name = "", labels = c('Pan-proteome', 'Core-proteome'), values = c("dodgerblue", "firebrick1")) +
+  scale_color_manual(name = "", labels = c('Pan-proteome', 'Core-proteome'), values = c("firebrick1", "dodgerblue")) +
   scale_x_continuous(name = '# Genomes Sequenced') +
   scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 60000)) + 
   theme_bw() +

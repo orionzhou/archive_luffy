@@ -1,0 +1,9 @@
+#PBS -l nodes=1:ppn=4,walltime=20:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q lab
+
+module load java
+interproscan.sh -appl PfamA -dp -i $FI -f tsv --goterms -o $FO
+#interproscan.sh -appl PfamA,Panther,TIGRFAM,SuperFamily,PRINTS -dp -i $FI -f tsv -o $FO
+

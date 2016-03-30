@@ -57,48 +57,69 @@ grvs = with(tvs, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score
 grvl = with(tvl, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
 
 ##### create sliding window table using 1Mb sliding windows
-source('comp.win.fun.R')
 chr = 'chr2'
-beg = 7000001
-title = sprintf("%s:%02dMb", chr, as.integer(beg/1000000))
+beg = 7
+title = sprintf("%s:%02dMb", chr, beg)
 
 res = prepare_data(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl)
 splots = sub_plots(chr, beg, res$tw, res$dg, res$dy, res$ds)
 
-### multi-panel plot
-gp1 = splots$cvg + theme(axis.text.y = element_blank())
-gt1 = ggplotGrob(gp1)
+p_cvg = splots$cvg + theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines"))
+p_sta = splots$sta
+gr_cvg = ggplotGrob(p_cvg)
+gr_sta = ggplotGrob(p_sta)
+gr_sta$widths = gr_cvg$widths
 #gt1 = gtable_add_cols(gt1, unit(0, "mm"))
-gs = list(gt1)
-heis = c(15)
-for (key in names(splots$splots)) {
-	gp2 = splots$splots[[key]] + theme(axis.text.y = element_blank())
-	gt2 = ggplotGrob(gp2)
-	gt2$widths = gt1$widths
-	gs = c(gs, list(gt2))
-	heis = c(heis, 1)
-}
-for (key in names(splots$gplots)) {
-	gp2 = splots$gplots[[key]] + theme(axis.text.y = element_blank())
-	gt2 = ggplotGrob(gp2)
-	gt2$widths = gt1$widths
-	gs = c(gs, list(gt2))
-	heis = c(heis, 1)
-}
-g <- gtable_matrix(name = 'demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
-pp <- gtable_matrix(name = 'demo', grobs = matrix(list(g, g), nrow = 1), widths = c(1, 1), heights = 1)
+gs = list(gr_cvg, gr_sta)
+heis = c(3, 2)
 
-bog <- rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
-bo <- gtable_matrix(name = 'demo', grobs = matrix(list(bog, bog), nrow = 1), widths = c(1, 1), heights = 1)
-
+g <- gtable_matrix(name='demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
 fo = sprintf("%s/33.wins/%s.pdf", dirw, title)
-pdf(file = fo, width = 6, height = 6, bg = 'transparent')
+pdf(file = fo, width = 4, height = 6, bg = 'transparent')
 grid.newpage()
-grid.draw(pp)
-grid.draw(bo)
+grid.draw(g)
 dev.off()
 
 ##### create multiple sliding-window plot
+source('comp.win.fun.R')
 chrs = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7')
 begs = c(16, 30, 5, 6, 28)
 
+lres = list()
+for (i in 1:length(chrs)) {
+  res = prepare_data(chrs[i], begs[i], grt, grp, tg, grl, grc, grn, grvs, grvl)
+  lres[[i]] = res
+}
+
+gts = list()
+for (i in 1:length(chrs)) {
+  res = lres[[i]]
+  splots = sub_plots(chrs[i], begs[i], res$tw, res$dg, res$dy, res$ds)
+  p_cvg = splots$cvg + ggtitle(LETTERS[i]) + theme(plot.margin = unit(c(0,0,0,0.1), "lines"))
+  p_sta = splots$sta + theme(plot.margin = unit(c(0,0,0.1,0.1), "lines"))
+  
+  if(i == 1) {
+    p_cvg = p_cvg + theme(plot.margin = unit(c(0,0,0,1), "lines"))
+    p_sta = p_sta + theme(plot.margin = unit(c(0,0,0.1,1), "lines"))
+  } else {
+    p_cvg = p_cvg + theme(axis.text.y = element_blank())
+    p_sta = p_sta + theme(axis.text.y = element_blank())
+  }
+  gr_cvg = ggplotGrob(p_cvg)
+  gr_sta = ggplotGrob(p_sta)
+  gr_sta$widths = gr_cvg$widths
+  gs = list(gr_cvg, gr_sta)
+  heis = c(3, 2)
+  g <- gtable_matrix(name='demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
+  g_rect = rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
+#  g = gtable_add_grob(g, g_rect, t=1, l=1, b=2, r=1)
+  gts[[i]] = g
+}
+
+bog <- rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
+gf <- gtable_matrix(name='demo', grobs = matrix(gts, ncol = length(gts)), widths = c(3.9,rep(3,length(gts)-1)), heights = 1)
+fo = sprintf("%s/33.wins/fig2.pdf", dirw)
+pdf(file = fo, width = 10, height = 6, bg = 'transparent')
+grid.newpage()
+grid.draw(gf)
+dev.off()

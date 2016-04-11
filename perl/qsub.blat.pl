@@ -11,7 +11,6 @@
 =head1 SYNOPSIS
   
   qsub.blat.pl [-help] [-in input-file] [-out output-directory]
-                      [-n number-batches] [-db blat-db]
 
   Options:
     -h (--help)   brief help message
@@ -20,6 +19,7 @@
     -n (--num)    number of qsub batches (def: 1)
     -t (--tgt)    blat target (def: "HM101")
     -g (--tag)    qsub job tag (def: "pz")
+    -p (--opt)    which qsub script to run (1: blat; 2: blat2; 3: blat-pro)
 
 =cut
   
@@ -38,8 +38,7 @@ use Data::Dumper;
 
 my ($fi, $dir) = ('') x 2;
 my ($n, $tgt) = (1, "HM101");
-my $tag = "pz";
-my $opt = "";
+my ($tag, $opt) = ("pz", 1);
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -80,7 +79,16 @@ printf "range: %s  -  %s\n", $sizes[0], $sizes[$#sizes];
 print "##### stats end   #####\n\n";
 
 print "\n##### qsub command begins #####\n";
-my $prog = $opt eq "pro" ? "blat-pro" : "blat";
+my $prog;
+if($opt == 1) {
+  $prog = "blat";
+} elsif($opt == 2) {
+  $prog = "blat2";
+} elsif($opt == 3) {
+  $prog = "blat-pro";
+} else {
+  die "unknonw opt: $opt\n";
+}
 for my $i (0..$n-1) {
   my $beg = $i * $ppn;
   print "qsub $prog -N blat.$tag.$i -v PRE=$dir/part,SUF=fas,BEG=$beg,DIG=$digits,TGT=$tgt\n";# -l qos=weightlessqos\n";

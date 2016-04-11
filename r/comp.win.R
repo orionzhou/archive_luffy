@@ -21,6 +21,9 @@ tgap = read.table(tcfg$gap, sep = "\t", header = F, as.is = T)
 grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
 tp = data.frame(chr = tgap$V1, beg = tgap$V2, end = tgap$V3)
 
+fcen = '/home/youngn/zhoup/Data/misc2/centromere/31.cent.mt40.tbl'
+tcen = read.table(fcen, sep = "\t", header = T, as.is = T)
+
 ##### create sliding window table using 1Mb sliding windows
 x = tt$end
 names(x) = tt$chr
@@ -149,6 +152,14 @@ tx = tx[tx$chr != 'chrU',]
 gbeg = tw$beg + goff[tw$chr] - 1
 gend = tw$end + goff[tw$chr] - 1
 
+tcen = cbind(tcen, gpos = goff[tcen$chr] + tcen$beg)
+## add sub-plot annotation
+tw2 = cbind(tw, gbeg = gbeg)
+tws = data.frame(chr = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7'),
+  beg = c(16, 30, 5, 6, 28) * 1000000 + 1, label = LETTERS[1:5])
+tws = merge(tw2, tws, by = c('chr', 'beg'))
+
+
 fy = file.path(dirw, "32.win.syn.tbl")
 ty = read.table(fy, sep = "\t", header = T, as.is = T)
 ty = cbind(ty[,4:18], gbeg = gbeg, gend = gend)
@@ -169,138 +180,111 @@ labg = rep('', length(colsy))
 labg[length(colsy)] = sprintf("(%.03f-%.03f)", vmin, vmax)
 ltitle = sprintf("proportion covered in synteny alignment (%.03f-%.03f)", vmin, vmax)
 
-py <- ggplot(tyl) +
+nx = nrow(tx); ny = length(qnames_15); wd = 0.4
+tb1 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny-wd,each=nx))
+tb2 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny+wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb3 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gbeg,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb4 = data.frame(xbeg=rep(tx$gend,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb = rbind(tb1, tb2, tb3, tb4)
+
+p_syn <- ggplot(tyl) +
   geom_tile(aes(x = gbeg, y = org, fill = syn2, height = 0.8)) +
-  geom_vline(data = tx, aes(xintercept = gbeg), size = 0.5) +
-  geom_vline(data = tx, aes(xintercept = gend), size = 0.5) +
+  geom_segment(data=tb, aes(x=xbeg, xend= xend, y=ybeg, yend=yend), color='black', size=0.5) +
+  geom_point(data = tws, aes(x = gbeg, y = 15.7), size = 1.5, shape = 25, color = 'black', fill = 'black') +
+  geom_text(data = tws, aes(x = gbeg, y = 15.6, label = label), size = 3, color = 'black', hjust = -0.5, vjust = 0) +
+  geom_point(data = tcen, aes(x = gpos, y = 0.3), size = 1.5, shape = 2, color = 'black', fill = 'black') +
   theme_bw() + 
-  scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
+  scale_x_continuous(name = '', expand = c(0, 0)) + 
   scale_y_discrete(expand = c(0, 0), name = '') +
-#  scale_fill_gradient(name = '% covered in synteny alignment', space = "Lab", low = 'firebrick1', high = 'dodgerblue') +
-#  scale_fill_distiller(name = '% covered in synteny alignment', type = "seq", space = "Lab", direction = 1, palette = "Spectral") +
+  expand_limits(y=c(0,16.1)) +
   scale_fill_manual(name = ltitle, breaks = labs, labels = labg, values = colsy, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
   theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines")) +
-  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.title.x = element_blank()) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+#fo = file.path(dirw, "12.comp.pdf")
+#ggsave(p_syn, filename = fo, width = 8, height = 4)
+
+## gene fam density
+fg = file.path(dirw, "32.win.gene.tbl")
+dg = read.table(fg, sep = "\t", header = T, as.is = T)
+
+## theta-pi stats
+fs = file.path(dirw, "32.win.stat.tbl")
+ds = read.table(fs, sep = "\t", header = T, as.is = T)
+
+## construct stat sub-plot
+dw = cbind(ds, dg[,-1:-3])
+opts = colnames(dw)[-1:-3]
+dcl = data.frame()
+for (opt in opts) {
+	cols = brewer.pal(9, "Greys")
+	vals = dw[,opt]
+	vmin = min(dw[,opt], na.rm = T); vmax = max(dw[,opt], na.rm = T)
+	breaks = seq(vmin, vmax, length.out = length(cols)+1)
+	if(vmin == vmax) {
+		itvs = rep(vmin, length(vals))
+		itvs = factor(itvs, levels = seq(vmin, by = 0.1, length.out = length(cols)))
+	} else {
+		itvs = cut(vals, breaks, include.lowest = T)
+	}
+
+	col_map = cols
+	names(col_map) = levels(itvs)
+	vals_mapped = as.character(col_map[itvs])
+	
+	labg = rep('', length(cols))
+	ltitle = sprintf("%% bases (%.01f-%.01f)", vmin, vmax)
+	dcl1 = cbind(tw[,1:2], gbeg=gbeg, opt = opt, col = vals_mapped)
+	dcl = rbind(dcl, dcl1)
+}
+dcl$opt = factor(dcl$opt, levels = rev(opts))
+
+nx = nrow(tx); ny = length(opts); wd = 0.4
+tb1 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny-wd,each=nx))
+tb2 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny+wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb3 = data.frame(xbeg=rep(tx$gbeg,ny), xend=rep(tx$gbeg,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb4 = data.frame(xbeg=rep(tx$gend,ny), xend=rep(tx$gend,ny), ybeg=rep(1:ny-wd,each=nx), yend=rep(1:ny+wd,each=nx))
+tb = rbind(tb1, tb2, tb3, tb4)
+
+p_sta <- ggplot(dcl) +
+  geom_tile(aes(x = gbeg, y = opt, fill = col, height = 0.8)) +
+  geom_segment(data=tb, aes(x=xbeg, xend= xend, y=ybeg, yend=yend), color='black', size=0.5) +
+  theme_bw() + 
+  scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
+  scale_y_discrete(expand = c(0, 0), name = '') +
+  expand_limits(y=c(0.5,9.5)) +
+  scale_fill_identity() +
+  theme(legend.position = 'none') + 
+  theme(panel.grid=element_blank(), panel.border=element_rect(fill=NA, linetype=0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.title.x = element_blank()) +
   theme(axis.text.x = element_text(colour = "blue", size = 8)) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
 
-#fo = file.path(dirw, "12.comp.pdf")
-#ggsave(py, filename = fo, width = 8, height = 4)
-
-## gene fam density
-fg = file.path(dirw, "32.win.gene.tbl")
-tg = read.table(fg, sep = "\t", header = T, as.is = T)
-tg = tg[,-1:-3]
-fams = colnames(tg)
-tg = cbind(tg, gbeg = gbeg, gend = gend)
-
-lst = list()
-for (fam in fams) {
-colsg = brewer.pal(9, "Greens")
-
-vmin = min(tg[,fam]); vmax = max(tg[,fam])
-breaks = seq(vmin, vmax, length.out = length(colsg)+1)
-tg2 = cbind(tg, gd = cut(tg[,fam], breaks, include.lowest = T))
-
-labs = sort(unique(tg2$gd))
-labg = rep('', length(colsg))
-labg[length(colsg)] = sprintf("(%.03f-%.03f)", vmin, vmax)
-ltitle = sprintf("number per 100kb (%.01f-%.01f)", vmin, vmax)
-
-pg1 <- ggplot(tg2) +
-  geom_tile(aes(x = gbeg, y = fam, fill = gd, height = 1)) +
-  geom_segment(data=tx, aes(x=gbeg,xend=gend,y=0.5,yend=0.5), size = 0.5) +
-  geom_segment(data=tx, aes(x=gbeg,xend=gend,y=1.5,yend=1.5), size = 0.5) +
-  geom_vline(data = tx, aes(xintercept = gbeg), size = 0.5) +
-  geom_vline(data = tx, aes(xintercept = gend), size = 0.5) +
-  theme_bw() + 
-  scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
-  scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_manual(name = ltitle, breaks = labs, labels = labg, values = colsg, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
-  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) + 
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.title.y = element_blank()) +
-  theme(axis.text.y = element_text(colour = "black", size = 8)) +
-  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-lst[[fam]] = pg1
-}
-
-## theta-pi stats
-fs = file.path(dirw, "32.win.stat.tbl")
-ts = read.table(fs, sep = "\t", header = T, as.is = T)
-ts = ts[,-1:-3]
-ts = cbind(Gaps = 1-tw$len_ng/tw$len, ts)
-keys = colnames(ts)
-ts = cbind(ts, gbeg = gbeg, gend = gend)
-
-stats = list()
-for (key in keys) {
-colst = brewer.pal(9, "Purples")
-if(key == 'Coverage') {colst = brewer.pal(9, "Reds")}
-
-vmin = min(ts[,key]); vmax = max(ts[,key])
-breaks = seq(vmin, vmax, length.out = length(colst)+1)
-ts2 = cbind(ts, val = cut(ts[,key], breaks, include.lowest = T))
-
-labs = sort(unique(ts2$val))
-labg = rep('', length(colst))
-labg[length(colst)] = sprintf("(%.03f-%.03f)", vmin, vmax)
-ltitle = sprintf("number per 100kb (%.01f-%.01f)", vmin, vmax)
-
-ps <- ggplot(ts2) +
-  geom_tile(aes(x = gbeg, y = key, fill = val, height = 1)) +
-  geom_segment(data=tx, aes(x=gbeg,xend=gend,y=0.5,yend=0.5), size = 0.5) +
-  geom_segment(data=tx, aes(x=gbeg,xend=gend,y=1.5,yend=1.5), size = 0.5) +
-  geom_vline(data = tx, aes(xintercept = gbeg), size = 0.5) +
-  geom_vline(data = tx, aes(xintercept = gend), size = 0.5) +
-  theme_bw() + 
-  scale_x_continuous(name = '', expand = c(0, 0), breaks = tx$gpos, labels = tx$chr) + 
-  scale_y_discrete(expand = c(0, 0), name = '') +
-  scale_fill_manual(name = ltitle, breaks = labs, labels = labg, values = colst, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
-  theme(legend.position = 'none', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.title.y = element_blank()) +
-  theme(axis.text.y = element_text(colour = "black", size = 8)) +
-  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
-stats[[key]] = ps
-}
-
 ### multi-panel plot
-g1 = ggplotGrob(py)
-#g1 = gtable_add_cols(g1, unit(0, "mm"))
-gs = list(g1)
-heis = c(15)
-for (key in keys) {
-	g3 = ggplotGrob(stats[[key]])
-	g3$widths = g1$widths
-	gs = c(gs, list(g3))
-	heis = c(heis, 1)
-}
-for (fam in fams) {
-	g2 = ggplotGrob(lst[[fam]])
-	g2$widths = g1$widths
-	gs = c(gs, list(g2))
-	heis = c(heis, 1)
-}
-g <- gtable_matrix(name = 'demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
-#g$layout[grepl("guide", g$layout$name),c("t","b")] <- c(1,nrow(g))
+p_syn = p_syn + theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines"))
+p_sta = p_sta + theme(plot.margin = unit(c(0.1,0.1,0.2,0.1), "lines"))
+gr_syn = ggplotGrob(p_syn)
+gr_sta = ggplotGrob(p_sta)
+gr_sta$widths = gr_syn$widths
+gs = list(gr_syn, gr_sta)
+heis = c(3.5, 2)
+g <- gtable_matrix(name='demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
 
 fo = file.path(dirw, "12.comp.pdf")
-pdf(file = fo, width = 8.5, height = 6.5, bg = 'transparent')
+pdf(file = fo, width = 9, height = 6, bg = 'transparent')
 grid.newpage()
 grid.draw(g)
 dev.off()
-
 
 ##### test correlation of theta-pi and gene density (100kb sliding windows)
 fw = file.path(dirw, "32.win.stat.tbl")

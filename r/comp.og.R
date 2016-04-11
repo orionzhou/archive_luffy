@@ -32,22 +32,18 @@ fo = file.path(dirw, "01.gid.tbl")
 #write.table(tg, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 ## read gene cluster information
-fi = file.path(dirw, "05.clu/32.tbl")
+fi = file.path(dirw, "05.clu.70/32.tbl")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 x = strsplit(ti$id, "-")
 t_clu = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
 
 ##### pan-proteome splited by gene-family
-fi = file.path(dirw, "05.clu/32.tbl")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
-x = strsplit(ti$id, "-")
-ti = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
-
+ti = t_clu
 ti = ti[ti$org %in% c(tname,qnames_12),]
-ti = merge(ti, tc, by = c('org', 'gid'))
+ti = merge(ti, tg, by = c('org', 'gid'))
 
 gb = group_by(ti, grp)
-tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(cat2), decreasing = T))[1], rid = id[1])
+tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], fam = names(sort(table(fam), decreasing = T))[1], rid = id[1])
 ti = merge(ti, tr[,c('grp','size')], by = 'grp')
 
 # output unknown cluster/ids for blastnr
@@ -83,12 +79,12 @@ do$size = factor(do$size, levels = brks)
 do$fam = factor(do$fam, levels = famss)
 
 p1 = ggplot(do, aes(x = size, y = cnt)) +
-  geom_bar(stat = 'identity', geom_params=list(width = 0.8)) +
+  geom_bar(stat = 'identity', width = 0.8) +
   scale_x_discrete(name = '', breaks = brks) +
   scale_y_continuous(name = '# Clusters') +
   facet_wrap(~ fam, scales = 'free', nrow = 2) +
   theme_bw() +
-  theme(axis.ticks.length = unit(0, 'lines'), axis.ticks.margin = unit(0.4, 'lines')) +
+  theme(axis.ticks.length = unit(0, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
@@ -97,6 +93,27 @@ p1 = ggplot(do, aes(x = size, y = cnt)) +
 
 fp = sprintf("%s/41.afs.pdf", dirw)
 ggsave(p1, filename = fp, width = 7, height = 5)
+
+
+tp = ddply(tr, .(fam), summarise, cnt = length(fam), q25 = quantile(size, 0.25, na.rm = T), q50 = median(size, na.rm = T), q75 = quantile(size, 0.75, na.rm = T))
+famsf = as.character(tp$fam[order(tp$q50, decreasing = T)])
+tp$fam = factor(tp$fam, levels = famsf)
+labs = sprintf("%s (%d)", famsf, tp$cnt[match(famsf, tp$fam)])
+
+p1 = ggplot(tp) +
+  geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
+    stat = 'identity', position = 'dodge', width = 0.6) + 
+  coord_flip() +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
+  scale_y_continuous(name = '# Shared Accession', expand = c(0, 0), limits = c(0, 14)) +
+  theme_bw() +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+fp = sprintf("%s/42.afs.hist.pdf", dirw)
+ggsave(p1, filename = fp, width = 4, height = 2.5)
 
 
 ##### enrichment of unknown proteins in low-confidence calls

@@ -95,24 +95,26 @@ gts = list()
 for (i in 1:length(chrs)) {
   res = lres[[i]]
   splots = sub_plots(chrs[i], begs[i], res$tw, res$dg, res$dy, res$ds)
-  p_cvg = splots$cvg + ggtitle(LETTERS[i]) + theme(plot.margin = unit(c(0,0,0,0.1), "lines"))
-  p_sta = splots$sta + theme(plot.margin = unit(c(0,0,0.1,0.1), "lines"))
+  p_syn = splots$syn + theme(plot.margin = unit(c(0.5,0.1,0,0.5), "lines"))
+  p_syn = p_syn + theme(plot.title = element_blank())
+  p_sta = splots$sta + theme(plot.margin = unit(c(0.2,0.1,0.1,0.5), "lines"))
   
   if(i == 1) {
-    p_cvg = p_cvg + theme(plot.margin = unit(c(0,0,0,1), "lines"))
-    p_sta = p_sta + theme(plot.margin = unit(c(0,0,0.1,1), "lines"))
+    p_syn = p_syn + theme(plot.margin = unit(c(0.5,0.1,0,1), "lines"))
+    p_sta = p_sta + theme(plot.margin = unit(c(0.2,0.1,0.1,1), "lines"))
   } else {
-    p_cvg = p_cvg + theme(axis.text.y = element_blank())
+    p_syn = p_syn + theme(axis.text.y = element_blank())
     p_sta = p_sta + theme(axis.text.y = element_blank())
   }
-  gr_cvg = ggplotGrob(p_cvg)
+  gr_syn = ggplotGrob(p_syn)
   gr_sta = ggplotGrob(p_sta)
-  gr_sta$widths = gr_cvg$widths
-  gs = list(gr_cvg, gr_sta)
+  gr_sta$widths = gr_syn$widths
+  gs = list(gr_syn, gr_sta)
   heis = c(3, 2)
   g <- gtable_matrix(name='demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
   g_rect = rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
-#  g = gtable_add_grob(g, g_rect, t=1, l=1, b=2, r=1)
+  g_titl = textGrob(LETTERS[i], x=unit(0.5,'npc'), y=unit(1,'npc')-unit(0.1,'lines'), vjust=1)
+  g = gtable_add_grob(g, g_titl, t=1, l=1, b=2, r=1)
   gts[[i]] = g
 }
 
@@ -123,3 +125,4 @@ pdf(file = fo, width = 10, height = 6, bg = 'transparent')
 grid.newpage()
 grid.draw(gf)
 dev.off()
+

@@ -89,7 +89,7 @@ dyl = cbind(dyl, syn2 = cut(dyl$syn, breaks, include.lowest = T))
 labs = rep('', length(colsy))
 ltitle = sprintf("Coverage (%.03f-%.03f)", vmin, vmax)
 
-p_cvg <- ggplot(dyl) +
+p_syn <- ggplot(dyl) +
   geom_tile(aes(x = beg, y = org, fill = syn2, height = 0.8)) +
   theme_bw() + 
   scale_x_continuous(name = '', expand = c(0, 0)) + 
@@ -160,5 +160,5 @@ p_sta <- ggplot(dcl) +
   theme(axis.text.y = element_text(colour = "black", size = 8)) +
   theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
 
-	list(cvg = p_cvg, sta = p_sta)
+	list(syn = p_syn, sta = p_sta)
 }

@@ -51,7 +51,7 @@ chdir $dir || die "cannot chdir $dir\n";
 my $fg = "11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
-my $f_aug = "augustus/41.gtb";
+my $f_aug = "augustus/43.gtb";
 -s $f_aug or die "$f_aug is not there\n";
 runCmd("ln -sf $f_aug 41.gtb");
 

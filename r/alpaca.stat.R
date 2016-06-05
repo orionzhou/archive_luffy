@@ -143,3 +143,29 @@ do = t(do)
 do = cbind('sub-family' = rownames(do), do)
 fo = file.path(diro, "04.te.tbl")
 write.table(do, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+
+### tandem clustering statistics in HM101
+fi = sprintf("%s/gene.cluster/11.tandem/%s.tbl", Sys.getenv('misc2'), "HM101")
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+ti = ti[ti$cat2 != 'TE',]
+idx_single = which(is.na(ti$clu))
+ti$clu[idx_single] = seq(max(ti$clu, na.rm = T)+1, by = 1, length.out = length(idx_single))
+
+brks = c(seq(0.5, 10.5, by = 1), 15.5, Inf)
+labs = c(1:10, '11-15', '16+')
+labs = factor(labs, levels = labs)
+
+tx = ti
+tx$cat2[tx$cat2 %in% c("CC-NBS-LRR", "TIR-NBS-LRR")] = "NBS-LRR"
+tx$cat2[tx$cat2 %in% c("NCR", "CRP0000-1030", "CRP1600-6250")] = "CRP"
+
+fam = "CRP"
+  tm = tx[tx$cat2 == fam,]
+  tm1 = ddply(tm, .(clu), summarise, csize = length(clu))
+  tm2 = ddply(tm1, .(csize), summarise, nc = length(csize), ng = sum(csize))
+  tm3 = cbind(tm2, itv = sapply(tm2$csize, toString), stringsAsFactors = F)
+  tm3$itv[tm3$csize>=11 & tm3$csize<=15] = '11-15'
+  tm3$itv[tm3$csize>=16] = '16+'
+  
+sprintf("%s: %d, %.03f in tandem clusters\n", fam, nrow(tm), sum(tm2$ng[tm2$csize>1])/nrow(tm))

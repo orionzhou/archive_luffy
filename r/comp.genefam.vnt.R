@@ -7,7 +7,7 @@ source("comp.fun.R")
 source("Location.R")
 
 dirw = file.path(Sys.getenv("misc3"), "comp.vnt")
-diro = file.path(Sys.getenv("misc3"), "comp.stat")
+diro = file.path(Sys.getenv("misc3"), "comp.genefam")
 
 tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
 colnames(tg) = c("chr", "beg", "end", "srd", "id", "type", "fam")
@@ -58,29 +58,31 @@ dg = dplyr::summarise(gb, fam = fam[1], len = sum(end-beg+1), lenc = sum(bp), nd
 
 dg = dg[dg$lenc / dg$len >= 0.8,]
 genes_covered = dg$id
-to = cbind(dg[,c('fam')], pi = dg$nd / dg$lenc)
+to = cbind(dg[,c('id','fam')], pi = dg$nd / dg$lenc)
 
-fo = file.path(diro, "42.pi.tbl")
+fo = file.path(diro, "03.pi.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
-tp = ddply(to, .(fam), summarise, cnt = length(fam), q25 = quantile(pi, 0.25), q50 = quantile(pi, 0.5), q75 = quantile(pi, 0.75))
-fams = tp$fam[order(tp$q50, decreasing = T)]
+tp = ddply(to, .(fam), summarise, cnt = length(fam), q5=quantile(pi,0.05), q25=quantile(pi,0.25), q50=quantile(pi,0.5), q75=quantile(pi,0.75), q95=quantile(pi,0.95))
+tp = tp[order(tp$q50, decreasing=T),]
+fams = tp$fam
 tp$fam = factor(tp$fam, levels = fams)
 
 p1 = ggplot(tp) +
   geom_crossbar(aes(x = fam, y = q50, ymin = q25, ymax = q75),
-    stat = 'identity', position = 'dodge', geom_params = list(width = 0.7)) + 
+    stat = 'identity', position = 'dodge', width = 0.7) +
   coord_flip() +
-  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tis$fam, tis$cnt)) +
+  scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = sprintf("%s | %5d", tp$fam, tp$cnt)) +
   scale_y_continuous(name = 'ThetaPi', expand = c(0, 0), limits = c(0, 0.02)) +
   theme_bw() +
-  theme(plot.margin = unit(c(0.5,1,0,0), "lines")) +
+  theme(axis.ticks.length = unit(0,'lines')) +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
 
-fp = file.path(diro, "42.pi.pdf")
+fp = file.path(diro, "03.pi.pdf")
 ggsave(p1, filename = fp, width = 5, height = 8)
 
 ### characterize large-effect SNPs by gene fam
@@ -105,8 +107,32 @@ gb = group_by(dz, id, eff)
 dz2 = dplyr::summarize(gb, fam = fam[1], cnt = sum(cnt))
 to = dz2[dz2$id %in% genes_covered,]
 
-fo = file.path(diro, "43.largeeff.tbl")
+
+fo = file.path(diro, "07.largeeff.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+tp = ddply(to, .(fam, eff), summarise, prop = sum(cnt > 0) / length(cnt))
+tp2 = ddply(tp, .(fam), summarise, prop = sum(prop))
+fams = tp2$fam[order(tp2$prop, decreasing=T)]
+tp$fam = factor(tp$fam, levels = fams)
+
+p2 = ggplot(tp) +
+  geom_bar(aes(x = fam, y = prop, fill = eff),
+    stat = 'identity', position = 'stack', width = 0.7) + 
+  coord_flip() +
+  scale_x_discrete(name = '', breaks = fams, labels = fams, expand = c(0.01, 0.01)) +
+  scale_y_continuous(name = 'Proportion w. large-effect changes', expand = c(0, 0), limits = c(0, 1)) +
+  theme_bw() +
+  theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
+  theme(legend.position = c(0.7, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.7, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "lines")) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
+
+fp = file.path(diro, "07.largeeff.pdf")
+ggsave(p2, filename = fp, width = 5, height = 8)
 
 ### Gene-Family Theta-Pi using reference mapping-based approach
 dirw = file.path(Sys.getenv("misc3"), "hapmap/12_ncgr")

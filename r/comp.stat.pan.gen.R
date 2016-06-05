@@ -179,7 +179,7 @@ p2 = ggplot(tp) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, color = "blue")) +
-  theme(axis.text.y = element_text(size = 8, color = "grey", angle = 90, hjust  = 0.5))
+  theme(axis.text.y = element_text(size = 8, color = "brown", angle = 90, hjust  = 0.5))
 
 fp = sprintf("%s/63.pan.genome.size.pdf", diro)
 ggsave(p2, filename = fp, width = 4, height = 5)

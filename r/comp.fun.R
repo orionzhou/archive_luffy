@@ -306,15 +306,26 @@ read_bam <- function(bam, gr, pileup = F) {
   res
 }
 
-fams = c("NBS-LRR", "F-box", "LRR-RLK", "RLK", "TE", "Unknown", 'CRP-DEFL', 'CRP-NCR', 'CRP-Miscellaneous', 'Zinc-Finger')
-rename_genefam <- function(ti, fams) {
+rename_genefam <- function(ti) {
+  mapping = list(
+  	"F-box" = "F-box",
+  	"RLK" = c("LRR-RLK", "RLK"),
+  	"TE" = "TE",
+  	"Unknown" = "Unknown",
+  	"NBS-LRR" = c("CC-NBS-LRR", "TIR-NBS-LRR", "NB-ARC", "TIR"),
+  	'CRP:NCR' = 'NCR',
+  	'CRP:other' = c('CRP0000-1030','CRP1600-6250'),
+  	'LRR' = 'LRR',
+  	'HSP70' = 'HSP70',
+#  	'Cytochrome' = 'Cytochrome',
+  	'Pkinase' = c('Pkinase', 'Pkinase_Tyr')
+  )
   to = ti
-  to$fam[to$fam %in% c("CC-NBS-LRR", "TIR-NBS-LRR")] = "NBS-LRR"
-  to$fam[to$fam == 'CRP0000-1030'] = 'CRP-DEFL'
-  to$fam[to$fam == 'NCR'] = 'CRP-NCR'
-  to$fam[to$fam == 'CRP1600-6250'] = 'CRP-Miscellaneous'
-  to$fam[! to$fam %in% fams] = 'Pfam-Miscellaneous'
-  to$fam = factor(to$fam, levels = c(fams, 'Pfam-Miscellaneous'))
+  for (fam in names(mapping)) {
+  	to$fam[to$fam %in% mapping[[fam]]] = fam
+  }
+  to$fam[! to$fam %in% names(mapping)] = 'Pfam:other'
+  to$fam = factor(to$fam, levels = unique(to$fam))
   to
 }
 

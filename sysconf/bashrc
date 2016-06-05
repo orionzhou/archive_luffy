@@ -70,7 +70,7 @@ if [[ -d $soft ]]; then
       export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
     fi
   done
-  for subpath in RepeatMasker interproscan \
+  for subpath in RepeatMasker interproscan mummer \
     bwa lastz snap trimal phyml paramugsy blasr pal2nal
   do
     export PATH=$soft/$subpath:$PATH

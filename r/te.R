@@ -4,12 +4,22 @@ dirg = file.path(Sys.getenv("genome"), "HM101")
 
 fr = file.path(dirg, "12.rm.tbl")
 tr = read.table(fr, sep = "\t", header = F, as.is = T)
-idxs = grep("^(DNA)|(LINE)|(LTR)|(SINE)|(RC)", tr$V9)
-grr = with(tr[idxs,], GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
-grr = reduce(grr)
+#idxs = grep("^(DNA)|(LINE)|(LTR)|(SINE)|(RC)", tr$V9)
+grr = with(tr, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
 
-fi = file.path(dirg, "51.gtb")
+fi = file.path(dirg, "raw/41.gtb")
 ti = read.table(fi, sep = "\t", header = T, as.is = T, quote = "")[,c(1:6,16:18)]
+gri = with(ti, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+lens = intersect_basepair(gri, grr)
+idxs_rm_pfam = lens/(ti$end-ti$beg+1) >= 0.6 | ti$cat2 == 'TE'
+idxs_rm_pfam = ti$cat2 == 'TE'
+idxs = grep("Medtr[0-9]+te", ti$id)
+idxs_jcvi = rep(FALSE, nrow(ti))
+idxs_jcvi[idxs] = TRUE
+
+table(data.frame(jcvi=idxs_jcvi,rm_pfam=idxs_rm_pfam))
+
 
 fj = file.path(dirg, "raw/25.dedup.gtb")
 tj = read.table(fj, sep = "\t", header = T, as.is = T, quote = "")[,c(1:6,16:18)]

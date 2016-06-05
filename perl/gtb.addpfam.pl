@@ -35,7 +35,7 @@ use Gtb;
 use List::Util qw/min max sum/;
 
 my ($fi, $fo, $fp) = ('') x 3;
-my $fc = "$ENV{'data'}/db/pfam/genefam.tbl";
+my $fc = "$ENV{'data'}/db/pfam/genefam.tsv";
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#

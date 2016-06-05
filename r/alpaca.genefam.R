@@ -57,93 +57,141 @@ for (sfam in sfams) {
 }
 
 ### run alpaca.genefam.py
+qnames1 = c("HM101","HM056","HM034","HM340")
+qnames2 = c("HM101","HM056.AC","HM034.AC","HM340.AC")
 cols_raw = brewer.pal(10, "Paired")
-cols_map = cols_raw[c(1:6,10)]
-names(cols_map) = qnames
+cols_map1 = cols_raw[c(10,1,3,5)]
+cols_map2 = cols_raw[c(10,2,4,6)]
+names(cols_map1) = qnames1
+names(cols_map2) = qnames2
 
-f_cl = file.path(diro, "34.color.legend.pdf")
-pdf(f_cl, width = 2, height = 2, bg = 'transparent')
-par(mar=c(0,0,0,0))
-plot(c(0, 200), c(0, 200), type= "n", axes = F)
-legend(0, 200, legend = qnames, fill = cols_map, bty = 'n')
-dev.off()
 
 sfam = sfams[1]
-for (opt in opts) {
-  ft1 = sprintf("%s/34.sfams/%s.%s.phy.nwk", diro, sfam, opt)
-  tree = read.tree(ft1)
-  fo1 = sprintf("%s/34.sfams/%s.%s.png", diro, sfam, opt)
-  
-  res = strsplit(tree$tip.label, '[|]')
+
+  ft1 = sprintf("%s/34.sfams/%s.alps.phy.nwk", diro, sfam)
+  tree1 = read.tree(ft1)
+  res = strsplit(tree1$tip.label, '[|]')
   oids = sapply(res, "[", 1)
   chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
-  tree$tip.label = chrs
-  font = rep(1, length(oids))
-  
-  tip.cols = cols_map[oids]
+  tree1$tip.label = chrs
+  font1 = rep(1, length(oids))
+  tip.cols1 = cols_map1[oids]
 
-  scores = as.numeric(tree$node.label)
-  node.bg = rep('white', tree$Nnode)
-  node.bg[scores >= 0.95] = 'black'
-  node.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+  ft2 = sprintf("%s/34.sfams/%s.alpc.phy.nwk", diro, sfam)
+  tree2 = read.tree(ft2)
+  res = strsplit(tree2$tip.label, '[|]')
+  oids = sapply(res, "[", 1)
+  chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
+  tree2$tip.label = chrs
+  font2 = rep(1, length(oids))
+  tip.cols2 = cols_map2[oids]
   
-  png(filename = fo1, width = 600, height = 800, units = 'px')
-  plot(tree, type = 'phylogram', show.node.label = F, show.tip.label = T,
-    tip.color = tip.cols, label.offset = 0.08, font = font,
-    no.margin = T, cex = 0.8)
-  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols)
- # nodelabels(pch = 22, bg = node.bg)
-  add.scale.bar(x = 0.02, y = tree$Nnode*0.9 , lcol = 'black')
+  fo = sprintf("%s/34.sfams/%s.pdf", diro, sfam)
+  pdf(fo, width = 12, height = 10)
+  par(mfrow = c(1,2))
+  
+  plot(tree1, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols1, label.offset = 0.11, font = font1,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols1)
+  add.scale.bar(x = 0.02, y = tree1$Nnode*0.9 , lcol = 'black')
+  legend(0.02, tree1$Nnode*0.8, legend=qnames1, fill=cols_map1, bty='n', cex=0.8)
+  text(2, tree1$Nnode*1.01, "ALLPATHS", cex=1.5)
+  
+  plot(tree2, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols2, label.offset = 0.11, font = font2,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols2)
+  add.scale.bar(x = 0.02, y = tree2$Nnode*0.9 , lcol = 'black')
+  legend(0.02, tree2$Nnode*0.8, legend=qnames2, fill=cols_map2, bty='n', cex=0.8)
+  text(2, tree2$Nnode*1.01, "ALPACA", cex=1.5)
+
   dev.off()
-}
+
 
 sfam = sfams[2]
-for (opt in opts) {
-  ft1 = sprintf("%s/34.sfams/%s.%s.phy.nwk", diro, sfam, opt)
-  tree = read.tree(ft1)
-  fo1 = sprintf("%s/34.sfams/%s.%s.png", diro, sfam, opt)
-  
-  res = strsplit(tree$tip.label, '[|]')
+
+  ft1 = sprintf("%s/34.sfams/%s.alps.phy.nwk", diro, sfam)
+  tree1 = read.tree(ft1)
+  res = strsplit(tree1$tip.label, '[|]')
   oids = sapply(res, "[", 1)
   chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
-  tree$tip.label = chrs
-  font = rep(1, length(oids))
-  
-  tip.cols = cols_map[oids]
+  tree1$tip.label = chrs
+  font1 = rep(1, length(oids))
+  tip.cols1 = cols_map1[oids]
 
-  scores = as.numeric(tree$node.label)
-  node.bg = rep('white', tree$Nnode)
-  node.bg[scores >= 0.95] = 'black'
-  node.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+  ft2 = sprintf("%s/34.sfams/%s.alpc.phy.nwk", diro, sfam)
+  tree2 = read.tree(ft2)
+  res = strsplit(tree2$tip.label, '[|]')
+  oids = sapply(res, "[", 1)
+  chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
+  tree2$tip.label = chrs
+  font2 = rep(1, length(oids))
+  tip.cols2 = cols_map2[oids]
   
-  png(filename = fo1, width = 600, height = 800, units = 'px')
-  plot(tree, type = 'phylogram', show.node.label = F, show.tip.label = T,
-    tip.color = tip.cols, label.offset = 0.08, font = font,
-    no.margin = T, cex = 0.8)
-  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols)
- # nodelabels(pch = 22, bg = node.bg)
-  add.scale.bar(x = 0.02, y = tree$Nnode*0.9 , lcol = 'black')
+  fo = sprintf("%s/34.sfams/%s.pdf", diro, sfam)
+  pdf(fo, width = 12, height = 10)
+  par(mfrow = c(1,2))
+  
+  plot(tree1, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols1, label.offset = 0.11, font = font1,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols1)
+  add.scale.bar(x = 0.02, y = tree1$Nnode*0.95 , lcol = 'black')
+  legend(0.02, tree1$Nnode*0.9, legend=qnames1, fill=cols_map1, bty='n', cex=0.8)
+  text(1, tree1$Nnode*1.02, "ALLPATHS", cex=1.5)
+  
+  plot(tree2, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols2, label.offset = 0.11, font = font2,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.55, bg = tip.cols2)
+  add.scale.bar(x = 0.02, y = tree2$Nnode*0.9 , lcol = 'black')
+  legend(0.02, tree2$Nnode*0.8, legend=qnames2, fill=cols_map2, bty='n', cex=0.8)
+  text(1, tree2$Nnode*1.01, "ALPACA", cex=1.5)
+
   dev.off()
-}
+
 
 sfam = sfams[3]
-for (opt in opts) {
-  ft1 = sprintf("%s/34.sfams/%s.%s.phy.nwk", diro, sfam, opt)
-  tree = read.tree(ft1)
-  fo1 = sprintf("%s/34.sfams/%s.%s.png", diro, sfam, opt)
-  
-  res = strsplit(tree$tip.label, '[|]')
+  ft1 = sprintf("%s/34.sfams/%s.alps.phy.nwk", diro, sfam)
+  tree1 = read.tree(ft1)
+  res = strsplit(tree1$tip.label, '[|]')
   oids = sapply(res, "[", 1)
   chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
-  tree$tip.label = chrs
-  font = rep(1, length(oids))
-  
-  tip.cols = cols_map[oids]
+  tree1$tip.label = chrs
+  font1 = rep(1, length(oids))
+  tip.cols1 = cols_map1[oids]
 
-  scores = as.numeric(tree$node.label)
-  node.bg = rep('white', tree$Nnode)
-  node.bg[scores >= 0.95] = 'black'
-  node.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+  ft2 = sprintf("%s/34.sfams/%s.alpc.phy.nwk", diro, sfam)
+  tree2 = read.tree(ft2)
+  res = strsplit(tree2$tip.label, '[|]')
+  oids = sapply(res, "[", 1)
+  chrs = sapply(strsplit(sapply(res, "[", 2), "_"), "[", 2)
+  tree2$tip.label = chrs
+  font2 = rep(1, length(oids))
+  tip.cols2 = cols_map2[oids]
+  
+  fo = sprintf("%s/34.sfams/%s.pdf", diro, sfam)
+  pdf(fo, width = 12, height = 10)
+  par(mfrow = c(1,2))
+  
+  plot(tree1, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols1, label.offset = 0.06, font = font1,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.52, bg = tip.cols1)
+  add.scale.bar(x = 0.02, y = tree1$Nnode*0.9 , lcol = 'black')
+  legend(0.02, tree1$Nnode*0.8, legend=qnames1, fill=cols_map1, bty='n', cex=0.8)
+  text(2, tree1$Nnode*1.01, "ALLPATHS", cex=1.5)
+  
+  plot(tree2, type = 'phylogram', show.node.label = F, show.tip.label = T,
+    tip.color = tip.cols2, label.offset = 0.06, font = font2,
+    no.margin = T, cex = 0.6)
+  tiplabels(pch = 22, frame = 'none', adj = 0.52, bg = tip.cols2)
+  add.scale.bar(x = 0.02, y = tree2$Nnode*0.9 , lcol = 'black')
+  legend(0.02, tree2$Nnode*0.8, legend=qnames2, fill=cols_map2, bty='n', cex=0.8)
+  text(2, tree2$Nnode*1.01, "ALPACA", cex=1.5)
+  
+  dev.off()
   
   png(filename = fo1, width = 600, height = 800, units = 'px')
   plot(tree, type = 'phylogram', show.node.label = F, show.tip.label = T,
@@ -152,5 +200,3 @@ for (opt in opts) {
   tiplabels(pch = 22, frame = 'none', adj = 0.52, bg = tip.cols)
  # nodelabels(pch = 22, bg = node.bg)
   add.scale.bar(x = 0.02, y = tree$Nnode*0.9 , lcol = 'black')
-  dev.off()
-}

@@ -42,14 +42,18 @@ pod2usage(1) if $help_flag;
 
 print "#qsub rnaseq\n";
 
-for my $org ($tname, @qnames) {
+#my @orgs = ($tname, @qnames);
+my @orgs = @qnames_15;
+for my $org (@orgs) {
   my $dir = "$ENV{'genome'}/$org";
   chdir $dir || die "cannot chdir to $dir\n";
 #  runCmd("genome.fas.pl -g $org");
 #  runCmd("genome.db.pl -g $org");
 #  print "qsub rm -N rm.$org -v ORG=$org -l qos=weightlessqos\n";
+  runCmd("cp $dir/11_genome.fas \$data/out/gff_for_ncgr/$org.fas");
+  runCmd("cp $dir/51.gff \$data/out/gff_for_ncgr/$org.gff");
 #  runCmd("mt.augus.pl -g $org");
-  runCmd("mt.anno.pl -g $org");
+#  runCmd("mt.anno.pl -g $org");
 #  print "qsub mtanno -N mtanno.$org -v ORG=$org -l qos=weightlessqos");
 #  runCmd("gff.rename.pl -i \$genome/$org/51.gff -m \$genome/$org/raw.fix.fas.map -o \$misc2/coge/$org.gff");
 }

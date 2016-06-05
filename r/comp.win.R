@@ -21,8 +21,8 @@ tgap = read.table(tcfg$gap, sep = "\t", header = F, as.is = T)
 grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
 tp = data.frame(chr = tgap$V1, beg = tgap$V2, end = tgap$V3)
 
-fcen = '/home/youngn/zhoup/Data/misc2/centromere/31.cent.mt40.tbl'
-tcen = read.table(fcen, sep = "\t", header = T, as.is = T)
+fcen = '/home/youngn/zhoup/Data/misc2/centromere/cen.mt40.tsv'
+tcen = read.table(fcen, sep = "\t", header = F, as.is = T)
 
 ##### create sliding window table using 1Mb sliding windows
 x = tt$end
@@ -135,7 +135,7 @@ pi_sv = nucdivs / tw$len_ng
 pi_snp[is.infinite(pi_snp)] = NA
 pi_indel[is.infinite(pi_indel)] = NA
 pi_sv[is.infinite(pi_sv)] = NA
-to = cbind(tw[,1:3], Coverage = lenc/tw$len_ng, Pi_SNP = pi_snp, Pi_InDel = pi_indel, Pi_SV = pi_sv)
+to = cbind(tw[,1:3], Gaps = 1-tw$len_ng/tw$len, Coverage = lenc/tw$len_ng, Pi_SNP = pi_snp, Pi_InDel = pi_indel, Pi_SV = pi_sv)
 fo = file.path(dirw, "32.win.stat.tbl")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
@@ -152,7 +152,7 @@ tx = tx[tx$chr != 'chrU',]
 gbeg = tw$beg + goff[tw$chr] - 1
 gend = tw$end + goff[tw$chr] - 1
 
-tcen = cbind(tcen, gpos = goff[tcen$chr] + tcen$beg)
+tcen = cbind(tcen, gpos = goff[tcen$V1] + (tcen$V2+tcen$V3)/2)
 ## add sub-plot annotation
 tw2 = cbind(tw, gbeg = gbeg)
 tws = data.frame(chr = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7'),

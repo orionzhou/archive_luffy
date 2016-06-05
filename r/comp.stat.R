@@ -154,7 +154,7 @@ fi = file.path(Sys.getenv("misc2"), "genefam", "crp.info")
 cfams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
 fi = file.path(Sys.getenv("misc2"), "genefam", "rlk.info")
 rfams = read.table(fi, header = T, sep = "\t", as.is = T)[,1]
-fi = file.path(Sys.getenv("data"), 'db', 'pfam', 'genefam.tbl')
+fi = file.path(Sys.getenv("data"), 'db', 'pfam', 'genefam.tsv')
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 tfams = ti$dom[ti$fam == 'TE']
 fams = unique(ti$fam[order(ti$pri)])
@@ -198,7 +198,7 @@ for (qname in c(tname, qnames_15)) {
   nstats[[qname]] = matrix(x, nrow = 1, dimnames = list(NULL, nfams))
   n_nbs = nrow(tn)
   
-  tr = tg[tg$cat2 %in% c('LRR-RLK'),]
+  tr = tg[tg$cat2 %in% c('RLK','LRR-RLK'),]
   dtn = table(tr$cat3)
   x = c()
   x[rfams] = 0
@@ -238,9 +238,7 @@ for (qname in c(tname, qnames_15)) {
   }
   p_sup = sprintf("%.01f", length(unique(c(ids_rna, ids_hom))) / length(ids) * 100)
   
-  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_fbx, n_rlk, n_ncr, med_prot, p_rna, p_hom, p_sup),
-    nrow = 1, dimnames = list(NULL, c("# Total Genes", 'TE', 'non-TE', 
-    'NBS-LRR','F-box','LRR-RLK','NCR',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
+  stats[[qname]] = matrix(c(ngene, n_te, n_nonte, n_nbs, n_fbx, n_rlk, n_ncr, med_prot, p_rna, p_hom, p_sup), nrow = 1, dimnames = list(NULL, c("# Total Genes", 'TE', 'non-TE','NBS-LRR','F-box','LRR-RLK','NCR',"Median Prot Length", 'RNA-seq (%)', 'Homology (%)', 'RNA-seq + Homology (%)')))
 }
 ds = do.call(rbind.data.frame, stats)
 #for (i in 1:ncol(do)) { do[,i] = format(do[,i], big.mark = ",") }

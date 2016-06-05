@@ -106,12 +106,12 @@ to$fam = factor(to$fam, levels = fams)
 tw = ddply(to, .(org, itv), summarise, ng = sum(ng))
 tw = reshape(tw, direction = 'wide', timevar = c('itv'), idvar = c('org'))
 fo = file.path(dirw, "69.tbl")
-write.table(tw, fo, col.names = T, row.names = F, sep = "\t", quote = F)
+#write.table(tw, fo, col.names = T, row.names = F, sep = "\t", quote = F)
 
 p1 = ggplot(to) + 
   geom_bar(aes(x = itv, y = ng, fill = org), stat = 'identity', position = 'dodge', width = 0.8) + 
-  scale_x_discrete(name = 'Tandem array size') +
-  scale_y_continuous(name = '# Genes in tandem arrays') +
+  scale_x_discrete(name = 'Tandem Array Size') +
+  scale_y_continuous(name = '# Tandem Arrays') +
   scale_fill_brewer(palette = "Paired") +
   facet_grid(fam ~ ., scales = 'free') +  
   theme_bw() +
@@ -129,9 +129,9 @@ ggsave(p1, filename = fo, width = 6, height = 8)
 to2 = ddply(to, .(org, itv), summarise, nc = sum(nc), ng = sum(ng))
 to2$org = factor(to2$org, levels = qnames_alpaca_comp)
 p1 = ggplot(to2) + 
-  geom_bar(aes(x = itv, y = ng, fill = org), stat = 'identity', position = 'dodge', width = 0.8) + 
-  scale_x_discrete(name = 'Tandem array size') +
-  scale_y_continuous(name = '# Genes in tandem arrays') +
+  geom_bar(aes(x = itv, y = nc, fill = org), stat = 'identity', position = 'dodge', width = 0.8) + 
+  scale_x_discrete(name = 'Tandem Array Size') +
+  scale_y_continuous(name = '# Tandem Arrays') +
   scale_fill_brewer(palette = "Paired") +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +

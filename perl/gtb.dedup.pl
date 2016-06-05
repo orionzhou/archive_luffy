@@ -33,7 +33,7 @@ use Gtb;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 
 my ($fi, $fo) = ('') x 2;
-my $ff = "$ENV{'data'}/db/pfam/genefam.tbl";
+my $ff = "$ENV{'data'}/db/pfam/genefam.tsv";
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#

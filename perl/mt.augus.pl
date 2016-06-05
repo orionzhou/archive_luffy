@@ -29,6 +29,7 @@ use lib "$FindBin::Bin";
 use Common;
 use Location;
 use Data::Dumper;
+use Gtb;
 use File::Path qw/make_path remove_tree/;
 use File::Basename;
 use List::Util qw/min max sum/;
@@ -122,14 +123,77 @@ sub postprocess_aug {
 sub pipe_pfam {  
 ##runCmd("interproscan.sh -appl PfamA -dp -i 31.fas -f tsv -o 33.pfam.tsv");
 ##runCmd("pfam2tbl.pl -i 33.pfam.tsv -o 34.pfam.tbl -e 1 -l 10");
-#  -s "33.txt" && runCmd("cp 33.txt 34.tbl.1.txt");
-  runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
+  #-s "33.txt" && runCmd("cp 33.txt 34.tbl.1.txt");
+  #runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
   runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
+  gtb2bed("41.gtb", "41.bed");
+  runCmd("intersectBed -wao -a 41.bed -b ../12.rm.bed > 42.ovlp.bed");
+  gtb_add_rm("41.gtb", "42.ovlp.bed", "43.gtb");
 }
-pipe_blastnr {
+sub pipe_blastnr {
 #  runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {if(NR>1 && \$16 == \"Unknown\") print \$1}' 41.gtb > 42.unk.txt");
 #  runCmd("seqret.pl -d 31.fas -b 42.unk.txt -o 42.unk.fas");
   runCmd("pro.blastnr.py 42.unk.fas 44");
+}
+sub gtb2bed {
+  my ($fi, $fo) = @_;
+  open(my $fhi, $fi) || die "cannot read file $fi\n";
+  open(my $fho, ">$fo") || die "cannot write $fo\n";
+  while(<$fhi>) {
+    chomp;
+    /(^id)|(^\#)|(^\s*$)/i && next;
+    my $ps = [ split("\t", $_, -1) ];
+    @$ps >= 18 || die "not 19 fileds:\n$_\n";
+    my ($id, $par, $chr, $beg, $end, $srd, 
+      $locES, $locIS, $locCS, $loc5S, $loc3S, $phase, 
+      $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
+    print $fho join("\t", $chr, $beg-1, $end, $id)."\n";
+  }
+  close $fhi;
+  close $fho;
+}
+sub gtb_add_rm {
+  my ($fi, $fb, $fo) = @_;
+  open(my $fhb, $fb) || die "cannot read file $fb\n";
+  my $h = {};
+  while(<$fhb>) {
+    chomp;
+    my ($c1, $b1, $e1, $id, $c2, $b2, $e2) = split "\t";
+    $h->{$id} ||= 0;
+    $h->{$id} += $e2 - $b2;
+  }
+  close $fhb;
+  
+  open(my $fhi, $fi) || die "cannot read file $fi\n";
+  open(my $fho, ">$fo") || die "cannot write $fo\n";
+  print $fho join("\t", @HEAD_GTB)."\n";
+  my $cnt = 0;
+  my $h2 = {};
+  while(<$fhi>) {
+    chomp;
+    /(^id)|(^\#)|(^\s*$)/i && next;
+    my $ps = [ split("\t", $_, -1) ];
+    @$ps >= 18 || die "not 19 fileds:\n$_\n";
+    my ($id, $par, $chr, $beg, $end, $srd, 
+      $locES, $locIS, $locCS, $loc5S, $loc3S, $phase, 
+      $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
+    my $leng = $end - $beg + 1;
+    my $lenr = exists $h->{$id} ? $h->{$id} : 0;
+    if($lenr / $leng >= 0.6 && $cat2 ne 'TE') {
+      $ps->[15] = 'TE';
+      $ps->[16] = 'RepeatMasker';
+      $cnt ++;
+      $h2->{$cat2} ||= 0;
+      $h2->{$cat2} ++;
+    }
+    print $fho join("\t", @$ps)."\n";
+  }
+  close $fhi;
+  close $fho;
+  print "$cnt new TEs added\n";
+  for my $fam (keys(%$h2)) {
+    print "$fam\t$h2->{$fam}\n";
+  }
 }
 
 

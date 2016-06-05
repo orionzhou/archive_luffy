@@ -13,15 +13,26 @@ source("comp.fun.R")
 
 dirw = file.path(Sys.getenv("misc3"), "comp.og")
 diro = file.path(Sys.getenv("misc3"), "comp.stat")
-
-fi = file.path(dirw, "05.clu/32.tbl")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
-x = strsplit(ti$id, "-")
-ti = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
-
 qnames = qnames_12
 orgs = c(tname, qnames)
-ti = ti[ti$org %in% orgs,]
+
+## read all gene models
+tg = data.frame()
+for (qname in c(tname, qnames_12)) {
+  gdir = cfgs[[qname]]$gdir
+  fg = file.path(gdir, "51.gtb")
+  ti = read.table(fg, sep = "\t", header = T, as.is = T)
+  tg = rbind(tg, data.frame(org = qname, gid = ti$id, fam = ti$cat2, sfam = ti$cat3, stringsAsFactors = F))
+}
+tg = cbind(tg, id = sprintf("%s|%s", tg$org, tg$gid))
+
+## read orthomcl output
+fi = file.path(dirw, "05.clu/32.tbl")
+fi = file.path(dirw, "09.fastortho/11.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+x = strsplit(ti$id, "[|]")
+ti = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
+ti = ti[ti$org %in% orgs & ti$id %in% tg$id[tg$fam != 'TE'],]
 
 gb = group_by(ti, grp)
 tr = dplyr::summarise(gb, size = length(unique(org)), org = org[1], rid = id[1])
@@ -47,7 +58,7 @@ p1 = ggplot(to, aes(x = norg, y = cnt, fill = org)) +
   geom_bar(stat = 'identity', position = "stack", width = 0.5) +
   scale_fill_manual(name = "Accession-Specific", breaks = labs, labels = labs, values = cols, guide = guide_legend(ncol = 1, byrow = F, label.position = "right", direction = "vertical", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
   scale_x_discrete(name = '# Sharing Accession') +
-  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 30100)) +
+  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 25500)) +
   theme_bw() +
   ggtitle("A") +
   theme(axis.ticks.length = unit(0, 'lines')) +
@@ -99,7 +110,7 @@ p2 = ggplot(tp) +
   stat_smooth(aes(x = n_org, y = core, col = 'b'), size = 0.3, se = F) +
   scale_color_manual(name = "", labels = c('Pan-proteome', 'Core-proteome'), values = c("firebrick1", "dodgerblue")) +
   scale_x_continuous(name = '# Genomes Sequenced') +
-  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 60000)) + 
+  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 77000)) + 
   theme_bw() +
   ggtitle("B") +
   theme(axis.ticks.length = unit(0, 'lines')) +
@@ -108,7 +119,7 @@ p2 = ggplot(tp) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, color = "blue")) +
-  theme(axis.text.y = element_text(size = 8, color = "grey", angle = 90, hjust  = 0.5))
+  theme(axis.text.y = element_text(size = 8, color = "brown", angle = 90, hjust  = 0.5))
   
 fp = sprintf("%s/73.pan.proteome.size.pdf", diro)
 ggsave(p2, filename = fp, width = 4, height = 5)

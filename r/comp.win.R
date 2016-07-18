@@ -49,11 +49,13 @@ fg = file.path(tcfg$gdir, "51.gtb")
 tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1,3:5,16)]
 colnames(tg) = c("id", "chr", 'beg', 'end', 'cat')
 
-h = list('TE'='TE',
-  'NBS' = c('TIR-NBS-LRR', 'CC-NBS-LRR'),
-  'NCR' = 'NCR',
-  'LRR_RLK' = 'LRR-RLK', 
-  'F_box' = 'F-box'
+h = list(
+  	"TE" = "TE",
+  	"NBS_LRR" = c("CC-NBS-LRR", "TIR-NBS-LRR", "NB-ARC", "TIR"),
+  	"RLK" = c("LRR-RLK", "RLK"),
+  	'NCR' = 'NCR',
+  	'LRR' = 'LRR',
+  	"F_box" = "F-box"
 )
 
 to = tw[,1:3]
@@ -155,8 +157,9 @@ gend = tw$end + goff[tw$chr] - 1
 tcen = cbind(tcen, gpos = goff[tcen$V1] + (tcen$V2+tcen$V3)/2)
 ## add sub-plot annotation
 tw2 = cbind(tw, gbeg = gbeg)
-tws = data.frame(chr = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7'),
-  beg = c(16, 30, 5, 6, 28) * 1000000 + 1, label = LETTERS[1:5])
+chrs = c('chr7', 'chr2', 'chr6', 'chr2', 'chr8')
+begs = c(28, 16, 5, 30, 25)
+tws = data.frame(chr = chrs, beg = begs * 1000000 + 1, label = LETTERS[1:5])
 tws = merge(tw2, tws, by = c('chr', 'beg'))
 
 

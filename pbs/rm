@@ -1,7 +1,6 @@
-#PBS -l nodes=1:ppn=16,walltime=6:00:00
-##PBS -l nodes=1:ppn=8,mem=16GB,walltime=10:00:00
+#PBS -l nodes=1:ppn=24,walltime=10:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
-#PBS -q sb
+#PBS -q small
 
-repeatmasker.pl -g $ORG
+repeatmasker.pl -g HM340.PB

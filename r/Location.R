@@ -249,7 +249,7 @@ intersect_gene <- function(gr1, gr2, cdsidx) {
   write.table(t1, fbd1, sep = "\t", row.names = F, col.names = F, quote = F)
   write.table(t2, fbd2, sep = "\t", row.names = F, col.names = F, quote = F)
   options(scipen = 0)
-  system(sprintf("intersectBed -wao -a %s -b %s > %s", fbd1, fbd2, fres))
+  system(sprintf("intersectBed -wo -a %s -b %s > %s", fbd1, fbd2, fres))
 
   t3 = read.table(fres, sep = "\t", header = F, as.is = T, quote = "")
   colnames(t3) = c('chr', 'beg', 'end', 'idx', 'qchr', 'qbeg', 'qend', 'qidx', 'olen')

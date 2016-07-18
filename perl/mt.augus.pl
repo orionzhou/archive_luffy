@@ -6,7 +6,7 @@
   
 =head1 NAME
   
-  mt.augus.pl - use augustus to annotate an Medicago genome
+  mt.augus.pl - run augustus in parallel on Medicago genome assembly
 
 =head1 SYNOPSIS
   
@@ -35,7 +35,7 @@ use File::Basename;
 use List::Util qw/min max sum/;
 use List::MoreUtils qw/first_index first_value insert_after apply indexes pairwise zip uniq/;
 
-my ($org, $ncpu) = ('', 16);
+my ($org, $ncpu) = ('', 24);
 my $help_flag;
 #--------------------------------- MAIN -----------------------------------#
 GetOptions(
@@ -54,8 +54,8 @@ my $fg = "../11_genome.fas";
 
 #get_hints_ortholog();
 #get_hints_rnaseq();
-#run_aug();
-#postprocess_aug();
+run_aug();
+postprocess_aug();
 pipe_pfam();
 
 sub get_hints_ortholog {
@@ -119,12 +119,13 @@ sub postprocess_aug {
   runCmd("gtb2gtbx.pl -i 25.dedup.gtb -d $fg -o 31.gtbx");
   runCmd("cut -f1-18 31.gtbx > 31.gtb");
   runCmd("gtbx2fas.pl -i 31.gtbx -o 31.fas");
+  runCmd("gtb2gff.pl -i 31.gtb -o 31.gff");
 }
 sub pipe_pfam {  
 ##runCmd("interproscan.sh -appl PfamA -dp -i 31.fas -f tsv -o 33.pfam.tsv");
 ##runCmd("pfam2tbl.pl -i 33.pfam.tsv -o 34.pfam.tbl -e 1 -l 10");
   #-s "33.txt" && runCmd("cp 33.txt 34.tbl.1.txt");
-  #runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
+  runCmd("pfam.scan.pl -i 31.fas -o 34.tbl");
   runCmd("gtb.addpfam.pl -i 31.gtb -p 34.tbl -o 41.gtb"); 
   gtb2bed("41.gtb", "41.bed");
   runCmd("intersectBed -wao -a 41.bed -b ../12.rm.bed > 42.ovlp.bed");

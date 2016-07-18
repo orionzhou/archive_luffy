@@ -114,11 +114,11 @@ export SCRIPT_HOME_PERL=$code/perl
 export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 
 # Python
+export SCRIPT_HOME_PYTHON=$robin
 export PYTHON_HOME=$prefix/soft/python
 export PYTHONUSERBASE=$prefix/soft/python
-export PYTHONPATH=${PYTHON_HOME}/lib/python2.7/site-packages
+export PYTHONPATH=${PYTHON_HOME}/lib/python2.7/site-packages:${SCRIPT_HOME_PYTHON}
 #export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
-export SCRIPT_HOME_PYTHON=$robin
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
 
 # C++

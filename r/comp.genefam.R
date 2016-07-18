@@ -78,7 +78,7 @@ p3 = ggplot(tp) +
     stat = 'identity', position = 'dodge', width = 0.6) + 
   coord_flip() +
   scale_x_discrete(name = '', expand = c(0.01, 0.01), labels = labs) +
-  scale_y_continuous(name = 'Mean Pariwise Protein Distance', expand = c(0,0), limits = c(0, 0.2)) +
+  scale_y_continuous(name = 'Mean Pariwise Protein Distance', expand = c(0,0), limits = c(0, 0.23)) +
   theme_bw() +
   theme(plot.margin = unit(c(1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.y = element_blank()) +

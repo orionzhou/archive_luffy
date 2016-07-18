@@ -4,51 +4,152 @@ require(GenomicRanges)
 require(grid)
 require(RColorBrewer)
 require(reshape2)
+require(seqinr)
+require(bios2mds)
 source("Location.R")
 source("comp.fun.R")
 
 dirw = file.path(Sys.getenv("misc3"), "comp.ortho.hm")
 
+## copy HM***_HM101/51_ortho/01.ortho.tbl to comp.ortho.hm/01_syn_ortho
+for (qname in qnames_15) {
+  f1 = sprintf("%s/%s_HM101/51_ortho/01.ortho.tbl", Sys.getenv("misc3"), qname)
+  f2 = sprintf("%s/01_syn_ortho/%s.tbl", dirw, qname)
+  system(sprintf("cp %s %s",f1, f2))
+}
+
+## create syn-ortho matrix
+fg = file.path(tcfg$gdir, "51.gtb")
+tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
+
+to = data.frame(idx = 1:nrow(tg), id = tg$id, stringsAsFactors = F)
+colnames(to)[2] = tname
+for (qname in qnames_15) {
+  fgq = file.path(Sys.getenv("genome"), qname, "51.gtb")
+  tgq = read.table(fgq, sep = "\t", header = T, as.is = T)
+  qids = tgq$id
+
+  fi = sprintf("%s/01_syn_ortho/%s.tbl", dirw, qname)
+  ti = read.table(fi, sep = "\t", header = T, as.is = T)[,1:5]
+  qidss = ti$qid[ti$qid != '']
+  
+  ti2 = ti[, c('tid','qid')]
+	colnames(ti2) = c(tname, qname)
+
+  to = merge(to, ti2, by = tname, all = T)
+  cat(qname, sum(! qidss %in% qids), nrow(to), "\n")
+}
+to = to[order(to$idx), c(2,1,3:ncol(to))]
+
+norgs = apply(to, 1, function(x) sum(x[-1] != ''))
+table(norgs)
+
 ## run comp.ortho.score.R to create 05_score/xx.tbl
+## compute pairwise aln similarity (HM101-based)
+fi = file.path(dirw, "01.ids.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+
 fg = file.path(tcfg$gdir, "51.gtb")
 tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
 
 tg = tg[order(tg$chr, tg$beg, tg$end),]
 tg = cbind(tg, idx = 1:nrow(tg))
 colnames(tg)[6] = 'fam'
-tg = rename_genefam(tg, fams)
+tg = rename_genefam(tg)
 
-## compute pairwise aln similarity (HM101-based)
 to = tg[,1:2]
 colnames(to)[1] = tname
 for (qname in qnames_15) {
   fs = sprintf("%s/11_score/%s.tbl", dirw, qname)
-  ts = read.table(fs, sep = "\t", header = T, as.is = T)
-  ts2 = ts[(ts$qgap + ts$tgap) / ts$len <= 0.5,]
-  ts3 = data.frame(tname = ts2$tid, qname = ts2$mat / (ts2$mat+ts2$mis), stringsAsFactors = F)
-  colnames(ts3) = c(tname, qname)
+  tt = read.table(fs, sep = "\t", header = T, as.is = T)
+  tt = cbind(tt, cvg = 1 - (tt$qgap + tt$tgap) / tt$len, sim = tt$mat / (tt$mat + tt$mis))
+  tt2 = tt[tt$cvg >= 0.5 & tt$sim >= 0.4, c('tid','sim')]
+  colnames(tt2) = c(tname, qname)
 
-  to = merge(to, ts3, by = tname, all = T)
-#  system(sprintf("cp %s %s/01_syn_ortho/%s.tbl", fh, dirw, qname))
-  cat(qname, nrow(to), "\n")
+  to = merge(to, tt2, by = tname, all = T)
+  cat(qname, nrow(to), nrow(tt2), "\n")
 }
 to = to[,-2]
+td = merge(ti[,1:2], to, by = tname)
+stopifnot(nrow(td)==nrow(ti))
+td = td[order(td$idx), c(2,1,3:ncol(td))]
 
-norgs = apply(to, 1, function(x) sum(!is.na(x[-1])))
+norgs = apply(td, 1, function(x) sum(!is.na(x[-1])))
 table(norgs)
 
 fo = file.path(dirw, "12.score.tbl")
-write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+write.table(td, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
-##
+# filter syn-ortho matrix
+sum(ti=='')
+sum(is.na(td))
+for (org in qnames_15) {
+	idxs = which(is.na(td[,org]))
+	ti[idxs, org] = ''
+}
+sum(ti=='')
+
+fo = file.path(dirw, "05.ids.tbl")
+write.table(ti, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+### add insertion to syn-ortho-matrix
+fg = file.path(tcfg$gdir, "51.gtb")
+tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
+
+fi = file.path(dirw, "05.ids.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+
+
+
+### compute MPPD
+fg = file.path(tcfg$gdir, "51.gtb")
+tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
+
+fi = file.path(dirw, "05.ids.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+
+tos = ti[,c('idx', 'HM101', qnames_12)]
+norgs = apply(tos, 1, function(x) sum(x[-1] != ''))
+table(norgs)
+toss = tos[norgs >= 10,]
+nrow(toss)
+fo = file.path(dirw, "21.ids.tbl")
+write.table(toss, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+# run comp.ortho.hm.pl create multiple-sequence alignment 
+
+fi = file.path(dirw, "21.ids.tbl")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+
+tm = data.frame(id = tg$id, mpd = NA, stringsAsFactors = F)
+for (idx in ti$idx) {
+	fa = sprintf("%s/25_aln/%s.fas", dirw, idx)
+	aln = read.alignment(fa, format = 'fasta')
+	mat = dist.alignment(aln, matrix='similarity')
+	tm$mpd[idx] = mean(mat)
+	#aln = import.fasta(fa)
+  #dis = mat.dis(aln, aln)
+	#tm$mpd[idx] = mean(dis[lower.tri(dis)])
+}
+fo = file.path(dirw, "29.mpd.tbl")
+write.table(tm, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+
+#### plot gene-fam syn-ortho view
+fg = file.path(tcfg$gdir, "51.gtb")
+tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:5,16)]
+
+tg = tg[order(tg$chr, tg$beg, tg$end),]
+tg = cbind(tg, idx = 1:nrow(tg))
+colnames(tg)[6] = 'fam'
+tg = rename_genefam(tg)
+
 fs = file.path(dirw, "12.score.tbl")
 ts = read.table(fs, sep = "\t", header = T, as.is = T)
-ids_nomissing = ts$HM101[norgs >= 10]
-
 norgs = apply(ts, 1, function(x) sum(!is.na(x[-1])))
 table(norgs)
 
-## plot all pfam-misc
+ids_nomissing = ts$HM101[norgs >= 10]
+
+## all pfam-misc
 tgs = tg[tg$chr != 'chrU' & tg$id %in% ids_nomissing & !tg$fam %in% c("Unknown", "TE"),]
 tgs = tgs[order(tgs$idx),]
 tgs$idx = 1:nrow(tgs)
@@ -84,7 +185,7 @@ fo = file.path(dirw, "13.score.pdf")
 ggsave(pb, filename = fo, width = 8, height = 4)
 
 ## plot selected fams
-famsp = c("Zinc-Finger", "CRP-NCR", "NBS-LRR")
+famsp = c("Zinc-Finger", "CRP:NCR", "NBS-LRR")
 pname = 'fams0'
 
 plots = list()
@@ -98,7 +199,7 @@ for (i in 1:length(famsp)) {
   tx = ddply(tgs, .(chr), summarise, beg = min(idx), end = max(idx))
   tx = tx[tx$end > tx$beg,]
 
-  tw = ts[ts$HM101 %in% tgs$id,]
+  tw = ts[ts$HM101 %in% tgs$id, -1]
   colnames(tw)[1] = 'id'
   tl = reshape(tw, direction = 'long', varying = list(2:16), idvar = 'id', timevar = 'org', v.names = 'score', times = colnames(tw)[2:16])
 
@@ -132,7 +233,7 @@ p1 <- ggplot(to) +
 numrow = length(famsp)
 
 fo = sprintf("%s/13.score.%s.pdf", dirw, pname)
-pdf(file = fo, width = 6, height = 2*numrow+0.5, bg = 'transparent')
+pdf(file = fo, width = 6, height = 2.1*numrow+0.5, bg = 'transparent')
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(numrow, 1, height = c(2.5,rep(2, numrow-1)))))
 
@@ -141,7 +242,7 @@ for (i in 1:nrow(dco)) {
   x = dco$x[i]; y = dco$y[i]; lab = dco$lab[i]
   print(plots[[famsp[i]]], vp = viewport(layout.pos.row = x, layout.pos.col = y))
   grid.text(lab, x = 0, y = unit(1, 'npc'), just = c('left', 'top'), 
-    gp =  gpar(col = "black", fontface = 2, fontsize = 15),
+    gp =  gpar(col = "black", fontface = 2, fontsize = 14),
     vp = viewport(layout.pos.row = x, layout.pos.col = y))
 }
 dev.off()

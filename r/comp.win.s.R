@@ -56,26 +56,26 @@ tvl = tv[tv$size >= 50,]
 grvs = with(tvs, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
 grvl = with(tvl, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos), score = nucdiv))
 
-##### create sliding window table using 1Mb sliding windows
-chr = 'chr2'
+##### create sliding window table using 10kb sliding windows
+chr = 'chr5'
 beg = 7
 title = sprintf("%s:%02dMb", chr, beg)
 
 res = prepare_data(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl)
 splots = sub_plots(chr, beg, res$tw, res$dg, res$dy, res$ds)
 
-p_cvg = splots$cvg + theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines"))
+p_syn = splots$syn + theme(plot.margin = unit(c(0.1,0.1,0.1,1), "lines"))
 p_sta = splots$sta
-gr_cvg = ggplotGrob(p_cvg)
+gr_syn = ggplotGrob(p_syn)
 gr_sta = ggplotGrob(p_sta)
-gr_sta$widths = gr_cvg$widths
+gr_sta$widths = gr_syn$widths
 #gt1 = gtable_add_cols(gt1, unit(0, "mm"))
-gs = list(gr_cvg, gr_sta)
+gs = list(gr_syn, gr_sta)
 heis = c(3, 2)
 
 g <- gtable_matrix(name='demo', grobs = matrix(gs, nrow = length(gs)), widths = 1, heights = heis)
 fo = sprintf("%s/33.wins/%s.pdf", dirw, title)
-pdf(file = fo, width = 4, height = 6, bg = 'transparent')
+pdf(file = fo, width = 3, height = 6, bg = 'transparent')
 grid.newpage()
 grid.draw(g)
 dev.off()
@@ -84,6 +84,8 @@ dev.off()
 source('comp.win.fun.R')
 chrs = c('chr2', 'chr2', 'chr4', 'chr5', 'chr7')
 begs = c(16, 30, 5, 6, 28)
+chrs = c('chr7', 'chr2', 'chr6', 'chr2', 'chr8')
+begs = c(28, 16, 5, 30, 25)
 
 lres = list()
 for (i in 1:length(chrs)) {
@@ -121,7 +123,7 @@ for (i in 1:length(chrs)) {
 bog <- rectGrob(gp = gpar(col='black', fill=NA, lwd=2))
 gf <- gtable_matrix(name='demo', grobs = matrix(gts, ncol = length(gts)), widths = c(3.9,rep(3,length(gts)-1)), heights = 1)
 fo = sprintf("%s/33.wins/fig2.pdf", dirw)
-pdf(file = fo, width = 10, height = 6, bg = 'transparent')
+pdf(file = fo, width = 7, height = 6, bg = 'transparent')
 grid.newpage()
 grid.draw(gf)
 dev.off()

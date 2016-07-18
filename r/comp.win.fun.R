@@ -14,7 +14,11 @@ source('comp.fun.R')
 
 prepare_data <- function(chr, beg, grt, grp, tg, grl, grc, grn, grvs, grvl) {
 beg = beg * 1000000 + 1
-tw = data.frame(chr = chr, beg = seq(beg, by = 10000, length.out = 100), end = seq(beg+10000-1, by = 10000, length.out = 100), len = 10000, stringsAsFactors = F)
+winsize = 50000
+winnum = 1000000 / winsize
+begs = seq(beg, by = winsize, length.out = winnum)
+ends = begs + winsize - 1
+tw = data.frame(chr = chr, beg = begs, end = ends, len = winsize, stringsAsFactors = F)
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
   
 bp_gap = intersect_basepair(gr, grp)
@@ -25,11 +29,13 @@ tw = cbind(tw, len_ng = bp_nogap)
 gr = with(tw, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 ### gene family stats - basepair %
-h = list('TE'='TE',
-  'NBS' = c('TIR-NBS-LRR', 'CC-NBS-LRR'),
-  'NCR' = 'NCR',
-  'LRR_RLK' = 'LRR-RLK', 
-  'F_box' = 'F-box'
+h = list(
+  	"TE" = "TE",
+  	"NBS_LRR" = c("CC-NBS-LRR", "TIR-NBS-LRR", "NB-ARC", "TIR"),
+  	"RLK" = c("LRR-RLK", "RLK"),
+  	'NCR' = 'NCR',
+  	'LRR' = 'LRR',
+  	"F_box" = "F-box"
 )
 
 dg = tw[,1:3]
@@ -53,18 +59,18 @@ for (qname in qnames_15) {
 
 ### theta-pi, covered bases in 9/12 accessions
 lenc = intersect_basepair(gr, grc)
+pcov = lenc / tw$len_ng
 
 nds = intersect_score(gr, grn)
 pi_snp = nds / lenc
-
 ndi = intersect_score(gr, grvs)
-pi_indel = ndi / tw$len_ng
+pi_indel = ndi / lenc
 ndv = intersect_score(gr, grvl)
-pi_sv = ndv / tw$len_ng
+pi_sv = ndv / lenc
 
-pi_snp[is.infinite(pi_snp)] = NA
-pi_indel[is.infinite(pi_indel)] = NA
-pi_sv[is.infinite(pi_sv)] = NA
+pi_snp[pcov < 0.2] = NA
+pi_indel[pcov < 0.2] = NA
+pi_sv[pcov < 0.2] = NA
 ds = cbind(tw[,1:3], Gaps = 1-tw$len_ng/tw$len, Coverage = lenc/tw$len_ng, Pi_SNP = pi_snp, Pi_InDel = pi_indel, Pi_SV = pi_sv)
 
   list(tw = tw, dg = dg, dy = dy, ds = ds)
@@ -87,7 +93,7 @@ breaks = seq(vmin, vmax, length.out = length(colsy) + 1)
 dyl = cbind(dyl, syn2 = cut(dyl$syn, breaks, include.lowest = T))
 
 labs = rep('', length(colsy))
-ltitle = sprintf("Coverage (%.03f-%.03f)", vmin, vmax)
+ltitle = sprintf("%.03f-%.03f", vmin, vmax)
 
 p_syn <- ggplot(dyl) +
   geom_tile(aes(x = beg, y = org, fill = syn2, height = 0.8)) +
@@ -96,7 +102,7 @@ p_syn <- ggplot(dyl) +
   scale_y_discrete(expand = c(0, 0), name = '') +
   scale_fill_manual(name = ltitle, labels = labs, values = colsy, guide = guide_legend(nrow = 1, byrow = T, label = T, label.position = 'top')) +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.title = element_text(size = 7), legend.key.size = unit(0.3, 'lines'), legend.key.width = unit(0.3, 'lines'), legend.text = element_blank(), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "cm")) +
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='deeppink4', size=1)) +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='black', size=1)) + #deeppink4
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_blank(), axis.ticks.length = unit(0,'cm')) +
   theme(axis.text.x = element_blank()) +
@@ -113,7 +119,7 @@ dw = cbind(ds, dg[,-1:-3])
 opts = colnames(dw)[-1:-3]
 dcl = data.frame()
 for (opt in opts) {
-	cols = brewer.pal(9, "Greys")
+	cols = c("white", brewer.pal(9, "Reds"))
 	vals = dw[,opt]
 	vmin = min(dw[,opt], na.rm = T); vmax = max(dw[,opt], na.rm = T)
 	breaks = seq(vmin, vmax, length.out = length(cols)+1)
@@ -137,6 +143,7 @@ for (opt in opts) {
 	col_map = cols
 	names(col_map) = levels(itvs)
 	vals_mapped = as.character(col_map[itvs])
+	vals_mapped[is.na(vals_mapped)] = 'grey75'
 	
 	labg = rep('', length(cols))
 	ltitle = sprintf("%% bases (%.01f-%.01f)", vmin, vmax)
@@ -152,7 +159,7 @@ p_sta <- ggplot(dcl) +
   scale_y_discrete(expand = c(0, 0), name = '') +
   scale_fill_identity() +
   theme(legend.position = 'none') + 
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='deeppink4', size=1)) +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, color='black', size=1)) + #deeppink4
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_text(colour = "blue", size = 8), axis.ticks.length = unit(0, 'lines')) +
   theme(axis.text.x = element_blank()) +

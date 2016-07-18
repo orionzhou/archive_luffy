@@ -58,7 +58,7 @@ p1 = ggplot(to, aes(x = norg, y = cnt, fill = org)) +
   geom_bar(stat = 'identity', position = "stack", width = 0.5) +
   scale_fill_manual(name = "Accession-Specific", breaks = labs, labels = labs, values = cols, guide = guide_legend(ncol = 1, byrow = F, label.position = "right", direction = "vertical", title.theme = element_text(size = 8, angle = 0), label.theme = element_text(size = 8, angle = 0))) +
   scale_x_discrete(name = '# Sharing Accession') +
-  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 25500)) +
+  scale_y_continuous(name = '# Ortholog Groups', expand = c(0, 0), limits = c(0, 25500)) +
   theme_bw() +
   ggtitle("A") +
   theme(axis.ticks.length = unit(0, 'lines')) +
@@ -110,7 +110,7 @@ p2 = ggplot(tp) +
   stat_smooth(aes(x = n_org, y = core, col = 'b'), size = 0.3, se = F) +
   scale_color_manual(name = "", labels = c('Pan-proteome', 'Core-proteome'), values = c("firebrick1", "dodgerblue")) +
   scale_x_continuous(name = '# Genomes Sequenced') +
-  scale_y_continuous(name = '# Gene Clusters', expand = c(0, 0), limits = c(0, 77000)) + 
+  scale_y_continuous(name = '# Ortholog Groups', expand = c(0, 0), limits = c(0, 77000)) + 
   theme_bw() +
   ggtitle("B") +
   theme(axis.ticks.length = unit(0, 'lines')) +

@@ -61,18 +61,18 @@ my $dir = "$data/misc3/$qry\_$tgt/23_blat";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
-prepare_blat();
+#prepare_blat();
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-#process_blat2();
-#process_vnt();
+process_blat2();
+process_vnt();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
-#  runCmd("breakseq.bygap.pl -i $qry_fas -o 00.fas -g 1000");
+  runCmd("breakseq.bygap.pl -i $qry_fas -o 00.fas -g 1000");
   runCmd("seq.splitlarge.py 00.fas 00.even.fas");
-  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 8 -t $tgt -g $qry");
+  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 10 -t $tgt -g $qry");
 }
 sub process_blat1 {
   runCmd("cat 01_seq/part.*.psl > 11.psl");
@@ -166,6 +166,7 @@ sub pipe_gal {
     gal.calib.pl -i - -q $qFas -t $tFas -o - | \\
     gal.addlev.pl -i - -n $pre.8.net -o $pre.8.gal");
   runCmd("gal.filter.pl -i $pre.8.gal -m 100 -p 0.6 -o $pre.9.gal");
+  runCmd("gal2chain.pl -i $pre.9.gal -o $pre.9.chain");
   gal_expand("$pre.9.gal", "$pre.9", $qFas, $tFas, $qSize, $tSize);
 }
 sub gal_expand {

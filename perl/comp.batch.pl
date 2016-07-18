@@ -48,7 +48,8 @@ for my $qry (@qrys) {
   chdir $dir || die "cannot chdir to $dir\n";
 #  runCmd("comp.pl -q $qry -t $tgt");
 #  runCmd("comp.novseq.pl -q $qry -t $tgt");
-  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
+  runCmd("gal2chain.pl -i $dir/31.9.gal -o $dir/31.9.chain");
+#  runCmd("comp.syn.ortho.pl -q $qry -t $tgt");
 #  runCmd("comp.sv.pl -q $qry");
 }
 __END__

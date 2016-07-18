@@ -317,6 +317,7 @@ rename_genefam <- function(ti) {
   	'CRP:other' = c('CRP0000-1030','CRP1600-6250'),
   	'LRR' = 'LRR',
   	'HSP70' = 'HSP70',
+  	'Zinc-Finger' = 'Zinc-Finger',
 #  	'Cytochrome' = 'Cytochrome',
   	'Pkinase' = c('Pkinase', 'Pkinase_Tyr')
   )

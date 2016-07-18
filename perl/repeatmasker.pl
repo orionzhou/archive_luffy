@@ -49,7 +49,7 @@ my $fg = "11_genome.fas";
 
 -d "12.rm" && runCmd("rm -rf 12.rm");
 mkdir "12.rm";
-runCmd("RepeatMasker -pa 16 -species medicago -xsmall -dir $dir/12.rm $dir/$fg");
+runCmd("RepeatMasker -pa 24 -species medicago -xsmall -dir $dir/12.rm $dir/$fg");
 parse_rm("12.rm/11_genome.fas.out", "12.rm.tbl");
 runCmd("awk 'BEGIN{OFS=\"\\t\"} {print \$1, \$2-1, \$3, \$9 \" | \" (\$5)}' 12.rm.tbl > 12.rm.raw.bed");
 runCmd("sortBed -i 12.rm.raw.bed > 12.rm.bed");

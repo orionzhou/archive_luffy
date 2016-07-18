@@ -1,5 +1,5 @@
 ##PBS -l nodes=1:ppn=16,walltime=20:00:00
-#PBS -l nodes=1:ppn=24,walltime=15:00:00
+#PBS -l nodes=1:ppn=24,walltime=30:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 ##PBS -q sb

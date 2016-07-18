@@ -48,16 +48,17 @@ my $fg = "$ENV{'genome'}/$org/11_genome.fas";
 
 ### needs to run mt.rnaseq.pl on Itasca first
 ### needs to be run on Itasca
+#runCmd("repeatmasker.pl -g $org");
 #runCmd("mt.augus.pl -g $org");
 #runCmd("mt.nbs.pl -g $org");
 #runCmd("mt.rlk.pl -g $org");
-#runCmd("spada.pl --cfg \$spada/cfg.txt \\
-#  --dir \$misc4/spada.crp.$org \\
-#  --hmm \$misc4/hmm/crp \\
-#  --fas \$genome/\$ORG/11_genome.fas \\
-#  --gff \$genome/\$ORG/augustus/31.gff \\
-#  --org Mtruncatula --sp --threads 16");
-runCmd("mt.anno.pl -g $org");
+runCmd("spada.pl --cfg \$spada/cfg.txt \\
+  --dir \$misc4/spada.crp.$org \\
+  --hmm \$misc4/hmm/crp \\
+  --fas \$genome/$org/11_genome.fas \\
+  --gff \$genome/$org/augustus/31.gff \\
+  --org Mtruncatula --sp --threads 24");
+#runCmd("mt.anno.pl -g $org");
 
 __END__
 

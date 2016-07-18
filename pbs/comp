@@ -1,9 +1,9 @@
-#PBS -l nodes=1:ppn=2,mem=8GB,walltime=48:00:00
+#PBS -l nodes=1:ppn=1,walltime=50:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
-#PBS -q lab
+#PBS -q small
 
-QRY=${QRY:-HM056}
+QRY=${QRY:-HM340.PB}
 TGT=${TGT:-HM101}
 
 echo QRY=$QRY

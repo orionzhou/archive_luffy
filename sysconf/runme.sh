@@ -27,6 +27,7 @@ cp -f $CONFIGDIR/authorized_keys .ssh/authorized_keys
 ln -sf $CONFIGDIR/vim/colors .vim/colors
 ln -sf $CONFIGDIR/vim/ftdetect .vim/ftdetect
 ln -sf $CONFIGDIR/vim/ftplugin .vim/ftplugin
+[[ -d Library/Application\ Support/BBEdit/Language\ Modules ]] && cp $CONFIGDIR/R.plist Library/Application\ Support/BBEdit/Language\ Modules
 
 echo " all done -> cheers "
 

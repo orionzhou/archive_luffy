@@ -53,7 +53,7 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-runCmd("seqlen.pl -i $fi -o $fi.sizes");
+runCmd("seqlen.py $fi $fi.sizes");
 
 my $h;
 open(my $fhs, "<$fi.sizes") or die "cannot read $fi.sizes\n";

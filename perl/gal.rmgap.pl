@@ -64,19 +64,8 @@ if ($fo eq "" || $fo eq "stdout" || $fo eq "-") {
   open ($fho, ">$fo") || die "cannot write $fo\n";
 }
 
-my $tq = readTable(-in=>$fq, -header=>0);
-my $tt = readTable(-in=>$ft, -header=>0);
-my ($hq, $ht);
-for my $i (0..$tq->lastRow) {
-  my ($chr, $beg, $end) = $tq->row($i);
-  $hq->{$chr} ||= [];
-  push @{$hq->{$chr}}, [$beg + 1, $end];
-}
-for my $i (0..$tt->lastRow) {
-  my ($chr, $beg, $end) = $tt->row($i);
-  $ht->{$chr} ||= [];
-  push @{$ht->{$chr}}, [$beg + 1, $end];
-}
+my $hq = get_gap_hash($fq);
+my $ht = get_gap_hash($ft);
 
 print $fho join("\t", @HEAD_GAL)."\n";
 
@@ -151,7 +140,22 @@ while( <$fhi> ) {
 close $fhi;
 close $fho;
 
-
+sub get_gap_hash {
+  my ($fi) = @_;
+  my $h = {};
+  if(-e $fi && -s $fi) {
+    my $ti = readTable(-in=>$fi, -header=>0);
+    for my $i (0..$ti->lastRow) {
+      my ($chr, $beg, $end) = $ti->row($i);
+      $h->{$chr} ||= [];
+      push @{$h->{$chr}}, [$beg + 1, $end];
+    }
+  } elsif(-e $fi && ! -s $fi) {  ## do nothing
+  } else {
+    die "$fi is not there\n";
+  }
+  return $h;
+}
 sub coordMap {
   my ($qloc, $tloc, $qsrd, $tsrd, $iloc) = @_;
   $qloc = [ sort {$a->[0] <=> $b->[0]} @$qloc ];

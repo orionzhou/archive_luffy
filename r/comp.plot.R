@@ -10,7 +10,7 @@ fl = file.path(dirw, 'loci.xlsx')
 source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis')#, 'qgene')
 i = 27
 tls = tl[tl$i == i,]
 
@@ -30,6 +30,8 @@ dev.off()
 #### chr4-8 translocation
 qnames = c("HM004", "HM034", "HM185", "HM340")
 qnames = c("HM004", "HM034", "HM185")
+qnames = c("HM340", "HM340.PB0", "HM340.PB")
+cfgs = get_genome_cfgs(c(tname, qnames))
 gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(37000000,33000000), end = c(42000000, 36000000)))
 
 tracks = c('taxis', 'link', 'qaxis')
@@ -42,14 +44,14 @@ CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 
-xsu = c(165, 328, 333, 340)
-ysu = c(1:3) * 105 - 30
-xs = rep(xsu, length(ysu))
-ys = rep(ysu, each = length(xsu))
-grid.text(rep("x", length(xs)), x = unit(xs, 'points'), y = unit(ys, 'points'), 
-  just = c('left', 'bottom'), 
-  gp = gpar(col = "navy", fontface = 1, fontsize = 8)
-)
+#xsu = c(165, 328, 333, 340)
+#ysu = c(1:3) * 105 - 30
+#xs = rep(xsu, length(ysu))
+#ys = rep(ysu, each = length(xsu))
+#grid.text(rep("x", length(xs)), x = unit(xs, 'points'), y = unit(ys, 'points'), 
+#  just = c('left', 'bottom'), 
+#  gp = gpar(col = "navy", fontface = 1, fontsize = 8)
+#)
 dev.off()
 
 ## zoom in

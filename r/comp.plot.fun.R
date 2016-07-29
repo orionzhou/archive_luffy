@@ -254,10 +254,13 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     qtik = prep_ticks(qmap, tick_itv)
     qgap = read_tabix(cfg$gapz, grq)
     qgap = coord_mapping(qgap, qmap)
+    qgene = NULL
+    if('qgene' %in% tracks) {
     qgene = read_tabix(cfg$genez, grq)
     if(!is.null(qgene)) {
       colnames(qgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
       qgene = coord_mapping(qgene, qmap)
+    }
     }
 
     tdcoo = coord_mapping(tg[,1:4], tmap)

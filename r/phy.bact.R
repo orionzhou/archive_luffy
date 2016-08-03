@@ -167,20 +167,20 @@ tree = rotate(tree, 56)
   
   scores = as.numeric(tree$node.label)
   node.bg = rep('white', tree$Nnode)
-  node.bg[scores >= 0.9] = 'black'
-  node.bg[scores >= 0.8 & scores < 0.9] = 'grey'
+  node.bg[scores >= 0.8] = 'black'
+  #node.bg[scores >= 0.8 & scores < 0.9] = 'grey'
   tree$node.label = sprintf("%.02f", as.numeric(tree$node.label))
   
   fo = file.path(dirw, "69.pdf")
   pdf(fo, width = 6, height = 8)
   plot(tree, type = 'phylogram', show.node.label = F, show.tip.label = T,
-    tip.color = tip.cols, label.offset = 0.01, 
-    no.margin = T, cex = 0.75, x.lim = 2.5, y.lim = ntip+2, align.tip.label = T)
+    tip.color = tip.cols, label.offset = 0.01, , font = 1,
+    no.margin = T, cex = 0.75, x.lim = 1.9, y.lim = ntip+2, align.tip.label = T)
   #tiplabels(labs, frame = 'none', adj = 1)
-  nodelabels(pch = 22, bg = node.bg, cex = 0.5)
-  text(2.4, 1:ntip, labels = labs, cex = 0.8)
-  text(2.4, ntip+2.3, labels = '# of Lantibiotics', cex = 0.7)
-  text(2.4, ntip+1.2, labels = 'Identified', cex = 0.7)
-  add.scale.bar(x = 0, y = ntip+1, lcol = 'black')
+  nodelabels(pch = 22, bg = node.bg, cex = 0.7)
+  text(1.8, 1:ntip, labels = labs, cex = 0.8)
+  text(1.8, ntip+2.3, labels = '# of Lantibiotics', cex = 0.75)
+  text(1.8, ntip+1.2, labels = 'Identified', cex = 0.75)
+  add.scale.bar(x = 0, y = ntip+2, lcol = 'black')
   dev.off()
   

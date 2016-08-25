@@ -70,8 +70,9 @@ if($stat_flag) {
   print_stat();
   exit;
 }
+cat_seq("01.bed", "11.blastnr.tbl", "12.bed");
 #pipe1(); ### Itasca
-pipe2(); ### requires internet
+#pipe2(); ### requires internet
 
 sub pipe1 {
   runCmd("gax2bed.pl -i ../23_blat/41.5/gax -p tgt -o - | \\

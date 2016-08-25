@@ -30,7 +30,7 @@ dev.off()
 #### chr4-8 translocation
 qnames = c("HM004", "HM034", "HM185", "HM340")
 qnames = c("HM004", "HM034", "HM185")
-qnames = c("HM340", "HM340.PB0", "HM340.PB")
+qnames = c("HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN")
 cfgs = get_genome_cfgs(c(tname, qnames))
 gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(37000000,33000000), end = c(42000000, 36000000)))
 

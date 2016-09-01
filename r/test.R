@@ -1,11 +1,26 @@
-f01 = file.path("/project/youngn/zhoup/Data/misc3/gm_snp1/goldengate1536.csv")
-d1 = read.table(f01, sep=",", header=TRUE)
+require(plyr)
+require(dplyr)
+require(seqinr)
+require(GenomicRanges)
+require(ggplot2)
 
-f02 = file.path("/project/youngn/zhoup/Data/misc3/gm_snp1/04_snp_loc.txt")
-d2 = read.table(f02, sep="\t", header=FALSE)
-colnames(d2) = c("id", "allele", "chr", "pos", "pct_idty", "alias", "note")
+dirw = file.path(Sys.getenv('misc1'), 'expdesign')
 
-d3 = merge(d1, d2, by.x="Locus", by.y="id", all.x=TRUE, all.y=FALSE)
-write.table(d3, file.path("/project/youngn/zhoup/Data/misc3/gm_snp1/goldengate1536_location.txt"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+fi = file.path(dirw, 'tissues.tsv')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
 
+genos = c("B73", "Mo17", "B73xMo17", "Mo17xB73")
 
+to = ddply(ti, .(TissueID), expand <- function(x, genos) {
+	data.frame(genotype=genos[1:x[1,'Genotypes']])
+}, genos = genos)
+to$TissueID = factor(to$TissueID, levels = ti$TissueID)
+to$genotype = factor(to$genotype, levels = genos)
+to = to[order(to$TissueID, to$genotype), ]
+
+to = data.frame(Tissue = rep(to$TissueID, each = 3), 
+	Genotype = rep(to$genotype, each = 3),
+	Replicate = rep(c(1:3), nrow(to)))
+
+fo = file.path(dirw, "05.tsv")
+write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)

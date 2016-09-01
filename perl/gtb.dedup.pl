@@ -89,9 +89,10 @@ my @idxsd;
 for my $str (keys(%$h)) {
   my @idxs = @{$h->{$str}};
   @idxs > 1 || next;
-  
-  @idxs = sort {$hf->{$t->elm($a, "cat2")} 
-    <=> $hf->{$t->elm($b, "cat2")}} @idxs;
+ 
+  if(exists $hf->{$t->elm($idxs[0], "cat2")}) {
+    @idxs = sort {$hf->{$t->elm($a, "cat2")} <=> $hf->{$t->elm($b, "cat2")}} @idxs;
+  }
   my $idx = $idxs[0];
   push @idxsd, @idxs[1..$#idxs];
   

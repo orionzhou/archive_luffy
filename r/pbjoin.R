@@ -7,7 +7,7 @@ source('Location.R')
 
 dirw = file.path(Sys.getenv('misc2'), 'pbjoin')
 
-alg = "PBBNDT"
+alg = "PBBN"
 
 fs = sprintf("%s/HM340.%s/raw.fix.fas.map", Sys.getenv("genome"), alg)
 ts = read.table(fs, header = F, sep = "\t", as.is = T)
@@ -26,10 +26,23 @@ t02 = read.table(f02, header = T, sep = "\t", as.is= T)
 colnames(t02) = c("chr", "motif", "beg", "end", "mm", "srd", "str")
 grr2 = with(t02, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
+res = "DpnII"
+f03 = sprintf("%s/02.restriction/HM340.%s.%s.txt", dirw, alg, res)
+t03 = read.table(f03, header = T, sep = "\t", as.is= T)
+colnames(t03) = c("chr", "motif", "beg", "end", "mm", "srd", "str")
+grr3 = with(t03, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
 ##### find joins and breaks
 f01 = sprintf("%s/%s.txt", dirw, alg)
-t01 = read.table(f01, header = F, sep = "\t", as.is= T)
-colnames(t01) = c("nchr", "ochr", "obeg", "oend", "srd", "nbeg", "nend")
+
+if(alg == "PBBN") {
+	t01 = read.table(f01, header = T, sep = "\t", as.is= T)
+	t01 = t01[t01$Compnt_Type=='W', c(1,6:9,2,3)]
+	colnames(t01) = c("nchr", "ochr", "obeg", "oend", "srd", "nbeg", "nend")
+} else {
+	t01 = read.table(f01, header = F, sep = "\t", as.is= T)
+	colnames(t01) = c("nchr", "ochr", "obeg", "oend", "srd", "nbeg", "nend")
+}
 
 ### 'joins'
 x = table(t01$nchr)

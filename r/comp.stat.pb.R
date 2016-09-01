@@ -8,10 +8,9 @@ require(gtable)
 source('Location.R')
 source('comp.fun.R')
 
-diro = file.path(Sys.getenv("misc3"), "pb.stat")
+diro = file.path(Sys.getenv("misc2"), "pb.stat")
 
 qnames = c("HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN")
-qnames = c("HM340", "HM340.PB0")
 
 
 tlen = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
@@ -184,10 +183,10 @@ for (qname in qnames) {
   total_bases = total_len - total_gap
   
   fcds = file.path(dir, "51.tbl")
-  tcds = read.table(fcds, sep = "\t", header = F, as.is = T)[,1:6]
-  tcds = tcds[tcds$V6 == 'cds',]
-  grc = GRanges(seqnames = tcds$V1, ranges = IRanges(tcds$V2, end = tcds$V3))
-  grc = reduce(grc)
+  #tcds = read.table(fcds, sep = "\t", header = F, as.is = T)[,1:6]
+  #tcds = tcds[tcds$V6 == 'cds',]
+  #grc = GRanges(seqnames = tcds$V1, ranges = IRanges(tcds$V2, end = tcds$V3))
+  #grc = reduce(grc)
   
   frep = file.path(dir, "12.rm.bed")
   trep = read.table(frep, sep = "\t", header = F, as.is = T)

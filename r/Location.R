@@ -79,6 +79,7 @@ get_loc_gene <- function(g) {
 intersect_basepair <- function(gr1, gr2) {
   t1 = data.frame(chr = seqnames(gr1), beg = start(gr1)-1, end = end(gr1),
     idx = 1:length(gr1), stringsAsFactors = F)
+  gr2 = reduce(gr2)
   t2 = data.frame(chr = seqnames(gr2), beg = start(gr2)-1, end = end(gr2),
     idx = 1:length(gr2), stringsAsFactors = F)
   

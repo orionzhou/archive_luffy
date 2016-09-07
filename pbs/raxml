@@ -3,9 +3,12 @@
 #PBS -M zhoux379@umn.edu
 #PBS -q small
 
-module load intel ompi/intel
+#module load intel ompi/intel
 
-cd /home/youngn/zhoup/git/rgeneclust/rosa
+cd $git/rgeneclust
+rosar.py rosa.csv rosa
+
+cd $git/rgeneclust/rosa
 /home/youngn/zhoup/git/standard-RAxML/raxmlHPC-PTHREADS-AVX2 -s 43.fas \
   -n 61.nwk -m PROTCATDAYHOFF -T 24 -f a -x 98 -p 5 -N 100 -o Arabidopsis
 #mpirun -np 24 $git/ExaML/examl/examl-OMP-AVX \

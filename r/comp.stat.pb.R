@@ -5,12 +5,13 @@ require(seqinr)
 require(GenomicRanges)
 require(ggplot2)
 require(gtable)
+require(RColorBrewer)
 source('Location.R')
 source('comp.fun.R')
 
 diro = file.path(Sys.getenv("misc2"), "pb.stat")
 
-qnames = c("HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN")
+qnames = c("HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN", "HM340.FN")
 
 
 tlen = read.table(tcfg$size, sep = "\t", header = F, as.is = T)
@@ -20,6 +21,14 @@ tt = data.frame(chr = tlen$V1, beg = 1, end = tlen$V2)
 tgap = read.table(tcfg$gap, sep = "\t", header = F, as.is = T)
 grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
 tp = data.frame(chr = tgap$V1, beg = tgap$V2, end = tgap$V3)
+
+tgen = read.table(file.path(tcfg$gdir, "51.gtb"), sep = "\t", header = T, as.is = T)
+tg = data.frame(chr = tgen$chr, beg = tgen$beg, end = tgen$end)
+grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+trep = read.table(file.path(tcfg$gdir, "12.rm.bed"), sep = "\t", header = F, as.is = T)
+tr = data.frame(chr = trep$V1, beg = trep$V2+1, end = trep$V3)
+grr = with(tr, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 
 ##### functional annotation stat
 stats = list()
@@ -183,10 +192,10 @@ for (qname in qnames) {
   total_bases = total_len - total_gap
   
   fcds = file.path(dir, "51.tbl")
-  #tcds = read.table(fcds, sep = "\t", header = F, as.is = T)[,1:6]
-  #tcds = tcds[tcds$V6 == 'cds',]
-  #grc = GRanges(seqnames = tcds$V1, ranges = IRanges(tcds$V2, end = tcds$V3))
-  #grc = reduce(grc)
+  tcds = read.table(fcds, sep = "\t", header = F, as.is = T)[,1:6]
+  tcds = tcds[tcds$V6 == 'cds',]
+  grc = GRanges(seqnames = tcds$V1, ranges = IRanges(tcds$V2, end = tcds$V3))
+  grc = reduce(grc)
   
   frep = file.path(dir, "12.rm.bed")
   trep = read.table(frep, sep = "\t", header = F, as.is = T)
@@ -227,12 +236,90 @@ for (qname in qnames) {
 #  pct_synteny = sprintf("%.01f%%", pct_synteny)
   bnov = format(bnov, big.mark = ",")
   pnov = sprintf("%.01f%%", pnov)
-  bcds = 0#format(bcds, big.mark = ",")
-  pcds = 0#sprintf("%.01f%%", pcds)
+  bcds = format(bcds, big.mark = ",")
+  pcds = sprintf("%.01f%%", pcds)
   stats[[qname]] = matrix(c(total_bases, brep, aligned, synteny, bnov, pnov, bcds, pcds), 
     nrow = 1, dimnames = list(NULL, c("Total Bases", "Repetitive", "Alignable to HM101", "Bases in Synteny Blocks", "Novel Sequences", "", "Novel Coding Seq", "")))
 }
 ds = do.call(rbind.data.frame, stats)
 fo = file.path(diro, "11_comp_stat.tbl")
 write.table(ds, fo, sep = "\t", row.names = T, col.names = T, quote = F)
+
+### synteny heatmap
+chrn = 1:nrow(tt)
+names(chrn) = rev(tt$chr)
+
+qname = "HM340.FN"
+qname = "HM034"
+
+dirq = sprintf("%s/%s", Sys.getenv("genome"), qname)
+fl = file.path(dirq, "15.sizes")
+tl = read.table(fl, header = F, sep = "\t", as.is = T)
+colnames(tl) = c("chr", "len")
+
+dirw = sprintf("%s/%s_HM101/23_blat", Sys.getenv("misc3"), qname)
+fi = file.path(dirw, "31.9.gal")
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:15,]
+
+tt2 = cbind(tt, chrn = chrn[as.character(tt$chr)])
+ti2 = cbind(ti, chrn = chrn[as.character(ti$tId)])
+tg2 = cbind(tg, chrn = chrn[as.character(tg$chr)])
+
+ti3 = cbind(ti2, lev2 = ti2$lev, y=ti2$chrn)
+ti3$lev2[ti3$lev == 1] = '1'
+ti3$lev2[ti3$lev == 2] = '2'
+ti3$lev2[ti3$lev == 3] = '3'
+ti3$lev2[ti3$lev >= 4] = '4'
+ti3$y[ti3$lev == 1] = ti3$y[ti3$lev == 1] + 0.15
+ti3$y[ti3$lev == 2] = ti3$y[ti3$lev == 2] + 0.05
+ti3$y[ti3$lev == 3] = ti3$y[ti3$lev == 3] - 0.05
+ti3$y[ti3$lev >= 4] = ti3$y[ti3$lev >= 4] - 0.15
+breaks = c('1','2','3', '4')
+cols = brewer.pal(4, "Set2")
+
+chr_coord <- function(l) {
+     sprintf("%dMb", floor(l/1000000))
+}
+pc <- ggplot() +
+  geom_rect(data = tt2, aes(xmin=beg, xmax=end, ymin=chrn-0.3, ymax=chrn+0.3), fill=NA, color='black') +
+  geom_rect(data = ti3, aes(xmin=tBeg, xmax=tEnd, ymin=y-0.05, ymax=y+0.05, fill=lev2), color=NA) +
+  geom_rect(data = tg2, aes(xmin=beg, xmax=end, ymin=chrn+0.2, ymax=chrn+0.3), fill='royalblue', color=NA) +
+#  geom_point(data = ti2, aes(x=tBeg, y=chrn+0.4, col=qId, shape=qId), size=2) +
+#  geom_point(data = tm2, aes(x=tBeg, y=chrn+0.4, col='Mt3.5 Cen', shape='Mt3.5 #Cen'), size=2) +
+#  geom_point(data = tc2, aes(x=pos, y=chrn-0.35, col='Predicted Mt4.0 Cen', shape='Predicted Mt4.0 Cen'), size=2) +
+  theme_bw() + 
+  scale_x_continuous(name = '', expand = c(0.01, 0), labels=chr_coord) + 
+  scale_y_continuous(name = '', expand = c(0, 0), breaks=chrn, labels=names(chrn), limits=c(0.5,9.7)) +
+  scale_fill_manual(name='', breaks = breaks, values=cols) +
+#  scale_color_manual(name='', values=c('red','blue','green','purple','black')) +
+#  scale_shape_manual(name='', values=c(6,6,6,6,17)) +
+#  theme(legend.position = c(0.9,0.45), legend.direction = "vertical", legend.title = element_text(size = 8), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size=8), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "cm")) +
+#  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype=0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.text.x = element_text(colour = "black", size = 8)) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+
+fo = sprintf("%s/51.syn.%s.pdf", diro, qname)
+ggsave(pc, filename = fo, width = 10, height = 6)
+
+
+## look for TE and lev2 syn-block
+tg = data.frame(chr = tgen$chr, beg = tgen$beg, end = tgen$end)[tgen$cat2=='TE',]
+grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+tx = data.frame(chr = ti$tId, beg = ti$tBeg, end = ti$tEnd)[ti$lev==2,]
+grx = with(tx, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+bp = intersect_basepair(grx, union(grr,grg))
+nrow(tx)
+sum(bp/width(grx) > 0)
+sum(bp/width(grx) > 0.5)
+
+for (qname in c("HM034", "HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN")) {
+	xxx(qname)
+}
+
 

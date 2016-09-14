@@ -21,12 +21,17 @@ cp -f $CONFIGDIR/authorized_keys .ssh/authorized_keys
 
 [[ -h .vim ]] && rm .vim
 [[ -d .vim ]] || mkdir .vim
-[[ -h .vim/colors ]] && rm .vim/colors
-[[ -h .vim/ftdetect ]] && rm .vim/ftdetect
-[[ -h .vim/ftplugin ]] && rm .vim/ftplugin
-ln -sf $CONFIGDIR/vim/colors .vim/colors
-ln -sf $CONFIGDIR/vim/ftdetect .vim/ftdetect
-ln -sf $CONFIGDIR/vim/ftplugin .vim/ftplugin
+cd $CONFIGDIR/vim
+vimfolders=$(ls -d */)
+cd ~/.vim
+for i in $vimfolders
+do
+  j=${i%%/}
+  [[ -h $j ]] && rm $j
+  ln -sf $CONFIGDIR/vim/$j $j
+done
+cd ..
+
 [[ -d Library/Application\ Support/BBEdit/Language\ Modules ]] && cp $CONFIGDIR/R.plist Library/Application\ Support/BBEdit/Language\ Modules
 
 echo " all done -> cheers "

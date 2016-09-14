@@ -102,6 +102,7 @@ export robin=$git/robin
 export spada=$git/spada
 export rosar=$git/rgeneclust
 export urt=$git/soyurt
+export site=$git/orionzhou.github.io
 export PATH=$rosar:$spada:$PATH
 
 # Perl

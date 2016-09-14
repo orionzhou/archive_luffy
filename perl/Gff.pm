@@ -64,10 +64,13 @@ sub check_rnas {
     my ($id, $par, $type, $seqid, $src, $beg, $end, $score, $srd, $phase, $note) = @$stat;
     if($type eq "gene") {
       next;
-    }elsif(exists $h_gff->{$type}) {
+    } elsif(exists $h_gff->{$type}) {
       $hr->{$id} = [$stat]
     } else {
-      die("parent[$par] of $id not exist\n".Dumper($hr)) unless exists $hr->{$par};
+      if(! exists $hr->{$par}) {
+        print "$id has no parent: $par\n";
+        next;
+      }
       my $ptype = $hr->{$par}->[0]->[2];
       push @{$hr->{$par}}, $stat;
     }

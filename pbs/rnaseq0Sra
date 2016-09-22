@@ -1,0 +1,15 @@
+#PBS -l nodes=1:ppn=8,walltime=20:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q small
+
+PPN=8
+PID=${PID:-ril105}
+JOB=${JOB:-rnaseq0Sra}
+
+dirw=$data/misc2/rnaseq/${PID}
+cd $dirw
+
+parallel -j $PPN < 04.fastqdump.cmd
+
+touch $dirw/cps/${JOB}

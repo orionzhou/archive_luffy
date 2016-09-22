@@ -50,7 +50,7 @@ export soft=$prefix/soft
 if [[ -d $soft ]]; then
   for subpath in zlib gcc boost libsequence \
     samtools bamtools bedtools vcftools bedops \
-    hdf tabix bowtie2 sra blast bwtool\
+    hdf tabix bowtie2 ncbi blast bwtool\
     clustalw clustalo paml4.8 \
     parallel blast CAP3 cmake cufflinks mcl \
     augustus maker ocaml opam \

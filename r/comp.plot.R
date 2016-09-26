@@ -10,8 +10,8 @@ fl = file.path(dirw, 'loci.xlsx')
 source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis')#, 'qgene')
-i = 27
+tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')#, 'qgene')
+i = 91
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -28,15 +28,16 @@ grid.draw(res$grobs)
 dev.off()
 
 #### chr4-8 translocation
+source("comp.plot.fun.R")
 qnames = c("HM004", "HM034", "HM185", "HM340")
 qnames = c("HM004", "HM034", "HM185")
-qnames = c("HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340.PBBNDT", "HM340.PBDTBN")
+qnames = c("HM340.FN")
 cfgs = get_genome_cfgs(c(tname, qnames))
-gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(37000000,33000000), end = c(42000000, 36000000)))
+gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(30000000,10000000), end = c(56000000, 46000000)))
 
 tracks = c('taxis', 'link', 'qaxis')
 
-dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T)
 res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.85, 'npc'))
 
 fn = sprintf("%s/illus_A17_TLC.pdf", dirw)

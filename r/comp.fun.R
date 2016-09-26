@@ -1,3 +1,4 @@
+require(dplyr)
 require(plyr)
 require(rtracklayer)
 require(rbamtools)
@@ -203,7 +204,8 @@ read_gax <- function(fgal, fgax, gr, minp = 0.05) {
     tgs = trim_gax(df1, start(grs)[i], end(grs)[i])
     tgs = cbind(tgs, len = tgs$qend - tgs$qbeg + 1)
     
-    tcs = ddply(tgs, .(cid), summarise, 
+    gb = dplyr::group_by(tgs, cid)
+    tcs = dplyr::summarise(gb, 
       tid = unique(tid), tbeg = min(tbeg), tend = max(tend), 
       tsrd = unique(tsrd),
       qid = unique(qid), qbeg = min(qbeg), qend = max(qend), 

@@ -196,7 +196,7 @@ coord_mapping_bw <- function(fbw, dmap) {
   dm
 }
 
-prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
+prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
   tcfg = cfgs[[tname]]
   tmap = prep_coord_mapping(granges2df(gro), tcfg$seqinfo)
   gr = GRanges(seqnames = tmap$chr, ranges = IRanges(tmap$beg, end = tmap$end),
@@ -221,6 +221,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     max_len = max(max_len, qmap$end.a + qmap$beg.a[1] - 1)
     max_pan_len = max(max_pan_len, qmap$Len)
     
+    if(largescale) {tg = tc}
     pres[[qname]] = list(tg = tg, qmap = qmap, gr = grq)
   }
   
@@ -228,7 +229,11 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
       
   ttik = prep_ticks(tmap, tick_itv)
   tgap = coord_mapping(read_tabix(tcfg$gapz, gr), tmap)
-  tgene = read_tabix(tcfg$genez, gr)
+  if("tgene" %in% tracks) {
+  	tgene = read_tabix(tcfg$genez, gr)
+  } else {
+  	tgene = NULL
+  }
   if(!is.null(tgene)) {
     colnames(tgene) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
     tgene = coord_mapping(tgene, tmap)
@@ -263,8 +268,8 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks) {
     }
     }
 
-    tdcoo = coord_mapping(tg[,1:4], tmap)
-    qdcoo = coord_mapping(tg[,5:8], qmap)
+    tdcoo = coord_mapping(tg[,c('tid','tbeg','tend','tsrd')], tmap)
+    qdcoo = coord_mapping(tg[,c('qid','qbeg','qend','qsrd')], qmap)
     stopifnot(rownames(tdcoo) == rownames(tg), rownames(qdcoo) == rownames(tg))
     comp = cbind(tg, 
       tbeg.a = tdcoo$beg.a, tend.a = tdcoo$end.a, tsrd.a = tdcoo$srd.a, 

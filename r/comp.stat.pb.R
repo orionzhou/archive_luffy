@@ -322,4 +322,98 @@ for (qname in c("HM034", "HM340", "HM340.PB", "HM340.PBBN", "HM340.PBDT", "HM340
 	xxx(qname)
 }
 
+#### visualize with centromere locations
+qname = "HM340.FN"
+dirg = sprintf("%s/%s", Sys.getenv("genome"), qname)
+flen = file.path(dirg, "15.bed")
+tt = read.table(flen, sep = "\t", header = F, as.is = T)
+colnames(tt) = c("chr", "beg", "end")
+tt$beg = tt$beg + 1
+
+fgap = file.path(dirg, "16.gap.bed")
+tgap = read.table(fgap, sep = "\t", header = F, as.is = T)
+grp = with(tgap, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+tp = data.frame(chr = tgap$V1, beg = tgap$V2, end = tgap$V3)
+
+fgen = file.path(dirg, "51.gtb")
+tgen = read.table(fgen, sep = "\t", header = T, as.is = T)
+tg = data.frame(chr = tgen$chr, beg = tgen$beg, end = tgen$end)
+grg = with(tg, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+frep = file.path(dirg, "12.rm.bed")
+trep = read.table(frep, sep = "\t", header = F, as.is = T)
+tr = data.frame(chr = trep$V1, beg = trep$V2+1, end = trep$V3)
+grr = with(tr, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+
+tt = tt[1:49,]
+chrs = tt$chr
+
+chrn = 1:nrow(tt)
+names(chrn) = rev(tt$chr)
+
+## gap & repeat stat
+x = tt$end
+names(x) = tt$chr
+gr = tileGenome(x, tilewidth = 100000, cut.last.tile.in.chrom = T)
+
+tw = data.frame(chr = seqnames(gr), beg = start(gr), end = end(gr), 
+  len = width(gr), stringsAsFactors = F)
+bp_gap = intersect_basepair(gr, grp)
+bp_rep = intersect_basepair(gr, grr)
+rep = bp_rep / tw$len
+gap = bp_gap / tw$len
+
+cols1 = brewer.pal(9, "Greys")
+cols2 = brewer.pal(9, "OrRd")
+
+vmin = min(gap); vmax = max(gap)
+breaks1 = seq(vmin, vmax, length.out = length(cols1)+1)
+gapcol = cut(gap, breaks1, include.lowest = T)
+
+vmin = min(rep); vmax = max(rep)
+breaks2 = seq(vmin, vmax, length.out = length(cols2)+1)
+repcol = cut(rep, breaks1, include.lowest = T)
+
+tw = cbind(tw, gapcol=gapcol, repcol=repcol)
+
+## cent
+dirw = file.path(Sys.getenv("misc2"), "centromere")
+fc = file.path(dirw, "51.HM340.gal")
+tc = read.table(fc, header = T, sep = "\t", as.is = T)
+tc = tc[tc$score > 100,c(2:11,13:14,18:19)]
+tc2 = ddply(tc, .(tId, qId), summarise, beg = min(tBeg), end=max(tEnd), nrep = length(tId))
+tc2 = tc2[tc2$nrep > 5 & tc2$tId %in% chrs,]
+tc2 = cbind(tc2, pos = (tc2$beg+tc2$end)/2)
+
+tt2 = cbind(tt, chrn = chrn[as.character(tt$chr)])
+tw2 = cbind(tw, chrn = chrn[as.character(tw$chr)])
+tc2 = cbind(tc2, chrn = chrn[as.character(tc2$tId)])
+
+chr_coord <- function(l) {
+     sprintf("%dMb", floor(l/1000000))
+}
+pc <- ggplot() +
+  geom_rect(data = tw2, aes(xmin=beg, xmax=end, ymin=chrn, ymax=chrn+0.35, fill=gapcol), linetype=0) +
+  geom_rect(data = tw2, aes(xmin=beg, xmax=end, ymin=chrn-0.35, ymax=chrn, fill=repcol), linetype=0) +
+  geom_rect(data = tt2, aes(xmin=beg, xmax=end, ymin=chrn-0.35, ymax=chrn+0.35), fill=NA, color='black') +
+  geom_segment(data = tt2, aes(x=beg, xend=end, y=chrn, yend=chrn), color='black') +
+  geom_point(data = tc2, aes(x=pos, y=chrn+0.5, col='MtR3 Centromeric Repeat', shape='MtR3 Centromeric Repeat'), size=1.5) +
+  theme_bw() + 
+  scale_x_continuous(name = '', expand = c(0.01, 0), labels = chr_coord) + 
+  scale_y_continuous(name = '', expand = c(0, 0), breaks=chrn, labels=names(chrn), limits=c(0.5,49.7)) +
+  scale_fill_manual(name='', breaks=breaks1, values=cols1, guide=guide_legend(label.position='none')) +
+  scale_color_manual(name='', values=c('red','blue','black','purple','red')) +
+  scale_shape_manual(name='', values=c(6,6,6,6,17)) +
+  theme(legend.position = c(0.8,0.8), legend.direction = "vertical", legend.title = element_text(size = 8), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size=8), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "cm")) +
+#  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype=0)) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.text.x = element_text(colour = "black", size = 8)) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_text(colour = "black", size = 8)) +
+  theme(axis.line = element_line(size = 0.3, colour = "grey", linetype = "solid"))
+
+fo = file.path(dirw, "92.pdf")
+ggsave(pc, filename = fo, width = 8, height = 8)
+
 

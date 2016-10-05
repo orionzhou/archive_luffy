@@ -6,12 +6,12 @@ source("comp.plot.fun.R")
 dirw = file.path(Sys.getenv("misc3"), 'comp.stat', 'figs')
 fl = file.path(dirw, 'loci.xlsx')
 
-##### experimental
+##### fine-scale synteny plot
 source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')#, 'qgene')
-i = 91
+tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
+i = 24
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -27,20 +27,43 @@ grid.newpage()
 grid.draw(res$grobs)
 dev.off()
 
-#### chr4-8 translocation
+#### large-scale synteny plot
 source("comp.plot.fun.R")
-qnames = c("HM004", "HM034", "HM185", "HM340")
-qnames = c("HM004", "HM034", "HM185")
-qnames = c("HM340.FN")
-cfgs = get_genome_cfgs(c(tname, qnames))
-gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(30000000,10000000), end = c(56000000, 46000000)))
+tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
 tracks = c('taxis', 'link', 'qaxis')
+i = 91
+tls = tl[tl$i == i,]
 
+gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+
+cfgs = get_genome_cfgs(c(tname, qnames))
 dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T)
-res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.85, 'npc'))
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.85, 'npc'), largescale = T)
 
-fn = sprintf("%s/illus_A17_TLC.pdf", dirw)
+fn = sprintf("%s/fig%03d.pdf", dirw, i)
+CairoPDF(file = fn, width = 15, height = res$ht/72, bg = 'transparent')
+grid.newpage()
+grid.draw(res$grobs)
+dev.off()
+
+#### chr4-8 translocation
+source("comp.plot.fun.R")
+tl = read.xlsx(fl, sheetIndex = 1, header = T)
+
+tracks = c('taxis', 'link', 'qaxis')
+i = 92
+tls = tl[tl$i == i,]
+
+gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+
+cfgs = get_genome_cfgs(c(tname, qnames))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.1, 'npc'), largescale = T)
+
+fn = sprintf("%s/fig%03d.pdf", dirw, i)
 CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)

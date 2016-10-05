@@ -3,6 +3,7 @@ require(plyr)
 require(rtracklayer)
 require(rbamtools)
 require(Rsamtools)
+require(seqminer)
 
 read_seqinfo <- function(fsize) {
   tsize = read.table(fsize, header = F, sep = "\t",  as.is = T, 
@@ -129,9 +130,6 @@ get_genome_composition <- function(org, utr.merge = F) {
   }
 }
 
-
-parse_tabix <- function(txt) 
-  read.csv(textConnection(txt), sep = "\t", header = F, stringsAsFactors = F)
 trim_gax <- function(ds, beg, end) {
   for (i in 1:nrow(ds)) {
     if(ds$tbeg[i] < beg) {
@@ -180,28 +178,38 @@ read_gax_simple <- function(fgax, gr) {
   }
   tg
 }
-read_gax <- function(fgal, fgax, gr, minp = 0.05) {
+read_gal <- function(fgal, gr, minp = 0.005) {
   gr = reduce(gr)
+  tc = data.frame()
+  for (i in 1:length(gr)) {
+  	locstr = sprintf("%s:%d-%d", seqnames(gr)[i], start(gr)[i], end(gr)[i])
+    df1 = tabix.read.table(fgal, locstr)[,1:19]
+    if(nrow(df1) == 0) next
+  	colnames(df1) = c('cid', 'tid', 'tbeg', 'tend', 'tsrd', 'tsize',
+      'qid', 'qbeg', 'qend', 'qsrd', 'qsize', 
+      'lev', 'ali', 'mat', 'mis', 'qN', 'tN', 'ident', 'score')
+    tcs = trim_gax(df1, start(gr)[i], end(gr)[i])
+    tc = rbind(tc, tcs)
+	}
+  tc = tc[order(tc$tid, tc$tbeg, tc$tend),]
   
+  idxs = tc$ali >= sum(tc$ali) * minp
+  cids = tc$cid[idxs]
+  list(tc = tc[idxs,])
+}
+read_gax <- function(fgax, gr, minp = 0.03) {
+  gr = reduce(gr)
   tg = data.frame()
   tc = data.frame()
   
-  gax = open(TabixFile(fgax))
-  grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(gax)]
-  if(length(grs) == 0) return(NULL)
-  x = scanTabix(gax, param = grs)
-  close(gax)
-  
-  txts = rapply(x, c)
-  if(length(txts) == 0) return(NULL)
-  
   lc = list()
-  for (i in 1:length(grs)) {
-    if(length(x[[i]]) == 0) next
-    df1 = parse_tabix(x[[i]])
+  for (i in 1:length(gr)) {
+  	locstr = sprintf("%s:%d-%d", seqnames(gr)[i], start(gr)[i], end(gr)[i])
+    df1 = tabix.read.table(fgax, locstr)
+    if(nrow(df1) == 0) next
     colnames(df1) = c('tid', 'tbeg', 'tend', 'tsrd', 
       'qid', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
-    tgs = trim_gax(df1, start(grs)[i], end(grs)[i])
+    tgs = trim_gax(df1, start(gr)[i], end(gr)[i])
     tgs = cbind(tgs, len = tgs$qend - tgs$qbeg + 1)
     
     gb = dplyr::group_by(tgs, cid)
@@ -225,15 +233,6 @@ read_gax <- function(fgal, fgax, gr, minp = 0.05) {
     tc = rbind(tc, tcs)
   }
 
-#   gal = open(TabixFile(fgal))
-#   grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(gal)]
-#   x = scanTabix(gal, param = grs)
-#   tco = parse_tabix(rapply(x, c))[,1:19]
-#   colnames(tco) = c('cid', 'tid', 'tbeg', 'tend', 'tsrd', 'tsize',
-#       'qid', 'qbeg', 'qend', 'qsrd', 'qsize', 
-#       'lev', 'ali', 'mat', 'mis', 'qN', 'tN', 'ident', 'score')
-#   close(gal)
-
   tc = cbind(tc, mis = 0)
   qgap = tc$qend - tc$qbeg + 1 - tc$ali
   tgap = tc$tend - tc$tbeg + 1 - tc$ali
@@ -242,10 +241,11 @@ read_gax <- function(fgal, fgax, gr, minp = 0.05) {
   tc = cbind(tc, score = score)
   tc = tc[order(tc$tid, tc$tbeg, tc$tend),]
   
-  idxs = tc$ali >= sum(tc$ali) * 0.05
+  idxs = tc$ali >= sum(tc$ali) * minp
   cids = tc$cid[idxs]
   list(tg = tg[tg$cid %in% cids,], tc = tc[idxs,])
 }
+
 read_tabix <- function(ftbx, gr) {
   gr = reduce(gr)
   tbx = open(TabixFile(ftbx))

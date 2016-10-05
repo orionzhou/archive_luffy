@@ -207,22 +207,31 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
   max_pan_len = max(tmap$len)
   for (qname in qnames) {
     cfg = cfgs[[qname]]
-    aln = read_gax(cfg$tgal, cfg$tgax, gr)
-
+    if(largescale) {
+    	aln = read_gal(cfg$tgal, gr)
+    } else {
+    	aln = read_gax(cfg$tgax, gr)
+    }
     if(is.null(aln)) {
       dats[[qname]] = NULL
       next
     }
-    tg = aln$tg
-    tc = aln$tc
-    qmap = prep_coord_mapping(tc[,6:9], cfg$seqinfo) #tg[,5:8]
+    if(largescale) {
+    	qmap = prep_coord_mapping(aln$tc[,7:10], cfg$seqinfo)
+    } else {
+    	qmap = prep_coord_mapping(aln$tg[,5:8], cfg$seqinfo)
+    }
     grq = GRanges(seqnames = qmap$chr, 
       ranges = IRanges(qmap$beg, end = qmap$end), seqinfo = cfg$seqinfo)
     max_len = max(max_len, qmap$end.a + qmap$beg.a[1] - 1)
     max_pan_len = max(max_pan_len, qmap$Len)
     
-    if(largescale) {tg = tc}
-    pres[[qname]] = list(tg = tg, qmap = qmap, gr = grq)
+    if(largescale) {
+    	to = aln$tc
+    } else {
+    	to = aln$tg
+    }
+    pres[[qname]] = list(to = to, qmap = qmap, gr = grq)
   }
   
   tick_itv = diff( pretty(c(1, max_pan_len))[1:2] )      
@@ -254,7 +263,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
     cfg = cfgs[[qname]]
     pre = pres[[qname]]
     if(is.null(pre)) next
-    tg = pre$tg; qmap = pre$qmap; grq = pre$gr
+    to = pre$to; qmap = pre$qmap; grq = pre$gr
     
     qtik = prep_ticks(qmap, tick_itv)
     qgap = read_tabix(cfg$gapz, grq)
@@ -268,10 +277,10 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
     }
     }
 
-    tdcoo = coord_mapping(tg[,c('tid','tbeg','tend','tsrd')], tmap)
-    qdcoo = coord_mapping(tg[,c('qid','qbeg','qend','qsrd')], qmap)
-    stopifnot(rownames(tdcoo) == rownames(tg), rownames(qdcoo) == rownames(tg))
-    comp = cbind(tg, 
+    tdcoo = coord_mapping(to[,c('tid','tbeg','tend','tsrd')], tmap)
+    qdcoo = coord_mapping(to[,c('qid','qbeg','qend','qsrd')], qmap)
+    stopifnot(rownames(tdcoo) == rownames(to), rownames(qdcoo) == rownames(to))
+    comp = cbind(to, 
       tbeg.a = tdcoo$beg.a, tend.a = tdcoo$end.a, tsrd.a = tdcoo$srd.a, 
       qbeg.a = qdcoo$beg.a, qend.a = qdcoo$end.a, qsrd.a = qdcoo$srd.a, 
       stringsAsFactors = F)
@@ -350,7 +359,7 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
   dats$max_len = max_len
   dats
 }
-comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = F, legend.opt = 'all') {
+comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), draw.legend.gene = F, legend.opt = 'all', largescale = F) {
   ## some default plotting parameters
   tracktypes = c('tgene' = 'gene', 'taxis' = 'axis',  'tgap' = 'gap', 
     'qgap' = 'gap', 'qaxis' = 'axis', 'qgene' = 'gene',
@@ -360,6 +369,7 @@ comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), 
 
   trackheight = c('axis' = 30, 'gap' = 10, 'gene' = 15, 'link' = 45,
     'snp' = 10, 'mcov' = 20, 'mapp' = 20, 'tpct' = 20, 'bam' = 30)
+  if(largescale) {trackheight['link'] = 90}
 
   fillg = c('TE' = 'slategray3', 'Gene' = 'brown4', 
     'CC-NBS-LRR' = 'forestgreen', 'TIR-NBS-LRR' = 'forestgreen', 
@@ -447,8 +457,8 @@ comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), 
         if(track == 'taxis') {dmap = dat$tmap} else {dmap = dat$qmap}
         if(track == 'taxis') {dtik = dat$ttik} else {dtik = dat$qtik}
         lab = ifelse(track == 'taxis', tname, name)
-        grob_le = plot_legend(sprintf("%s (kb)", lab), y = y, vp = vl)
-        grob_ri = plot_axis(dmap, dtik, y = y, text.above = T, vp = vr)
+        grob_le = plot_legend(sprintf("%s", lab), y = y, vp = vl)
+        grob_ri = plot_axis(dmap, dtik, y = y, text.above = T, vp = vr, largescale = largescale)
       } else if(tracktype == "gap") {
         if(track == 'tgap') {dgap = dat$tgap} else {dgap = dat$qgap}
         lab = ifelse(track == 'tgap', tname, name)
@@ -524,7 +534,7 @@ comp.plot <- function(dats, tname, qnames, tracks, scale.ht = unit(0.8, 'npc'), 
     }
     os = os + pht
   }
-  grobs = gList(grobs, plot_scale(max_len, y = scale.ht, vp = vbr))
+  grobs = gList(grobs, plot_scale(max_len, y = scale.ht, vp = vbr, largescale = largescale))
   list(ht = height, grobs = grobs)
 }
 
@@ -545,7 +555,7 @@ plot_legend <- function(txt, x = unit(4, 'points'), y = unit(0.5, 'npc'),
     vp = vp)
 }
 plot_axis <- function(dmap, dtik, y = unit(0.5, 'npc'), 
-  col.p = 'red', col.n = 'blue', text.above = F, text.rot = 0, vp = NULL) {
+  col.p = 'red', col.n = 'blue', text.above = F, text.rot = 0, largescale = F, vp = NULL) {
   if(is.null(dmap)) return(NULL)
   dax = dmap[,c('chr', 'beg.a', 'end.a', 'srd')]
   colnames(dax) = c('id','beg','end','srd')
@@ -608,6 +618,7 @@ plot_axis <- function(dmap, dtik, y = unit(0.5, 'npc'),
   if(is.null(dtik) | nrow(dtik) == 0) {
     gList(axisgrob, arrowgrob, chrgrob)
   } else {
+  	if(largescale) {lab = dtik$pos / 1000000} else {lab = dtik$pos / 1000}
     gList(axisgrob, arrowgrob, chrgrob, 
   tikgrob = segmentsGrob(
     x0 = unit(dtik$pos.a, 'native'),
@@ -615,7 +626,7 @@ plot_axis <- function(dmap, dtik, y = unit(0.5, 'npc'),
     y0 = y, y1 = tick.y, 
     vp = vp),
   posgrob = textGrob( 
-    label = dtik$pos / 1000,
+    label = lab,
     x = unit(dtik$pos.a, 'native'), 
     y = text.y,  just = text.just, 
     gp = gpar(cex = 0.6), vp = vp)
@@ -810,9 +821,14 @@ plot_reads <- function(ds, col.p = 'navy', col.n = 'salmon', vp = NULL) {
   }
   grobs
 }
-plot_scale <- function(max_len, x = unit(0.98, 'npc'), y = unit(0.2, 'npc'), vp = NULL) {
-  len = diff( pretty(1:max_len, 20)[1:2] )
-  name = sprintf("%gkb", len / 1000)
+plot_scale <- function(max_len, x = unit(0.98, 'npc'), y = unit(0.2, 'npc'), largescale = F, vp = NULL) {
+	if(largescale) {
+  	len = diff( pretty(1:max_len, 40)[1:2] )
+  	name = sprintf("%gmb", len / 1000000)
+  } else {
+  	len = diff( pretty(1:max_len, 20)[1:2] )
+  	name = sprintf("%gkb", len / 1000)
+  }
   scalegrob1 = segmentsGrob( 
     x0 = x - unit(len, 'native'), x1 = x, y0 = y, y1 = y, 
     vp = vp)

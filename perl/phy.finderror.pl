@@ -47,11 +47,15 @@ my $fv = "$ENV{'misc3'}/hapmap/30_vnt/acc319.vcf.gz";
 my $fc = "$ENV{'misc3'}/hapmap/30_vnt/ingroup.txt";
 #runCmd("bcftools view -U -m2 -M2 -c2 -O z -v snps -S $fc -o 01.vcf.gz $fv chr5");
 
-#runCmd("bcftools view -O z -o 05.hm018.dn.chr5.vcf.gz 04.hm018.dn.vcf.gz chr5");
-#runCmd("bcftools merge 01.vcf.gz 05.hm018.dn.chr5.vcf.gz -o 11.vcf");
+my $org;
+$org = "HM018A";
+runCmd("bcftools view -O z -o 08.$org.vcf.gz 07.$org.vcf.gz chr5");
+$org = "HM023A";
+runCmd("bcftools view -O z -o 08.$org.vcf.gz 07.$org.vcf.gz chr5");
+runCmd("bcftools merge 01.vcf.gz 07.HM018A.vcf.gz 07.HM023A.vcf.gz -o 11.vcf");
 
-#vcf2bed("11.vcf", "11.bed");
-my $fg = "$ENV{'misc3'}/HM018_HM101/23_blat/31.9/gax.bed";
+vcf2bed("11.vcf", "11.bed");
+my $fg = "$ENV{'misc3'}/HM023_HM101/23_blat/31.9/gax.bed";
 #runCmd("coverageBed -a $fg -b 11.bed | cut -f1,3,4 > 15.hm018.bed");
 #vcf_fill("11.vcf", "15.hm018.bed", "21.vcf");
 #runCmd("bgzip -f 21.vcf");
@@ -91,12 +95,12 @@ sub vcf_fill {
     my $idx = $#ps; 
     my $gt = $ps[$idx];
     $gt =~ /^([\d\.])\/\1/ or die "unknown gt: $gt\n";
-    my $line = readline($fhb);
-    
     if($1 ne ".") {
       print $fho join("\t", @ps)."\n";
       next;
     }
+    
+    my $line = readline($fhb);
     chomp $line;
 #    print $orgs[$idx]." ".$line."\n";
     my ($chr2, $pos2, $gt2) = split("\t", $line);
@@ -114,11 +118,11 @@ sub vcf_fill {
 #  bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - | \\
 #  snpfilter.pl -n 80 -m 1 -o 51.snp");
 
-runCmd("samplelines.pl -i 51.snp -o 52.snp -n 10000");
-runCmd("snp2phy.pl -i 52.snp -o 52.phy -r HM101_ref");
-runCmd("phyml -i 52.phy -d nt");
-runCmd("mv 52.phy_phyml_tree.txt 52.nwk");
-runCmd("rm 52.phy_phyml*");
+#runCmd("samplelines.pl -i 51.snp -o 52.snp -n 10000");
+#runCmd("snp2phy.pl -i 52.snp -o 52.phy -r HM101_ref");
+#runCmd("phyml -i 52.phy -d nt");
+#runCmd("mv 52.phy_phyml_tree.txt 52.nwk");
+#runCmd("rm 52.phy_phyml*");
 
 
 

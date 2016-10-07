@@ -51,8 +51,6 @@ GetOptions(
 pod2usage(1) if $help_flag;
 pod2usage(1) if !$fi;
 
-open ($fhi, "<$fi") || die "cannot read $fi\n";
-
 $fho = \*STDOUT;
 unless ($fo eq "stdout" || $fo eq "-" || $fo eq "") {
   open ($fho, ">$fo") || die "cannot write $fo\n";
@@ -68,6 +66,7 @@ if($opt eq "serial") {
   die "unknown opt: $opt\n";
 }
 
+open ($fhi, "<$fi") || die "cannot read $fi\n";
 my ($line, $idx) = (1, 0);
 while( <$fhi> ) {
   if($idx < @nums && $line == $nums[$idx]) {

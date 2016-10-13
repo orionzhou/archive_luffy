@@ -10,6 +10,6 @@ JOB=${JOB:-rnaseq0Sra}
 dirw=$data/misc2/rnaseq/${PID}
 cd $dirw
 
-parallel -j $PPN < 04.fastqdump.cmd
+parallel -j $PPN < 04.fastqdump.sh
 
 touch $dirw/cps/${JOB}

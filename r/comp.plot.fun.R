@@ -108,6 +108,7 @@ prep_ticks <- function(dmap, tick_itv) {
 
 coord_mapping <- function(dcoo, dmap) {
   if(is.null(dcoo)) { return(NULL) }
+  if(nrow(dcoo)==0) { return(NULL) }
   if(ncol(dcoo) == 3) { dcoo = cbind(dcoo, srd = "+", stringsAsFactors = F) }
   colnames(dcoo)[1:4] = c('chr','beg','end','srd')
   idxs.raw = c()

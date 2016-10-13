@@ -11,7 +11,8 @@ source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
-i = 24
+tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')
+i = 93
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -32,7 +33,8 @@ source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
 tracks = c('taxis', 'link', 'qaxis')
-i = 91
+tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')
+i = 93
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
@@ -43,7 +45,7 @@ dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T)
 res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.85, 'npc'), largescale = T)
 
 fn = sprintf("%s/fig%03d.pdf", dirw, i)
-CairoPDF(file = fn, width = 15, height = res$ht/72, bg = 'transparent')
+CairoPDF(file = fn, width = 8, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)
 dev.off()

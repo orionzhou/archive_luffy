@@ -315,25 +315,21 @@ nodelabels(pch = 22, bg = node.labels.bg)
 add.scale.bar(x = 0.02, y = 10, lcol = 'black')
 dev.off()
 
-### plot ingroup + HM018_DN tree
-dir = file.path(DIR_Data, "misc3/phy_finderror")
-fi = file.path(dir, "52.nwk")
-fo = file.path(dir, "52.png")
+### plot ingroup + HM018A + HM023A tree
+dirw = file.path(DIR_Data, "misc3/phy_finderror")
+fi = file.path(dirw, "52.nwk")
+fo = file.path(dirw, "52.pdf")
 tree = read.tree(fi)
 
-group1 = c(
-  "HM058", "HM125", "HM056", "HM129", "HM060", 
-  "HM095", "HM185", "HM034", "HM004", "HM050", 
-  "HM023", "HM010", "HM022", "HM324", "HM340"
-)
-group2 = c("HM101", "HM034", "HM056", "HM340")
-grouph = c("HM101")
+group1 = c("HM018A", "HM023A")
+group2 = c("HM018", "HM023")
+grouph = c("HM101", "HM340")
 
 labels = tree$tip.label
 tip.color = rep('black', length(tree$tip.label))
 tip.color[which(labels %in% group1)] = 'red'
 tip.color[which(labels %in% group2)] = 'forestgreen'
-#tip.color[which(labels %in% group3)] = 'dodgerblue'
+tip.color[which(labels %in% grouph)] = 'dodgerblue'
 
 font = rep(1, length(tree$tip.label))
 font[which(labels %in% grouph)] = 2
@@ -358,11 +354,11 @@ node.labels.bg = rep('white', tree$Nnode)
 node.labels.bg[scores >= 0.95] = 'black'
 node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
 
-png(filename=fo, width=1000, height=4000, units='px')
+pdf(fo, width = 8, height = 32)
 plot(tree, show.node.label = F, show.tip.label = T, font = font, 
-  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 1.2)
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 0.75)
 nodelabels(pch = 22, bg = node.labels.bg)
-add.scale.bar(x = 0.02, y = 10, lcol = 'black')
+add.scale.bar(x = 0.02, y = 50, lcol = 'black')
 dev.off()
 
 ### plot pan16-expanded tree

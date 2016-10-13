@@ -248,19 +248,14 @@ read_gax <- function(fgax, gr, minp = 0.03) {
 
 read_tabix <- function(ftbx, gr) {
   gr = reduce(gr)
-  tbx = open(TabixFile(ftbx))
-  grs = gr[as.character(seqnames(gr)) %in% seqnamesTabix(tbx)]
-  if(length(grs) == 0) return(NULL)
-  x = scanTabix(tbx, param = grs)
-  txts = rapply(x, c)
-  close(tbx)
-  if(length(txts) == 0) return(NULL)
-  res = parse_tabix(txts)
-#  colnames(res) = c('tid', 'tpos', 'ref', 'alt', 'qid', 'qpos', 'cid', 'lev')
-#  colnames(res) = c('chr', 'pos', 'alt', 'gt', 'rd', 'qual', 'mapqual')
-#  colnames(res) = c('chr', 'beg', 'end')
-#  colnames(res) = c('chr', 'beg', 'end', 'srd', 'id', 'type', 'cat')
-  res
+  to = data.frame()
+  for (i in 1:length(gr)) {
+  	locstr = sprintf("%s:%d-%d", seqnames(gr)[i], start(gr)[i], end(gr)[i])
+    df1 = tabix.read.table(ftbx, locstr)
+    if(nrow(df1) == 0) next
+    to = rbind(to, df1)
+	}
+  to
 }
 pileupReads <- function(dr){
     dr <- dr[order(dr$beg),]

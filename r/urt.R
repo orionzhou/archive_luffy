@@ -160,6 +160,15 @@ to = to[order(to$id),]
 fo = file.path(dirw, "11.strain.tsv")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = T, na='')
 
+tx = data.frame(name=to$name, program="URT", aliases=to$alias_pi, acc="", pedigree=to$parentage, generation=to$generation, species="Y", comments=to$unique_traits, stringsAsFactors = F)
+genmap = 1:9
+names(genmap) = sprintf("F%d", 1:9)
+tx$generation[!tx$generation %in% names(genmap)] = 'F1'
+tx$generation = genmap[tx$generation]
+fo = file.path(dirw, "11.strain.t3.tsv")
+write.table(tx, fo, sep = "\t", row.names = F, col.names = T, quote = F, na='')
+
+
 ##### process real data
 fi = file.path(dirw, "10.tsv")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)

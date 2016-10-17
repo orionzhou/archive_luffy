@@ -315,20 +315,22 @@ nodelabels(pch = 22, bg = node.labels.bg)
 add.scale.bar(x = 0.02, y = 10, lcol = 'black')
 dev.off()
 
-### plot ingroup + HM018A + HM023A tree
+### plot ingroup + HM018BC + HM022B tree
 dirw = file.path(DIR_Data, "misc3/phy_finderror")
 fi = file.path(dirw, "52.nwk")
 fo = file.path(dirw, "52.pdf")
 tree = read.tree(fi)
 
-group1 = c("HM018A", "HM023A")
-group2 = c("HM018", "HM023")
+group1 = c("HM018", "HM018B", "HM018C")
+group2 = c("HM022-I", "HM022B")
+group3 = c("HM017-I", "HM017B")
 grouph = c("HM101", "HM340")
 
 labels = tree$tip.label
 tip.color = rep('black', length(tree$tip.label))
 tip.color[which(labels %in% group1)] = 'red'
 tip.color[which(labels %in% group2)] = 'forestgreen'
+tip.color[which(labels %in% group3)] = 'purple'
 tip.color[which(labels %in% grouph)] = 'dodgerblue'
 
 font = rep(1, length(tree$tip.label))

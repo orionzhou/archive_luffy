@@ -1,15 +1,18 @@
 #PBS -l nodes=1:ppn=8,walltime=20:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
-#PBS -q small
+#PBS -q sb
 
 PPN=8
-PID=${PID:-ril105}
+PID=${PID:-grn23}
 JOB=${JOB:-rnaseq0Sra}
 
 dirw=$data/misc2/rnaseq/${PID}
 cd $dirw
 
+#cd 03.sra
+#bash ../04.fastqdump.sh
 parallel -j $PPN < 04.fastqdump.sh
+rnaseq.checkfq.py ${PID}
 
 touch $dirw/cps/${JOB}

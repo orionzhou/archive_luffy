@@ -2,8 +2,8 @@
 shopt -s nocasematch
 export PS1="\[$(tput setaf 7)\]\u@\h:\W $ \[$(tput sgr0)\]"
 alias vi='vim'
-alias ll='ls -l'
-alias la='ls -al'
+alias ll='ls -lrt'
+alias la='ls -alrt'
 alias du='du -BM --max-depth=1'
 alias ssh='ssh -Y'
 umask 022

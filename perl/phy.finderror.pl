@@ -52,25 +52,29 @@ my @orgs = ("HM018B", "HM018C", "HM017B", "HM022B");
 for my $org (@orgs) {
   my $dirc = "$ENV{'misc3'}/$org\_HM101/23_blat/31.9";
 #  runCmd("cp -f $dirc/snp.vcf 07.$org.vcf");
-  # make manual corrections
-  runCmd("bgzip -cf 07.$org.vcf > 07.$org.vcf.gz");
-  runCmd("tabix -f -p vcf 07.$org.vcf.gz"); 
-  runCmd("bcftools view -O z -o 08.$org.vcf.gz 07.$org.vcf.gz chr5");
-  runCmd("tabix -f -p vcf 08.$org.vcf.gz");
+}
+# make manual corrections
+
+for my $org (@orgs) {
+  my $dirc = "$ENV{'misc3'}/$org\_HM101/23_blat/31.9";
+#  runCmd("bgzip -cf 07.$org.vcf > 07.$org.vcf.gz");
+#  runCmd("tabix -f -p vcf 07.$org.vcf.gz"); 
+#  runCmd("bcftools view -O z -o 08.$org.vcf.gz 07.$org.vcf.gz chr5");
+#  runCmd("tabix -f -p vcf 08.$org.vcf.gz");
 }
 
 my $vcfstr = join(" ", map {"08.$_.vcf.gz"} @orgs);
-runCmd("bcftools merge 01.vcf.gz $vcfstr -o 11.vcf");
-vcf2bed("11.vcf", "11.bed");
+#runCmd("bcftools merge 01.vcf.gz $vcfstr -o 11.vcf");
+#vcf2bed("11.vcf", "11.bed");
 for my $org (@orgs) {
   my $dirc = "$ENV{'misc3'}/$org\_HM101/23_blat/31.9";
-  runCmd("coverageBed -a $dirc/gax.bed -b 11.bed | cut -f1,3,4 > 15.$org.bed");
+#  runCmd("coverageBed -a $dirc/gax.bed -b 11.bed | cut -f1,3,4 > 15.$org.bed");
 }
 
 my $fcs = [ map {"15.$_.bed"} @orgs ];
-vcf_fill("11.vcf", \@orgs, $fcs, "21.vcf");
-runCmd("bgzip -f 21.vcf");
-runCmd("tabix -f -p vcf 21.vcf.gz");
+#vcf_fill("11.vcf", \@orgs, $fcs, "21.vcf");
+#runCmd("bgzip -f 21.vcf");
+#runCmd("tabix -f -p vcf 21.vcf.gz");
 
 sub vcf2bed {
   my ($fi, $fb) = @_;
@@ -136,11 +140,11 @@ sub vcf_fill {
   close $fho;
 }
 
-runCmd("bcftools view -m2 -M2 -O u -v snps 21.vcf.gz chr5 | \\
-  bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - | \\
-  snpfilter.pl -n 80 -m 1 -o 51.snp");
+#runCmd("bcftools view -m2 -M2 -O u -v snps 21.vcf.gz chr5 | \\
+#  bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%GT]\\n' - | \\
+#  snpfilter.pl -n 80 -m 1 -o 51.snp");
 
-runCmd("samplelines.pl -i 51.snp -o 52.snp -n 10000");
+runCmd("samplelines.pl -i 51.snp -o 52.snp -n 11000");
 runCmd("snp2phy.pl -i 52.snp -o 52.phy -r HM101_ref");
 runCmd("phyml -i 52.phy -d nt");
 runCmd("mv 52.phy_phyml_tree.txt 52.nwk");

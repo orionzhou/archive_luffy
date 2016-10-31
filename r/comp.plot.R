@@ -81,16 +81,42 @@ grid.draw(res$grobs)
 dev.off()
 
 ## zoom in
-qnames = c("HM004", "HM034", "HM185", "HM340")
-qnames = c("HM004", "HM034", "HM185")
-gro = GRanges(seqnames = c('chr4','chr8'), ranges = IRanges(c(38900000,33800000), end = c(39100000, 34400000)))
+source("comp.plot.fun.R")
+tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
-tracks = c('tgene', 'taxis', 'link', 'qaxis', 'qgene')
+tracks = c('taxis', 'link', 'qaxis')
+i = 93
+tls = tl[tl$i == i,]
 
-dats = prep_plot_data(gro, cfgs, tname, qnames, tracks)
-res = comp.plot(dats, tname, qnames, tracks, draw.legend.gene = T, scale.ht  = unit(0.95, 'npc'))
+gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
 
-fn = sprintf("%s/illus_A17_TLC2.pdf", dirw)
+cfgs = get_genome_cfgs(c(tname, qnames))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = F)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.25, 'npc'), largescale = F)
+
+fn = sprintf("%s/fig%03d.pdf", dirw, i)
+CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
+grid.newpage()
+grid.draw(res$grobs)
+dev.off()
+
+## zoom in
+source("comp.plot.fun.R")
+tl = read.xlsx(fl, sheetIndex = 1, header = T)
+
+tracks = c('taxis', 'link', 'qaxis')
+i = 94
+tls = tl[tl$i == i,]
+
+gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
+qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
+
+cfgs = get_genome_cfgs(c(tname, qnames))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = F)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.1, 'npc'), largescale = F)
+
+fn = sprintf("%s/fig%03d.pdf", dirw, i)
 CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
 grid.newpage()
 grid.draw(res$grobs)

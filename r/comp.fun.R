@@ -197,7 +197,7 @@ read_gal <- function(fgal, gr, minp = 0.005) {
   cids = tc$cid[idxs]
   list(tc = tc[idxs,])
 }
-read_gax <- function(fgax, gr, minp = 0.03) {
+read_gax <- function(fgax, gr, minp = 0.02) {
   gr = reduce(gr)
   tg = data.frame()
   tc = data.frame()
@@ -209,6 +209,7 @@ read_gax <- function(fgax, gr, minp = 0.03) {
     if(nrow(df1) == 0) next
     colnames(df1) = c('tid', 'tbeg', 'tend', 'tsrd', 
       'qid', 'qbeg', 'qend', 'qsrd', 'cid', 'lev')
+    df1$cid = as.integer(df1$cid)
     tgs = trim_gax(df1, start(gr)[i], end(gr)[i])
     tgs = cbind(tgs, len = tgs$qend - tgs$qbeg + 1)
     

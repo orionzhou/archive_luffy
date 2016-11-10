@@ -11,8 +11,8 @@ source("comp.plot.fun.R")
 tl = read.xlsx(fl, sheetIndex = 1, header = T)
 
 tracks = c('tgene', 'taxis', 'tgap', 'link', 'qgap', 'qaxis', 'qgene')
-tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')
-i = 93
+#tracks = c('taxis', 'tgap', 'link', 'qgap', 'qaxis')
+i = 28
 tls = tl[tl$i == i,]
 
 gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))

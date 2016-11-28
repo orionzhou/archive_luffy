@@ -62,8 +62,9 @@ gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
 
 cfgs = get_genome_cfgs(c(tname, qnames))
-dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T)
-res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.1, 'npc'), largescale = T)
+qods = list("HM340.FN" = c("scf010", "scf005", "scf015", "scf002"))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T, fill_prop = 0.05, qods = qods)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.45, 'npc'), largescale = T)
 
 fn = sprintf("%s/fig%03d.pdf", dirw, i)
 CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')
@@ -92,8 +93,9 @@ gro =  with(tls, GRanges(seqnames = chr, ranges = IRanges(beg, end = end)))
 qnames = strsplit(as.character(tls$qnames), split = ' ')[[1]]
 
 cfgs = get_genome_cfgs(c(tname, qnames))
-dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = F)
-res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.25, 'npc'), largescale = F)
+qods = list("HM340.FN" = c("scf010", "scf005", "scf015", "scf002"))
+dats = prep_plot_data(gro, cfgs, tname, qnames, tracks, largescale = T, fill_prop = 0.01, qods = qods)
+res = comp.plot(dats, tname, qnames, tracks, scale.ht  = unit(0.15, 'npc'), largescale = T)
 
 fn = sprintf("%s/fig%03d.pdf", dirw, i)
 CairoPDF(file = fn, width = 7, height = res$ht/72, bg = 'transparent')

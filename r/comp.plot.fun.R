@@ -7,10 +7,14 @@ require(rbamtools)
 source('comp.fun.R')
 
 ## data processing functions
-prep_coord_mapping <- function(dcoo, seqinfo, gap_prop = 0.4, gap_len = 5000) {
+prep_coord_mapping <- function(dcoo, seqinfo, gap_prop = 0.4, gap_len = 5000, fill_prop = 0.02, ods = NULL) {
   dfi = dcoo
   if(ncol(dcoo) == 3) { dfi = cbind(dcoo, srd = "+", stringsAsFactors = F) }
   colnames(dfi)[1:4] = c('chr', 'beg', 'end', 'srd')
+  if(!is.null(ods)) {
+  	dfi = dfi[dfi$chr %in% ods,]
+  	dfi = dfi[order(factor(dfi$chr, levels=ods)),]
+  }
   order.idx = order(dfi[,1], dfi[,2], dfi[,3])
   df = dfi[order.idx,]
   panels = rep(0, nrow(df))
@@ -70,7 +74,7 @@ prep_coord_mapping <- function(dcoo, seqinfo, gap_prop = 0.4, gap_len = 5000) {
   dpan = cbind(dpan, len = dpan$endr - dpan$begr + 1)
 
   len_total = sum(dpan$len)
-  itv = as.integer(0.01 * len_total)
+  itv = as.integer(fill_prop * len_total)
   dpan = cbind(dpan, beg.a = itv + 1)
   if(nrow(dpan) > 1) {
     for (i in 2:nrow(dpan)) {
@@ -197,9 +201,9 @@ coord_mapping_bw <- function(fbw, dmap) {
   dm
 }
 
-prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
+prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F, fill_prop = 0.02, qods = NULL) {
   tcfg = cfgs[[tname]]
-  tmap = prep_coord_mapping(granges2df(gro), tcfg$seqinfo)
+  tmap = prep_coord_mapping(granges2df(gro), tcfg$seqinfo, fill_prop = fill_prop)
   gr = GRanges(seqnames = tmap$chr, ranges = IRanges(tmap$beg, end = tmap$end),
     seqinfo = tcfg$seqinfo)
     
@@ -218,9 +222,9 @@ prep_plot_data <- function(gro, cfgs, tname, qnames, tracks, largescale = F) {
       next
     }
     if(largescale) {
-    	qmap = prep_coord_mapping(aln$tc[,7:10], cfg$seqinfo)
+    	qmap = prep_coord_mapping(aln$tc[,7:10], cfg$seqinfo, ods=qods[[qname]], fill_prop = fill_prop)
     } else {
-    	qmap = prep_coord_mapping(aln$tg[,5:8], cfg$seqinfo)
+    	qmap = prep_coord_mapping(aln$tg[,5:8], cfg$seqinfo, ods=qods[[qname]], fill_prop = fill_prop)
     }
     grq = GRanges(seqnames = qmap$chr, 
       ranges = IRanges(qmap$beg, end = qmap$end), seqinfo = cfg$seqinfo)
@@ -550,6 +554,8 @@ plot_grid <- function(wd = 1000, itv = 30, vp = NULL) {
 }
 plot_legend <- function(txt, x = unit(4, 'points'), y = unit(0.5, 'npc'), 
   text.rot = 0, vp = NULL) {
+  txtmap = c("HM101" = "A17 (Mt4.0)", "HM340.FN" = "R108 (v1.0)", "HM340.FN/HM101" = "", "HM340" = "R108 (ALLPATHS)", "HM340.PB" = "R108 (PacBio)", "HM340/HM101" = "", "HM340.PB/HM101" = "")
+  if(txt %in% names(txtmap)) {txt = txtmap[txt]}
   textGrob( label = txt, 
     x = x, y = y, just = c("left", "center"), 
     rot = text.rot, gp = gpar(cex = 0.7, fontfamily = "serif"), 
@@ -825,10 +831,10 @@ plot_reads <- function(ds, col.p = 'navy', col.n = 'salmon', vp = NULL) {
 plot_scale <- function(max_len, x = unit(0.98, 'npc'), y = unit(0.2, 'npc'), largescale = F, vp = NULL) {
 	if(largescale) {
   	len = diff( pretty(1:max_len, 40)[1:2] )
-  	name = sprintf("%gmb", len / 1000000)
+  	name = sprintf("%gMb", len / 1000000)
   } else {
   	len = diff( pretty(1:max_len, 20)[1:2] )
-  	name = sprintf("%gkb", len / 1000)
+  	name = sprintf("%gKb", len / 1000)
   }
   scalegrob1 = segmentsGrob( 
     x0 = x - unit(len, 'native'), x1 = x, y0 = y, y1 = y, 

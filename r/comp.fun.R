@@ -178,7 +178,7 @@ read_gax_simple <- function(fgax, gr) {
   }
   tg
 }
-read_gal <- function(fgal, gr, minp = 0.005) {
+read_gal <- function(fgal, gr, minp = 0.01) {
   gr = reduce(gr)
   tc = data.frame()
   for (i in 1:length(gr)) {

@@ -43,12 +43,13 @@ else
 fi
 
 # Add software paths
-prefix=$HOME/$arch
-export PATH=$PATH:$prefix/bin
+#prefix=$HOME/$arch
+#export PATH=$PATH:$prefix/bin
 #export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
-export soft=$prefix/soft
+export soft=$HOME/software
 if [[ -d $soft ]]; then
-  for subpath in zlib gcc boost libsequence \
+  for subpath in zlib bzip2 xz pcre curl \
+    gcc boost libsequence \
     samtools bamtools bedtools vcftools bedops \
     hdf tabix bowtie2 ncbi blast bwtool\
     clustalw clustalo paml4.8 \
@@ -79,20 +80,25 @@ if [[ -d $soft ]]; then
   do
     export PATH=$soft/$subpath/scripts:$PATH
   done
-  
+  for subpath in zlib bzip2 xz pcre curl
+  do
+    export CFLAGS="-I$soft/$subpath/include $CFLAGS"
+    export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
+  done
 fi
 
 # generic locations
 export home=$HOME
-export src=$home/Source
-export data=$home/Data
-export genome=$home/Data/genome
-export misc1=$home/Data/misc1
-export misc2=$home/Data/misc2
-export misc3=$home/Data/misc3
-export misc4=$home/Data/misc4
+export src=$home/source
+export data=$home/data
+export genome=$home/data/genome
+export misc1=$data/misc1
+export misc2=$data/misc2
+export misc3=$data/misc3
+export misc4=$data/misc4
 export dbox=$home/Dropbox
 export git=$home/git
+export PATH=$HOME/bin:$PATH
 
 # repositories
 export luffy=$git/luffy
@@ -106,7 +112,7 @@ export site=$git/orionzhou.github.io
 export PATH=$rosar:$spada:$PATH
 
 # Perl
-export PERL_HOME=$prefix/soft/perl
+export PERL_HOME=$soft/perl
 #export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
 #export PERL_MB_OPT="--install_base $PERL_HOME"
 export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
@@ -116,14 +122,17 @@ export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 
 # Python
 export SCRIPT_HOME_PYTHON=$robin
-export PYTHON_HOME=$prefix/soft/python
-export PYTHONUSERBASE=$prefix/soft/python
+export PYTHON_HOME=$soft/python
+export PYTHONUSERBASE=$soft/python
 export PYTHONPATH=${PYTHON_HOME}/lib/python2.7/site-packages:${SCRIPT_HOME_PYTHON}
 #export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
 
 # C++
 export PATH=$code/c++/bin:$PATH
+
+# bash
+export PATH=$code/bash:$PATH
 
 # R
 export SCRIPT_HOME_R=$code/r
@@ -132,10 +141,10 @@ export SCRIPT_HOME_R=$code/r
 export SVN_EDITOR=vi
 
 # LATEX
-export PATH=$prefix/soft/tex/bin/x86_64-linux:$PATH
+export PATH=$soft/tex/2016/bin/x86_64-linux:$PATH
 
 # ROOT
-export ROOTSYS=$prefix/soft/root
+export ROOTSYS=$soft/root
 
 # Augustus
 export AUGUSTUS_CONFIG_PATH=$soft/augustus/config
@@ -150,8 +159,8 @@ export ZOE=$soft/snap
 export MUGSY_INSTALL=$soft/mugsy
 
 # OPAM configuration
-. /home/youngn/zhoup/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+. /home/youngn/zhoux379/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # misc
-unset prefix
+#unset prefix
 

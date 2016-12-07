@@ -1,8 +1,6 @@
 #!/bin/bash
 
 GRP="$1"
+GRP=${GRP:-youngn}
 newgrp $GRP
-export HOME=/home/$GRP/zhoux379
-cd
-source .bashrc
 

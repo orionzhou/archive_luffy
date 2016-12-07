@@ -1,7 +1,7 @@
 require(dplyr)
 require(plyr)
 require(rtracklayer)
-require(rbamtools)
+#require(rbamtools)
 require(Rsamtools)
 require(seqminer)
 
@@ -12,7 +12,7 @@ read_seqinfo <- function(fsize) {
 }
 get_genome_cfg <- function(org, tname = "HM101") {
   org = toupper(org)
-  gdir = file.path(Sys.getenv("genome"), org)
+  gdir = file.path('/home/youngn/zhoux379/data/genome', org)
   
   size = file.path(gdir, "15.sizes")
   seqinfo = read_seqinfo(file.path(gdir, "15.sizes"))
@@ -41,7 +41,7 @@ get_genome_cfg <- function(org, tname = "HM101") {
   if(file.exists(f_rnaseq)) cfg[['rnaseq']] = bamReader(f_rnaseq, idx = T)
   
   if(org != tname) {
-    cdir = sprintf("%s/%s_%s/23_blat", Sys.getenv("misc3"), org, tname)
+    cdir = sprintf("%s/%s_%s/23_blat", '/home/youngn/zhoux379/data/misc3', org, tname)
     tgal = sprintf("%s/31.9/gal.gz", cdir)
     qgal = sprintf("%s/41.9/gal.gz", cdir)
     tgax = sprintf("%s/31.9/gax.gz", cdir)
@@ -50,7 +50,7 @@ get_genome_cfg <- function(org, tname = "HM101") {
     qsnp = sprintf("%s/41.9/snp.gz", cdir)
     fpct = sprintf("%s/31.9/pct.bw", cdir)
     
-    vdir = sprintf("%s/hapmap_mt40/12_ncgr", Sys.getenv("misc3"))
+    vdir = sprintf("%s/hapmap_mt40/12_ncgr", '/home/youngn/zhoux379/data/misc3')
     fsnp = sprintf("%s/44_snp/%s.tbl.gz", vdir, org)
     fcov = sprintf("%s/35_cov/%s.bw", vdir, org)
     fcovab = sprintf("%s/36_abcov/%s.bw", vdir, org)
@@ -76,7 +76,7 @@ granges2df <- function(gr) {
   ds
 }
 get_genome_composition <- function(org, utr.merge = F) {
-  dirw = file.path(Sys.getenv("genome"), org)
+  dirw = file.path('/home/youngn/zhoux379/data/genome', org)
   fsize = file.path(dirw, "15.sizes")
   fgap = file.path(dirw, "16.gap.bed")
   stopifnot(file.exists(fsize) & file.exists(fgap))

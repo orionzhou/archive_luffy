@@ -269,3 +269,25 @@ DescriptiveDisease            Entries             Height            Lodging
                1                1               32                7
       StemCanker
                1
+
+ti$strain = toupper(ti$strain)
+ti = ti[ti$year %in% c(1989, 1990, 1991),]
+
+f51 = file.path(dirw, "51.strains.tsv")
+t51 = data.frame(name = unique(ti$strain), program = "URT", ali = "", acc = "", ped = "", gen = 9, spe = "G.max", com = "", stringsAsFactors = F)
+write.table(t51, f51, sep = "\t", row.names = F, col.names = F, quote = F, na='')
+
+
+f52 = file.path(dirw, "52.trials.tsv")
+tt = unique(ti[,c('year','test','location')])
+tt = merge(tt, tl[,c('name','city','state','longitude','latitude')], by.x = 'location', by.y = 'name')
+t52 = data.frame(name = paste(tt$test, tt$year, tt$location, sep = "_"), year = tt$year, expe = tt$test, location = paste(tt$city, tt$state, sep = ", "), lat = tt$latitude, logi = tt$longitude, coll = "Aaron", desc = "", pdate = sprintf("5/1/%d", tt$year), hdate = sprintf("8/1/%d", tt$year), bdate = "", gtag = "no", rate = 200, design = "", nentry = 50, nrep = 3, psize = 6.5, harea = 4.6, iri = "yes", stringsAsFactors = F)
+write.table(t52, f52, sep = "\t", row.names = F, col.names = F, quote = F, na='')
+
+f53 = file.path(dirw, "53.pheno.tsv")
+tx = cbind(ti, trial = paste(ti$test, ti$year, ti$location, sep = "_"))
+t53 = reshape(tx[c('trial','strain','phenotype','value')], direction = 'wide', timevar = "phenotype", idvar = c("trial", "strain"), times = list(phenotype))
+colnames(t53)[-c(1:2)] = sapply(strsplit(colnames(t53)[-c(1:2)], split = "[.]"), "[", 2)
+t53 = cbind(t53[1:2], check = 0, t53[-c(1:2)])
+write.table(t53, f53, sep = "\t", row.names = F, col.names = T, quote = F, na='')
+

@@ -24,6 +24,48 @@ fo = sprintf("%s/01_sv/%s.tbl", dirw, org)
 write.table(tv, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 }
 
+##### classify SVs by gene/TE/intergenic, or SV types
+org = "HM034"
+for (org in c("HM034", "HM056", "HM340")) {
+	fi = sprintf("%s/01_sv/%s.tbl", dirw, org)
+	ti = read.table(fi, header = T, sep = "\t", as.is = T)
+	
+	types = c()
+	for (i in 1:nrow(ti)) {
+		tlen = ti$tlen[i]; tinfo = ti$tinfo[i]; qlen = ti$qlen[i]; qinfo = ti$qinfo[i]
+		is_t = tlen > 0 & tlen > qlen
+		info = ifelse(is_t, tinfo, qinfo)
+		arys = strsplit(info, split = ",")[[1]]
+		x = strsplit(arys, split = "-")
+		stypes = sapply(x, "[", 3)
+		slens = as.numeric(sapply(x, "[", 2)) - as.numeric(sapply(x, "[", 1)) + 1
+		plen = sum(slens[stypes == 'pav'])
+		clen = sum(slens[stypes == 'cnv'])
+		is_p = plen > clen
+		tag = ifelse(is_t, ifelse(is_p, 'del', 'cnl'), ifelse(is_p, 'ins', 'cng'))
+		types = c(types, tag)
+	}
+	table(types)
+	
+	dirg = file.path('/home/youngn/zhoux379/data/genome', 'HM101')
+	fg = sprintf("%s/51.tbl", dirg)
+	tg = read.table(fg, header = F, sep = "\t", as.is = T)
+	tg = tg[tg$V6 == 'mrna',]
+	grg = with(tg, GRanges(seqnames = V1, ranges = IRanges(V2, end = V3)))
+	grsv = with(ti, GRanges(seqnames = tchr, ranges = IRanges(tbeg, end = tend)))
+	idxs = intersect_idx_maxovlp(grsv, grg)
+	
+	gtags = rep('Intergenic', nrow(ti))
+	idxs_sv = which(!is.na(idxs))
+	gtags[idxs_sv] = tg$V7[idxs_sv]
+	gtags[!gtags %in% c("Intergenic", "TE", "Unknown")] = 'Gene'
+	table(gtags)
+	
+	to = cbind(ti, stype = types, gtype = gtags)
+	fo = sprintf("%s/01_sv/%s.1.tsv", dirw, org)
+	write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+}
+
 ##### read in pacbio BAM for support (obsolete - see comp.sv.valid.py)
 f_bam = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), org, org)
 bam = bamReader(f_bam, idx = T)
@@ -50,7 +92,13 @@ sum(to$nr1 <= 1 & to$nr2 <= 1)
 
 ####
 for (org in c("HM034", "HM056", "HM340")) {
+  fi = sprintf("%s/01_sv/%s.1.tsv", dirw, org)
+  ti = read.table(fi, header = T, sep = "\t", as.is = T)
   fp = sprintf("%s/02_pacbio/%s.tbl", dirw, org)
   tp = read.table(fp, header = T, sep = "\t", as.is = T)
-  cat(org, nrow(tp), sum(tp$n1 >= 5 & tp$n2 >= 5) / nrow(tp), "\n")
+  vtag = tp$n1 >= 10 & tp$n2 >= 10
+  tt = cbind(ti, vtag = vtag)
+  ds1 = ddply(tt, .(stype), summarise, n = length(vtag), nv = sum(vtag)/n)
+  ds2 = ddply(tt, .(gtype), summarise, n = length(vtag), nv = sum(vtag)/n)
+  cat(org, "\n", paste(sprintf("%s %.03f (%d)", ds1$stype, ds1$nv, ds1$n), by = "\t"), "\n", paste(sprintf("%s %.03f (%d)", ds2$gtype, ds2$nv, ds2$n), by = "\t"), "\n")
 }

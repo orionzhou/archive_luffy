@@ -14,8 +14,8 @@ source("Location.R")
 source("ggplot.fun.R")
 source("comp.fun.R")
 
-dirw = file.path(Sys.getenv("misc3"), "comp.og")
-diro = file.path(Sys.getenv("misc3"), "comp.genefam")
+dirw = file.path('/home/youngn/zhoux379/data/misc3', "comp.og")
+diro = file.path('/home/youngn/zhoux379/data/misc3', "comp.genefam")
 
 ## read all gene models
 tg = data.frame()
@@ -40,6 +40,9 @@ t_clu = cbind(ti, org = sapply(x, "[", 1), gid = sapply(x, "[", 2))
 ti = t_clu
 ti = ti[ti$org %in% c(tname,qnames_12),]
 ti = merge(ti, tg, by = c('org', 'gid'))
+ti = ti[order(ti$grp, ti$org), c(3,4,1,2,5,6)]
+fo = file.path(dirw, "06.clu.tsv")
+#write.table(ti, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 #ti = ti[ti$fam!='TE',]
 gb = group_by(ti, grp)

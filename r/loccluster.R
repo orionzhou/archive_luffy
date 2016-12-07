@@ -26,3 +26,4 @@ to2 = table(to1$cnt)
 to3 = data.frame(clu_size = as.numeric(names(to2)), clu_num = as.numeric(to2), stringsAsFactors = F)
 to3 = within(to3, {tot_num = clu_size * clu_num})
 sum(to3$tot_num[to3$clu_size > 2]) / sum(to3$tot_num)
+

@@ -1,7 +1,7 @@
 require(plyr)
 require(rtracklayer)
 require(GenomicRanges)
-require(Cairo)
+#require(Cairo)
 source("comp.fun.R")
 
 build_ideogram_track <- function(tgap, tlen, tname) {

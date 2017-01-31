@@ -3,5 +3,7 @@
 #PBS -M zhoux379@umn.edu
 #PBS -q small
 
-cd $misc2/bact
-phyml.py 55.aln 56
+#cd $misc2/bact
+#phyml.py 55.aln 56
+
+phy.mt.pl -t pan16x

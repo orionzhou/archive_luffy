@@ -15,7 +15,7 @@
   Options:
     -h (--help)   brief help message
     -i (--in)     input file (fasta format)
-    -o (--out)    output file (Tbl)
+    -o (--out)    output file (*.tsv)
 
 =cut
   

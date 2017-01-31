@@ -1,0 +1,11 @@
+#PBS -l nodes=1:ppn=24,walltime=10:00:00
+#PBS -m ae
+#PBS -M zhoux379@umn.edu
+#PBS -q small
+
+cd $code/r
+#Rscript --no-init-file --no-restore grn.3.hpc.R > ../pbs/rjob.Rout
+#Rscript --no-init-file --no-restore grn.4.hpc.R > ../pbs/rjob.Rout
+Rscript --no-init-file --no-restore grn.6.hpc.R > ../pbs/rjob.Rout
+
+

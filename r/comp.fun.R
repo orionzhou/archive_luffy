@@ -35,10 +35,10 @@ get_genome_cfg <- function(org, tname = "HM101") {
   
   orgp = gsub(".AC", "", org)
   f_pacbio = sprintf("%s/pacbio/%s_%s/15.bam", Sys.getenv("misc3"), orgp, org)
-  if(file.exists(f_pacbio)) cfg[['pacbio']] = bamReader(f_pacbio, idx = T)
+  #if(file.exists(f_pacbio)) cfg[['pacbio']] = bamReader(f_pacbio, idx = T)
 
   f_rnaseq = sprintf("%s/rnaseq/mt/22_tophat/%s_%s/accepted_hits.bam", Sys.getenv("misc2"), orgp, org)
-  if(file.exists(f_rnaseq)) cfg[['rnaseq']] = bamReader(f_rnaseq, idx = T)
+  #if(file.exists(f_rnaseq)) cfg[['rnaseq']] = bamReader(f_rnaseq, idx = T)
   
   if(org != tname) {
     cdir = sprintf("%s/%s_%s/23_blat", '/home/youngn/zhoux379/data/misc3', org, tname)

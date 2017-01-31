@@ -1,9 +1,22 @@
+require(plyr)
 
-dirw = file.path(Sys.getenv("misc1"), "rnaseq_design")
+dirw = file.path(Sys.getenv("misc1"), "grn.design")
 
 f01 = file.path(dirw, "01.tsv")
 t01 = read.table(f01, sep = "\t", header = T, as.is = T)
 nsam = nrow(t01)
+
+### create meaningful sample ID
+geno_map = c(
+	"B73" = "B",
+	"Mo17" = "M",
+	"B73xMo17" = "BxM",
+	"Mo17xB73" = "MxB"
+)
+t05 = cbind(t01, sid = sprintf("br%03d_%s_%s_%d", t01$Sample, t01$Tissue, geno_map[t01$Genotype], t01$Replicate))
+
+fo = file.path(dirw, "05.sampleid.tsv")
+write.table(t05[,c(1,6)], fo, sep = "\t", row.names = F, col.names = F, quote = F)
 
 ### create reverse mapping for grinding tubebox
 boxnames = c("BR_P01_Boxx", "BR_P02_Box3", "BR_P03_Box6", "BR_R01_Box1", "BR_R02_Box2", "BR_R03_Box4", "BR_R04_Box5", "BR_R05_Box7")
@@ -75,8 +88,8 @@ poolmap = c(
 	"root_0DAP" = 7,
 	"kernel_14DAP" = 6,
 	"endosperm_14DAP" = 8,
-	"embryo_27DAP" = 9,
-	"endosperm_27DAP" = 8
+	"embryo_27DAP" = 8,
+	"endosperm_27DAP" = 9
 )
 tr = cbind(t01, pool = NA, idxname = NA)
 for (tissue in unique(tr$Tissue)) {
@@ -91,11 +104,15 @@ for (i in 1:nrow(t33)) {
 for (pool in unique(tr$pool)) {
 	if(pool != "Pool7") {
 		idxs = which(tr$pool == pool)
+		tr$idxname[idxs] = idxnames[1:length(idxs)]
 	} else {
 		idxs = which(tr$pool == pool & is.na(tr$idxname))
+		idxnames_used = tr$idxname[tr$pool == pool & !is.na(tr$idxname)]
+		idxnames_unused = idxnames[! idxnames %in% idxnames_used]
+		tr$idxname[idxs] = idxnames_unused[1:length(idxs)]
 	}
-	tr$idxname[idxs] = idxnames[1:length(idxs)]
 }
+ddply(tr, .(pool), summarise, nidx = length(unique(idxname)))
 tr = tr[match(tr$Sample, t01$Sample),]
 fo = file.path(dirw, "39.pool.tsv")
 write.table(tr[,-c(2:5)], fo, sep = "\t", row.names = F, col.names = F, quote = F)

@@ -1,6 +1,5 @@
 package Gal;
 use strict;
-use Tabix;
 use Data::Dumper;
 use Common;
 use Location;

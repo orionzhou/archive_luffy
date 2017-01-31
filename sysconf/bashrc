@@ -50,7 +50,7 @@ export soft=$HOME/software
 if [[ -d $soft ]]; then
   for subpath in zlib bzip2 xz pcre curl \
     gcc boost libsequence \
-    samtools htslib bamtools bedtools2 vcftools bedops \
+    samtools htslib bamtools bedtools2 vcftools bcftools bedops bwa \
     hdf bowtie2 ncbi blast bwtool\
     clustalw clustalo paml4.8 \
     parallel blast CAP3 cmake cufflinks mcl \
@@ -71,14 +71,18 @@ if [[ -d $soft ]]; then
       export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
     fi
   done
-  for subpath in RepeatMasker interproscan mummer \
+  for subpath in RepeatMasker interproscan mummer sra-tools \
     bwa lastz snap trimal phyml paramugsy blasr pal2nal
   do
-    export PATH=$soft/$subpath:$PATH
+    if [[ -d $soft/$subpath ]]; then
+      export PATH=$soft/$subpath:$PATH
+    fi
   done
   for subpath in augustus
   do
-    export PATH=$soft/$subpath/scripts:$PATH
+    if [[ -d $soft/$subpath/scripts ]]; then
+      export PATH=$soft/$subpath/scripts:$PATH
+    fi
   done
   for subpath in zlib bzip2 xz pcre curl
   do
@@ -111,6 +115,10 @@ export urt=$git/soyurt
 export site=$git/orionzhou.github.io
 export PATH=$rosar:$spada:$PATH
 
+# camoco
+export LD_LIBRARY_PATH=/home/springer/zhoux379/.camoco/lib:$LD_LIBRARY_PATH
+export PATH=/home/springer/zhoux379/.camoco/bin:/home/springer/zhoux379/.camoco/conda/bin:$PATH
+
 # Perl
 export PERL_HOME=$soft/perl
 #export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
@@ -124,7 +132,7 @@ export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 export SCRIPT_HOME_PYTHON=$robin
 export PYTHON_HOME=$soft/python
 export PYTHONUSERBASE=$soft/python
-export PYTHONPATH=${PYTHON_HOME}/lib/python2.7/site-packages:${SCRIPT_HOME_PYTHON}
+#export PYTHONPATH=${PYTHON_HOME}/lib/python3.5/site-packages:${SCRIPT_HOME_PYTHON}
 #export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
 export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
 
@@ -134,8 +142,11 @@ export PATH=$code/c++/bin:$PATH
 # bash
 export PATH=$code/bash:$PATH
 
-# R
+# R 
 export SCRIPT_HOME_R=$code/r
+
+# transition
+export old=/home/youngn/zhoux379/data
 
 # SVN
 export SVN_EDITOR=vi
@@ -159,7 +170,7 @@ export ZOE=$soft/snap
 export MUGSY_INSTALL=$soft/mugsy
 
 # OPAM configuration
-. /home/youngn/zhoux379/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+#. /home/youngn/zhoux379/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # misc
 #unset prefix

@@ -90,15 +90,24 @@ for (i in 1:100) {
 sum(to$nr1 > 1 & to$nr2 > 1)
 sum(to$nr1 <= 1 & to$nr2 <= 1)
 
-####
+#### generate stat table
+txt = paste("", "Deletion", "Insertion", "Copy Number Loss", "Copy Number Gain", "Gene", "TE", "Unknown", "Intergeic", sep = "\t")
+txts = c(txt)
 for (org in c("HM034", "HM056", "HM340")) {
   fi = sprintf("%s/01_sv/%s.1.tsv", dirw, org)
   ti = read.table(fi, header = T, sep = "\t", as.is = T)
   fp = sprintf("%s/02_pacbio/%s.tbl", dirw, org)
   tp = read.table(fp, header = T, sep = "\t", as.is = T)
-  vtag = tp$n1 >= 10 & tp$n2 >= 10
+  vtag = tp$n1 >= 5 & tp$n2 >= 5
   tt = cbind(ti, vtag = vtag)
   ds1 = ddply(tt, .(stype), summarise, n = length(vtag), nv = sum(vtag)/n)
   ds2 = ddply(tt, .(gtype), summarise, n = length(vtag), nv = sum(vtag)/n)
-  cat(org, "\n", paste(sprintf("%s %.03f (%d)", ds1$stype, ds1$nv, ds1$n), by = "\t"), "\n", paste(sprintf("%s %.03f (%d)", ds2$gtype, ds2$nv, ds2$n), by = "\t"), "\n")
+  ds1 = ds1[match(ds1$stype, c("del", "ins", "cnl", "cng")),]
+  ds2 = ds2[match(ds2$gtype, c("Gene", "TE", "Unknown", "Intergenic")),]
+  txt = paste(c(org, 
+  	sprintf("%.01f%% (%s)", ds1$nv*100, prettyNum(ds1$n, big.mark = ",")),
+  	sprintf("%.01f%% (%s)", ds2$nv*100, prettyNum(ds2$n, big.mark = ","))),
+  sep = "\t", collapse = "\t")
+  txts = c(txts, txt)
 }
+write(txts, file = file.path(dirw, '11.stat.tsv'))

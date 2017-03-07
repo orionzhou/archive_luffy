@@ -5,6 +5,7 @@ alias vi='vim'
 alias ll='ls -l'
 alias la='ls -al'
 alias du='du -BM --max-depth=1'
+alias qu='watch qstat -u zhoux379'
 #alias ssh='ssh -Y'
 umask 022
 
@@ -72,7 +73,7 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan mummer sra-tools \
-    bwa lastz snap trimal phyml paramugsy blasr pal2nal
+    bwa hisat2 lastz snap trimal phyml paramugsy blasr pal2nal pigz
   do
     if [[ -d $soft/$subpath ]]; then
       export PATH=$soft/$subpath:$PATH

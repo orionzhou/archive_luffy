@@ -323,7 +323,7 @@ rename_genefam <- function(ti) {
   for (fam in names(mapping)) {
   	to$fam[to$fam %in% mapping[[fam]]] = fam
   }
-  to$fam[! to$fam %in% names(mapping)] = 'Pfam:other'
+  to$fam[! to$fam %in% names(mapping)] = 'Miscellaneous' #'Pfam:other'
   to$fam = factor(to$fam, levels = unique(to$fam))
   to
 }

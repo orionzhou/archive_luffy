@@ -8,7 +8,7 @@ source('comp.fun.R')
 
 dirw = file.path(Sys.getenv("misc3"), "comp.genefam")
 
-ffam = "/home/youngn/zhoup/Data/db/pfam/genefam.tsv"
+ffam = "/home/youngn/zhoux379/data/db/pfam/genefam.tsv"
 tfam = read.table(ffam, header = T, sep = "\t", as.is = T)[,1:2]
 
 tg = read.table(tcfg$gene, sep = "\t", header = F, as.is = T)
@@ -40,7 +40,7 @@ p1 = ggplot(tp) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
 
 # largeeff
-fi = file.path(diro, "07.largeeff.tbl")
+fi = file.path(dirw, "07.largeeff.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 to = rename_genefam(ti)
 
@@ -55,7 +55,7 @@ p2 = ggplot(tp) +
   scale_y_continuous(name = 'Proportion', expand = c(0, 0), limits = c(0, 1)) +
   theme_bw() +
   theme(axis.ticks.y = element_blank(), axis.line.y = element_blank()) +
-  theme(legend.position = c(0.7, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.7, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.7, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.7, 'lines'), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(1,0.1,0.1,1.1), "lines")) +
   theme(axis.title.y = element_blank()) +
   theme(axis.title.x = element_text(size = 9)) +
@@ -64,7 +64,7 @@ p2 = ggplot(tp) +
   theme(axis.text.y = element_blank())
 
 # mpd
-fi = file.path(diro, "12.mpd.tbl")
+fi = file.path(dirw, "12.mpd.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 to = rename_genefam(ti)
 
@@ -87,7 +87,7 @@ p3 = ggplot(tp) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
 
 # cnv
-fi = file.path(diro, "25.cnv.tbl")
+fi = file.path(dirw, "25.cnv.tbl")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 to = rename_genefam(ti)
 
@@ -110,7 +110,7 @@ p4 = ggplot(tp) +
   theme(axis.text.y = element_text(size = 8, colour = "royalblue", angle = 0, hjust = 1))
 
 # multi-panel plot 
-fo = file.path(diro, "49.genefam.pdf")
+fo = file.path(dirw, "49.genefam.pdf")
 numrow = 2; hts = c(3, 3)
 numcol = 2; wds = c(4, 3)
 pdf(file = fo, width = sum(wds), height = sum(hts), bg = 'transparent')

@@ -11,8 +11,17 @@ begs = sapply(x, "[", 2)
 lens = sapply(x, myfunc <- function(x) attr(x, "match.length")[2])
 ids = substr(ti$V9, begs, begs + lens - 1)
 
-ti2 = cbind.data.frame(ti[,c(1,3:5,7)], id = ids, stringsAsFactors = F)
-colnames(ti2) = c("chr", "type", "beg", "end", "srd", "cid")
+x = regexec("Parent=([\\w\\.]+)", ti$V9, perl = T)
+begs = sapply(x, "[", 2)
+lens = sapply(x, myfunc <- function(x) attr(x, "match.length")[2])
+pas = substr(ti$V9, begs, begs + lens - 1)
+
+ti2 = cbind.data.frame(ti[,c(1,3:5,7)], id = ids, pa = pas, stringsAsFactors = F)
+colnames(ti2) = c("chr", "type", "beg", "end", "srd", "cid", "pid")
+
+### get primary-ht scaffolds
+fp = file.path(dirw, 'Malus_x_domestica.v3.0.a1_pht.tsv')
+tp = read.table(fp, sep = "\t", as.is = T, header = F)
 
 ###
 fa = file.path(dirw, "gene.aln.gff")
@@ -53,9 +62,10 @@ for (i in 1:nrow(tx)) {
 	fbegs = c(fbegs, fbeg); fends = c(fends, fend); fsrds = c(fsrds, fsrd)
 }
 
-tx2 = cbind(tx[,c('gid','aid','score','cid','cbeg','cend','csrd', 'chr')], fbeg = fbegs, fend = fends, fsrd = fsrds)
+tx2 = cbind(tx[,c('gid','aid','score','cid','cbeg','cend','csrd','chr')], fbeg = fbegs, fend = fends, fsrd = fsrds, sid = tx$pid)
 tx3 = tx2[order(tx2$gid),]
+tx4 = tx3[tx3$sid %in% tp$V1,]
 
 fo = file.path(dirw, "41.tsv")
-write.table(tx3, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+write.table(tx4, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 

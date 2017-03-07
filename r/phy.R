@@ -363,8 +363,56 @@ nodelabels(pch = 22, bg = node.labels.bg)
 add.scale.bar(x = 0.02, y = 50, lcol = 'black')
 dev.off()
 
+### plot pan16 tree
+dir = file.path(DIR_Data, "misc1/phy.mt/pan16")
+fi = file.path(dir, "31.nwk")
+fo = file.path(dir, "32.pdf")
+tree = read.tree(fi)
+
+grouph = c("HM101", "HM340")
+group2 = c("HM101", "HM034", "HM056", "HM340")
+
+labs = tree$tip.label
+
+font = rep(1, length(labs))
+#font[which(labs %in% grouph)] = 4
+tip.color = rep('black', length(labs))
+tip.color[which(labs %in% grouph)] = 'dodgerblue'
+
+label2.bg = rep('white', length(labs))
+label2.bg[which(labs %in% group2)] = 'red'
+
+df1 = data.frame(idx = 1:length(labs), id = labs)
+df2 = merge(df1, ann, by = "id", all.x = T)
+df3 = df2[order(df2$idx), ]
+notes = as.character(df3$country)
+notes[is.na(notes)] = ""
+notes[labs == "HM101"] = paste("(A17)", notes[labs == "HM101"], by = " ")
+notes[labs == "HM340"] = paste("(R108)", notes[labs == "HM340"], by = " ")
+notes[labs == 'HM023'] = "Tunisia"
+#notes = sprintf(paste("%-", max(nchar(notes)), "s", sep = ''), notes)
+
+scores = as.numeric(tree$node.label)
+if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+node.labels.bg = rep('white', tree$Nnode)
+node.labels.bg[scores >= 0.95] = 'black'
+node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+tree$tip.label = paste(labs, notes, sep = "       ")
+#tree = root(tree, 4)
+pdf(file = fo, width = 5, height = 6, bg = 'transparent')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.8,
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 0.9)
+nodelabels(pch = 22, bg = node.labels.bg)
+tiplabels(pch = 22, col = NA, bg = label2.bg, adj = 0.61, cex = 1.5)
+#par(family = "Courier New")
+add.scale.bar(x = 0, y = 10, lcol = 'black')
+rect(0.08, 11.87, 0.10, 12.13, col = 'red', border = NA)
+text(0.115, 12, labels = "RNA-Seq", cex = 0.75, adj = c(0, 0.5))
+dev.off()
+
 ### plot pan16-expanded tree
-dir = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/pan16x")
+dir = file.path(DIR_Data, "misc1/phy.mt/pan16x")
 fi = file.path(dir, "31.nwk")
 fo = file.path(dir, "32.pdf")
 tree = read.tree(fi)

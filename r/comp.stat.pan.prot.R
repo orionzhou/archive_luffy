@@ -60,9 +60,9 @@ p1 = ggplot(to, aes(x = norg, y = cnt, fill = org)) +
   scale_x_discrete(name = '# Sharing Accession') +
   scale_y_continuous(name = '# Ortholog Groups', expand = c(0, 0), limits = c(0, 25500)) +
   theme_bw() +
-  ggtitle("A") +
+#  ggtitle("A") +
   theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(legend.position = c(0.3, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.3, 0.7), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.6, 'lines'), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +

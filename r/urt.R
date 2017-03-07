@@ -4,14 +4,10 @@ require(xlsx)
 
 dirw = file.path(Sys.getenv("misc2"), "urt")
 
-### process raw data
-fi = file.path(dirw, "urt_data.RData")
-x = load(fi)
-#fi = file.path(dirw, "NotesSummariesFromData.RData")
-#y = load(fi)
-
 ### extract phenotypic data
-ud = urt_data
+fi = file.path(dirw, "00.urt.rda")
+x = load(fi)
+
 tnames = names(ud)
 yrs = sapply(strsplit(tnames, split="[_]"), "[", 1)
 exs = sapply(strsplit(tnames, split="[_]"), "[", 2)
@@ -27,7 +23,7 @@ for (i in 1:length(ud)) {
 	if(ph %in% phs1) {
 		tp1 = ud[[i]]
 		#if("Mean" %in% colnames(tp1)) { tp1 = tp1[,-which(colnames(tp1)=="Mean")] }
-		if(ph == "Maturity") { for (k in 2:ncol(tp1)) { tp1[,k] = as.character(tp1[,k]) }}
+		#if(ph == "Maturity") { for (k in 2:ncol(tp1)) { tp1[,k] = as.character(tp1[,k]) }}
 		if(colnames(tp1)[1] != 'Strain') {
 			cat(tnames[i], "not start with Strain: ", colnames(tp1)[1], "\n")
 			colnames(tp1)[1] = "Strain"
@@ -76,7 +72,6 @@ fo = file.path(dirw, "01.tsv")
 write.table(tp, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
 ### extract trial meta-data
-pl = planting_maturity; yp = yield_plots
 
 tpl = data.frame()
 for (i in 1:length(pl)) {
@@ -178,7 +173,7 @@ ts2 = data.frame(name = lcsc, city = pre, state = suf, stringsAsFactors = F)
 ts2$city[ts2$name == 'Mean'] = "Mean"; ts2$state[ts2$name == 'Mean'] = "Mean"
 
 tl2 = rbind(ts1, ts2)
-tl2 = tl[order(tl$state, tl$city),]
+tl2 = tl2[order(tl2$state, tl2$city),]
 
 fl = file.path(dirw, "04.location.tsv")
 tl = read.table(fl, sep = "\t", as.is = T, header = T)
@@ -318,28 +313,43 @@ strainsn = unique(ti$Strain[ti$Year >= 2004 & ti$Year <= 2015])
 strainsu = strainsn[!strainsn %in% tt$Strain]
 length(strainsu)
 fo = file.path(dirw, "21.parents.txt")
-write(unique(tt$Parentage), fo)
+#write(unique(tt$Parentage), fo)
 fo = file.path(dirw, "21.entries.tsv")
-write.table(tt, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
+#write.table(tt, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
 
-grp = dplyr::group_by(tt, Strain)
-tt = tt2[,-4]
-tt2 = dplyr::summarise(grp, 
-	Year=Year[1], Parentage=Parentage[1], SeedSource=SeedSource[1], 
+fp = file.path(dirw, "22.tsv")
+tp = read.table(fp, header = F, sep = "\t", as.is = T, quote = "", comment.char = "")
+colnames(tp) = c("Parentage", "Parent1", "Parent2")
+tp = cbind(tp, Pedigree = sprintf("%s / %s", tp$Parent1, tp$Parent2))
+tt2 = merge(tt, tp, by = "Parentage", all.x = T)
+stopifnot(nrow(tt) == nrow(tt2))
+
+grp = dplyr::group_by(tt2, Strain)
+#tt = tt2[,-4]
+tt3 = dplyr::summarise(grp, 
+	Year=Year[1], Pedigree=Pedigree[1], SeedSource=SeedSource[1], 
 	GenComp=GenComp[1], UniqueTraits=UniqueTraits[1], Trial=Trial[1], 
 	PreviousTesting=PreviousTesting[1])
 ti2 = ti[ti$Year >= 2004 & ti$Year <= 2015,]
-sum(! unique(ti2$Strain) %in% tt2$Strain)
+sum(! unique(ti2$Strain) %in% tt3$Strain)
 
 tx = data.frame(
-	name = tt2$Strain, program = "URT", aliases = "", acc = "", 	
-	pedigree = tt2$Parentage, generation = tt2$GenComp, species = "G.max", 
-	comments = tt2$UniqueTraits, stringsAsFactors = F)
+	name = tt3$Strain, program = "URT", aliases = "", acc = "", 	
+	pedigree = tt3$Pedigree, generation = tt3$GenComp, species = "G.max", 
+	comments = tt3$UniqueTraits, stringsAsFactors = F)
 genmap = 1:9
 names(genmap) = sprintf("F%d", 1:9)
 tx$generation[!tx$generation %in% names(genmap)] = 'F1'
 tx$generation = genmap[tx$generation]
 
+tx2 = tx[tx$pedigree != '',c("name", "pedigree")]
+tx2 = merge(tx2, tp[,2:4], by.x = "pedigree", by.y = "Pedigree")
+tx3 = data.frame(LINE_NAME=tx2$name, PARENT_1=tx2$Parent1, PARENT_2=tx2$Parent2,
+	contrib_1=0.5, contrib_2=0.5, selfing_1="FN", selfing_2="FN",
+	pedigree=tx2$pedigree, stringsAsFactors = F)
+colnames(tx3)[8] = "Text pedigree"
+fp2 = file.path(dirw, "23.pedigree.tsv")
+write.table(tx3, fp2, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
 
 f25 = sprintf("%s/25.strain.xlsx", dirw)
 wb <- createWorkbook()

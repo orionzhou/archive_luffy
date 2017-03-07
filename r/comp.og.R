@@ -64,8 +64,8 @@ ts = tr[tr$grp %in% grps,]
 y = table(ts$fam)
 y[order(y, decreasing = T)][1:20]/sum(y)
 
-# plot all fams -hist
 brks = as.character(1:13)
+# plot all fams -hist
 
 tq = ddply(tr, .(fam), summarise, cnt = length(fam), avg = mean(size))
 fams = tq$fam[order(tq$avg, decreasing=T)]

@@ -76,7 +76,7 @@ p1 = ggplot(to, aes(x = n_org, y = size, fill = org)) +
   theme_bw() +
   ggtitle("A") +
   theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(legend.position = c(0.25, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.5, 'lines'), legend.margin = unit(0, "lines"), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.25, 0.8), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA, size = 0), legend.key.size = unit(0.5, 'lines'), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
@@ -173,7 +173,7 @@ p2 = ggplot(tp) +
   theme_bw() +
   ggtitle("B") +
   theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(legend.position = c(0.25, 0.2), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "line"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.25, 0.2), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
 #    theme(panel.grid = element_blank()) +
   theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
@@ -186,30 +186,35 @@ ggsave(p2, filename = fp, width = 4, height = 5)
 
 
 ## exponential fitting + extrapolating plot
+require(poweRlaw)
 tt = ddply(tp, .(n_org), summarise, 
-  pan0 = min(pan), pan25 = quantile(pan, 0.25), pan50 = median(pan), pan75 = quantile(pan, 0.75), pan100 = max(pan),
-  core0 = min(core), core25 = quantile(core, 0.25), core50 = median(core), core75 = quantile(core, 0.75), core100 = max(core))
-tt$n_org = factor(tt$n_org)
+  pan0 = min(pan), pan25 = quantile(pan, 0.25), pan50 = median(pan), pan75 = quantile(pan, 0.75), pan100 = max(pan), panm = mean(pan), 
+  core0 = min(core), core25 = quantile(core, 0.25), core50 = median(core), core75 = quantile(core, 0.75), core100 = max(core), corem = mean(core))
 
+#z <- glm(panm ~ b0 + b1 * n_org^b2, data = tt)
+# y = Ax^B + C   Ae^Bx + C  b0 + b1*(1-exp(-exp(lrc) * x))
 xs = 1:13
 xsp = 1:50
 
-fitl <- loess(pan ~ n_org, tp)
-ysl = predict(fitl, data.frame(n_org = xs), se = F)
-dft = data.frame(x = xs, y = ysl)
+#fitl <- loess(pan ~ n_org, tp)
+#ysl = predict(fitl, data.frame(n_org = xs), se = F)
+dft = data.frame(x = tt$n_org, y = tt$panm)
 fite = NLSstAsymptotic(sortedXyData(expression(x),expression(y), dft))
 b0 = fite['b0']; b1 = fite['b1']; lrc = fite['lrc']
 pansf = b0 + b1*(1-exp(-exp(lrc) * xsp))
+b0+b1
 
-fitl <- loess(core ~ n_org, tp)
-ysl = predict(fitl, data.frame(n_org = xs), se = F)
-dft = data.frame(x = xs, y = ysl)
+#fitl <- loess(core ~ n_org, tp)
+#ysl = predict(fitl, data.frame(n_org = xs), se = F)
+dft = data.frame(x = tt$n_org, y = tt$corem)
 fite = NLSstAsymptotic(sortedXyData(expression(x),expression(y), dft))
 b0 = fite['b0']; b1 = fite['b1']; lrc = fite['lrc']
 coresf = b0 + b1*(1-exp(-exp(lrc) * xsp))
+b0+b1
 
 tf = data.frame(x=xsp, panf = pansf, coref = coresf)
 
+tt$n_org = factor(tt$n_org)
 p2 = ggplot(tp) +
   geom_linerange(data = tt, mapping = aes(x = n_org, y = pan50, ymin = pan0, ymax = pan100), col = 'darkorchid4', size = 0.5) +
   geom_linerange(data = tt, mapping = aes(x = n_org, y = core50, ymin = core0, ymax = core100), col = 'darkorchid4', size = 0.5) +
@@ -222,7 +227,7 @@ p2 = ggplot(tp) +
   scale_y_continuous(name = 'Genome size (Mbp)', expand = c(0, 0), limits = c(220, 450)) + 
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(legend.position = c(0.85, 0.65), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.margin = unit(0, "line"), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
+  theme(legend.position = c(0.85, 0.65), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.text = element_text(size = 8, angle = 0)) +
   theme(plot.margin = unit(c(1,1,0,0), "lines")) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +

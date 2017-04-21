@@ -331,3 +331,31 @@ y = to$prop[to$type=='random']
 t.test(y1, y, alternative = 'greater')
 t.test(y2, y, alternative = 'greater')
 t.test(c(y1,y2), y, alternative = 'greater')
+
+### prepare PBBN/PBDT join/break coordinates
+dirw = file.path(Sys.getenv('misc1'), 'hm340.ms')
+fh = file.path(dirw, "00.shared.tsv")
+th = read.table(fh, header = F, sep = "\t", as.is = T)
+
+alg = "PBBN"
+#alg = "PBDT"
+fs = sprintf("%s/HM340.%s/raw.fix.fas.map", Sys.getenv("genome"), alg)
+ts = read.table(fs, header = F, sep = "\t", as.is = T)
+colnames(ts) = c("chr", "size", "chr2")
+smap = ts$chr2; names(smap) = ts$chr
+
+f01 = sprintf("%s/01.%s.tsv", dirw, tolower(alg))
+t01 = read.table(f01, header = F, sep = "\t", as.is= T)
+colnames(t01) = c("chr", "beg", "end")
+t01 = cbind.data.frame(t01, shared = '', stringsAsFactors = F)
+if(alg == "PBBN") {
+	t01$shared[t01$chr %in% th$V1] = 1
+} else {
+	t01$shared[t01$chr %in% th$V2] = 1
+}
+stopifnot(t01$chr %in% ts$chr)
+t01$chr = smap[t01$chr]
+
+if(alg == "PBDT") t01$beg = t01$beg + 1
+fo = sprintf("%s/03.%s.tsv", dirw, tolower(alg))
+write.table(t01, fo, col.names = F, row.names = F, sep='\t', quote = F)

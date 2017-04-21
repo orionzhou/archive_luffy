@@ -6,6 +6,15 @@ dirw = '/home/springer/zhoux379/scratch/mo17vnt'
 fi = file.path(dirw, "chr1.tsv")
 ti = read.table(fi, header = T, sep = "\t", stringsAsFactors = F)
 
+levs_tissue = unique(ti$Tissue)
+levs_genotype = unique(ti$Genotype)
+ti$Tissue = factor(ti$Tissue, levels = levs_tissue)
+ti$Genotype = factor(ti$Genotype, levels = levs_genotype)
+ti = ti[order(ti$Tissue, ti$Genotype),]
+
+ti2 = cbind(x = 1:nrow(ti), ti[,c(2:7)])
+tox = ddply(ti2, .(Tissue, Genotype), summarise, x = (min(x)+max(x))/2, lab = sprintf("%s_%s", Genotype[1], Tissue[1]))
+
 
 
 pr = ggplot(ti2) +

@@ -65,3 +65,18 @@ sortC <- function(...) {
     Sys.setlocale("LC_COLLATE", "C")
     sort(...)
 }
+
+plot_hist <- function(x, fo = 'tmp.pdf', xlab='xlab', ylab='count') {
+p1 = ggplot() +
+  geom_histogram(aes(x = x)) +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.3,0.1,0.1,0.1), "lines")) +
+  theme(legend.position = 'right', legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0, hjust = 1))
+ggsave(p1, filename = fo, width = 6, height = 6)
+}
+

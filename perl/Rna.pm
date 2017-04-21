@@ -291,6 +291,7 @@ sub to_gff {
   push @tags, "Note=".$self->note if $self->note;
   push @rows, [$seqid, $self->source, $self->cat1, $self->beg, $self->end, '.', $srd, '.', join(";", @tags)];
   
+  my ($tid, $gid) = ($self->id, $self->parent);
   my @types = qw/exon CDS five_prime_UTR three_prime_UTR/;
   my @locs = ($self->exon, $self->cds, $self->utr5, $self->utr3);
   for my $i (0..$#types) {
@@ -303,7 +304,7 @@ sub to_gff {
       my ($beg, $end) = $srd eq "-" ? 
         ($self->end-$re+1, $self->end-$rb+1) : 
         ($self->beg+$rb-1, $self->beg+$re-1);
-      push @rows, [$seqid, '.', $type, $beg, $end, '.', $srd, $phase, 'Parent='.$self->id];
+      push @rows, [$seqid, '.', $type, $beg, $end, '.', $srd, $phase, "Parent=$tid;gene_id=$gid"];
     }
   }
   return join("\n", map {join("\t", @$_)} @rows);

@@ -55,7 +55,7 @@ if [[ -d $soft ]]; then
     hdf bowtie2 ncbi blast bwtool\
     clustalw clustalo paml4.8 \
     parallel blast CAP3 cmake cufflinks mcl \
-    augustus maker ocaml opam \
+    augustus maker ocaml opam graphviz \
     emboss gd geco genometools gmap hmmer mysql orthomcl \
     R root tophat trimAl wise2 GEM kent unafold imagemagick
   do
@@ -114,7 +114,7 @@ export spada=$git/spada
 export rosar=$git/rgeneclust
 export urt=$git/soyurt
 export site=$git/orionzhou.github.io
-export PATH=$rosar:$spada:$PATH
+export PATH=$rosar:$spada:$git/pedtools:$PATH
 
 # camoco
 export LD_LIBRARY_PATH=/home/springer/zhoux379/.camoco/lib:$LD_LIBRARY_PATH
@@ -125,7 +125,7 @@ export PERL_HOME=$soft/perl
 #export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
 #export PERL_MB_OPT="--install_base $PERL_HOME"
 export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
-export PERL5LIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
+export PERL5LIB=$soft/vcftools/share/perl5:$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
 export SCRIPT_HOME_PERL=$code/perl
 export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
 

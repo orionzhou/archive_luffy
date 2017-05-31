@@ -3,12 +3,47 @@ require(dplyr)
 require(GenomicRanges)
 require(ggplot2)
 source('Location.R')
+require(igraph)
 
 dirg = '/home/springer/zhoux379/data/genome/Zmays_v4'
 dirw = '/home/springer/zhoux379/scratch/mo17vnt'
-fi = file.path(dirw, "52.vnt/Mo17.filtered.tsv")
+#fi = file.path(dirw, "52.vnt/Mo17.filtered.tsv")
+fi = file.path(dirw, "52.vnt/Mo17.tsv")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
 tf = ti[ti$PASS==1,]
+
+### filter ###
+t0 = ti
+t1 = t0[(is.na(t0$GT) | t0$GT==2) & (
+	(t0$IS_SNP==1 &
+		(t0$QD>=2 | is.na(t0$QD)) & 
+		(t0$FS<=60 | is.na(t0$FS)) & 
+		(t0$MQ>=40 | is.na(t0$MQ)) & 
+		(t0$MQRankSum>=-12.5 | is.na(t0$MQRankSum)) & 
+		(t0$ReadPosRankSum>=-8 | is.na(t0$ReadPosRankSum)) & 
+		(t0$SOR<=4 | is.na(t0$SOR))
+	) |
+	(t0$IS_SNP==0 & 
+		(t0$QD>=2 | is.na(t0$QD)) &
+		(t0$FS<=200 | is.na(t0$FS)) & 
+		(t0$ReadPosRankSum>=-20 | is.na(t0$ReadPosRankSum)) & 
+		(t0$SOR<=10 | is.na(t0$SOR))
+	)),]
+1       24900   .       T       C       1457.77 .       AC=1;AF=0.500;AN=2;BaseQRankSum=2.092;ClippingRankSum=0.000;DP=82;ExcessHet=3.0103;FS=15.693;MLEAC=1;MLEAF=0.500;MQ=30.25;MQRankSum=-1.928;QD=21.13;ReadPosRankSum=-4.480;SOR=0.987     GT:AD:DP:GQ:PL  0/1:17,52:69:99:1486,0,226
+
+grv = with(t1, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos+nchar(t1$ref)-1)))
+tov = intersect_idx(grv, grv)
+tov = tov[tov$idx != tov$qidx,]
+
+edges = as.matrix(tov[,c('idx','qidx')])
+edges[,1] = as.character(edges[,1])
+edges[,2] = as.character(edges[,2])
+graph = graph_from_edgelist(edges)
+clus = clusters(graph)
+mb = clus$membership
+tm = data.frame(idx = as.integer(names(mb)), clu = as.integer(mb))
+tms = ddply(tm, .(clu), summarise, clusize = length(clu))
+clus_large = tms$clu[tms$clusize>2]
 
 ### apply filter 2
 dp_mean = mean(ti$DP)

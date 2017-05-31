@@ -89,6 +89,10 @@ while( my $res = $in->next_result ) {
       exists $hm->{$hid} || die "no size for $hid\n";
       my $hsize = $hm->{$hid};
       my $qsize = $db->length($qid);
+      if(!$qsize) {
+        print "no size for $qid in $fs\n";
+        exit(1)
+      }
       my ($qbeg, $qend) = ($hsp->start("hit"), $hsp->end("hit"));
       my ($hbeg, $hend) = ($hsp->start("query"), $hsp->end("query"));
       my ($alnH, $alnQ) = ($hsp->query_string, $hsp->hit_string);

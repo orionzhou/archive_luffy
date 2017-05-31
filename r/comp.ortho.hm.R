@@ -170,7 +170,7 @@ pb <- ggplot(to) +
   scale_x_continuous(name = '', limits = c(0, max(to$idx)+1), expand=c(0.01, 0), breaks = floor((tx$beg+tx$end)/2), labels = tx$chr) +
   scale_y_discrete(expand = c(0.02, 0), name = '') +
   scale_fill_gradient(name = 'sequence similarity with HM101 ortholog', space = "Lab", low = 'firebrick1', high = 'dodgerblue', na.value = 'grey50') +
-  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0, 1), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill=NA, size=0), legend.margin = unit(0, "line")) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0, 1), legend.title = element_text(size = 8), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill=NA, size=0)) +
   theme(plot.margin = unit(c(0,0.5,0,0), "lines")) +
   theme(axis.title.x = element_blank(), axis.ticks.length = unit(0, 'lines')) +
   theme(axis.text.x = element_text(colour = "black", size = 8)) +

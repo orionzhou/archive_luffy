@@ -1,4 +1,6 @@
 require(GenomicRanges)
+require(dplyr)
+source('Location.R')
 
 ## maize
 dirg = '/home/springer/zhoux379/data/genome/Zmays_v4'
@@ -33,6 +35,25 @@ stopifnot(sum(width(grt)) == sum(tw$end-tw$beg+1))
 
 fo = file.path(dirg, "52.itv.tsv")
 write.table(tw, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+## get longest transcripts
+f_gtb = file.path(dirg, "51.gtb")
+f_tbl = file.path(dirg, "51.tbl")
+tg = read.table(f_gtb, sep = "\t", header = T, as.is = T)[,1:2]
+tt = read.table(f_tbl, sep = "\t", header = F, as.is = T)
+colnames(tg) = c("tid", "gid")
+colnames(tt) = c("chr", "beg", "end", "srd", "tid", "type", "fam")
+tt = tt[tt$type %in% c('cds'),]
+grp = dplyr::group_by(tt, tid)
+tt2 = dplyr::summarise(grp, len = sum(end - beg + 1))
+
+tg2 = merge(tg, tt2, by = 'tid')
+grp = dplyr::group_by(tg2, gid)
+tg3 = dplyr::summarise(grp, tid = tid[which(len==max(len))[1]])
+
+fo = file.path(dirg, "57.longest.tsv")
+write.table(tg3, fo, sep = "\t", row.names = F, col.names = F, quote = F)
+
 
 ## medicago
 chrs = sprintf("chr%s", 1:8)

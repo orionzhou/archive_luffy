@@ -43,7 +43,12 @@ tt = data.frame(
 	end = c(100, 115, 150, 170, 190, 180, 250, 271)
 )
 
-### compute a global position for each row - presume each chromosome is 100Mb long so no inter-chromosomal locations get clustered
+dirw = '/home/springer/zhoux379/data/in'
+fi = file.path(dirw, 'test1.tsv')
+ti = read.table(ft, header = T, sep = "\t", as.is = T)
+tt = ti[,3:5]
+
+### compute a global position for each row - assume each chromosome is 100Mb long so no inter-chromosomal locations get clustered
 chrs = sort(unique(tt$chr))
 chrmap = 1:length(chrs)
 names(chrmap) = chrs
@@ -62,7 +67,7 @@ tt = tt[order(tt$pos), ]
 # 7 chr2 250 250 200000250
 # 8 chr2 271 271 200000271
 
-locCluster(tt$pos, 20)
+tt2 = locCluster(tt$pos, 200000)
 
 ### output - "cluster": cluster ID; "cluster_y": numeric ID within one cluster
 #   id       pos cluster cluster_y
@@ -75,4 +80,5 @@ locCluster(tt$pos, 20)
 # 7  7 200000250       4         1
 # 8  8 200000271       5         1
 
-
+fo = file.path(dirw, 'test1.out.tsv')
+write.table(tt2[,3:4], fo, sep = "\t", row.names = F, col.names = T, quote = F)

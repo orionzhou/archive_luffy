@@ -6,7 +6,7 @@ require(RColorBrewer)
 source('Location.R')
 
 dirg = '/home/springer/zhoux379/data/genome/Zmays_v4'
-dirw = '/home/springer/zhoux379/scratch/mo17vnt/solid'
+dirw = '/home/springer/zhoux379/scratch/mo17vnt/61.rnaseq.solid'
 dirb = '/home/springer/zhoux379/scratch/briggs'
 
 ###
@@ -164,12 +164,23 @@ txe = tx1[! posb %in% posa,]
 tvc = tv1[posa %in% posb,]
 tve = tv1[! posa %in% posb,]
 
-tvd = tv[tv$IS_SNP==0,]
+tvd = tv[tv$IS_SNP==0 & nchar(tv$ref) > 1,]
 tvd = cbind(tvd, end = tvd$pos + nchar(tvd$ref) - 1)
-grd = with(tvd, GRanges(seqnames = chr, ranges = IRanges(pos, end = end)))
+tvi = tv[tv$IS_SNP==0 & nchar(tv$alt) > 1,]
+tvi = cbind(tvi, end = tvi$pos + 1)
+grd = with(rbind(tvd, tvi), GRanges(seqnames = chr, ranges = IRanges(pos, end = end)))
 
 ### find conflict txc
-idxfs = which(!(txc$btot > 0 & txc$mtot > 0 & txc$pctb >= 0.5 & txc$pctm >= 0.5))
+ib = (txc$btot == 0 | txc$mtot == 0)
+sum(ib)
+txc = txc[!ib,]
+
+sum(txc$pctb >= 0.8 & txc$pctm >= 0.8)
+sum(txc$pctb >= 0.8 & txc$pctm >= 0.8)/nrow(txc)
+sum(txc$pctb >= 0.5 & txc$pctm >= 0.5)
+sum(txc$pctb >= 0.5 & txc$pctm >= 0.5)/nrow(txc)
+
+idxfs = which(!(txc$pctb >= 0.5 & txc$pctm >= 0.5))
 tc = txc[idxfs,]
 nrow(tc)
 sum(tc$btot<1)
@@ -179,8 +190,9 @@ grc = with(tc2, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos)))
 x = intersect_count(grc, grd)
 tc3 = tc2[x == 0,]
 nrow(tc3)
-sum(tc3$pctb == 0)
-tc4 = tc3[tc3$pctb != 0,]
+tc4 = tc3[tc3$btot > 1 & tc3$pctb < 0.5 & tc3$mtot > 1 & tc3$pctm > 0.8,]
+
+tc5 = tc3[tc3$btot > 1 & tc3$pctb > 0.5 & tc3$mtot > 1 & tc3$pctm+tc3$pcth < 0.5,]
 
 ### split txe
 #tve[tve$IS_SNP==1,][100:130,]
@@ -214,4 +226,6 @@ x = sum(txc$btot > 1 & txc$mtot > 1 & txc$pctb >= 0.5 & txc$pctm >= 0.5)
 cat(sprintf("%g (%.02f%%) out of %g\n", x, x/nrow(txc)*100, nrow(txc)))
 x = sum(txc$btot > 0 & txc$mtot > 0 & txc$pctb >= 0.5 & txc$pctm >= 0.5)
 cat(sprintf("%g (%.02f%%) out of %g\n", x, x/nrow(txc)*100, nrow(txc)))
+
+
 

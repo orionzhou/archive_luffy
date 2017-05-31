@@ -3,7 +3,7 @@
 #PBS -M zhoux379@umn.edu
 #PBS -q small
 
-cd /scratch.global/zhoux379/mo17vnt
-gzip -dc 6487.7.44763.TTAGGC.fastq.gz | deinterleave_fastq.sh 05.reads/ch_mo17_01_1.fastq.gz 05.reads/ch_mo17_01_2.fastq.gz compress
-gzip -dc 6734.5.52349.GTGAAA.fastq.gz | deinterleave_fastq.sh 05.reads/ch_mo17_02_1.fastq.gz 05.reads/ch_mo17_02_2.fastq.gz compress
-gzip -dc 6734.6.52350.GTGAAA.fastq.gz | deinterleave_fastq.sh 05.reads/ch_mo17_03_1.fastq.gz 05.reads/ch_mo17_03_2.fastq.gz compress 
+cd ~/scratch/mo17vnt/05.reads
+gzip -dc ch_mo17_01.fq.gz | deinterleave_fastq.sh ch_mo17_01_1.fastq.gz ch_mo17_01_2.fastq.gz compress
+gzip -dc ch_mo17_02.fq.gz | deinterleave_fastq.sh ch_mo17_02_1.fastq.gz ch_mo17_02_2.fastq.gz compress
+gzip -dc ch_mo17_03.fq.gz | deinterleave_fastq.sh ch_mo17_03_1.fastq.gz ch_mo17_03_2.fastq.gz compress

@@ -1,6 +1,6 @@
 require(GenomicRanges)
 require(dplyr)
-#options(scipen=999)
+options(scipen=999)
 
 locCluster <- function(pos, wsize) {
   npos = length(pos)

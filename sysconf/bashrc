@@ -113,8 +113,9 @@ export robin=$git/robin
 export spada=$git/spada
 export rosar=$git/rgeneclust
 export urt=$git/soyurt
+export ped=$git/pedtools
 export site=$git/orionzhou.github.io
-export PATH=$rosar:$spada:$git/pedtools:$PATH
+export PATH=$rosar:$spada:$ped:$PATH
 
 # camoco
 export LD_LIBRARY_PATH=/home/springer/zhoux379/.camoco/lib:$LD_LIBRARY_PATH

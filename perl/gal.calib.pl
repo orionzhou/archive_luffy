@@ -101,6 +101,14 @@ while( <$fhi> ) {
   
   my $tSeq = seqRet($tLoc, $tId, $tSrd, $ft);
   my $qSeq = seqRet($qLoc, $qId, $qSrd, $fq);
+  if(length($tSeq) != $tlen) {
+    print "tseq error\n$tId:$tBeg-$tEnd $tlS\n$tlen\n".length($tSeq)."\n";
+    exit;
+  }
+  if(length($qSeq) != $qlen) {
+    print "tseq error\n$qId:$qBeg-$qEnd $qlS\n$qlen\n".length($qSeq)."\n";
+    exit;
+  }
   ($mat, $mis, $qN, $tN) = seqCompare($tSeq, $qSeq);
   $ali = $mat + $mis + $qN + $tN;
   $ident = ($mat+$mis==0) ? 0 : sprintf "%.03f", $mat/($mat+$mis);

@@ -3,7 +3,7 @@ require(dplyr)
 require(ggplot2)
 
 ### mapping stats
-dirw = '/home/springer/zhoux379/scratch/briggs'
+dirw = '/home/springer/zhoux379/scratch/briggs2'
 fi = file.path(dirw, "00.3.hisat.tsv")
 ti = read.table(fi, header = T, sep = "\t", stringsAsFactors = F)[,c(1,3,4,17:24)]
 levs_tissue = unique(ti$Tissue)

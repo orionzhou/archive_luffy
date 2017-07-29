@@ -67,10 +67,19 @@ cat(sprintf("nvnt>= 2: %d\n", sum(tv4$nvnt >= 2)))
 fl = file.path(dirg, "57.longest.tsv")
 tl = read.table(fl, sep = "\t", header = F, as.is = T)
 
-tv5 = tv4[tv4$tid %in% tl$V2,]
+tv5 = merge(tv4, tl, by.x = 'tid', by.y = 'V2')
+stopifnot(nrow(tv5) == nrow(tl))
+tv5 = tv5[,3:2]
+colnames(tv5)[1] = 'gid'
 cat(sprintf("nvnt = 0: %d\n", sum(tv5$nvnt == 0)))
 cat(sprintf("nvnt = 1: %d\n", sum(tv5$nvnt == 1)))
 cat(sprintf("nvnt>= 2: %d\n", sum(tv5$nvnt >= 2)))
+
+dirgm = '/home/springer/zhoux379/data/genome/Mo17'
+fo1 = file.path(dirgm, "61.transcript.vnt.tsv")
+#write.table(tv4, fo1, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
+fo2 = file.path(dirgm, "62.gene.vnt.tsv")
+#write.table(tv5, fo2, sep = "\t", row.names = F, col.names = T, quote = F, na = '')
 
 ### construct transcript seqs from cds seqs
 translate_srd <- function(dx) {

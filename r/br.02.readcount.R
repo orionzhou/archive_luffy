@@ -2,9 +2,10 @@ require(plyr)
 require(dplyr)
 require(ggplot2)
 
-dirw = '/home/springer/zhoux379/scratch/mo17vnt'
-fi = file.path(dirw, "chr1.tsv")
-ti = read.table(fi, header = T, sep = "\t", stringsAsFactors = F)
+dirw = '/home/springer/zhoux379/scratch/briggs2'
+
+fi = file.path(dirw, '00.2.trim.tsv')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)[,c(1:5,8,13)]
 
 levs_tissue = unique(ti$Tissue)
 levs_genotype = unique(ti$Genotype)
@@ -13,7 +14,7 @@ ti$Genotype = factor(ti$Genotype, levels = levs_genotype)
 ti = ti[order(ti$Tissue, ti$Genotype),]
 
 ti2 = cbind(x = 1:nrow(ti), ti[,c(2:7)])
-tox = ddply(ti2, .(Tissue, Genotype), summarise, x = (min(x)+max(x))/2, lab = sprintf("%s_%s", Genotype[1], Tissue[1]))
+tix = ddply(ti2, .(Tissue, Genotype), summarise, x = (min(x)+max(x))/2, lab = sprintf("%s_%s", Genotype[1], Tissue[1]))
 
 
 
@@ -37,4 +38,4 @@ pr = ggplot(ti2) +
   geom_label(x=64, y=41.5, hjust=0, vjust=0, label='Filtered Reads', label.padding = unit(0.2, "lines"), label.r = unit(0, "lines"), label.size = 0, size=2.5)
 
 fr = file.path(dirw, "stats/00.2.rpc.pdf")
-ggsave(pr, filename=fr, width=5, height=6)
+ggsave(pr, filename=fr, width=6, height=8)

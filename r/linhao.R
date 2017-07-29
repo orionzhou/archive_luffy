@@ -12,10 +12,13 @@ dirw = file.path(Sys.getenv("misc1"), 'linhao')
 
 fi = file.path(dirw, "11.ac.gal")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-ti[order(ti$ali, decreasing = T),][1:20,c(2:10,13:15)]
+ti[order(ti$ali, decreasing = T),][1:20,c(2:11,13:15)]
 
 fi = file.path(dirw, "12.fn.gal")
 ti = read.table(fi, header = T, sep = "\t", as.is = T)
-ti[order(ti$ali, decreasing = T),][1:20,c(2:10,13:15)]
+ti[order(ti$ali, decreasing = T),][1:20,c(2:11,13:15)]
 
 chr7:13900000-14600000 and one 100kb gap at chr7:14435000-14535000)
+
+scf016:1820965-1829330
+scf016:1820001-1830000

@@ -52,8 +52,8 @@ chdir $dir || die "cannot chdir $dir\n";
 my $fg = "../11_genome.fas";
 -s $fg || die "$fg is not there\n";
 
-#get_hints_ortholog();
-#get_hints_rnaseq();
+get_hints_ortholog();
+get_hints_rnaseq();
 run_aug();
 postprocess_aug();
 pipe_pfam();
@@ -66,7 +66,7 @@ sub get_hints_ortholog {
   runCmd("liftover.gtb2hint.pl -i $f_gtb -r $f_ref -x $f_gax -s $f_snp -o 05.hm101.gff");
 }
 sub get_hints_rnaseq {
-  my $dirin = "$ENV{'misc2'}/rnaseq/mt";
+  my $dirin = "$ENV{'misc2'}/rnaseq/acc4";
   
   my $t = readTable(-in => "$dirin/21.tbl", -header => 1);
   my $h;
@@ -83,11 +83,11 @@ sub get_hints_rnaseq {
   runCmd("bamtools filter -isPrimaryAlignment 1 -isMapped 1 -isMateMapped 1 -in $bam_in -out 11.f.bam");
   runCmd("samtools view -H 11.f.bam > 12.header.txt");
 
-  runCmd("samtools sort 11.f.bam 14.sf");
+  runCmd("samtools sort 11.f.bam -o 14.sf.bam");
   runCmd("bam2hints --intronsonly --in=14.sf.bam --out=15.rnaseq.gff");
 #  runCmd("bam2wig $bam_in | \$soft/augustus/scripts/wig2hints.pl > 15.ep.gff");
 
-  runCmd("rm 11.f.bam 12.header.txt 14.sf.bam");
+#  runCmd("rm 11.f.bam 12.header.txt 14.sf.bam");
 }
 sub run_aug {
   -s "05.hm101.gff" || die "no 05.hm101.gff";

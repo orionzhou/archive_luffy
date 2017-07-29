@@ -29,7 +29,6 @@ t1 = t0[(is.na(t0$GT) | t0$GT==2) & (
 		(t0$ReadPosRankSum>=-20 | is.na(t0$ReadPosRankSum)) & 
 		(t0$SOR<=10 | is.na(t0$SOR))
 	)),]
-1       24900   .       T       C       1457.77 .       AC=1;AF=0.500;AN=2;BaseQRankSum=2.092;ClippingRankSum=0.000;DP=82;ExcessHet=3.0103;FS=15.693;MLEAC=1;MLEAF=0.500;MQ=30.25;MQRankSum=-1.928;QD=21.13;ReadPosRankSum=-4.480;SOR=0.987     GT:AD:DP:GQ:PL  0/1:17,52:69:99:1486,0,226
 
 grv = with(t1, GRanges(seqnames = chr, ranges = IRanges(pos, end = pos+nchar(t1$ref)-1)))
 tov = intersect_idx(grv, grv)

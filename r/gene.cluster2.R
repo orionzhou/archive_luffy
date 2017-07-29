@@ -2,6 +2,7 @@ require(grid)
 require(plyr)
 require(dplyr)
 require(ggplot2)
+require(RColorBrewer)
 source('Location.R')
 source("comp.fun.R")
 
@@ -9,7 +10,7 @@ dirw = file.path(Sys.getenv("misc2"), "gene.cluster")
 dir.create(dirw)
 
 for (org in qnames_alpaca_comp) {
-#org = "HM034.AC"
+#org = "HM340.PJ"
 f_gen = file.path(Sys.getenv("genome"), org, "51.gtb")
 tg = read.table(f_gen, header = T, sep = "\t", as.is = T)[,c(1,3:5,16:17)]
 
@@ -108,6 +109,8 @@ tw = reshape(tw, direction = 'wide', timevar = c('itv'), idvar = c('org'))
 fo = file.path(dirw, "69.tbl")
 #write.table(tw, fo, col.names = T, row.names = F, sep = "\t", quote = F)
 
+cols = c(brewer.pal(3, "Blues"), brewer.pal(3, "Greens"), brewer.pal(3, "Oranges"), "Purple")
+
 p1 = ggplot(to) + 
   geom_bar(aes(x = itv, y = ng, fill = org), stat = 'identity', position = 'dodge', width = 0.8) + 
   scale_x_discrete(name = 'Tandem Array Size') +
@@ -132,18 +135,18 @@ p1 = ggplot(to2) +
   geom_bar(aes(x = itv, y = nc, fill = org), stat = 'identity', position = 'dodge', width = 0.8) + 
   scale_x_discrete(name = 'Tandem Array Size') +
   scale_y_continuous(name = '# Tandem Arrays') +
-  scale_fill_brewer(palette = "Paired") +
+  scale_fill_manual(values = cols, guide = guide_legend(nrow = 3)) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0,0), "lines")) +
-  theme(legend.position = "top", legend.title = element_blank(), legend.key.size = unit(0.6, 'lines'), legend.background = element_rect(fill = 'white', size=0), legend.margin = unit(0, "line")) +
+  theme(legend.position = c(0.7, 0.9), legend.title = element_blank(), legend.key.size = unit(0.6, 'lines'), legend.background = element_rect(fill = 'white', size=0)) +
   theme(axis.title.x = element_text(size = 9, angle = 0)) +
   theme(axis.title.y = element_text(size = 9, angle = 90)) +
   theme(axis.text.x = element_text(size = 8, angle = 0, colour = "blue", hjust = 1)) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 0.5))
 
 fo = sprintf("%s/69.all.pdf", dirw)
-ggsave(p1, filename = fo, width = 6, height = 4)
+ggsave(p1, filename = fo, width = 7, height = 5)
 
 
 do = data.frame()

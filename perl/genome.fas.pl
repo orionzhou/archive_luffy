@@ -54,11 +54,11 @@ runCmd("seq.rename.pl -i raw.fix.fas -p scf -o 11_genome.fas");
 
 -s "ctg.raw.fas" && runCmd("seq.check.pl -i ctg.raw.fas -o ctg.fas");
 
-runCmd("seqlen.pl -i 11_genome.fas -o 15.sizes");
+runCmd("seqlen.py 11_genome.fas 15.sizes");
 runCmd("awk 'BEGIN {FS=\"\\t\"; OFS=\"\\t\"} {print \$1, 0, \$2}' 15.sizes > 15.bed");
 
 runCmd("seqgap.pl -i 11_genome.fas -o 16.gap.bed -m 10");
-runCmd("bedToBigBed 16.gap.bed 15.sizes 16.gap.bb");
+##runCmd("bedToBigBed 16.gap.bed 15.sizes 16.gap.bb");
 runCmd("bgzip -c 16.gap.bed > 16.gap.bed.gz");
 runCmd("tabix -p bed 16.gap.bed.gz");
 

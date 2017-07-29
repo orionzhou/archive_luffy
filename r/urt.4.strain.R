@@ -38,6 +38,8 @@ tt$Parentage = gsub("'", "", tt$Parentage)
 tt$Parentage = gsub("\"", "", tt$Parentage)
 tt$Parentage = gsub("#", "", tt$Parentage)
 
+tt2 = tt[,c('Strain', 'Year', 'Parentage', 'SeedSource', 'GenComp', 'UniqueTraits', 'Trial', 'PreviousTesting')]
+colnames(tt2)[3] = 'Pedigree'
 tt2 = ddply(tt, .(Strain), summarise, i=which(nchar(Parentage)==max(nchar(Parentage)))[1], 
 	Year=Year[i], Pedigree=Parentage[i], SeedSource=SeedSource[i], 
 	GenComp=GenComp[i], UniqueTraits=UniqueTraits[i], Trial=Trial[i], 
@@ -54,17 +56,14 @@ tn = data.frame(Strain=nsts, Year='', Pedigree='', SeedSource='', GenComp='', Un
 
 to = rbind(tt2, tn)
 nrow(to)
-stopifnot(nrow(to) == length(unique(to$Strain)))
+#stopifnot(nrow(to) == length(unique(to$Strain)))
 fo = file.path(dirw, "20.ped.raw.tsv")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
 
 fo = file.path(dirw, "21.tsv")
 write.table(to[,c("Strain", "Pedigree")], fo, sep = "\t", row.names = F, col.names = F, quote = F, na = "")
 
-## ped.dedup.py --cor 22.dedup.tsv.cor 21.tsv 22.dedup.tsv
-## ped.check.py --cor 24.check.tsv.cor 22.dedup.tsv 24.check.tsv
-## ped.rename.py 22.dedup.tsv 24.check.tsv 25.rename.tsv
-## ped.expand.py 25.rename.tsv 26.expand.tsv
+## see apple notes
 
 ### update ped-file
 fi = file.path(dirw, "20.ped.raw.tsv")

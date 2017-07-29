@@ -81,7 +81,7 @@ print "##### stats end   #####\n\n";
 print "\n##### qsub command begins #####\n";
 my $prog;
 if($opt == 1) {
-  $prog = "blat";
+  $prog = "Comp2Blat";
 } elsif($opt == 2) {
   $prog = "blat2";
 } elsif($opt == 3) {
@@ -89,9 +89,11 @@ if($opt == 1) {
 } else {
   die "unknonw opt: $opt\n";
 }
-for my $i (0..$n-1) {
-  my $beg = $i * $ppn;
-  print "qsub $prog -N blat.$tag.$i -v PRE=$dir/part,SUF=fas,BEG=$beg,DIG=$digits,TGT=$tgt\n";# -l qos=weightlessqos\n";
+
+if($n == 1) {
+  print "qsub $prog -N blat.$tag -k 1 -v PRE=$dir/part,SUF=fas,DIG=$digits,TGT=$tgt\n";
+} else {
+  print "qsub $prog -N blat.$tag -k 1-10 -v PRE=$dir/part,SUF=fas,DIG=$digits,TGT=$tgt\n";# -l qos=weightlessqos\n";
 }
 print "##### qsub command ends   #####\n\n";
 

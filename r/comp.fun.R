@@ -346,7 +346,7 @@ qnames_15 = c(
   "HM023", "HM010", "HM022", "HM340", "HM324"
 )
 qnames_alpaca = c("HM056.AC", "HM034.AC", "HM340.AC")
-qnames_alpaca_comp = c("HM056", "HM056.AC", "HM034", "HM034.AC", "HM340", "HM340.AC", "HM101")
+qnames_alpaca_comp = c("HM056", "HM056.PJ", "HM056.AC", "HM034", "HM034.PJ", "HM034.AC", "HM340", "HM340.PJ", "HM340.AC", "HM101")
 qnames_ingroup = qnames_12
 orgs = c(tname, qnames_all)
 cfgs = get_genome_cfgs(orgs)

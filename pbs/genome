@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=24,walltime=10:00:00
+#PBS -l nodes=1:ppn=1,walltime=10:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 #PBS -q small
@@ -16,7 +16,7 @@ export misc3=$data/misc3
 export misc4=$data/misc4
 changegrp.sh
 
-repeatmasker.pl -g HM034.PJ
-repeatmasker.pl -g HM056.PJ
-repeatmasker.pl -g HM340.PJ
-
+module load bowtie2/2.3.1
+genome.db.pl -g HM034.PJ
+genome.db.pl -g HM056.PJ
+genome.db.pl -g HM340.PJ

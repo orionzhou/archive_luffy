@@ -1,7 +1,0 @@
-#PBS -l nodes=1:ppn=16,walltime=23:00:00
-##PBS -l nodes=1:ppn=8,mem=16GB,walltime=48:00:00
-#PBS -m ae
-#PBS -M zhoux379@umn.edu
-#PBS -q sb
-
-pacbio.pl

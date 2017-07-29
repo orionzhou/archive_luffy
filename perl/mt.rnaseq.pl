@@ -8,7 +8,7 @@ use List::Util qw/min max sum/;
 use Common;
 use Bam;
 
-my $dir = "$ENV{'misc2'}/rnaseq/mt";
+my $dir = "$ENV{'misc2'}/rnaseq/acc4";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir $dir\n";
 
@@ -54,7 +54,7 @@ sub read_rnaseq_mapping {
 }
 sub run_tophat {
   -d "22_tophat" || make_path("22_tophat");
-  my $hi = read_fastq_by_org("01.tbl");
+  my $hi = read_fastq_by_org("01.tsv");
   my $hr = read_rnaseq_mapping("21.tbl");
   for my $org (sort(keys(%$hr))) {
     my $orgr = $hr->{$org};
@@ -74,7 +74,7 @@ sub run_tophat {
       push @fns, ($fa, $fb);
     }
     my $str_fn = join(" ", @fns);
-    runCmd("tophat2 --num-threads 16 --mate-inner-dist 0 \\
+    runCmd("tophat2 --num-threads 24 --mate-inner-dist 0 \\
       --min-intron-length 45 --max-intron-length 5000 \\
       --min-segment-intron 45 --max-segment-intron 5000 \\
       -o $dir \$data/db/bowtie2/$org \\

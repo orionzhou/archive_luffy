@@ -38,6 +38,7 @@ use Common;
 use Location;
 use Seq;
 use Gal;
+use Tabix;
 
 my ($fi, $fo) = ('') x 2;
 my ($fr, $fx, $fs) = ('') x 3;

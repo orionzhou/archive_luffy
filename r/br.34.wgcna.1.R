@@ -1,21 +1,10 @@
-require(plyr)
-require(ape)
-require(ggplot2)
-require(WGCNA)
-require(tidyr)
+source("br.fun.R")
 
-options(stringsAsFactors = FALSE)
-
-dirw = '/home/springer/zhoux379/scratch/briggs2'
-diro = file.path(dirw, '52.wgcna')
+dirw = '/home/springer/zhoux379/scratch/briggs2/52.wgcna'
 
 fi = file.path(dirw, "36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 
-#allowWGCNAThreads()
-enableWGCNAThreads()
-
-gts = c("B73", "Mo17", "B73xMo17")
 for (gt in gts) {
 
 tiw = spread(ti[ti$Genotype == gt, -c(3,4)], Tissue, fpkm)
@@ -30,7 +19,7 @@ powers = 1:20
 # Call the network topology analysis function
 sft = pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
 # Plot the results:
-fo = sprintf("%s/01.power.%s.pdf", diro, gt)
+fo = sprintf("%s/01.power.%s.pdf", dirw, gt)
 pdf(fo, width = 9, height = 5)
 #sizeGrWindow(9, 5)
 par(mfrow = c(1,2))
@@ -53,10 +42,9 @@ dev.off()
 ##### run br.34.wgcna.hpc.R using soft threshold on MSI
 
 #####
-fx = file.path(diro, "x.RData")
+fx = file.path(dirw, "09.B73.rda")
 x = load(fx)
 x
-
 
 MEList = moduleEigengenes(datExpr, colors = wg_cols1, excludeGrey = T)
 MEs = MEList$eigengenes
@@ -69,7 +57,7 @@ dev.off()
 MEList = moduleEigengenes(datExpr, colors = wg_cols2, excludeGrey = T)
 MEs = MEList$eigengenes
 MEDiss = 1-abs(cor(MEs))
-pdf(file.path(diro, "11.2.pdf"), width = 5, height = 5)
+pdf(file.path(dirw, "11.2.pdf"), width = 5, height = 5)
 heatmap(MEDiss, Rowv=NA, Colv=NA, symm=TRUE)
 #heatmap(as.matrix(dist(t(MEs),diag=TRUE)), Rowv=NA, Colv=NA, symm=TRUE, scale = "column")
 dev.off()
@@ -91,7 +79,7 @@ tgc2$clu[!tgc2$clu %in% clus] = NA
 
 identical(tgc2$gid, toupper(colnames(datExpr)))
 
-pdf(file.path(diro, "15.pdf"), width = 12, height = 7)
+pdf(file.path(dirw, "15.pdf"), width = 12, height = 7)
 plotDendroAndColors(wg_tree, cbind(wg_cols1, wg_cols2, tgc2$clu),
 c("WGCNA Raw", "WGCNA Merged", "Camoco"),
 dendroLabels = FALSE, hang = 0.03, addGuide = TRUE, guideHang = 0.05)
@@ -101,14 +89,14 @@ MEList = moduleEigengenes(datExpr, colors = tgc2$clu, excludeGrey = T)
 MEs = MEList$eigengenes
 MEDiss = 1-cor(MEs)
 METree = hclust(as.dist(MEDiss), method = "ward.D")
-pdf(file.path(diro, "31.camoco.tree.pdf"), width = 8, height = 5)
+pdf(file.path(dirw, "31.camoco.tree.pdf"), width = 8, height = 5)
 plot(METree, main = "Clustering of Camoco module eigengenes", cex = 0.7,
 xlab = "", sub = "")
 dev.off()
 
 ### 
 MEDiss3 = 1-abs(cor(MEs))
-pdf(file.path(diro, "32.pdf"), width = 8, height = 8)
+pdf(file.path(dirw, "32.pdf"), width = 8, height = 8)
 heatmap(MEDiss, Rowv=NA, Colv=NA, symm=TRUE)
 dev.off()
 

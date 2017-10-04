@@ -8,41 +8,39 @@ require(pheatmap)
 require(DESeq2)
 
 dirw = file.path(Sys.getenv("misc2"), "briggs2")
-dirw = '/home/springer/zhoux379/scratch/briggs2'
+dirw = '/home/springer/zhoux379/scratch/briggs2/43.deseq'
 
 dirg = '/home/springer/zhoux379/data/genome/Zmays_v4'
 f_gtb = file.path(dirg, "51.gtb")
 tg = read.table(f_gtb, sep = "\t", header = T, as.is = T)[,c('id','par','cat2','cat3')]
 
-ft = file.path(dirg, "57.longest.tsv")
-tt = read.table(ft, sep = "\t", header = F, as.is = T)
-tt = tg[tg$id %in% tt$V2,]
-
-fi = file.path(dirw, '00.1.read.correct.tsv')
+fi = file.path(dirw, '../00.1.read.correct.tsv')
 ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:5]
 
-fc1 = file.path(dirw, "32.rc.tsv")
+fc1 = file.path(dirw, "../32.rc.tsv")
 tc1 = read.table(fc1, header = T, sep = "\t", as.is = T)
-fc2 = file.path(dirw, "32.rc.as.tsv")
+fc2 = file.path(dirw, "../32.rc.as.tsv")
 tc2 = read.table(fc2, header = T, sep = "\t", as.is = T)
 rownames(tc1) = tc1$gid
 rownames(tc2) = tc2$gid
 
-fl = file.path(dirw, "39.fpkm.long.tsv")
+fl = file.path(dirw, "../35.long.tsv")
 tl = read.table(fl, sep = "\t", header = T, as.is = T) 
 
 cols = c(brewer.pal(8, 'Dark2'), brewer.pal(9, 'Set1'))
 
-### identify overlap of DE sense and DE antise genes
+### find DE genes
 to = data.frame()
+comps = c("B73 vs Mo17", "B73 vs B73xMo17", "Mo17 vs B73xMo17")
 
 for (tissue in unique(ti$Tissue)) {
-#tissue = 'root_0DAP'
-
-tis = ti[ti$Tissue == tissue & ti$Genotype %in% c("B73", "Mo17"),]
-rownames(tis) <- tis$SampleID
-cnts1 = tc1[,tis$SampleID]
-cnts2 = tc2[,tis$SampleID]
+	#tissue = 'root_0DAP'
+	for (comp in comps) {
+		gts_comp = unlist(strsplit(comp, split = " vs "))
+		tis = ti[ti$Tissue == tissue & ti$Genotype %in% gts_comp,]
+		rownames(tis) <- tis$SampleID
+		cnts1 = tc1[,tis$SampleID]
+		cnts2 = tc2[,tis$SampleID]
 
 ## DE sense
 dds1 = DESeqDataSetFromMatrix(countData = cnts1, colData = tis, design = ~ Genotype)
@@ -62,28 +60,17 @@ is.de1 = ifelse(res1$padj < .05 & res1$log2FoldChange > 1 , "up", ifelse(res1$pa
 cnts1[rownames(cnts1) %in% rownames(res1)[is.de1 == 'up'],][1:20,]
 cnts1[rownames(cnts1) %in% rownames(res1)[is.de1 == 'down'],][1:20,]
 
-## DE anti-sense
-dds2 = DESeqDataSetFromMatrix(countData = cnts2, colData = tis, design = ~ Genotype)
-deseq2 = DESeq(dds2)
-res2 = as.data.frame(results(deseq2, pAdjustMethod = "fdr"))
-is.de2 = ifelse(res2$padj < .05 & res2$log2FoldChange > 1 , "up", ifelse(res2$padj < .05 & res2$log2FoldChange < -1 , "down", 0))
-
-cnts2[rownames(cnts2) %in% rownames(res2)[is.de2 == 'up'],][1:20,]
-cnts2[rownames(cnts2) %in% rownames(res2)[is.de2 == 'down'],][1:20,]
-
-## overlap
-x = data.frame(sense = is.de1, antisense = is.de2, stringsAsFactors = F)
-table(x)
-idxs = which((is.de1 == 'up' & is.de2 == 'down') | (is.de1 == 'down' & is.de2 == 'up'))
-tos = data.frame(gid = tc1$gid[idxs], Tissue = tissue, s.de = is.de1[idxs], a.de = is.de2[idxs], stringsAsFactors = F)
-
-to = rbind(to, tos)
+		idxs = which(is.de1 %in% c('up','down'))
+		tos = data.frame(tissue = tissue, comp = comp, gid = rownames(res1)[idxs], 
+			is.de = is.de1[idxs], stringsAsFactors = F)
+		to = rbind(to, tos)
+	}
 }
 
-
-fo = file.path(dirw, 'stats/99.tsv')
+fo = file.path(dirw, '01.de.tsv')
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
+stopifnot(1>2)
 ## Dominance-over-additive value
 tis = ti[ti$Genotype %in% c("B73", "Mo17"),]
 grp = dplyr::group_by(tis, gid)

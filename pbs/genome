@@ -17,6 +17,9 @@ export misc4=$data/misc4
 changegrp.sh
 
 module load bowtie2/2.3.1
-genome.db.pl -g HM034.PJ
-genome.db.pl -g HM056.PJ
-genome.db.pl -g HM340.PJ
+genome.db.pl -g HM002
+genome.db.pl -g HM005
+genome.db.pl -g HM006
+genome.db.pl -g HM018a
+genome.db.pl -g HM020
+genome.db.pl -g HM026

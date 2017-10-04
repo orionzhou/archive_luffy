@@ -69,14 +69,16 @@ write.table(to[,c("Strain", "Pedigree")], fo, sep = "\t", row.names = F, col.nam
 fi = file.path(dirw, "20.ped.raw.tsv")
 ti = read.table(fi, header = T, sep = "\t", as.is = T, quote = "")
 
-fr = file.path(dirw, "25.rename.tsv")
+fr = file.path(dirw, "27.rename.tsv")
 tr = read.table(fr, header = F, sep = "\t", as.is = T, quote = "")
-stopifnot(ti$Strain %in% tr$V1)
-dicm = tr$V2; names(dicm) = tr$V1
+stopifnot(ti$Strain %in% tr$V3)
+dicm = tr$V1; names(dicm) = tr$V3
+t_alias = ddply(tr, .(V1), summarise, aliases = paste(V3, sep = ","))
+dica = t_alias$aliases; names(dica) = t_alias$V1
 
-fx = file.path(dirw, "26.expand.tsv")
+fx = file.path(dirw, "29.tsv")
 tx = read.table(fx, header = F, sep = "\t", as.is = T, quote = "")
-stopifnot(tr$V2 %in% tx$V1)
+#stopifnot(tr$V1 %in% tx$V1)
 
 ti2 = ti
 ti2$Strain = dicm[ti2$Strain]
@@ -91,7 +93,7 @@ stopifnot(nrow(tx2)==nrow(tx))
 fv = file.path(dirw, "10.tsv")
 tv = read.table(fv, header = T, sep = "\t", as.is = T)
 tv = tv[tv$Strain != "_",]
-stopifnot(tv$Strain %in% tr$V1)
+stopifnot(tv$Strain %in% tr$V3)
 
 tv$Strain = dicm[tv$Strain]
 fo = file.path(dirw, "30.observations.tsv")
@@ -99,7 +101,7 @@ write.table(tv, fo, sep = "\t", row.names = F, col.names = T, quote = F, na = ""
 
 ### make t3-style strain table
 ti = tx2
-colnames(ti)[1:4] = c("Strain", "Pedigree", "Parent1", "Parent2")
+colnames(ti)[1:4] = c("Strain", "Parent1", "Parent2", "Pedigree")
 tx = data.frame(
 	name = ti$Strain, program = "URT", aliases = "", acc = "", 	
 	pedigree = ti$Pedigree, generation = ti$GenComp, species = "G.max", 
@@ -108,16 +110,17 @@ genmap = 1:9
 names(genmap) = sprintf("F%d", 1:9)
 tx$generation[!tx$generation %in% names(genmap)] = 'F1'
 tx$generation = genmap[tx$generation]
+tx$aliases = dica[tx$name]
 
 tx3 = data.frame(LINE_NAME=ti$Strain, 
 	PARENT_1=ti$Parent1, PARENT_2=ti$Parent2,
 	contrib_1=0.5, contrib_2=0.5, selfing_1="FN", selfing_2="FN",
 	pedigree=ti$Pedigree, stringsAsFactors = F)
 colnames(tx3)[8] = "Text pedigree"
-fp = file.path(dirw, "28.allstrains.ped.txt")
+fp = file.path(dirw, "30.allstrains.ped.txt")
 write.table(tx3, fp, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
 
-f25 = sprintf("%s/29.allstrains.xlsx", dirw)
+f25 = sprintf("%s/30.allstrains.xlsx", dirw)
 wb <- createWorkbook()
 sheet1 <- createSheet(wb, "Sheet1")
 rows   <- createRow(sheet1, 1:5)
@@ -177,3 +180,4 @@ for (yr in unique(yrs)) {
 	write.table(t31, f31, sep = "\t", row.names = F, col.names = T, quote = F, append = T, na = "")
 }
 
+# ls *.txt | sed 'p;s/\.txt/\.xls/' | xargs -n2 txt2xls.py

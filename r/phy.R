@@ -1,6 +1,6 @@
 require(ape)
 
-f_ann = file.path(DIR_Data, "misc3/hapmap/31_phylogeny/mt_label.tbl")
+f_ann = "/home/youngn/zhoux379/data/misc3/hapmap/31_phylogeny/mt_label.tbl"
 ann = read.table(f_ann, sep="\t", header=TRUE, stringsAsFactors=FALSE, quote="")
 
 plot_mt_tree_2 <- function(fi, fo, ann, opt) {
@@ -465,6 +465,47 @@ rect(0.1, 25, 0.113, 25.6, col = 'red', border = NA)
 rect(0.1, 24, 0.113, 24.6, col = 'forestgreen', border = NA)
 text(0.12, 25.3, labels = "ALLPATHS-LG", cex = 0.7, adj = c(0, 0.5))
 text(0.12, 24.3, labels = "RNA-Seq", cex = 0.7, adj = c(0, 0.5))
+dev.off()
+
+### hapmap-denovo
+dirw = file.path(DIR_Data, "misc1/phy.mt/hapmapdenovo")
+fi = file.path(dirw, "31.nwk")
+fo = file.path(dirw, "32.1.pdf")
+tree = read.tree(fi)
+
+grouph = c("HM101")
+groupo = c("HM340")
+
+labs = tree$tip.label
+
+font = rep(1, length(labs))
+font[which(labs %in% c(grouph, groupo))] = 4
+tip.color = rep('black', length(labs))
+tip.color[which(labs %in% grouph)] = 'dodgerblue'
+tip.color[which(labs %in% groupo)] = 'forestgreen'
+
+df1 = data.frame(idx = 1:length(labs), id = labs)
+df2 = merge(df1, ann, by = "id", all.x = T)
+df3 = df2[order(df2$idx), ]
+notes = as.character(df3$country)
+notes[is.na(notes)] = ""
+#notes = sprintf(paste("%-", max(nchar(notes)), "s", sep = ''), notes)
+
+scores = as.numeric(tree$node.label)
+if(mean(scores, na.rm = TRUE) > 1) { scores = scores / 1000 }
+node.labels.bg = rep('white', tree$Nnode)
+node.labels.bg[scores >= 0.95] = 'black'
+node.labels.bg[scores >= 0.8 & scores < 0.95] = 'gray'
+
+tree$tip.label = paste(labs, notes, sep = "   ")
+tree$tip.label = rep('', length(labs))
+#tree = root(tree, 4)
+pdf(file = fo, width = 5, height = 6, bg = 'transparent')
+plot(tree, show.node.label = F, show.tip.label = T, font = font, x.lim = 0.6,
+  tip.color = tip.color, label.offset = 0.005, no.margin = T, cex = 0.9)
+nodelabels(pch = 22, bg = node.labels.bg)
+#par(family = "Courier New")
+add.scale.bar(x = 0, y = 16, lcol = 'black')
 dev.off()
 
 ### compare sv phylogeny with chr5 phylogeny

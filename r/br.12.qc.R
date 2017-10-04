@@ -314,7 +314,7 @@ ti = read.table(fi, sep = "\t", header = T, as.is = T)
 grp = dplyr::group_by(ti, gid, Genotype)
 ti2 = dplyr::summarise(grp, nexp = sum(fpkm>=1))
 ti3 = spread(ti2, Genotype, nexp)
-gids = ti3$gid[ti3$B73 >= 1 | ti3$Mo17 >= 1]
+gids = ti3$gid[ti3$B73 >= 1 & ti3$Mo17 >= 1]
 
 to = ti[ti$gid %in% gids,]
 fo = file.path(dirw, '36.long.filtered.tsv')

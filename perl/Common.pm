@@ -117,6 +117,7 @@ sub parse_gff_tags {
   my @tagAry = split(";", $str);
   my $h;
   for (@tagAry) {
+    next if $_ eq '';
     my ($tag, $value) = split "=";
     die $str if $value eq "";
     $value =~ s/\=/\:/g;

@@ -13,7 +13,7 @@ geno_map = c(
 	"B73xMo17" = "BxM",
 	"Mo17xB73" = "MxB"
 )
-t05 = cbind(t01, sid = sprintf("br%03d_%s_%s_%d", t01$Sample, t01$Tissue, geno_map[t01$Genotype], t01$Replicate))
+t05 = cbind(t01, sid = sprintf("%s_%s_%s_%d", t01$SampleID, t01$Tissue, geno_map[t01$Genotype], t01$Treatment))
 
 fo = file.path(dirw, "05.sampleid.tsv")
 write.table(t05[,c(1,6)], fo, sep = "\t", row.names = F, col.names = F, quote = F)
@@ -116,4 +116,34 @@ ddply(tr, .(pool), summarise, nidx = length(unique(idxname)))
 tr = tr[match(tr$Sample, t01$Sample),]
 fo = file.path(dirw, "39.pool.tsv")
 write.table(tr[,-c(2:5)], fo, sep = "\t", row.names = F, col.names = F, quote = F)
+
+### multiplex for additional 54 samples
+seta = c(2,4:7,12:16,18,19)
+setb = c(1,3,8:11,20:23,25,27)
+namesa = sprintf("SetA_Index%02d", seta)
+namesb = sprintf("SetB_Index%02d", setb)
+idxnames = c(rbind(namesa, namesb))
+
+poolmap = c(
+	"coleoptile_tip" = 10,
+	"radicle_root" = 10,
+	"embryo_imbibedseed" = 11,
+	"seedlingleaf_11DAS" = 11,
+	"seedlingroot_11DAS" = 12,
+	"seedlingmeristem_11DAS" = 12
+)
+tr = cbind(t01[t01$SampleID > "BR165",], pool = NA, idxname = NA)
+for (tissue in unique(tr$Tissue)) {
+	stopifnot(tissue %in% names(poolmap))
+	idxs = which(tr$Tissue == tissue)
+	tr$pool[idxs] = sprintf("Pool%d", poolmap[tissue])
+}
+for (pool in unique(tr$pool)) {
+	idxs = which(tr$pool == pool)
+	tr$idxname[idxs] = idxnames[1:length(idxs)]
+}
+ddply(tr, .(pool), summarise, nidx = length(unique(idxname)))
+fo = file.path(dirw, "39.pool2.tsv")
+write.table(tr, fo, sep = "\t", row.names = F, col.names = F, quote = F)
+
 

@@ -88,7 +88,7 @@ sub get_sample_ids {
   my @sams;
   while(<$fhi>) {
     chomp;
-    while(/(HM[\d\-\_]+)/ig) {
+    while(/(HM[\d\-\_I]+)/ig) {
       my $sam = $1;
       $sam = $hm->{$sam} if exists $hm->{$sam};
       push @sams, $sam;

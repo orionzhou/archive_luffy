@@ -1,14 +1,6 @@
-require(plyr)
-require(ape)
-require(dplyr)
-require(tidyr)
-require(ggplot2)
+source("br.fun.R")
 
-options(stringsAsFactors = FALSE)
-
-dirw = file.path(Sys.getenv("misc2"), "grn23", "51.camoco")
-dirw = '/home/springer/zhoux379/scratch/briggs2'
-diro = file.path(dirw, '51.camoco')
+dirw = '/home/springer/zhoux379/scratch/briggs2/51.camoco'
 
 dirg = file.path(Sys.getenv("genome"), "Zmays_v4")
 fg = file.path(dirg, "51.gtb")
@@ -16,7 +8,7 @@ tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,16:18)]
 gb = group_by(tg, par)
 tg2 = summarise(gb, fam = names(sort(table(cat3), decreasing = T))[1])
 
-fi = file.path(dirw, "36.long.filtered.tsv")
+fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 
 ### run camoco on a lab workstation
@@ -36,14 +28,10 @@ x.clusters.to_csv(fo)
 fo = file.path(diro, 'coex.csv')
 x.coex.score.to_csv(fo, index = False, float_format='%g')
 
-### run grn.4.hpc.R
-
 #####
 fx = file.path(dirw, "camoco.rda")
 x = load(fx)
 x
-
-
 
 ### obtain camoco PCC from scratch
 gts = c("B73", "Mo17", "B73xMo17")
@@ -55,6 +43,11 @@ colnames(expr) = tiw[,1]
 
 pcc.matrix = cor(asinh(expr), method = 'pearson')
 pcc = pcc.matrix[lower.tri(pcc.matrix)]
+
+ii = which(lower.tri(pcc.matrix))
+colidx = as.integer((ii - 1) / nrow(pcc.matrix)) + 1
+rowidx = ii - (colidx - 1) * nrow(pcc.matrix)
+
 pcc[pcc == 1] = 0.9999
 pcc[pcc == -1] = -0.9999
 #pcc2 = log((1+pcc) / (1-pcc)) / 2
@@ -62,14 +55,22 @@ pcc2 = atanh(pcc)
 pcc3 = (pcc2 - mean(pcc2)) / sd(pcc2)
 head(pcc3)
 
+sigidx = which(pcc3 >= 3)
+dg = data.frame(i = rowidx[sigidx], j = colidx[sigidx], pccz = pcc3[sigidx])
+fg = sprintf("%s/12.sig.%s.tsv", diro, gt)
+write.table(dg, fg, sep = "\t", row.names = F, col.names = F, quote = F)
+cmd = sprintf("mcl %s --abc -scheme 7 -I 2.0 -o %s/13.%s.mcl", fg, diro, gt)
+system(cmd)
+
 ng = nrow(tiw)
 coex <- matrix(rep(0, ng*ng), nrow=ng)
 coex[lower.tri(coex)] = pcc3
 coex = t(coex)
 coex[lower.tri(coex)] = pcc3
-fo = sprintf("%s/11.coex.%s.rda", diro, gt)
+fo = sprintf("%s/11.coex.%s.rda", dirw, gt)
 save(coex, file = fo)
 }
+
 
 ### look at B&M expression correlation v.s. connectivity correlation => re-wiring
 gts = c("B73", "Mo17", "B73xMo17")

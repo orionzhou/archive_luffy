@@ -3,3 +3,5 @@ if [ ! $HOMEBASHRCSOURCED ]; then
     . ~/.bashrc
 fi
 
+
+export PATH="$HOME/.cargo/bin:$PATH"

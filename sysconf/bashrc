@@ -171,9 +171,15 @@ export ZOE=$soft/snap
 # Mugsy
 export MUGSY_INSTALL=$soft/mugsy
 
+# Cairo
+export CAIRO_LIBS="-L$soft/cairo/lib -lcairo"
+export CAIRO_CFLAGS=-I$soft/cairo/include/cairo
+
 # OPAM configuration
 #. /home/youngn/zhoux379/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 # misc
 #unset prefix
 
+
+export PATH="$HOME/.cargo/bin:$PATH"

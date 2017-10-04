@@ -16,7 +16,7 @@ enableWGCNAThreads()
 allowWGCNAThreads()
 
 gts = c("B73", "Mo17", "B73xMo17")
-softPowers = c(B73=8, Mo17=7, B73xMo17=10)
+softPowers = c(B73=8, Mo17=8, B73xMo17=10)
 
 for (gt in gts) {
 tiw = spread(ti[ti$Genotype == gt, -c(3,4)], Tissue, fpkm)
@@ -26,10 +26,10 @@ colnames(datExpr) = tiw[,1]
 
 ### hclust and cut tree into modules
 softPower = as.numeric(softPowers[gt])
-adjacency = adjacency(datExpr, power = softPower)
+adjacency = adjacency(datExpr, power = softPower, type = "unsigned", corFnc = "cor")
 dim(adjacency)
 
-TOM = TOMsimilarity(adjacency)
+TOM = TOMsimilarity(adjacency, TOMType = "unsigned")
 dissTOM = 1-TOM
 geneTree = hclust(as.dist(dissTOM), method = "average")
 
@@ -109,5 +109,7 @@ wg_clus2 = moduleLabels; wg_cols2 = mergedColors
 wg_tree = geneTree
 
 fo = sprintf("%s/09.%s.rda", diro, gt)
-save(wg_tree, wg_clus1, wg_cols1, wg_clus2, wg_cols2, TOM, file = fo)
+tm = data.frame(gid = tiw[,1], clu1 = wg_clus1, col1 = wg_cols1, clu2 = wg_clus2, col2 = wg_cols2, stringsAsFactors = F)
+
+save(TOM, wg_tree, tm, file = fo)
 }

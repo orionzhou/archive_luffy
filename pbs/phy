@@ -7,4 +7,4 @@
 #phyml.py 55.aln 56
 
 module load bioperl
-phy.mt.pl -t pan16
+phy.mt.pl -t hapmapdenovo

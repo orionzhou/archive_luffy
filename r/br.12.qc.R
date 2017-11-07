@@ -7,15 +7,63 @@ require(RColorBrewer)
 require(GenomicRanges)
 
 dirg = file.path(Sys.getenv("genome"), "Zmays_v4")
-dirw = '/home/springer/zhoux379/scratch/briggs2'
+dirw = '/home/springer/zhoux379/scratch/briggs'
+dirw = file.path(Sys.getenv("misc2"), "briggs")
 diro = file.path(dirw, "41.qc")
 
 fm = file.path(dirw, "00.1.read.correct.tsv")
-tm = read.table(fm, sep = "\t", header = T, as.is = T)
-fg = file.path(dirg, "51.gtb")
-tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,16:18)]
-gb = group_by(tg, par)
-tg2 = summarise(gb, fam = names(sort(table(cat3), decreasing = T))[1])
+tm = read.table(fm, sep = "\t", header = T, as.is = T)[,1:5]
+
+### look at btw-replicate correlation
+#fi = file.path(dirw, '33.fpm.tsv')
+fi = file.path(dirw, '34.fpkm.tsv')
+ti = read.table(fi, header = T, sep = "\t", as.is = T)
+
+e1 = ti[,-1]
+stopifnot(identical(tm$SampleID, colnames(e1)))
+#colnames(e1) = sprintf("%s_%s_%s_%d", tm$Sample, tm$Tissue, tm$Genotype, tm$Treatment)
+dim(e1)
+
+n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
+e = e1[n_noexp < 50,]
+dim(e)
+
+tm2 = unique(tm[,c("Tissue", "Genotype")])
+to = data.frame()
+for (i in 1:nrow(tm2)) {
+	tiss = tm2$Tissue[i]
+	geno = tm2$Genotype[i]
+	sids = tm$SampleID[tm$Tissue == tiss & tm$Genotype == geno]
+	stopifnot(length(sids) == 3)
+	sid_pairs = combn(sids, m = 2)
+	tc = data.frame(t(sid_pairs), stringsAsFactors = F)
+	colnames(tc) = c('sid1', 'sid2')
+	pccs = c()
+	for (j in 1:nrow(tc)) {
+		pcc = cor(e[,tc$sid1[j]], e[,tc$sid2[j]], method = 'spearman')
+		pccs = c(pccs, pcc)
+	}
+	tc = cbind(tissue = tiss, genotype = geno, tc, pcc = pccs)
+	to = rbind(to, tc)
+}
+tp = cbind(to, x = sprintf("%s:%s", to$tissue, to$genotype))
+tp$x = factor(tp$x, levels = unique(tp$x))
+
+p1 = ggplot(tp) +
+  geom_point(aes(x = pcc, y = x), shape = 4) +
+  scale_x_continuous(name = 'Spearman Correlation of FPKM btw. Replicates', limits = c(0.5, 1)) +
+  #scale_y_continuous() +
+  #scale_color_manual(name = "", values = cols) +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  #theme(legend.position = c(0.4, 0.8), legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0, hjust = 1)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
+fp = sprintf("%s/06.fpkm.cor.s.pdf", diro)
+ggsave(p1, filename = fp, width = 6, height = 8)
 
 ### hclust
 fi = file.path(dirw, '33.fpm.tsv')
@@ -74,6 +122,8 @@ pca <- prcomp(e, center = F, scale. = F)
 x = pca['rotation'][[1]]
 y = summary(pca)$importance
 y[,1:5]
+xlab = sprintf("PC1 (%.01f%%)", y[2,1]*100)
+ylab = sprintf("PC2 (%.01f%%)", y[2,2]*100)
 tp = cbind.data.frame(SampleID = rownames(x), x[,1:5], stringsAsFactors = F)
 tp2 = merge(tp, tm[,c(1,3:5)], by = 'SampleID')
 tp2$Tissue = factor(tp2$Tissue, levels = unique(tp2$Tissue))
@@ -83,8 +133,8 @@ cols = c(brewer.pal(8, 'Dark2'), brewer.pal(9, 'Set1'))
 
 p1 = ggplot(tp2) +
   geom_point(aes(x = PC1, y = PC2, shape = Genotype, color = Tissue)) +
-  scale_x_continuous(name = 'PC1 (94.8%)') +
-  scale_y_continuous(name = 'PC2 (1.9%)') +
+  scale_x_continuous(name = xlab) +
+  scale_y_continuous(name = ylab) +
   scale_color_manual(name = "", values = cols) +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +
@@ -97,12 +147,65 @@ p1 = ggplot(tp2) +
 fp = sprintf("%s/01.sample.pca.pdf", diro)
 ggsave(p1, filename = fp, width = 8, height = 7)
 
+
+### LDA
+require(MASS)
+
+tissue_map = tm$Tissue; names(tissue_map) = tm$SampleID
+geno_map = tm$Genotype; names(geno_map) = tm$SampleID
+
+e1 = ti[,-1]
+n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
+idxs = which(n_noexp < 30)
+length(idxs)
+
+tl = asinh(t(ti[idxs,-1]))
+colnames(tl) = ti$gid[idxs]
+tl = data.frame(Tissue = tissue_map[rownames(tl)], Genotype = geno_map[rownames(tl)], tl, stringsAsFactors = F)
+tl[1:5,1:5]
+
+r <- lda(formula = Tissue ~ ., data = tl[,-2])#, prior = c(1,1,1)/3)
+r$svd^2/sum(r$svd^2)
+
+r$prior
+r$counts
+#r$means
+#r$scaling
+prop.lda = r$svd^2/sum(r$svd^2)
+prop.lda
+
+plda <- predict(object = r, newdata = tl)
+tp = data.frame(Tissue = tl$Tissue, Genotype = tl$Genotype, lda = plda$x)
+tp$Tissue = factor(tp$Tissue, levels = unique(tp$Tissue))
+tp$Genotype = factor(tp$Genotype, levels = unique(tp$Genotype))
+
+xlab = sprintf("LD1 (%.01f%%)", prop.lda[1]*100)
+ylab = sprintf("LD2 (%.01f%%)", prop.lda[2]*100)
+cols = c(brewer.pal(8, 'Dark2'), brewer.pal(9, 'Set1'))
+
+p1 <- ggplot(tp) + 
+  geom_point(aes(x = lda.LD1, y = lda.LD3, shape = Genotype, color = Tissue)) +
+  scale_x_continuous(name = xlab) +
+  scale_y_continuous(name = ylab) +
+  scale_color_manual(name = "", values = cols) +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.3,0.1,0.1,0.1), "lines")) +
+  theme(legend.position = 'right', legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0, hjust = 1))
+fp = sprintf("%s/01.sample.lda.pdf", diro)
+ggsave(p1, filename = fp, width = 8, height = 7)
+
+
 ### FPM distribution
 fr = file.path(dirw, "33.fpm.tsv")
 tr = read.table(fr, sep = "\t", header = T, as.is = T)
 #trl = reshape(tr, direction = 'long', varying = list(2:ncol(tr)), idvar = c("gid"), timevar = "sid", v.names = 'fpm', times = colnames(tr)[2:ncol(tr)])
-trl = gather(tr, SampleID, fpm, -gid)
-trl2 = merge(trl, tm[,c(1,3:5)], by = 'SampleID')
+trl = gather(tr, sid, fpm, -gid)
+trl2 = merge(trl, tm[,c(1,3:5)], by.x = 'sid', by.y = 'SampleID')
 grp = dplyr::group_by(trl2, gid, Tissue, Genotype)
 trl3 = dplyr::summarise(grp, fpm = mean(fpm))
 trl4 = cbind(trl3, sid = sprintf("%s-%s", trl3$Tissue, trl3$Genotype))
@@ -156,6 +259,12 @@ p1 = ggplot(yl) +
   theme(axis.text.y = element_text(size = 8, color = "black", angle = 0, hjust = 1))
 fp = sprintf("%s/11.fpm.top50.pdf", diro)
 ggsave(p1, filename = fp, width = 6, height = 12)
+
+## get top10 expressed genes w. functions
+fg = file.path(dirg, "51.gtb")
+tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,16:18)]
+gb = group_by(tg, par)
+tg2 = summarise(gb, fam = names(sort(table(cat3), decreasing = T))[1])
 
 z = ddply(trl, .(sid), myfun <- function(x) {
 	x1 = x[order(x[,'fpm'], decreasing = T),][1:10,]
@@ -274,7 +383,7 @@ fp = sprintf("%s/12.rpkm.pdf", diro)
 ggsave(p1, filename = fp, width = 6, height = 9)
 
 ### Averaging replicates & compute FPKM
-trl2 = merge(trl, tm[, c("SampleID", "Tissue", "Genotype")], by = 'SampleID')
+trl2 = merge(trl, tm[, c("SampleID", "Tissue", "Genotype")], by.x = 'sid', by.y = 'SampleID')
 grp = group_by(trl2, gid, Tissue, Genotype)
 trl3 = as.data.frame(summarise(grp, fpm = mean(fpm)))
 #trw = reshape(trl3, direction = 'wide', timevar = c('Tissue'), idvar = c('gid'))
@@ -315,6 +424,7 @@ grp = dplyr::group_by(ti, gid, Genotype)
 ti2 = dplyr::summarise(grp, nexp = sum(fpkm>=1))
 ti3 = spread(ti2, Genotype, nexp)
 gids = ti3$gid[ti3$B73 >= 1 & ti3$Mo17 >= 1]
+length(gids)
 
 to = ti[ti$gid %in% gids,]
 fo = file.path(dirw, '36.long.filtered.tsv')

@@ -1,8 +1,8 @@
 require(dplyr)
 require(GenomicRanges)
 
+dirw = '/home/springer/zhoux379/scratch/briggs'
 dirw = file.path(Sys.getenv("misc2"), "briggs")
-dirw = '/home/springer/zhoux379/scratch/briggs2'
 
 fi = file.path(dirw, '00.1.read.correct.tsv')
 ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:5]

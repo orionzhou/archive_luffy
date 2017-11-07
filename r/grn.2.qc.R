@@ -289,4 +289,96 @@ dim(to3)
 fo = file.path(dirw, '37.rpkm.filtered.tsv')
 write.table(to3, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
+### PCA
+fi = file.path(dirw, '36.rpm.filtered.tsv')
+fi = file.path(dirw, '37.rpkm.filtered.tsv')
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
 
+e1 = ti[,-1]
+
+n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
+n_exp = apply(e1, 1, myfunc <- function(x) sum(x>=1))
+
+e = asinh(e1[n_noexp < 10,])
+pca <- prcomp(e, center = F, scale. = F)
+x = pca['rotation'][[1]]
+y = summary(pca)$importance
+y[,1:5]
+tp = cbind.data.frame(SampleID = rownames(x), x[,1:5], stringsAsFactors = F)
+
+p1 = ggplot(tp) +
+  geom_point(aes(x = PC1, y = PC2)) +
+  geom_text(aes(x = PC1, y = PC2, label = SampleID), nudge_y = 0.01) +
+  scale_x_continuous(name = 'PC1') +
+  scale_y_continuous(name = 'PC2') +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  theme(legend.position = 'right', legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0, hjust = 1))
+fp = sprintf("%s/01.sample.pca.pdf", diro)
+ggsave(p1, filename = fp, width = 7, height = 7)
+
+### LDA
+require(MASS)
+
+fm = file.path(dirw, "00.0.srr.tsv")
+tm = read.table(fm, sep = "\t", header = T, as.is = T)
+fr = file.path(dirw, "33.rpm.tsv")
+tr = read.table(fr, sep = "\t", header = T, as.is = T)
+tissue_map = tm$Tissue; names(tissue_map) = tm$SampleID
+
+e1 = tr[,-1]
+n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
+idxs = which(n_noexp < 10)
+length(idxs)
+
+e = asinh(e1[n_noexp < 10,])
+pca <- prcomp(e, center = F, scale. = F)
+
+prop.pca = pca$sdev^2/sum(pca$sdev^2)
+prop.pca[1:5]
+
+pca.x = pca['rotation'][[1]]
+y = summary(pca)$importance
+y[,1:5]
+tp = cbind.data.frame(tissue = tissue_map[rownames(x)], 
+	pca.x = x[,1], pca.y = x[,2], stringsAsFactors = F)
+
+p2 <- ggplot(tp) + geom_point(aes(pca.x, pca.y, colour = tissue), size = 2) +
+  labs(x = paste("PC1 (", prop.pca[1]*100, ")", sep=""),
+       y = paste("PC2 (", prop.pca[2]*100, ")", sep=""))
+fp = sprintf("%s/01.sample.pca.pdf", diro)
+ggsave(p2, filename = fp, width = 10, height = 7)
+
+
+tl = asinh(t(tr[idxs,-1]))
+colnames(tl) = tr$gid[idxs]
+tl = data.frame(SampleID = rownames(tl), tl, stringsAsFactors = F)
+tl2 = merge(tm[,c('SampleID', 'Tissue')], tl, by = 'SampleID')
+tl2[1:5,1:5]
+tl3 = tl2[,-1]
+
+
+r <- lda(formula = Tissue ~ ., data = tl3)#, prior = c(1,1,1)/3)
+r$svd^2/sum(r$svd^2)
+
+r$prior
+r$counts
+#r$means
+#r$scaling
+prop.lda = r$svd^2/sum(r$svd^2)
+prop.lda
+
+plda <- predict(object = r, newdata = tl3)
+dataset = data.frame(tissue = tl3$Tissue, lda = plda$x)
+                     
+p1 <- ggplot(dataset) + 
+	geom_point(aes(lda.LD1, lda.LD2, colour = tissue), size = 2) + 
+  	labs(x = paste("LD1 (", prop.lda[1]*100, ")", sep=""),
+       y = paste("LD2 (", prop.lda[2]*100, ")", sep=""))
+fp = sprintf("%s/01.sample.lda.pdf", diro)
+ggsave(p1, filename = fp, width = 10, height = 7)

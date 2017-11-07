@@ -1,6 +1,7 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/scratch/briggs2/61.corncyc'
+dirw = file.path(Sys.getenv("misc2"), "briggs", "61.corncyc")
+#dirw = "/home/springer/zhoux379/scratch/briggs/61.corncyc"
 
 fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
@@ -74,7 +75,7 @@ lapply(multiExpr, lapply, dim)
 
 colorList = list('1' = tc$pid, "2" = tc$pid, "3" = tc$pid)
 
-mp = modulePreservation(multiExpr, colorList, networkType = 'unsigned', corFnc = "bicor",
+mp = modulePreservation(multiExpr, colorList, networkType = 'signed', corFnc = "cor",
 	referenceNetworks = 1, parallelCalculation = TRUE, 
 	loadPermutedStatistics = FALSE, nPermutations = 200, verbose = 3)
 fo = sprintf("%s/30.mp.rda", dirw)

@@ -52,7 +52,7 @@ if [[ -d $soft ]]; then
   for subpath in zlib bzip2 xz pcre curl \
     gcc boost libsequence \
     samtools htslib bamtools bedtools2 vcftools bcftools bedops bwa \
-    hdf bowtie2 ncbi blast bwtool\
+    hdf bowtie2 ncbi blast bwtool \
     clustalw clustalo paml4.8 \
     parallel blast CAP3 cmake cufflinks mcl \
     augustus maker ocaml opam graphviz \
@@ -73,9 +73,10 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan mummer sra-tools \
-    bwa hisat2 lastz snap trimal phyml paramugsy blasr pal2nal pigz
+    bwa hisat2 lastz snap trimal phyml paramugsy blasr pal2nal pigz trinity \
+    stack
   do
-    if [[ -d $soft/$subpath ]]; then
+    if [ -d $soft/$subpath ] || [ -h $soft/$subpath ]; then
       export PATH=$soft/$subpath:$PATH
     fi
   done
@@ -175,11 +176,14 @@ export MUGSY_INSTALL=$soft/mugsy
 export CAIRO_LIBS="-L$soft/cairo/lib -lcairo"
 export CAIRO_CFLAGS=-I$soft/cairo/include/cairo
 
-# OPAM configuration
-#. /home/youngn/zhoux379/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true
+# Trinity
+export TRINITY_HOME=$soft/trinity
+
+# pandoc
+export PATH=~/.local/bin:$PATH
 
 # misc
 #unset prefix
 
-
+export JAVA_TOOL_OPTIONS=-Xss1280k
 export PATH="$HOME/.cargo/bin:$PATH"

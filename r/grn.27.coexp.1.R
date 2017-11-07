@@ -1,9 +1,12 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/data/misc2/grn23/47.coexp.test'
+#dirw = file.path(Sys.getenv("misc2"), "grn23", "47.coexp.test")
+dirw = file.path(Sys.getenv("misc2"), "briggs", "47.coexp.test")
 
-fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+#fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
+ti = spread(ti[ti$Genotype == "B73", c(1,2,5)], Tissue, fpkm)
 
 expr = t(as.matrix(ti[,-1]))
 colnames(expr) = ti[,1]
@@ -11,15 +14,15 @@ gids = ti[,1]
 ng = length(gids)
 
 
-opt = 2
+opt = 3
 ## camoco
 if (opt == 1) {
 
 pcc.matrix = cor(asinh(expr), method = 'pearson')
 pcc = pcc.matrix[lower.tri(pcc.matrix)]
 
-pcc[pcc == 1] = 0.9999
-pcc[pcc == -1] = -0.9999
+pcc[pcc == 1] = 0.999999
+pcc[pcc == -1] = -0.999999
 #pcc2 = log((1+pcc) / (1-pcc)) / 2
 pcc2 = atanh(pcc)
 coexv = (pcc2 - mean(pcc2)) / sd(pcc2)
@@ -40,7 +43,7 @@ dev.off()
 }
 
 ## clusterOne
-opt = 2
+opt = 3
 if (opt == 2) {
 
 pcc.matrix = cor(asinh(expr), method = 'pearson')
@@ -77,6 +80,7 @@ dev.off()
 }
 
 ## WGCNA
+opt = 3
 if (opt == 30) {
 
 powers = c(c(1:10), seq(from = 12, to=20, by=2))
@@ -99,13 +103,12 @@ dev.off()
 
 }
 
-opt = 3
 if (opt == 3) {
 
 enableWGCNAThreads()
 allowWGCNAThreads()
 
-softPower = 10
+softPower = 8#10
 adjacency = adjacency(expr, power = softPower, type = "signed", corFnc = "cor")
 dim(adjacency)
 

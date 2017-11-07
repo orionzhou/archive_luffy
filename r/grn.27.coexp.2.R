@@ -1,14 +1,18 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/data/misc2/grn23/47.coexp.test'
+#dirw = file.path(Sys.getenv("misc2"), "grn23", "47.coexp.test")
+dirw = file.path(Sys.getenv("misc2"), "briggs", "47.coexp.test")
 
-fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+#fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
+ti = spread(ti[ti$Genotype == "B73", c(1,2,5)], Tissue, fpkm)
 
 expr = t(as.matrix(ti[,-1]))
 colnames(expr) = ti[,1]
 gids = ti[,1]
 ng = length(gids)
+
 
 
 fc = file.path(dirw, "params.tsv")
@@ -22,7 +26,7 @@ rowidx = ii - (colidx - 1) * ng
 
 for (i in 1:nrow(tce)) {
 	coex_opt = tce$coex_opt[i]; n_edges = tce$n_edges[i]	
-	net = sprintf("%s_%dk", coex_opt, n_edges/1000)
+	net = sprintf("%s_%dM", coex_opt, n_edges)
 
 	fd = sprintf("%s/01.edgeweight/%s.rda", dirw, coex_opt)
 	if(i %in% c(1, 3, 5)) {
@@ -33,22 +37,21 @@ for (i in 1:nrow(tce)) {
 			ord = order(-coexv)
 		}
 	}
-	idxs = ord[1:n_edges]
+	idxs = ord[1:(n_edges*1000000)]
 	dw = data.frame(g1 = gids[rowidx[idxs]], g2 = gids[colidx[idxs]], coex = coexv[idxs])
 	#length(unique(c(dw$g1, dw$g2)))
 	if(coex_opt == 'R') {
 		dw$coex = exp((-(dw$coex-1)/25))
 	}
 	
-	fo = sprintf("%s/05.modules/%s.tsv", dirw, net)
+	fo = sprintf("%s/02.edges/%s.tsv", dirw, net)
 	write.table(dw, fo, sep = "\t", row.names = F, col.names = F, quote = F)
-	cat(sprintf("%s: %d modules with %d genes\n", net, length(unique(tm$V1)), nrow(tm)))
 }
 
 to = data.frame()
 for (i in 1:nrow(tce)) {
 	coex_opt = tce$coex_opt[i]; n_edges = tce$n_edges[i]	
-	net = sprintf("%s_%dk", coex_opt, n_edges/1000)
+	net = sprintf("%s_%dM", coex_opt, n_edges)
 
 	fd = sprintf("%s/02.edges/%s.tsv", dirw, net)
 	td = read.table(fd, header = F, as.is = T, sep = "\t")

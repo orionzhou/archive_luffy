@@ -69,6 +69,11 @@ write.table(to[,c("Strain", "Pedigree")], fo, sep = "\t", row.names = F, col.nam
 fi = file.path(dirw, "20.ped.raw.tsv")
 ti = read.table(fi, header = T, sep = "\t", as.is = T, quote = "")
 
+f_fullped = file.path(dirw, "28.dedup.tsv")
+t_fullped = read.table(f_fullped, header = F, sep = "\t", as.is = T, quote = "")[,1:2]
+t_fullped = t_fullped[t_fullped$V2 != '',]
+colnames(t_fullped) = c('sid', 'FullPed')
+
 fr = file.path(dirw, "27.rename.tsv")
 tr = read.table(fr, header = F, sep = "\t", as.is = T, quote = "")
 stopifnot(ti$Strain %in% tr$V3)
@@ -117,6 +122,7 @@ tx3 = data.frame(LINE_NAME=ti$Strain,
 	contrib_1=0.5, contrib_2=0.5, selfing_1="FN", selfing_2="FN",
 	pedigree=ti$Pedigree, stringsAsFactors = F)
 colnames(tx3)[8] = "Text pedigree"
+tx4 = merge(tx3, t_fullped, by.x = 'LINE_NAME', by.y = 'sid', all.x = T)
 fp = file.path(dirw, "30.allstrains.ped.txt")
 write.table(tx3, fp, sep = "\t", row.names = F, col.names = T, quote = F, na = "")
 

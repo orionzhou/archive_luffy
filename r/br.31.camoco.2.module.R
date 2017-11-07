@@ -1,6 +1,7 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/scratch/briggs2/51.camoco'
+dirw = file.path(Sys.getenv("misc2"), "briggs", "51.camoco")
+#dirw = "/home/springer/zhoux379/scratch/briggs/51.camoco"
 
 fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
@@ -123,3 +124,5 @@ mergedMEs = merge$newMEs;
 dev.off()
 
 h = moduleMergeUsingKME(datExprb[,tg$id], tg$grp)
+
+

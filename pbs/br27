@@ -4,6 +4,8 @@
 #PBS -q ram256g
 
 cd $code/r
-Rscript --no-init-file --no-restore br.27.coexp.test.R
+Rscript --no-init-file --no-restore br.27.coexp.2.R
+Rscript --no-init-file --no-restore br.27.coexp.3.R
+#Rscript --no-init-file --no-restore br.27.coexp.test.R
 
 

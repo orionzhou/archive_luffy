@@ -1,16 +1,9 @@
-require(plyr)
-require(ape)
-require(dplyr)
-require(tidyr)
-require(ggplot2)
+source("br.fun.R")
 
-options(stringsAsFactors = FALSE)
+dirw = file.path(Sys.getenv("misc2"), "briggs", "48.permut")
+dirw = "/home/springer/zhoux379/scratch/briggs/48.permut"
 
-dirw = file.path(Sys.getenv("misc2"), "grn23", "51.camoco")
-dirw = '/home/springer/zhoux379/scratch/briggs2'
-diro = file.path(dirw, '51.camoco')
-
-fi = file.path(dirw, "36.long.filtered.tsv")
+fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 
 gts = c("B73", "Mo17")
@@ -58,8 +51,8 @@ colnames(expr) = tw[,1]
 
 pcc.matrix = cor(asinh(expr), method = 'pearson')
 pcc = pcc.matrix[lower.tri(pcc.matrix)]
-pcc[pcc == 1] = 0.9999
-pcc[pcc == -1] = -0.9999
+pcc[pcc == 1] = 0.999999
+pcc[pcc == -1] = -0.999999
 #pcc2 = log((1+pcc) / (1-pcc)) / 2
 pcc2 = atanh(pcc)
 pcc3 = (pcc2 - mean(pcc2, na.rm = T)) / sd(pcc2, na.rm = T)
@@ -97,6 +90,6 @@ d = d1
 #d$y <- xm[d$y]
 #d = d[!is.na(d$x) & !is.na(d$y),]
 
-fo = sprintf("%s/routs/%03d.rda", diro, i)
+fo = sprintf("%s/01.routs/%03d.rda", dirw, i)
 save(gids, mat.cor, de1, de2, ec, d, file = fo)
 

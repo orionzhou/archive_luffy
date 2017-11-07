@@ -1,146 +1,72 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/data/misc2/grn23/47.coexp.test'
-#dirw = '/home/springer/zhoux379/scratch/briggs2/47.coexp.test'
+#dirw = file.path(Sys.getenv("misc2"), "grn23", "47.coexp.test")
+dirw = file.path(Sys.getenv("misc2"), "briggs", "59.modules")
 
-fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+#fi = file.path(dirw, "../37.rpkm.filtered.tsv")
+fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
-
-expr = t(as.matrix(ti[,-1]))
-colnames(expr) = ti[,1]
-gids = ti[,1]
+gids = unique(ti$gid)
 ng = length(gids)
 
-## read GO
-fg = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/15.tsv'
-tg = read.table(fg, header = F, as.is = T, sep = "\t", quote = "")
-colnames(tg) = c("gid", "goid", "goterm")
-tg = tg[tg$gid %in% gids,]
-tf = unique(tg[,c("gid","goterm")])
-colnames(tf)[2] = "funcat"
-tfs = ddply(tf, .(funcat), summarise, size = length(gid))
-funcats = tfs$funcat[tfs$size >= 5]
-t_go = tf[tf$funcat %in% funcats,]
+## read modules
+fm = file.path(dirw, "../59.allmodules.tsv")
+tm = read.table(fm, header = T, sep = "\t", as.is = T, quote = '')
+tm = tm[tm$gid %in% gids,]
 
-## read GO - lev2
-fg = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/15_lev2.tsv'
-#tg = read.table(fg, header = F, as.is = T, sep = "\t")
-#colnames(tg) = c("gid", "goid", "goterm")
-#tg = tg[tg$gid %in% gids,]
-#tf = unique(tg[,c("gid","goterm")])
-#colnames(tf)[2] = "funcat"
-#tfs = ddply(tf, .(funcat), summarise, size = length(gid))
-#tf = tf[tf$funcat %in% tfs$funcat[tfs$size >= 10],]
+grp = dplyr::group_by(tm, mid)
+tms = dplyr::summarise(grp, size = length(gid))
+tms = tms[tms$size >= 5,]
+tm = tm[tm$mid %in% tms$mid,]
 
-## read CornCyc
-fc = '/home/springer/zhoux379/data/genome/Zmays_v4/corncyc/01.tsv'
-tc = read.table(fc, header = F, sep = "\t", quote = "")
-gidlst = strsplit(tc$V7, split = ",")
-lens = sapply(gidlst, length)
-tc = data.frame(pl = rep(tc$V1, lens), 
-	p1 = rep(tc$V2, lens), p2 = rep(tc$V3, lens), 
-	p3 = rep(tc$V4, lens), p4 = rep(tc$V5, lens), 
-	ps = rep(tc$V6, lens), gid = unlist(gidlst), stringsAsFactors = F)
-table(tc$p1)
+### Co-expression enrichment in GO categories / CornCyc Pathways
+#require(BSDA)
 
-tp = tc[tc$p1 %in% c('Biosynthesis', 'Degradation/Utilization/Assimilation'),]
-table(tp$p2)
+multiExpr = list()
+for (gt in gts) {
+	tiw = spread(ti[ti$Genotype == gt, c('gid','Tissue','fpkm')], Tissue, fpkm)
+	datExpr = t(as.matrix(tiw[,-1]))
+	colnames(datExpr) = tiw[,1]
+	multiExpr[[gt]] = asinh(datExpr)
+}
 
-tp2 = tp[tp$gid %in% gids, c('gid','p2')]
-tf = unique(tp2)
-colnames(tf) = c('gid','funcat')
-
-tps = ddply(tc[tc$gid %in% gids,], .(pl), summarise, size = length(pl))
-funcats = tps$pl[tps$size >= 5]
-t_corncyc = tc[tc$pl %in% funcats, c('pl','gid')]
-colnames(t_corncyc)[1] = 'funcat'
-
-### Co-expression enrichment in GO categories / CornCyc Pathways (Z-test)
-require(BSDA)
-
-make_hist <- function(vec, xmin, xmax, xitv) {
-	xb = seq(xmin, xmax, by = xitv)
-	xm <- xb[-length(xb)] + 0.5 * diff(xb)
-	td = data.frame(x = xm)
+tp = data.frame()
+fun_sets = c("GO", "CornCyc")
+for (fun_set in fun_sets) {
+	tms = tm[tm$opt == fun_set,]
+	tmr = tms
+	tmr$gid = sample(gids, size = length(tms$gid), replace = T)
 	
-	x = findInterval(vec, xb)
-	d = as.data.frame.table(table(x))
-	d$x = as.numeric(levels(d$x))[d$x]
-	d = d[d$x > 0 & d$x <= length(xm),]
-	d$x = xm[d$x]
-	d[!is.na(d$x),]
-	td = merge(td, d, by = 'x', all.x = T)
-	td[is.na(td[,2]), 2] = 0
-	colnames(td)[2] = "freq"
-	td
+	for (gt in gts) {
+		res = module_stats(multiExpr[[gt]], tms)
+		tp1 = data.frame(gt = gt, fun_set = fun_set, vname = 'meanCorDensity', score = res$meanCorDensity, stringsAsFactors = F)
+		tp2 = data.frame(gt = gt, fun_set = fun_set, vname = 'propVarExplained', score = res$propVarExplained, stringsAsFactors = F)
+		res = module_stats(multiExpr[[gt]], tmr)
+		tp3 = data.frame(gt = sprintf("%s_random", gt), fun_set = fun_set, vname = 'meanCorDensity', score = res$meanCorDensity, stringsAsFactors = F)
+		tp4 = data.frame(gt = sprintf("%s_random", gt), fun_set = fun_set, vname = 'propVarExplained', score = res$propVarExplained, stringsAsFactors = F)
+		tp = rbind(tp, tp1, tp2, tp3, tp4)
+	}
 }
 
-fun_sets = c("GO category", "CornCyc Pathway")
+xlabs = c('meanCorDensity' = 'Mean Correlation Density', 
+	'propVarExplained' = 'Proportion Variance Explained by Module Eigengene')
 
-net = "C"
-fd = sprintf("%s/01.edgeweight/%s.rda", dirw, net)
-x = load(fd)
+p2 = ggplot(tp) +
+	geom_density(aes(x = score, fill = gt), alpha = 0.5) + 
+	#scale_x_continuous(name = ) +
+	#scale_y_continuous(name = ) +
+	facet_grid(fun_set ~ vname) +
+	scale_fill_brewer(palette = "Paired") +
+	theme(legend.position = 'top', legend.direction = 'horizontal', legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 10), legend.background = element_rect(fill = NA, size=0)) +
+	theme(axis.ticks.length = unit(0, 'lines')) +
+	theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+	theme(axis.title.x = element_text(colour = 'black', angle = 0)) +
+	theme(axis.title.y = element_text(colour = 'black')) +
+	theme(axis.text.x = element_text(size = 9, color = "black")) +
+	theme(axis.text.y = element_text(size = 9, color = "black"))
 
-for (i in 1:2) {
-
-	fun_set = fun_sets[i]
-	label = strsplit(fun_set, split = " ")[[1]][1]
-	tfun = tf
-	if(label == "CornCyc") { tfun = tp }
-	funcats = unique(tfun$funcat)
-
-coexv_f = c()
-coexv_r = c()
-for (funcat in funcats) {
-	gids_f = tfun$gid[tfun$funcat == funcat]
-	idxs_f = which(gids %in% gids_f)
-	idxs_r = sample(which(! gids %in% gids_f), length(idxs_f))
-	coexm_f = coexm[idxs_f, idxs_f]
-	coexm_r = coexm[idxs_r, idxs_r]
-	coexv_f = c(coexv_f, coexm_f[lower.tri(coexm_f)])
-	coexv_r = c(coexv_r, coexm_r[lower.tri(coexm_r)])
-}
-
-if (net == "C") {
-	td1 = make_hist(coexv_f, -5, 5, 0.02)
-	td2 = make_hist(coexv_r, -5, 5, 0.02)
-	xlab = 'Co-expression Z-score'
-}
-if (net == "R") {
-	coexv_f = exp((-(coexv_f-1)/20))
-	coexv_r = exp((-(coexv_r-1)/20))
-	td1 = make_hist(coexv_f, 0, 1, 0.002)
-	td2 = make_hist(coexv_r, 0, 1, 0.002)
-	xlab = "MutualRank Transformed Edge Weight"
-}
-if (net == "W") {
-	td1 = make_hist(coexv_f, 0, 1, 0.002)
-	td2 = make_hist(coexv_r, 0, 1, 0.002)
-	xlab = "TOM (Topological Overlap Matrix) Score"
-}
-
-stopifnot(td1$x == td2$x)
-td = cbind(td1, td2[,2])
-colnames(td) = c('x', 'Funcat', 'Random')
-
-p2 = ggplot(td) +
-  geom_area(aes(x = x, y = Funcat, fill = 'Funcat'), alpha = 0.3) + 
-  geom_area(aes(x = x, y = Random, fill = 'Random'), alpha = 0.3) + 
-  #scale_x_continuous(name = xlab) +
-  scale_x_continuous(name = xlab, limits = c(0.02,1)) +
-  scale_y_continuous(name = 'Frequency') +
-  scale_fill_manual(breaks = c("Funcat", "Random"), labels = c(fun_set, "Random"), values = c('red', 'blue')) +
-  theme(legend.position = c(0.8,0.8), legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.background = element_rect(fill = 'white', size=0)) +
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
-  #theme(axis.title.y = element_text(colour = 'pink', angle = 0)) +
-  theme(axis.text.x = element_text(size = 9, color = "black")) +
-  theme(axis.text.y = element_text(size = 9, color = "black"))
-
-fp = sprintf("%s/11.goenrich/%s_%s.pdf", dirw, net, label)
-ggsave(p2, filename = fp, width = 8, height = 8)
-
-}
+fp = sprintf("%s/21.pdf", dirw)
+ggsave(p2, filename = fp, width = 9, height = 10)
 
 #### EGAD
 require(EGAD)
@@ -237,7 +163,7 @@ for (i in 12:nrow(tc)) {
 	nid = tc$nid[i]; coex_opt = tc$coex_opt[i]; n_edges = tc$n_edges[i]
 	algorithm = tc$algorithm[i]; mcl_param = tc$mcl_param[i]
 	
-	net = sprintf("%s_%dk_%s", coex_opt, n_edges/1000, algorithm)
+	net = sprintf("%s_%dM_%s", coex_opt, n_edges, algorithm)
 	if(algorithm == "mcl") {
 		net = sprintf("%s_%g", net, mcl_param)
 	}

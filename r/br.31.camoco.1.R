@@ -1,74 +1,53 @@
 source("br.fun.R")
 
-dirw = '/home/springer/zhoux379/scratch/briggs2/51.camoco'
-
-dirg = file.path(Sys.getenv("genome"), "Zmays_v4")
-fg = file.path(dirg, "51.gtb")
-tg = read.table(fg, sep = "\t", header = T, as.is = T)[,c(1:6,16:18)]
-gb = group_by(tg, par)
-tg2 = summarise(gb, fam = names(sort(table(cat3), decreasing = T))[1])
+dirw = file.path(Sys.getenv("misc2"), "briggs", "51.camoco")
+#dirw = "/home/springer/zhoux379/scratch/briggs/51.camoco"
 
 fi = file.path(dirw, "../36.long.filtered.tsv")
 ti = read.table(fi, sep = "\t", header = T, as.is = T)
 
-### run camoco on a lab workstation
-source activate camoco
-camoco --help
-camoco build-refgen $genome/Zmays_v4/51.gff maize v34 v34 maize
-camoco build-cob --rawtype RNASEQ --index-col 1 --min-single-sample-expr 0 $misc2/grn23/50.camoco.tsv grn23 1.0 maize
-camoco health --out $misc2/grn23/51.camoco.health/grn23 grn23
+### for how to run camoco on a workstation - see Note
 
-source activate camoco
-ipython
-import camoco as co
-x = co.COB("grn23")
-
-fo = file.path(diro, 'clusters.csv')
-x.clusters.to_csv(fo)
-fo = file.path(diro, 'coex.csv')
-x.coex.score.to_csv(fo, index = False, float_format='%g')
-
-#####
-fx = file.path(dirw, "camoco.rda")
-x = load(fx)
-x
-
-### obtain camoco PCC from scratch
+### obtain camoco results from scratch
 gts = c("B73", "Mo17", "B73xMo17")
 for (gt in gts) {
-tiw = spread(ti[ti$Genotype == gt, -c(3,4)], Tissue, fpkm)
+	tiw = spread(ti[ti$Genotype == gt, -c(3,4)], Tissue, fpkm)
+	expr = t(as.matrix(tiw[,-1]))
+	colnames(expr) = tiw[,1]
+	gids = tiw[,1]
+	ng = length(gids)
 
-expr = t(as.matrix(tiw[,-1]))
-colnames(expr) = tiw[,1]
+	pcc.matrix = cor(asinh(expr), method = 'pearson')
+	pcc = pcc.matrix[lower.tri(pcc.matrix)]
 
-pcc.matrix = cor(asinh(expr), method = 'pearson')
-pcc = pcc.matrix[lower.tri(pcc.matrix)]
+	ii = which(lower.tri(pcc.matrix))
+	colidx = as.integer((ii - 1) / nrow(pcc.matrix)) + 1
+	rowidx = ii - (colidx - 1) * nrow(pcc.matrix)
 
-ii = which(lower.tri(pcc.matrix))
-colidx = as.integer((ii - 1) / nrow(pcc.matrix)) + 1
-rowidx = ii - (colidx - 1) * nrow(pcc.matrix)
-
-pcc[pcc == 1] = 0.9999
-pcc[pcc == -1] = -0.9999
-#pcc2 = log((1+pcc) / (1-pcc)) / 2
-pcc2 = atanh(pcc)
-pcc3 = (pcc2 - mean(pcc2)) / sd(pcc2)
-head(pcc3)
-
-sigidx = which(pcc3 >= 3)
-dg = data.frame(i = rowidx[sigidx], j = colidx[sigidx], pccz = pcc3[sigidx])
-fg = sprintf("%s/12.sig.%s.tsv", diro, gt)
-write.table(dg, fg, sep = "\t", row.names = F, col.names = F, quote = F)
-cmd = sprintf("mcl %s --abc -scheme 7 -I 2.0 -o %s/13.%s.mcl", fg, diro, gt)
-system(cmd)
-
-ng = nrow(tiw)
-coex <- matrix(rep(0, ng*ng), nrow=ng)
-coex[lower.tri(coex)] = pcc3
-coex = t(coex)
-coex[lower.tri(coex)] = pcc3
-fo = sprintf("%s/11.coex.%s.rda", dirw, gt)
-save(coex, file = fo)
+	pcc[pcc == 1] = 0.999999
+	pcc[pcc == -1] = -0.999999
+	#pcc2 = log((1+pcc) / (1-pcc)) / 2
+	pcc2 = atanh(pcc)
+	coexv = (pcc2 - mean(pcc2)) / sd(pcc2)
+	
+	ord = order(-coexv)
+	idxs = ord[1:(1*1000000)]
+	dw = data.frame(g1 = gids[rowidx[idxs]], g2 = gids[colidx[idxs]], coex = coexv[idxs])
+	
+	fo1 = sprintf("%s/01.edges.%s.tsv", dirw, gt)
+	write.table(dw, fo1, sep = "\t", row.names = F, col.names = F, quote = F)
+	
+	fo2 = sprintf("%s/02.%s.mcl", dirw, gt)
+	cmd = sprintf("mcl %s --abc -scheme 7 -I %g -o %s", fo1, 2, fo2)
+	system(cmd)
+	
+	fo3 = sprintf("%s/03.modules.%s.tsv", dirw, gt)
+	cmd = sprintf("mcl2tsv.py %s %s", fo2, fo3)
+	system(cmd)
+	
+	fm = sprintf("%s/03.modules.%s.tsv", dirw, gt)
+	tm = read.table(fm, header = T, as.is = T, sep = "\t")
+	cat(sprintf("%s: %d modules with %d genes\n", gt, length(unique(tm$V1)), nrow(tm)))
 }
 
 

@@ -91,9 +91,9 @@ sub sliding_windows {
   for my $i (0..$n_win-1) {
     my $beg1 = $beg + $step * $i;
     my $end1 = $beg + $step * $i + $size - 1;
+    $end1 = min($end1, $end);
     $end1 <= $end || die "[$beg-$end] range error: [$beg1-$end1]\n";
-#    $end1 = min($end1, $end);
-    push @wins, [$beg1, $end1];
+    push @wins, [$beg1-1, $end1];
   }
   return \@wins;
 }

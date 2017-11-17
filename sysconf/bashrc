@@ -57,7 +57,7 @@ if [[ -d $soft ]]; then
     parallel blast CAP3 cmake cufflinks mcl \
     augustus maker ocaml opam graphviz \
     emboss gd geco genometools gmap hmmer mysql orthomcl \
-    R root tophat trimAl wise2 GEM kent unafold imagemagick
+    R root tophat rsem trimAl wise2 GEM kent unafold imagemagick
   do
     if [[ -d $soft/$subpath/bin ]]; then
       export PATH=$soft/$subpath/bin:$PATH
@@ -92,6 +92,10 @@ if [[ -d $soft ]]; then
     export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
   done
 fi
+for msisoft in bowtie2/2.3.2
+do
+	module load $msisoft
+done
 
 # generic locations
 export home=$HOME

@@ -28,19 +28,24 @@ n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
 e = e1[n_noexp < 50,]
 dim(e)
 
+sids_rm = c("BR045", "BR032", "BR026", "BR039", "BR042", "BR083", "BR095")
 tm2 = unique(tm[,c("Tissue", "Genotype")])
+cor.opt = 'pearson'
+cor.opt = 'spearman'
+
 to = data.frame()
 for (i in 1:nrow(tm2)) {
 	tiss = tm2$Tissue[i]
 	geno = tm2$Genotype[i]
 	sids = tm$SampleID[tm$Tissue == tiss & tm$Genotype == geno]
-	stopifnot(length(sids) == 3)
+	sids = sids[!sids %in% sids_rm]
+	#stopifnot(length(sids) == 3)
 	sid_pairs = combn(sids, m = 2)
 	tc = data.frame(t(sid_pairs), stringsAsFactors = F)
 	colnames(tc) = c('sid1', 'sid2')
 	pccs = c()
 	for (j in 1:nrow(tc)) {
-		pcc = cor(e[,tc$sid1[j]], e[,tc$sid2[j]], method = 'spearman')
+		pcc = cor(e[,tc$sid1[j]], e[,tc$sid2[j]], method = cor.opt)
 		pccs = c(pccs, pcc)
 	}
 	tc = cbind(tissue = tiss, genotype = geno, tc, pcc = pccs)
@@ -50,20 +55,21 @@ tp = cbind(to, x = sprintf("%s:%s", to$tissue, to$genotype))
 tp$x = factor(tp$x, levels = unique(tp$x))
 
 p1 = ggplot(tp) +
-  geom_point(aes(x = pcc, y = x), shape = 4) +
-  scale_x_continuous(name = 'Spearman Correlation of FPKM btw. Replicates', limits = c(0.5, 1)) +
-  #scale_y_continuous() +
+  geom_point(aes(x = x, y = pcc), shape = 4) +
+  scale_y_continuous(name = sprintf("%s Correlation of FPKM btw. Replicates", cor.opt), limits = c(0.8,1), expand = c(0.01,0.01)) +
+  #scale_x_discrete(expand = c(0,0)) +
   #scale_color_manual(name = "", values = cols) +
+  coord_flip() +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
-  #theme(legend.position = c(0.4, 0.8), legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(panel.border = element_rect(fill=NA, linetype = 0)) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.title.y = element_blank()) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0, hjust = 1)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
-fp = sprintf("%s/06.fpkm.cor.s.pdf", diro)
-ggsave(p1, filename = fp, width = 6, height = 8)
+fp = sprintf("%s/06.fpkm.cor.%s.pdf", diro, cor.opt)
+ggsave(p1, filename = fp, width = 6, height = 9)
 
 ### hclust
 fi = file.path(dirw, '33.fpm.tsv')
@@ -361,74 +367,4 @@ p1 = ggplot(tb2) +
   theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 1))
 fp = sprintf("%s/14.hk.pdf", diro)
 ggsave(p1, filename = fp, width = 7, height = 7)
-
-
-### FPKM distribution (obsolete)
-til = reshape(ti, direction = 'long', varying = list(2:ncol(ti)), idvar = c("gid"), timevar = "sid", v.names = 'fpkm', times = colnames(ti)[2:ncol(ti)])
-
-summary(til$rpkm)
-p1 = ggplot(til) +
-  geom_boxplot(aes(x = sid, y = fpkm), outlier.shape = NA) + #, draw_quantiles = c(0.25, 0.5, 0.75)) + 
-  coord_flip() +
-  scale_x_discrete(name = '', breaks = tm$SampleID, labels = tm$Tissue) +
-  scale_y_continuous(name = 'RPKM', limits = c(0, 30)) +
-  theme_bw() +
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.title.y = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "brown", angle = 0, hjust = 1))
-fp = sprintf("%s/12.rpkm.pdf", diro)
-ggsave(p1, filename = fp, width = 6, height = 9)
-
-### Averaging replicates & compute FPKM
-trl2 = merge(trl, tm[, c("SampleID", "Tissue", "Genotype")], by.x = 'sid', by.y = 'SampleID')
-grp = group_by(trl2, gid, Tissue, Genotype)
-trl3 = as.data.frame(summarise(grp, fpm = mean(fpm)))
-#trw = reshape(trl3, direction = 'wide', timevar = c('Tissue'), idvar = c('gid'))
-#colnames(trw)[2:ncol(trw)] = gsub("fpm.", "", colnames(trw)[2:ncol(trw)])
-
-### compute FPKM
-dirg = '/home/springer/zhoux379/data/genome/Zmays_v4'
-f_gtb = file.path(dirg, "51.gtb")
-f_tbl = file.path(dirg, "51.tbl")
-tg = read.table(f_gtb, sep = "\t", header = T, as.is = T)[,1:2]
-tt = read.table(f_tbl, sep = "\t", header = F, as.is = T)
-colnames(tg) = c("tid", "gid")
-colnames(tt) = c("chr", "beg", "end", "srd", "tid", "type", "fam")
-tt2 = tt[tt$type %in% c('cds', 'utr5', 'utr3'),]
-tg2 = merge(tg, tt2, by = 'tid')
-
-gr = with(tg2, GRanges(seqnames = chr, ranges = IRanges(beg, end = end), gid = gid))
-x = unlist(reduce(split(gr, elementMetadata(gr)$gid)))
-tr = data.frame(gid = names(x), chr = seqnames(x), beg = start(x), end = end(x), stringsAsFactors = F)
-grp = dplyr::group_by(tr, gid)
-tr2 = dplyr::summarise(grp, len = sum(end - beg + 1))
-
-to = trl3
-to2 = merge(to, tr2, by = 'gid')
-stopifnot(nrow(to) == nrow(to2))
-to3 = cbind(to2, fpkm = to2$fpm / (to2$len / 1000))
-to4 = to3[,-5]
-dim(to4)
-fo = file.path(dirw, '35.long.tsv')
-write.table(to4, fo, sep = "\t", row.names = F, col.names = T, quote = F)
-
-
-### filtering
-fi = file.path(dirw, "35.long.tsv")
-ti = read.table(fi, sep = "\t", header = T, as.is = T)
-
-grp = dplyr::group_by(ti, gid, Genotype)
-ti2 = dplyr::summarise(grp, nexp = sum(fpkm>=1))
-ti3 = spread(ti2, Genotype, nexp)
-gids = ti3$gid[ti3$B73 >= 1 & ti3$Mo17 >= 1]
-length(gids)
-
-to = ti[ti$gid %in% gids,]
-fo = file.path(dirw, '36.long.filtered.tsv')
-write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
-
-
 

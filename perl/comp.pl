@@ -34,7 +34,7 @@ use File::Basename;
 use Cwd qw/abs_path/;
 use List::Util qw/min max sum/;
 
-my ($qry, $tgt) = ('HM056', 'HM101');
+my ($qry, $tgt) = ('PH207', 'Zmays_v4');
 my $help_flag;
 
 #--------------------------------- MAIN -----------------------------------#
@@ -46,33 +46,35 @@ GetOptions(
 pod2usage(1) if $help_flag;
 
 my $data = $ENV{'data'};
-my $qry_fas = "$data/genome/$qry/11_genome.fas";
-my $tgt_fas = "$data/genome/$tgt/11_genome.fas";
-my $qry_2bit = "$data/db/blat/$qry.2bit";
-my $tgt_2bit = "$data/db/blat/$tgt.2bit";
-my $qry_size = "$data/genome/$qry/15.sizes";
-my $tgt_size = "$data/genome/$tgt/15.sizes";
-my $qry_size_bed = "$data/genome/$qry/15.bed";
-my $tgt_size_bed = "$data/genome/$tgt/15.bed";
-my $qry_gap = "$data/genome/$qry/16.gap.bed";
-my $tgt_gap = "$data/genome/$tgt/16.gap.bed";
+my $dirq = "$data/genome/$qry";
+my $dirt = "$data/genome/$tgt";
+my $qry_fas = "$dirq/11_genome.fas";
+my $tgt_fas = "$dirt/11_genome.fas";
+my $qry_2bit = "$dirq/21.blat/db.2bit";
+my $tgt_2bit = "$dirt/21.blat/db.2bit";
+my $qry_size = "$dirq/15.sizes";
+my $tgt_size = "$dirt/15.sizes";
+my $qry_size_bed = "$dirq/15.bed";
+my $tgt_size_bed = "$dirt/15.bed";
+my $qry_gap = "$dirq/16.gap.bed";
+my $tgt_gap = "$dirt/16.gap.bed";
 
-my $dir = "$data/misc3/$qry\_$tgt/23_blat";
+my $dir = "$data/misc3/$qry\_$tgt";
 -d $dir || make_path($dir);
 chdir $dir || die "cannot chdir to $dir\n";
 
-#prepare_blat();
+prepare_blat();
 ##### qsub itasca
 #process_blat1();
 ##### qsub itasca
-process_blat2();
-process_vnt();
+#process_blat2();
+#process_vnt();
 
 sub prepare_blat {
   -d "01_seq" || make_path("01_seq");
   runCmd("breakseq.bygap.pl -i $qry_fas -o 00.fas -g 1000");
   runCmd("seq.splitlarge.py 00.fas 00.even.fas");
-  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 10 -t $tgt -g $qry");
+  runCmd("qsub.blat.pl -i 00.even.fas -o 01_seq -n 50 -t $tgt -g $qry");
 }
 sub process_blat1 {
   runCmd("cat 01_seq/part.*.psl > 11.psl");

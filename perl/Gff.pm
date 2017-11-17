@@ -20,8 +20,12 @@ our $h_gff = {
   'tRNA'   => ['exon'],
   'miRNA'  => ['exon'],
   'ncRNA'  => ['exon'],
+  'lnc_RNA' => ['exon'],
   'snRNA'  => ['exon'],
   'snoRNA' => ['exon'],
+  'pre_miRNA'  => ['exon'],
+  'SRP_RNA'  => ['exon'],
+  'RNase_MRP_RNA'  => ['exon'],
 };
 
 sub parse_gene_gff {

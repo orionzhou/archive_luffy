@@ -65,6 +65,7 @@ if($fb && -s $fb) {
   while(<$fhb>) {
     chomp;
     my ($seqid, $beg, $end) = split "\t";
+    $seqid eq 'chr' && next;
     my $id;
     if(!defined($beg) || !defined($end)) {
       $beg = 1;

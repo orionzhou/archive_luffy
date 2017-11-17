@@ -25,15 +25,15 @@ fontsize: 11pt
 
 ![Image Title]($data/misc2/briggs/41.qc/00.4.mapping.pdf){width=80%}
 
-![Image Title]($data/misc2/briggs/41.qc/06.fpkm.cor.pdf){width=100%}
+![Image Title]($data/misc2/briggs/41.qc/06.fpkm.cor.pearson.pdf){width=100%}
 
-![Image Title]($data/misc2/briggs/41.qc/06.fpkm.cor.s.pdf){width=100%}
+![Image Title]($data/misc2/briggs/41.qc/06.fpkm.cor.spearman.pdf){width=100%}
 
 ![Image Title]($data/misc2/briggs/41.qc/01.sample.pca.pdf){width=100%}
 
 ![Image Title]($data/misc2/briggs/59.modules/21.pdf){width=100%}
 
-![Image Title]($data/misc2/briggs/59.modules/similarity.png){width=100%}
+![Image Title]($data/misc2/briggs/51.camoco/81.similarity.pdf){width=100%}
 
 ![Image Title]($data/misc2/briggs/61.perm/10.cor.mpstats){width=100%}
 
@@ -41,16 +41,18 @@ fontsize: 11pt
 
 ![Image Title]($data/misc2/briggs/61.perm/11.pcc.coex.pdf){width=100%}
 
-![Image Title]($data/misc2/briggs/61.perm/21.z1.pdf){width=100%}
+![Image Title]($data/misc2/briggs/41.qc/25.ase.pdf){width=100%}
 
-![Image Title]($data/misc2/briggs/61.perm/21.z2.pdf){width=100%}
+![Number expressed genes with different cutoff]($data/misc2/briggs/41.qc/21.expressed.genes.pdf){width=100%}
 
-![Image Title]($data/misc2/briggs/61.perm/22.z1.pdf){width=100%}
+![F1 has more active genes than parents in 15/17 tissues]($data/misc2/briggs/41.qc/21.expressed.genes2.pdf){width=80%}
 
-![Image Title]($data/misc2/briggs/61.perm/22.z2.pdf){width=100%}
+![DE genes with FC>=2]($data/misc2/briggs/41.qc/22.doa.de.2.pdf){width=90%}
+
+![DE genes with FC>=4]($data/misc2/briggs/41.qc/22.doa.de.4.pdf){width=90%}
 
 <!--
 require(rmarkdown) 
 rmarkdown::render("/home/springer/zhoux379/git/luffy/rmd/maize.coexp.Rmd")
-file.copy("/home/springer/zhoux379/git/luffy/rmd/maize.coexp.pdf", "/home/springer/zhoux379/git/orionzhou.github.io/docs")
+file.copy("/home/springer/zhoux379/git/luffy/rmd/maize.coexp.pdf", "/home/springer/zhoux379/git/orionzhou.github.io/docs", overwrite = T)
 -->

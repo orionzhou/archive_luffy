@@ -309,7 +309,34 @@ sub to_gff {
   }
   return join("\n", map {join("\t", @$_)} @rows);
 }
-
+sub to_gtf {
+  my $self = shift;
+  my $flag_utr = shift;
+  $flag_utr = 1 unless defined($flag_utr);
+  my @rows;
+  
+  my $seqid = $self->seqid;
+  my $srd = $self->strand;
+  my ($tid, $gid) = ($self->id, $self->parent);
+  my $tag = sprintf("gene_id \"%s\"; transcript_id \"%s\";", $gid, $tid);
+  
+  my @types = qw/exon CDS five_prime_UTR three_prime_UTR/;
+  my @locs = ($self->exon, $self->cds, $self->utr5, $self->utr3);
+  for my $i (0..$#types) {
+    my $type = $types[$i];
+    next if $flag_utr != 1 && $type =~ /prime\_UTR$/;
+    my $loc = $locs[$i];
+    for my $j (0..@$loc-1) {
+      my ($rb, $re) = @{$loc->[$j]};
+      my $phase = $type eq 'CDS' ? $self->phase->[$j] : '.';
+      my ($beg, $end) = $srd eq "-" ? 
+        ($self->end-$re+1, $self->end-$rb+1) : 
+        ($self->beg+$rb-1, $self->beg+$re-1);
+      push @rows, [$seqid, '.', $type, $beg, $end, '.', $srd, $phase, $tag];
+    }
+  }
+  return join("\n", map {join("\t", @$_)} @rows);
+}
 
 sub from_gtb {
   my ($self, $row) = @_;

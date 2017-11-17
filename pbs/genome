@@ -2,24 +2,8 @@
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 #PBS -q small
-#PBS -A youngn
-#PBS -W group_list=youngn
-
-GRP=youngn
-export HOME=/home/$GRP/zhoux379
-export home=$HOME
-export data=$home/data
-export genome=$home/data/genome
-export misc1=$data/misc1
-export misc2=$data/misc2
-export misc3=$data/misc3
-export misc4=$data/misc4
-changegrp.sh
 
 module load bowtie2/2.3.1
-genome.db.pl -g HM002
-genome.db.pl -g HM005
-genome.db.pl -g HM006
-genome.db.pl -g HM018a
-genome.db.pl -g HM020
-genome.db.pl -g HM026
+genome.py --bowtie2 Zmays_v4
+genome.py --bowtie2 PH207
+genome.py --bowtie2 W22

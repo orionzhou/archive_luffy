@@ -51,129 +51,36 @@ for (gt in gts) {
 }
 
 
-### look at B&M expression correlation v.s. connectivity correlation => re-wiring
-gts = c("B73", "Mo17", "B73xMo17")
+### make B,M,F1 similarity diagram
+require(diagram)
 
-tissue = "root_0DAP"
-#tiw = spread(ti[ti$Tissue == tissue, -c(2,4)], Genotype, fpkm)
-ti2 = ti
-ti2$fpkm = asinh(ti2$fpkm)
-tiw = spread(ti2[,-4], Genotype, fpkm)
-cor.test(tiw$B73, tiw$Mo17)
-dft = ddply(tiw, .(Tissue), myfunc <- function(x) cor.test(x[,'B73'], x[,'Mo17'])$estimate)
-ptitles = sprintf("%s: %.02f", dft$Tissue, dft$cor)
-names(ptitles) = dft$Tissue
+fp = sprintf("%s/../61.perm/09.rda", dirw)
+x = load(fp)
 
-p1 = ggplot(tiw, aes(x = B73, y = Mo17)) +
-  geom_point(size = 0.2) +
-  geom_smooth(method = "lm") +
-  scale_x_continuous(name = 'asinh(B73 FPKM)') +
-  scale_y_continuous(name = 'asinh(Mo17 FPKM)') +
-  facet_wrap(~Tissue, ncol = 5, labeller = as_labeller(ptitles)) +
-  theme_bw() +
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "lines")) +
-  #theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0,0), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
-  theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.title.y = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
-fp = sprintf("%s/51.expr.corr.pdf", diro)
-ggsave(p1, filename = fp, width = 10, height = 8)
+pme = pc[pc$perm==0, c('gt1','gt2','pcc.expr')]
+pmc = pc[pc$perm==0, c('gt1','gt2','pcc.coex')]
+pme$pcc.expr = sprintf("%.03f", pme$pcc.expr)
+pmc$pcc.coex = sprintf("%.03f", pmc$pcc.coex)
+pme = spread(pme, gt2, pcc.expr)
+pmc = spread(pmc, gt2, pcc.coex)
 
-#
-fc1 = sprintf("%s/11.coex.%s.rda", diro, gts[1])
-x = load(fc1)
-coex1 = coex
-de1 = apply(coex1, 1, myfunc <- function(x) sum(x >= 3))
+sime = as.matrix(pme[,-1])
+simc = as.matrix(pmc[,-1])
+sime[lower.tri(sime)] = NA
+sime[lower.tri(simc)] = NA
 
-fc2 = sprintf("%s/11.coex.%s.rda", diro, gts[2])
-x = load(fc2)
-coex2 = coex
-de2 = apply(coex2, 1, myfunc <- function(x) sum(x >= 3))
-
-cor.test(de1, de2)
-
-ptitle = sprintf("PCC = %.03f", cor.test(de1, de2)$estimate)
-tt = data.frame(b = de1, m = de2)
-p2 = ggplot(tt, aes(x = b, y = m)) +
-  geom_point(size = 0.5) +
-  geom_smooth(method="lm") +
-  scale_x_continuous(name = 'B73 Gene Degree') +
-  scale_y_continuous(name = 'Mo17 Gene Degree') +
-  theme_bw() +
-  ggtitle(ptitle) + 
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.3,0.1,0.1,0.1), "lines")) +
-  theme(axis.title.x = element_text(size = 9)) +
-  theme(axis.title.y = element_text(size = 9)) +
-  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
-  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0)) + 
-  theme(plot.title = element_text(hjust = 0.5))
-fp = sprintf("%s/52.degree.corr.pdf", diro)
-ggsave(p2, filename = fp, width = 6, height = 6)
-
-
-### compare camoco and wgcna
-fc1 = sprintf("%s/11.coex.%s.rda", diro, gt)
-x = load(fc1)
-coex1 = coex
-
-fc2 = file.path(dirw, "52.wgcna/x.RData")
-x = load(fc2)
-coex2 = TOM
-tom = coex2[low.tri(coex2)]
-pdf(file.path(dirw, "52.wgcna/coex.pdf"), width = 6, height = 6)
-hist(tom, breaks = seq(0, 1, by = 0.025))
+fo = file.path(dirw, "81.similarity.pdf")
+pdf(fo, width = 9, height = 5)
+par(mfrow=c(1,2))
+par(mar=c(0.1,0.1,3.1,0.1))
+pp1 = plotmat(sime, pos = c(2, 1), curve = 0, name = gts,
+	lwd = 1, box.lwd = 2, cex.txt = 1, box.cex = 1,
+	box.type = "square", box.prop = 0.6, arr.type = "triangle",
+	arr.pos = 0.5, arr.width = 0, shadow.size = 0.01, prefix = "",
+	main = "Expression Similarity")
+pp2 = plotmat(simc, pos = c(2, 1), curve = 0, name = gts,
+	lwd = 1, box.lwd = 2, cex.txt = 1, box.cex = 1,
+	box.type = "square", box.prop = 0.6, arr.type = "triangle",
+	arr.pos = 0.5, arr.width = 0, shadow.size = 0.01, prefix = "",
+	main = "Co-expression Similarity")
 dev.off()
-
-ec = sapply(1:nrow(coex1), myfunc <- function(i) cor(coex1[i, -i], coex2[i, -i]))
-idxs = c(1:length(ec))[order(ec, decreasing = T)][1:100]
-novlps = sapply(idxs, myfunc <- function(i) {
-	idxs1 = which(coex1[i,-i] >= sort(coex1[i,-i], decreasing = T)[1000])
-	idxs2 = which(coex2[i,-i] >= sort(coex2[i,-i], decreasing = T)[1000])
-	sum(idxs1 %in% idxs2)
-})
-novlps = sapply(1:length(ec), myfunc <- function(i) {
-	idxs1 = which(coex1[i,-i] >= sort(coex1[i,-i], decreasing = T)[1000])
-	idxs2 = which(coex2[i,-i] >= sort(coex2[i,-i], decreasing = T)[1000])
-	sum(idxs1 %in% idxs2)
-})
-cor.test(ec, novlps)
-
-tp = data.frame(gid = ti$gid, ec = ec, novlp = novlps, stringsAsFactors = F)
-tp = merge(tp, tg2, by.x = 'gid', by.y = 'par')
-tp = tp[order(tp$ec),]
-save(tp, file = file.path(dirw, "22.rda"))
-
-p1 = ggplot(tp) +
-  geom_point(aes(x = ec, y = novlp), size = 0.5) +
-  scale_x_continuous(name = 'Expression Conservation (EC) Score') +
-  scale_y_continuous(name = '# Common Neighbors btw. Networks', limits = c(0, 1000)) + 
-  theme_bw() +
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
-  theme(axis.title.x = element_text(size = 9, angle = 0)) +
-  theme(axis.title.y = element_text(size = 9, angle = 90)) +
-  theme(axis.text.x = element_text(size = 8, color = "blue")) +
-  theme(axis.text.y = element_text(size = 8, color = "blue", angle = 90, hjust  = 0.5))
-fp = file.path(dirw, "51.camoco/21.ec.pdf")
-ggsave(p1, filename = fp, width = 6, height = 6)
-
-x = load(file.path(dirw, "22.rda"))
-require(MASS)
-p2 = ggplot(tp, aes(x = ec, y = novlp)) +
-  stat_density2d(aes(fill = ..density..), contour = F, geom="tile") +
-  scale_x_continuous(name = 'Expression Conservation (EC) Score', limits = c(-1, 1), expand = c(0, 0)) +
-  scale_y_continuous(name = '# Common Neighbors btw. Networks', limits = c(0, 1000), expand = c(0, 0)) + 
-  scale_fill_gradient(low = "white", high = "royalblue") +
-  theme_bw() +
-  theme(legend.position = c(0.15, 0.85), legend.background = element_rect(fill = 'white', colour = 'black', size = 0.3), legend.key = element_rect(fill = NA, colour = NA), legend.key.size = unit(1, 'lines'), legend.title = element_text(size = 8, angle = 0), legend.text = element_text(size = 8, angle = 0)) +
-  theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
-  theme(axis.title.x = element_text(size = 9, angle = 0)) +
-  theme(axis.title.y = element_text(size = 9, angle = 90)) +
-  theme(axis.text.x = element_text(size = 8, color = "blue")) +
-  theme(axis.text.y = element_text(size = 8, color = "blue", angle = 90, hjust  = 0.5))
-fp = file.path(dirw, "51.camoco/22.ec.density.pdf")
-ggsave(p2, filename = fp, width = 6, height = 6)

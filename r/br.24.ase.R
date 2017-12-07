@@ -27,7 +27,7 @@ tv$pos = tv$pos + 1
 
 
 ta = data.frame()
-sid = 'BR003'
+sid = 'BR006'
 for (i in 1:41) {
 	sid = sprintf("BR%03d", i)
 	fa = sprintf("%s/25.ase/%s.tsv", dirw, sid)

@@ -10,13 +10,16 @@ gids = unique(ti$gid)
 ng = length(gids)
 
 ## read modules
-fm = file.path(dirw, "../59.allmodules.tsv")
-tm = read.table(fm, header = T, sep = "\t", as.is = T, quote = '')
+fm1 = file.path(dirw, "../59.allmodules.tsv")
+tm1 = read.table(fm1, header = T, sep = "\t", as.is = T, quote = '')
+fm2 = '/home/springer/zhoux379/data/misc1/li2013/29.hs.module.tsv'
+tm2 = read.table(fm2, header = T, sep = "\t", as.is = T, quote = '')
+tm = rbind(tm1, tm2)
 tm = tm[tm$gid %in% gids,]
 
 grp = dplyr::group_by(tm, mid)
 tms = dplyr::summarise(grp, size = length(gid))
-tms = tms[tms$size >= 5,]
+tms = tms[tms$size >= 30,]
 tm = tm[tm$mid %in% tms$mid,]
 
 ### Co-expression enrichment in GO categories / CornCyc Pathways
@@ -31,7 +34,7 @@ for (gt in gts) {
 }
 
 tp = data.frame()
-fun_sets = c("GO", "CornCyc")
+fun_sets = c("GO", "CornCyc","trans-eQTL")
 for (fun_set in fun_sets) {
 	tms = tm[tm$opt == fun_set,]
 	tmr = tms
@@ -51,13 +54,13 @@ for (fun_set in fun_sets) {
 xlabs = c('meanCorDensity' = 'Mean Correlation Density', 
 	'propVarExplained' = 'Proportion Variance Explained by Module Eigengene')
 
-p2 = ggplot(tp) +
+p2 = ggplot(tp[tp$vname == 'meanCorDensity',]) +
 	geom_density(aes(x = score, fill = gt), alpha = 0.5) + 
-	#scale_x_continuous(name = ) +
+	scale_x_continuous(name = xlabs[1]) +
 	#scale_y_continuous(name = ) +
-	facet_grid(fun_set ~ vname) +
+	facet_wrap(~fun_set) +
 	scale_fill_brewer(palette = "Paired") +
-	theme(legend.position = 'top', legend.direction = 'horizontal', legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 10), legend.background = element_rect(fill = NA, size=0)) +
+	theme(legend.position = 'top', legend.direction = 'horizontal', legend.key.size = unit(1, 'lines'), legend.title = element_blank(), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 9), legend.background = element_rect(fill = NA, size=0)) +
 	theme(axis.ticks.length = unit(0, 'lines')) +
 	theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
 	theme(axis.title.x = element_text(colour = 'black', angle = 0)) +
@@ -66,7 +69,7 @@ p2 = ggplot(tp) +
 	theme(axis.text.y = element_text(size = 9, color = "black"))
 
 fp = sprintf("%s/21.pdf", dirw)
-ggsave(p2, filename = fp, width = 9, height = 10)
+ggsave(p2, filename = fp, width = 10, height = 5)
 
 #### EGAD
 require(EGAD)

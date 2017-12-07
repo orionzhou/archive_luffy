@@ -14,4 +14,4 @@ to$beg = to$beg - 1
 to = to[order(to$chr, to$beg),]
 
 fo = file.path(dirw, "gene.bed")
-write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+write.table(to, fo, sep = "\t", row.names = F, col.names = F, quote = F)

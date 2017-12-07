@@ -1,4 +1,3 @@
-
 require(plyr)
 require(ape)
 require(tidyr)
@@ -121,5 +120,6 @@ p1 = ggplot(tkl) +
   theme(axis.text.y = element_blank())
 fo = sprintf("%s/12.sharing.heatmap.pdf", dirw)
 ggsave(p1, filename = fo, width = 4.5, height = 12)
+
 
 

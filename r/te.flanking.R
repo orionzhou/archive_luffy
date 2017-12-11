@@ -11,8 +11,8 @@ dirw = '/home/springer/zhoux379/data/misc1/te.flanking'
 # cat 04.blat.PH207/*.psl > 05.blat.PH207.psl
 # psl2tsv.pl -i 05.blat.W22.psl -o 06.W22.tsv
 # psl2tsv.pl -i 05.blat.PH207.psl -o 06.PH207.tsv
-# psl.filter.py --ident 0.9 --cov 0.9 06.W22.tsv 07.W22.tsv
-# psl.filter.py --ident 0.9 --cov 0.9 06.PH207.tsv 07.PH207.tsv
+# psl.filter.py --ident 0.9 --cov 0.9 --best 06.W22.tsv 07.W22.tsv
+# psl.filter.py --ident 0.9 --cov 0.9 --best 06.PH207.tsv 07.PH207.tsv
 
 fl = file.path(dirw, "02.tsv")
 tl = read.table(fl, sep = "\t", as.is = T, header = F)
@@ -27,6 +27,7 @@ ids_mapped = unique(ti$qId)
 
 grp = dplyr::group_by(ti, qId)
 ti2 = dplyr::summarise(grp, nbest = sum(score == max(score)), score = max(score))
+stopifnot(sum(ti2$nbest) == nrow(ti))
 ti3 = merge(ti, ti2, by = c("qId", "score"))
 ids_mapped_u = unique(ti2$qId[ti2$nbest == 1])
 ids_mapped_m = unique(ti2$qId[ti2$nbest > 1])
@@ -41,13 +42,13 @@ stopifnot(length(ids_mapped_u1) + length(ids_mapped_u2) == length(ids_mapped_u))
 
 outputs = c(
 '',
-sprintf("%5d total sequences:", length(ids_all)),
-sprintf("%5d do not map to W22 (0.9 identity, 0.9 coverage)", length(ids_all)-length(ids_mapped)),
-sprintf("%5d mapped >=1 times:", length(ids_mapped)),
-sprintf("   %5d mapped uniquely:", length(ids_mapped_u)),
-sprintf("      %5d are identical:", length(ids_mapped_u1)),
-sprintf("      %5d have at least 1 mismatch/indel:", length(ids_mapped_u2)),
-sprintf("   %5d mapped multiple times:", length(ids_mapped_m)),
+sprintf("%6d total sequences:", length(ids_all)),
+sprintf("%6d do not map to W22 (0.9 identity, 0.9 coverage)", length(ids_all)-length(ids_mapped)),
+sprintf("%6d mapped >=1 times:", length(ids_mapped)),
+sprintf("   %6d mapped uniquely:", length(ids_mapped_u)),
+sprintf("      %6d are identical:", length(ids_mapped_u1)),
+sprintf("      %6d have at least 1 mismatch/indel:", length(ids_mapped_u2)),
+sprintf("   %6d mapped multiple times:", length(ids_mapped_m)),
 ''
 )
 cat(paste(outputs, collapse = "\n"))

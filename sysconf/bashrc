@@ -6,6 +6,7 @@ alias ll='ls -l'
 alias la='ls -al'
 alias du='du -BM --max-depth=1'
 alias qu='watch qstat -u zhoux379'
+alias gm='git commit -a -m "normal commit"; git push origin master'
 #alias ssh='ssh -Y'
 umask 022
 
@@ -119,7 +120,7 @@ export spada=$git/spada
 export rosar=$git/rgeneclust
 export urt=$git/soyurt
 export ped=$git/pedtools
-export site=$git/orionzhou.github.io
+export site=$git/maizeumn.github.io
 export PATH=$rosar:$spada:$ped:$PATH
 
 # camoco
@@ -148,6 +149,9 @@ export PATH=$code/c++/bin:$PATH
 
 # bash
 export PATH=$code/bash:$PATH
+
+# ruby
+export PATH=$soft/ruby/bin:$PATH
 
 # R 
 export SCRIPT_HOME_R=$code/r

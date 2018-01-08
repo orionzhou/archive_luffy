@@ -3,7 +3,9 @@
 #PBS -M zhoux379@umn.edu
 #PBS -q small
 
-module load bowtie2/2.3.1
-genome.py --bowtie2 Zmays_v4
-genome.py --bowtie2 PH207
-genome.py --bowtie2 W22
+genome.py --bwa W22
+genome.py --bwa PH207
+#module load bowtie2/2.3.1
+#genome.py --bowtie2 B73
+#genome.py --bowtie2 W22
+#genome.py --bowtie2 PH207

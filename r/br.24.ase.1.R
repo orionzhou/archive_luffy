@@ -16,9 +16,9 @@ colnames(tg)[2] = 'gid'
 grp = dplyr::group_by(tg, gid)
 tg2 = dplyr::summarise(grp, gtype = cat1[1])
 
-fi = file.path(dirw, '00.1.read.correct.tsv')
-ti = read.table(fi, header = T, sep = "\t", as.is = T)[,1:5]
-ti = cbind(ti, label = sprintf("%s_%s_%d", ti$Tissue, ti$Genotype, ti$Treatment))
+fl = file.path(dirw, '00.1.read.correct.tsv')
+tl = read.table(fi, header = T, sep = "\t", as.is = T)[,1:5]
+tl = within(tl, {label = sprintf("%s: %s %s rep%d", SampleID, Tissue, Genotype, Treatment)})
 
 fv = '/home/springer/zhoux379/data/misc2/mo17vnt/53.vnt.final/65.vnt2gene.bed'
 tv = read.table(fv, header = F, sep = "\t", as.is = T)
@@ -86,3 +86,36 @@ p1 = ggplot(ta8) +
 fp = file.path(diro, "26.ase.gene.pdf")
 ggsave(p1, filename = fp, width = 8, height = 8)
 
+
+## look at indel bias
+sid = "BR152"
+sids = c("BR006", "BR054", "BR151")
+
+to = data.frame()
+for (sid in sids) {
+fa = sprintf("%s/25.ase.site/%s.tsv", dirw, sid)
+ta = read.table(fa, sep = "\t", as.is = T, header = T)[,c(1,2,3,4,6:8)]
+ta1 = ta[ta$depth >= 10 & ta$alt != ".",]
+ta2 = cbind(ta1, snp = nchar(ta1$ref)==nchar(ta1$alt))
+ta2$snp[ta2$snp == T] = 'SNP'
+ta2$snp[ta2$snp == F] = 'InDel'
+
+ta3 = cbind(sid = tl$label[tl$SampleID==sid], ta2[,-c(1:4)])
+to = rbind(to, ta3)
+}
+p1 = ggplot(to) +
+  geom_histogram(aes(x = dpr/(dpr+dpa)), bins = 30) +
+  scale_x_continuous(name = 'B73 Allele Abundance', limits = c(0,1), expand = c(0,0)) +
+  scale_y_continuous(name = "# Polymorphic Sites") +
+  #scale_color_manual(name = "", values = cols) +
+  facet_wrap(snp ~ sid, nrow = 2, scale = 'free') +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  #theme(legend.position = c(0.4, 0.8), legend.direction = "vertical", legend.justification = c(0,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
+fp = file.path(diro, "25.ase.bias.pdf")
+ggsave(p1, filename = fp, width = 12, height = 8)

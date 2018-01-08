@@ -1,4 +1,4 @@
-#PBS -l nodes=1:ppn=4,walltime=2:00:00
+#PBS -l nodes=1:ppn=1,walltime=10:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu
 #PBS -q small
@@ -12,11 +12,5 @@ module load picard/2.3.0
 module load java/jdk1.8.0_45
 export _JAVA_OPTIONS='-Djava.io.tmpdir=/scratch.global/zhoux379/temp'
 
-cd /home/springer/zhoux379/scratch/briggs/42.ase
-#$PTOOL/picard.jar CleanSam I=12.splitn.bam O=12.splitn2.bam CREATE_INDEX=true
-#$PTOOL/picard.jar BuildBamIndex I=12.splitn2.bam
-#vcf2tsv.py 21.raw.vcf 21.raw.tsv
-
-module load cufflinks
-cd /home/springer/zhoux379/scratch/briggs
-cufflinks -p 4 -G $genome/Zmays_v4/51.gff 22.hisat/BR001.bam > BR001.txt
+genome.py --bwa W22
+genome.py --bwa PH207

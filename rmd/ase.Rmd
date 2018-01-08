@@ -1,0 +1,120 @@
+---
+title: "ASE (Allele Specific Expression) Analysis"
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: false
+    fig_caption: true
+    latex_engine: pdflatex
+    template: rmd-latex-ms.tex
+# author:
+# - name: Peng Zhou
+#  affiliation: University of Minnesota
+# - name: Nathan Springer
+#  affiliation: University of Minnesota
+# abstract: "This document provides an introduction to R Markdown, argues for its..."
+# keywords: "pandoc, r markdown, knitr"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+# bibliography: ~/Dropbox/master.bib
+# biblio-style: apsr
+---
+
+ASE analysis were done for 51 B73xMo17 samples (17 tissues * 3 reps) and 12 Mo17xB73 samples (4 tissues * 3 reps) using two approaches:
+
+* Polymorphic site based approach:
+    + Allele counts (read depth) at 8,041,011 B73/Mo17 variant sites (1,108,990 genic variants) (6,743,545 SNPs + 1,297,466 InDels) were used to estimate the relative abundance of B73 and Mo17 alleles
+* Read based approach:
+    + Each read pair fragment is assigned a B73 or Mo17 haplotype if it spans at least one B73/Mo17 polymorphic site, then in each gene count the number of B73 fragments and Mo17 fragments
+    + Read pairs spanning multiple variants are only counted once
+
+\pagebreak
+![Distribution of B73 allele abundance in variants with >=10 reads covered ]($data/misc2/briggs/41.qc/25.ase.bias.pdf){width=100%}
+
+* Polymorphic site based approach
+* InDel mapping bias
+
+\pagebreak
+* Read based approach
+
+```
+BR006 [BR006: blade_v12 B73xMo17 rep1] against snp+indel
+ 3281505 total reads spanning >=1 variants:
+ 1975476: only 1 variant
+    1050521 [53.18%] B73 allele
+     924955 [46.82%] Mo17 allele
+ 1306029: >=2 variants
+     743446 [56.92%] with all B73 allele
+     472238 [36.16%] with all Mo17 allele
+      90345 [ 6.92%] with both B and M alleles
+
+BR006 [BR006: blade_v12 B73xMo17 rep1] against snp
+ 3040279 total reads spanning >=1 variants:
+ 1936522: only 1 variant
+     981566 [50.69%] B73 allele
+     954956 [49.31%] Mo17 allele
+ 1103757: >=2 variants
+     582694 [52.79%] with all B73 allele
+     497457 [45.07%] with all Mo17 allele
+      23606 [ 2.14%] with both B and M alleles
+
+BR054 [BR054: ear_v14 B73xMo17 rep3] against snp+indel
+ 3002600 total reads spanning >=1 variants:
+ 1745465: only 1 variant
+     930131 [53.29%] B73 allele
+     815334 [46.71%] Mo17 allele
+ 1257135: >=2 variants
+     701737 [55.82%] with all B73 allele
+     464136 [36.92%] with all Mo17 allele
+      91262 [ 7.26%] with both B and M alleles
+
+BR054 [BR054: ear_v14 B73xMo17 rep3] against snp
+ 2811556 total reads spanning >=1 variants:
+ 1728090: only 1 variant
+     886789 [51.32%] B73 allele
+     841301 [48.68%] Mo17 allele
+ 1083466: >=2 variants
+     568592 [52.48%] with all B73 allele
+     489257 [45.16%] with all Mo17 allele
+      25617 [ 2.36%] with both B and M alleles
+
+BR151 [BR151: embryo_27DAP Mo17xB73 rep1] against snp+indel
+ 2406056 total reads spanning >=1 variants:
+ 1347681: only 1 variant
+     671978 [49.86%] B73 allele
+     675703 [50.14%] Mo17 allele
+ 1058375: >=2 variants
+     595403 [56.26%] with all B73 allele
+     383114 [36.20%] with all Mo17 allele
+      79858 [ 7.55%] with both B and M alleles
+
+BR151 [BR151: embryo_27DAP Mo17xB73 rep1] against snp
+ 2238560 total reads spanning >=1 variants:
+ 1350837: only 1 variant
+     647973 [47.97%] B73 allele
+     702864 [52.03%] Mo17 allele
+  887723: >=2 variants
+     459406 [51.75%] with all B73 allele
+     409509 [46.13%] with all Mo17 allele
+      18808 [ 2.12%] with both B and M alleles
+
+```
+
+* Indel mapping bias
+    + only use SNPs
+    + try synthetic genome approach (use B73 + SNP-corrected Mo17 genome for mapping)
+* Read pairs with conflicting evidence
+    + cross-mapping
+
+\pagebreak
+![ASE pattern of genes (covered by >=50 allele-specific read frangments) in hybrid (BxM and MxB) samples ]($data/misc2/briggs/46.ase/26.ase.gene.pdf){width=100%}
+
+
+<!--
+require(rmarkdown) 
+rmarkdown::render("/home/springer/zhoux379/git/luffy/rmd/ase.Rmd")
+file.copy("/home/springer/zhoux379/git/luffy/rmd/ase.pdf", "/home/springer/zhoux379/git/orionzhou.github.io/docs", overwrite = T)
+-->

@@ -65,3 +65,15 @@ table(unique(tma[,-2])$opt)
 to = rbind(t_go, t_corncyc, tma)
 fo = file.path(dirw, "59.allmodules.tsv")
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
+###
+fm = file.path(dirw, "59.allmodules.tsv")
+tm = read.table(fm, header = T, sep = "\t", quote = "")
+
+grp = group_by(tm, opt, mid)
+tm1 = summarise(grp, size = n())
+grp = group_by(tm1, opt)
+tm2 = summarise(grp, num_groups=n(), total_genes=sum(size), min_size=min(size), max_size=max(size), mean_size=mean(size), median_size=median(size))
+
+fo = file.path(dirw, "59.modules", "10.sum.tsv")
+write.table(tm2, fo, sep = "\t", row.names = F, col.names = T, quote = F)

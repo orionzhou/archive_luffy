@@ -62,6 +62,33 @@ cnts1[rownames(cnts1) %in% rownames(res1)[is.de1 == 'down'],][1:20,]
 fo = file.path(dirw, '01.de.tsv')
 write.table(to, fo, sep = "\t", row.names = F, col.names = T, quote = F)
 
+## num DE genes per tissue
+ff = file.path(dirw, '01.de.tsv')
+tf = read.table(ff, header = T, sep = "\t", as.is = T)
+tf = tf[tf$comp == 'B73 vs Mo17', -2]
+
+grp = dplyr::group_by(tf, tissue, is.de)
+tp = dplyr::summarise(grp, ngene = n())
+tp$tissue = factor(tp$tissue, levels = rev(unique(ti$Tissue)))
+#tp$is.de = factor(tp$is.de, levels = rev(c("up", "down")))
+
+p1 = ggplot(tp) +
+  geom_histogram(aes(x = tissue, y = ngene, fill = is.de), position = 'dodge', width = 0.6, stat = 'identity') +  	
+  #scale_x_continuous(name = 'DOA: (F1-MP)/(HP-MP)', limits=c(-8,8)) +
+  scale_y_continuous(name = 'Num DE Genes') +
+  scale_fill_manual(breaks = c("up","down"), values = brewer.pal(5, "Set1")[1:2]) +
+  coord_flip() +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,1), legend.title = element_blank(), legend.key.size = unit(0, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0, hjust = 1))
+fo = sprintf("%s/10.sum.pdf", dirw)
+ggsave(p1, filename = fo, width = 4, height = 5)
+
 
 ### DE sharing among tissue
 ff = file.path(dirw, '01.de.tsv')

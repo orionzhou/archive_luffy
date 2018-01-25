@@ -29,7 +29,7 @@ tk = read.table(fk, header = T, sep = "\t", as.is = T)
 
 ### expressed genes in each tissue
 tr2 = gather(tr, sid, rc, -gid)
-tr3 = merge(tr2, tm[,-2], by.x = 'sid', by.y = 'SampleID')
+tr3 = merge(tr2, th[,-2], by.x = 'sid', by.y = 'SampleID')
 
 grp = dplyr::group_by(tr3, Genotype, Tissue, gid)
 tr4 = dplyr::summarise(grp, rc = sum(rc))
@@ -114,6 +114,95 @@ theme(legend.position = 'top', legend.direction = "horizontal", legend.justifica
   theme(axis.text.y = element_text(size = 9, colour = "black", angle = 0, hjust = 1))
 fo = file.path(diro, "21.expressed.genes2.pdf")
 ggsave(p1, filename = fo, width = 6, height = 9)
+
+
+### SPE genes
+tissues = unique(th$Tissue)
+tissues = tissues[! tissues %in% c("kernel_14DAP", "endosperm_27DAP")]
+to1 = tr4[tr4$Tissue %in% tissues & tr4$Genotype != "MxB",]
+to2 = spread(to1[,c(1,2,3,6)], Genotype, fpm)
+to3 = within(to2, {
+	type1 = B73 >= 0.1 & Mo17 >= 0.1 & BxM >= 0.1
+	type2 = B73 >= 0.1 & Mo17 < 0.1 & BxM >= 0.1
+	type3 = B73 < 0.1 & Mo17 >= 0.1 & BxM >= 0.1
+})
+
+grp = group_by(to3, Tissue)
+to31 = summarise(grp, spe_b = sum(type2), spe_m = sum(type3))
+to32 = gather(to31, type, ngene, -Tissue)
+to32$Tissue = factor(to32$Tissue, levels = tissues)
+p1 = ggplot(to32) +
+  geom_bar(aes(x = Tissue, y = ngene, fill = type), stat="identity", position='dodge', width=0.6) +
+  #scale_x_discrete(name = '# Shared Tissues') +
+  scale_y_continuous(name = '# Genes') +
+  scale_fill_brewer(palette = 'Set1') +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0.5), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_blank()) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 30, hjust = 1)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
+fp = file.path(diro, "21.spe.pdf")
+ggsave(p1, filename = fp, width = 6, height = 4)
+
+
+grp = group_by(to3, gid)
+to4 = summarise(grp, ntis1 = sum(type1), ntis2 = sum(type2), ntis3 = sum(type3))
+to5 = gather(to4, type, ntis, -gid)
+to6 = to5[to5$ntis > 0,]
+p1 = ggplot(to6) +
+  geom_histogram(aes(x = ntis), stat = "count") +
+  scale_x_discrete(name = '# Shared Tissues') +
+  #scale_y_continuous(name = 'F1 B73 Proportion', expand = c(0.01, 0)) +
+  scale_fill_manual(name = '', values = cols) +
+  facet_wrap( ~ type, nrow = 1, scale = 'free') +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
+  theme(legend.position = 'none') +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
+fp = file.path(diro, "22.spe.pdf")
+ggsave(p1, filename = fp, width = 8, height = 3)
+
+
+# heatmap
+tk = to3[to3$type2 | to3$type3,c(1,2,6,7)]
+tk = cbind(tk, type = 0)
+tk$type[tk$type2] = 1
+tk$type[tk$type3] = -1
+tk = spread(tk[,c(1,2,5)], Tissue, type)
+tk[is.na(tk)] = 0
+
+hcl = hclust(dist(tk[,-1]), method = "ward.D")
+gidsO = tk$gid[hcl$order]
+
+tkl = gather(tk, tissue, type, -gid)
+tkl$gid = factor(tkl$gid, levels = gidsO)
+tkl$type = as.character(tkl$type)
+tkl$tissue = factor(tkl$tissue, levels = tissues)
+
+p1 = ggplot(tkl) +
+  geom_tile(aes(x = tissue, y = gid, fill = type)) + 
+  #scale_x_discrete(name = '') +
+  scale_y_discrete(name = 'Genes') +
+  scale_fill_manual(values = c("white", "#E41A1C", "#4DAF4A"), labels = c("non SPE", "SPE_B", "SPE_M")) + 
+  theme_bw() +
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill=NA, linetype=0)) +
+  theme(plot.margin = unit(c(0.3,0.3,0.3,0.3), "lines")) +
+  theme(legend.position = 'right', legend.direction = "vertical", legend.justification = c(0.5,0.5), legend.title = element_blank(), legend.key.size = unit(0.5, 'lines'), legend.key.width = unit(0.5, 'lines'), legend.text = element_text(size = 7), legend.background = element_rect(fill='grey', size=1)) +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(axis.title.x = element_blank()) +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, colour = "black", angle = 70, hjust = 1)) +
+  theme(axis.text.y = element_blank())
+fo = sprintf("%s/23.spe.heatmap.pdf", diro)
+ggsave(p1, filename = fo, width = 4.5, height = 12)
+
 
 ###
 fi = file.path(dirw, '35.long.tsv')

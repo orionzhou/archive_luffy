@@ -66,14 +66,18 @@ pmc = spread(pmc, gt2, pcc.coex)
 
 sime = as.matrix(pme[,-1])
 simc = as.matrix(pmc[,-1])
+rownames(sime) = pme[,1]
+rownames(simc) = pmc[,1]
+sime = sime[gts,gts]
+simc = simc[gts,gts]
 sime[lower.tri(sime)] = NA
-sime[lower.tri(simc)] = NA
+simc[lower.tri(simc)] = NA
 
 fo = file.path(dirw, "81.similarity.pdf")
 pdf(fo, width = 9, height = 5)
 par(mfrow=c(1,2))
 par(mar=c(0.1,0.1,3.1,0.1))
-pp1 = plotmat(sime, pos = c(2, 1), curve = 0, name = gts,
+pp1 = plotmat(sime, pos = c(2,1), curve = 0, name = gts,
 	lwd = 1, box.lwd = 2, cex.txt = 1, box.cex = 1,
 	box.type = "square", box.prop = 0.6, arr.type = "triangle",
 	arr.pos = 0.5, arr.width = 0, shadow.size = 0.01, prefix = "",

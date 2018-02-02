@@ -33,7 +33,7 @@ my ($opt, $fi, $fo);
 my %options = (
     "help|h" => \$help_flag,
     "in|i=s" => \$fi,
-    "out|o=s" => \$fo
+    "out|o=s" => \$fo,
     "opt|p=s" => \$opt,
 );
 
@@ -90,7 +90,7 @@ sub format_gff_phytozome {
     close FHI;
     close FHO;
 }
-sub format_gff_ensembl {
+sub format_gff_w22 {
     my ($fi, $fo) = @_;
     open(FHI, "<$fi") || die "cannot read $fi\n";
     open(FHO, ">$fo") || die "cannot write to $fo\n";
@@ -101,10 +101,11 @@ sub format_gff_ensembl {
         my @ps = split "\t";
         my ($seqid, $type) = @ps[0,2];
         next if $type eq "chromosome";
+        next if $type eq "intron" || $type eq "exon";
         if($seqid =~ /^\d+$/) {
             $ps[0] = "chr$seqid";
-        } elsif($seqid eq "UNKNOWN") {
-            $ps[0] = "chrU";
+        } elsif($seqid eq "chr10000001") {
+            $ps[0] = "unmapped";
         }
         print FHO join("\t", @ps)."\n";
     }
@@ -215,8 +216,8 @@ if($opt eq "tair") {
     format_gff_tair($fi, $fo);
 } elsif($opt eq "phytozome") {
     format_gff_phytozome($fi, $fo);
-} elsif($opt eq "ensembl") {
-    format_gff_ensembl($fi, $fo);
+} elsif($opt eq "w22") {
+    format_gff_w22($fi, $fo);
 } elsif($opt eq "cufflinks") {
     format_gff_cufflinks($fi, $fo);
 } elsif($opt eq "jcvi") {

@@ -61,6 +61,10 @@ my $h;
 my @idxsd;
 for my $i (0..$t->lastRow) {
   my ($id, $par, $chr, $beg, $end, $srd, $locE, $locI, $locC, $loc5, $loc3, $phase, $src, $conf, $cat1, $cat2, $cat3, $note) = $t->row($i);
+  if($cat1 ne "mRNA") {
+    push @idxsd, $i;
+    next;
+  }
   my $loc = [sort {$a->[0] <=> $b->[0]} @{locStr2Ary($locC)}];
   my $len = locAryLen($loc);
   if(exists $h->{$par}) {
@@ -80,6 +84,7 @@ printf "%5d | %5d removed\n", scalar(@idxsd), $t->nofRow;
 $t->delRows(\@idxsd);
 print $fho $t->tsv(1);
 close $fho;
+printf "%5d models left\n", $t->nofRow;
 
 
 

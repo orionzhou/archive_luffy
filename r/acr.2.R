@@ -12,7 +12,8 @@ tm = read.table(fm, sep = "\t", header = T, stringsAsFactors = F)
 
 ### read expression table
 fi = '/home/springer/nosha003/wgbs_schmitz/ACR/ACR_expression.txt'
-ti = read.table(fi, sep = "\t", header = T, stringsAsFactors = F)
+ti1 = read.table(fi, sep = "\t", header = T, stringsAsFactors = F)[,33:37]
+
 ti2 = ti[,33:37]
 colnames(ti2)[1] = 'gene'
 #ti2[ti2==1e-6] = 0
@@ -21,6 +22,13 @@ ti2 = within(ti2, {
 	bpr.root = log(B73_root_rpm/PH207_root_rpm)
 	bpr.leaf = log(B73_leaf_rpm/PH207_leaf_rpm)
 })
+
+fi = '/home/springer/nosha003/wgbs_schmitz/ACR/rpm_matrix.txt'
+ti = read.table(fi, sep = "\t", header = T, stringsAsFactors = F)
+colnames(ti)[1] = 'gid'
+ti$gid = sapply(strsplit(ti$gid, split = "[:]"), "[", 2)
+ti2 = merge(ti, ti1, by.x = 'gid', by.y = 'transcript')
+
 # look at range of log ratio: [-8,8]
 describe(ti2$bpr.root)
 describe(ti2$bpr.leaf)
@@ -65,3 +73,5 @@ p1 = ggplot(ti4) +
   theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0, hjust = 1))
 fo = sprintf("%s/11.bpr.pdf", dirw)
 ggsave(p1, filename = fo, width = 8, height = 5)
+
+

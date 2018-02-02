@@ -66,7 +66,9 @@ while( <$fhi> ) {
   @$ps >= 18 || die "not 19 fileds:\n$_\n";
   my ($id, $par, $chr, $beg, $end, $srd, $locES, $locIS, $locCS, $loc5S, $loc3S, $phaseS, $src, $conf, $cat1, $cat2, $cat3, $note) = @$ps;
   $id =~ s/\.TAIR\d+$//;
+  $id =~ s/\.v[\d\.]+$//;
   $par =~ s/\.TAIR\d+$//;
+  $par =~ s/\.v[\d\.]+$//;
   $ps->[0] = $id;
   $ps->[1] = $par;
   print $fho join("\t", @$ps)."\n";

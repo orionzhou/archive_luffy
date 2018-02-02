@@ -113,7 +113,7 @@ fc = file.path(dirw, "31.pcc.tsv")
 tc = read.table(fc, header = T, sep = "\t", as.is = T)
 
 net = graph_from_data_frame(
-	d = tc[tc$z.pcc >= 2,], 
+	d = tc[tc$z.pcc >= 3,], 
 	vertices = unique(c(tc$gid1, tc$gid2)),
 	directed = F
 )
@@ -122,7 +122,7 @@ V(net)$color[which(V(net)$name %in% gids2)] = rep('royalblue', length(gids2))
 
 coords = layout_in_circle(net, order = c(gids1, gids2))
 
-fp = file.path(dirw, "35.network.pdf")
+fp = file.path(dirw, "35.network3.pdf")
 pdf(fp, width = 8, height = 8)
 par(mar=c(8,6,6,6))
 plot(net, vertex.size = 3, vertex.label = NA, layout = coords)

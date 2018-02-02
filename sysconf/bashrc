@@ -55,9 +55,9 @@ if [[ -d $soft ]]; then
     samtools htslib bamtools bedtools2 vcftools bcftools bedops bwa \
     hdf bowtie2 ncbi blast bwtool \
     clustalw clustalo paml4.8 \
-    parallel blast CAP3 cmake cufflinks mcl \
+    parallel CAP3 cmake cufflinks mcl \
     augustus maker ocaml opam graphviz \
-    emboss gd geco genometools gmap hmmer mysql orthomcl \
+    glpk scip emboss gd geco genometools gmap hmmer mysql orthomcl \
     R root tophat rsem trimAl wise2 GEM kent unafold imagemagick
   do
     if [[ -d $soft/$subpath/bin ]]; then
@@ -74,8 +74,8 @@ if [[ -d $soft ]]; then
     fi
   done
   for subpath in RepeatMasker interproscan mummer sra-tools \
-    bwa hisat2 lastz snap trimal phyml paramugsy blasr pal2nal pigz trinity \
-    stack
+    bwa hisat2 snap trimal phyml paramugsy blasr pal2nal pigz trinity \
+    blast lastz stack
   do
     if [ -d $soft/$subpath ] || [ -h $soft/$subpath ]; then
       export PATH=$soft/$subpath:$PATH

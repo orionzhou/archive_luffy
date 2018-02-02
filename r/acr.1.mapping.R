@@ -60,7 +60,7 @@ fg = '/home/springer/zhoux379/data/genome/Zmays_v4/51.gtb'
 tg = read.table(fg, sep = "\t", header = T, as.is = T)
 
 
-fm = '/home/springer/zhoux379/data/genome/PH207/mapping.tsv'
+fm = '/home/springer/zhoux379/data/genome/PH207/synteny/mapping.tsv'
 tm = read.table(fm, sep = "\t", header = F, as.is = T)
 colnames(tm) = c("bchr","bbeg",'bend','bgid','pchr','pbeg','pend','pgid','type1','type2')
 tm2 = tm[,c('bgid','pgid','pchr','pbeg','pend','type1','type2')]
@@ -99,8 +99,7 @@ tj8 = rbind(tj4[tj4$qId %in% ids_mapped_u,], tj7)
 tj8 = within(tj8, {
 	vartag = ifelse(alnLen == qSize & misMatch == 0 & qNumIns+tNumIns == 0, 'Identical', 
 	ifelse(alnLen < qSize & misMatch == 0 & qNumIns+tNumIns == 0, 'assemblyGap',
-	ifelse(misMatch > 0 & qNumIns+tNumIns == 0, 'onlySNP',
-	ifelse(misMatch == 0 & qNumIns+tNumIns > 0, "onlyIndel", "SNP+Indel"))))
+	ifelse(misMatch > 0 & qNumIns+tNumIns == 0, 'onlySNP', 'Indel')))
 	maptag = ifelse(nbest == 1, 'Unique', "multiMapping")
 })
 
@@ -121,8 +120,20 @@ sprintf("%5d mapped >=1 times to PH207:", nrow(to)),
 sprintf("   %5d full conservation (100%% coverage, no SNP, no InDel)", sum(to$vartag=='Identical')),
 sprintf("   %5d likely near assembly gaps (100%% coverege, no SNP, no InDel)", sum(to$vartag=='assemblyGap')),
 sprintf("   %5d only SNP(s), no Indel", sum(to$vartag=='onlySNP')),
-sprintf("   %5d no SNP, only Indel(s)", sum(to$vartag=='onlyIndel')),
-sprintf("   %5d SNP(s) + InDels(s)", sum(to$vartag=='SNP+Indel')),
+sprintf("   %5d >=1 InDel(s) (and/or SNPs)", sum(to$vartag=='Indel')),
+''
+)
+cat(paste(outputs, collapse = "\n"))
+
+
+outputs = c(
+'',
+sprintf("Of the %5d ACRs with at least one InDel(s) (and/or SNPs):", sum(to$vartag=='Indel')),
+sprintf("   %5d have >= 100 inserted B73 bases (deleted PH207 bases)", sum(to$vartag=='Indel' & to$qBaseIns >= 100)),
+sprintf("       %5d exactly one B73 insertion event (PH207 deletion)", sum(to$vartag=='Indel' & to$qBaseIns >= 100 & to$qNumIns == 1)),
+sprintf("   %5d have >= 100 deleted B73 bases (inserted PH207 bases)", sum(to$vartag=='Indel' & to$tBaseIns >= 100)),
+sprintf("       %5d exactly one B73 deletion event (PH207 insertion)", sum(to$vartag=='Indel' & to$tBaseIns >= 100 & to$tNumIns == 1)),
+
 ''
 )
 cat(paste(outputs, collapse = "\n"))

@@ -17,7 +17,8 @@
     -i (--in)     input file
     -o (--out)    output file
     -d (--db)     sequence database (fasta) file
-    -p (--opt)    ouput option (default: protein)
+    -p (--opt)    ouput option [protein]
+    -g (--usegid) use gene ID not transcript ID [No]
 
 =cut
   
@@ -34,6 +35,7 @@ use Location;
 use Seq;
 
 my ($fi, $fo, $fd) = ('') x 3;
+my $useGid = '';
 my $opt = "protein";
 my $help_flag;
 
@@ -44,6 +46,7 @@ GetOptions(
   "out|o=s"  => \$fo,
   "db|d=s"   => \$fd,
   "opt|p=s"  => \$opt,
+  "usegid|g"  => \$useGid,
 ) or pod2usage(2);
 pod2usage(1) if $help_flag;
 pod2usage(2) if !$fd;
@@ -74,6 +77,7 @@ while( <$fhi> ) {
   my $rloc = locStr2Ary($locCS);
   my $loc = $srd eq "-" ? [map {[$end-$_->[1]+1, $end-$_->[0]+1]} @$rloc] : 
     [map {[$beg+$_->[0]-1, $beg+$_->[1]-1]} @$rloc];
+  $id = $par if $useGid;
 
   $cnta ++;
   my $seq;

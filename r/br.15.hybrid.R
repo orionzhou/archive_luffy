@@ -59,8 +59,8 @@ tr5 = dplyr::summarise(grp, nexp = sum(fpm >= 0.1))
 tr5 = cbind(flt = 'FPM >= 0.1', data.frame(tr5))
 to = rbind(to, tr5)
 
-to$Genotype = factor(to$Genotype, levels = unique(tm$Genotype))
-to$Tissue = factor(to$Tissue, levels = rev(unique(tm$Tissue)))
+to$Genotype = factor(to$Genotype, levels = unique(th$Genotype))
+to$Tissue = factor(to$Tissue, levels = rev(unique(th$Tissue)))
 to$flt = factor(to$flt, levels = unique(to$flt))
 
 #tr6 = spread(tr5, Genotype, nexp)

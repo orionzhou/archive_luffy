@@ -1,0 +1,88 @@
+---
+title: "RNA-Seq Manuscript Supplementary Material"
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: rmd-latex-ms.tex
+# author:
+# - name: Peng Zhou
+#  affiliation: University of Minnesota
+# - name: Nathan Springer
+#  affiliation: University of Minnesota
+# abstract: "This document provides an introduction to R Markdown, argues for its..."
+# keywords: "pandoc, r markdown, knitr"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+# bibliography: ~/Dropbox/master.bib
+# biblio-style: apsr
+header-includes:
+- \usepackage{caption}
+- \captionsetup[figure]{labelformat=empty}
+---
+\pagenumbering{gobble}
+
+\pagebreak
+![Figure S1. Sample collection and data processing.]($data/misc2/briggs/91.diagram/flowchart.png){width=100%}
+
+![Figure S2. Read mapping statistics.]($data/misc2/briggs/41.qc/00.4.mapping.pdf){width=80%}
+
+![Figure S3. Pearson and Spearmen correlation of FPKM values between each two replicates for each tissue-genotype combination. Only 18,746 genes with FPKM >= 1 in at least 80% samples were used in this analysis.]($data/misc2/briggs/41.qc/06.fpkm.cor.pearson.pdf){width=100%}
+
+![Figure S4. Diagram showing additivity and allelic ratio.]($data/misc2/briggs/91.diagram/additive_ar.png){width=100%}
+
+![Figure S5. Principle component plot of FPKM matrix. ]($data/misc2/briggs/44.hybrid/10.pca.FPKM.pdf){width=100%}
+
+<!-- DE -->
+![Figure S6. Number of DE genes (up and down) between B73 and Mo17 in each tissue.]($data/misc2/briggs/43.deseq/10.sum.pdf){width=100%}
+
+\pagebreak
+![Figure S7. Among tissue sharing of DE genes.]($data/misc2/briggs/43.deseq/11.sharing.pdf){width=100%}
+
+![Figure S8. Heatmap of DE sharing among tissues.]($data/misc2/briggs/43.deseq/12.sharing.heatmap.pdf){width=100%}
+
+![Figure S9. Principle component plot of the DE status matrix. ]($data/misc2/briggs/44.hybrid/11.pca.BoM.pdf){width=100%}
+
+<!-- DOA -->
+![Figure S10. Additivity measure (DoA) for DE genes (and at least 2 fold change between parents).]($data/misc2/briggs/41.qc/22.doa.de.2.pdf){width=100%}
+
+![Figure S11. Distribution of hybrid-to-mid-parent (F1/MP) values among tissues.]($data/misc2/briggs/44.hybrid/19.HoM.pdf){width=100%}
+
+![Figure S12. Principle component plot of the DoA matrix.]($data/misc2/briggs/44.hybrid/12.pca.DoA.pdf){width=100%}
+
+![Figure S13. DoA heatmap among tissues.]($data/misc2/briggs/44.hybrid/22.heatmap.DoA.pdf){width=100%}
+
+<!-- AR -->
+![Figure S14. Distribution of allele ratios (proportion of B73-specific reads within a gene) in each F1 (B73xMo17) sample.]($data/misc2/briggs/46.ase/11.ase.gene.pdf){width=100%}
+
+![Figure S15. Distribution of allele ratios (proportion of B73-specific reads within a gene) in each F1 (B73xMo17) tissue. Genes with less than 30 allele-specific reads were filtered. Note that endosperm tissues have peaks at 0.67 or 0.33 due to double fertilization.]($data/misc2/briggs/46.ase/21.ase.tissue.pdf){width=100%}
+
+![Figure S16. Principle component plot of the allele ratio matrix.]($data/misc2/briggs/44.hybrid/13.pca.AR.pdf){width=100%}
+
+![Figure S17. Allele ratio heatmap among tissues.]($data/misc2/briggs/44.hybrid/23.heatmap.AR.pdf){width=100%}
+
+<!-- cis-trans -->
+![Figure S18. Expected (parental, x-axis) and observed (y-axis) B73 allele ratio for differentially expressed genes in the hybird ear tissue. Color represents different patterns of regulatory mechanism.]($data/misc2/briggs/46.ase/32a.pdf){width=100%}
+
+![Figure S19. Expected (parental, x-axis) and observed (y-axis) B73 allele ratio for non-differentially expressed genes in the hybird ear tissue. ]($data/misc2/briggs/46.ase/33.pdf){width=100%}
+
+![Figure S20. Number of DE genes in different regulatory categories (Figure S19) in each tissue.]($data/misc2/briggs/46.ase/35.cnt.pdf){width=100%}
+
+![Figure S21. More cis-regulatory genes are shared among multiple tissues than genes with trans-regulatory pattern.]($data/misc2/briggs/44.hybrid/30.sharing.reg.pdf){width=100%}
+
+![Figure S22. Heatmap of cis- and trans- regulatory genes in maize tissues.]($data/misc2/briggs/44.hybrid/25.heatmap.reg.pdf){width=100%}
+
+<!-- DE-DoA-AR -->
+![Figure S23. DE levels are negatively correlated with DoA: the more different the parents are, the less likely the hybrid will deviate from middle-parent value]($data/misc2/briggs/44.hybrid/51.DoA.DE.pdf){width=100%}
+
+
+<!--
+require(rmarkdown) 
+rmarkdown::render("/home/springer/zhoux379/git/luffy/rmd/rnaseq.sm.Rmd")
+file.copy("/home/springer/zhoux379/git/luffy/rmd/rnaseq.sm.pdf", "/home/springer/zhoux379/git/orionzhou.github.io/docs", overwrite = T)
+-->

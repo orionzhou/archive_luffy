@@ -5,6 +5,7 @@ require(dplyr)
 require(ggplot2)
 require(RColorBrewer)
 require(GenomicRanges)
+require(Hmisc)
 
 dirg = file.path(Sys.getenv("genome"), "Zmays_v4")
 dirw = '/home/springer/zhoux379/scratch/briggs'
@@ -24,52 +25,61 @@ stopifnot(identical(tm$SampleID, colnames(e1)))
 #colnames(e1) = sprintf("%s_%s_%s_%d", tm$Sample, tm$Tissue, tm$Genotype, tm$Treatment)
 dim(e1)
 
-n_noexp = apply(e1, 1, myfunc <- function(x) sum(x<1))
-e = e1[n_noexp < 50,]
+n_exp = apply(e1, 1, myfunc <- function(x) sum(x>=1))
+e = e1[n_exp >= ncol(e1) * 0.8,]
 dim(e)
 
-sids_rm = c("BR045", "BR032", "BR026", "BR039", "BR042", "BR083", "BR095")
+#sids_rm = c("BR045", "BR032", "BR026", "BR039", "BR042", "BR083", "BR095")
 tm2 = unique(tm[,c("Tissue", "Genotype")])
-cor.opt = 'pearson'
-cor.opt = 'spearman'
-
 to = data.frame()
 for (i in 1:nrow(tm2)) {
 	tiss = tm2$Tissue[i]
 	geno = tm2$Genotype[i]
-	sids = tm$SampleID[tm$Tissue == tiss & tm$Genotype == geno]
-	sids = sids[!sids %in% sids_rm]
+	tm3 = tm[tm$Tissue == tiss & tm$Genotype == geno,]
+	sids = tm3$SampleID
+	#sids = sids[!sids %in% sids_rm]
 	#stopifnot(length(sids) == 3)
 	sid_pairs = combn(sids, m = 2)
 	tc = data.frame(t(sid_pairs), stringsAsFactors = F)
 	colnames(tc) = c('sid1', 'sid2')
-	pccs = c()
-	for (j in 1:nrow(tc)) {
-		pcc = cor(e[,tc$sid1[j]], e[,tc$sid2[j]], method = cor.opt)
-		pccs = c(pccs, pcc)
+	tc = merge(tc, tm3[,c("SampleID", "Treatment")], by.x = 'sid1', by.y = "SampleID")
+	tc = merge(tc, tm3[,c("SampleID", "Treatment")], by.x = 'sid2', by.y = "SampleID")
+	colnames(tc)[3:4] = c("repx", "repy")
+	
+	for (cor.opt in c('pearson', 'spearman')) {
+        pccs = c()
+        for (j in 1:nrow(tc)) {
+            pcc = cor(e[,tc$sid1[j]], e[,tc$sid2[j]], method = cor.opt)
+            pccs = c(pccs, pcc)
+        }
+	    tc2 = cbind(tissue = tiss, genotype = geno, tc, cor.opt = cor.opt, pcc = pccs)
+        if(cor.opt == 'spearman') {
+            tmp = tc2$repx; tc2$repx = tc2$repy; tc2$repy = tmp
+        }
+	    to = rbind(to, tc2)
 	}
-	tc = cbind(tissue = tiss, genotype = geno, tc, pcc = pccs)
-	to = rbind(to, tc)
 }
-tp = cbind(to, x = sprintf("%s:%s", to$tissue, to$genotype))
-tp$x = factor(tp$x, levels = unique(tp$x))
+#tp = cbind(to, x = sprintf("%s:%s", to$tissue, to$genotype))
+#tp$x = factor(tp$x, levels = unique(tp$x))
 
-p1 = ggplot(tp) +
-  geom_point(aes(x = x, y = pcc), shape = 4) +
-  scale_y_continuous(name = sprintf("%s Correlation of FPKM btw. Replicates", cor.opt), limits = c(0.8,1), expand = c(0.01,0.01)) +
+p1 = ggplot(to) +
+  geom_tile(aes(x = repx, y = repy, fill = pcc)) +
+  #scale_y_continuous(name = sprintf("%s Correlation of FPKM btw. Replicates", cor.opt), limits = c(0.8,1), expand = c(0.01,0.01)) +
   #scale_x_discrete(expand = c(0,0)) +
-  #scale_color_manual(name = "", values = cols) +
-  coord_flip() +
+  scale_fill_gradient(name = "Correlation Coefficient") +
+  facet_wrap(~tissue, nrow = 3) +
   theme_bw() +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0), legend.title = element_text(size=9), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
   theme(axis.ticks.length = unit(0, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
   theme(panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(axis.title.x = element_text(size = 9)) +
+  theme(panel.grid.minor.y = element_blank(), panel.border = element_rect(fill=NA, linetype=0)) +
+  theme(axis.title.x = element_blank()) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
-fp = sprintf("%s/06.fpkm.cor.%s.pdf", diro, cor.opt)
-ggsave(p1, filename = fp, width = 6, height = 9)
+fp = sprintf("%s/06.fpkm.cor.pdf", diro)
+ggsave(p1, filename = fp, width = 9, height = 6)
 
 ### hclust
 fi = file.path(dirw, '33.fpm.tsv')
@@ -209,15 +219,52 @@ ggsave(p1, filename = fp, width = 8, height = 7)
 ### FPM distribution
 fr = file.path(dirw, "33.fpm.tsv")
 tr = read.table(fr, sep = "\t", header = T, as.is = T)
-#trl = reshape(tr, direction = 'long', varying = list(2:ncol(tr)), idvar = c("gid"), timevar = "sid", v.names = 'fpm', times = colnames(tr)[2:ncol(tr)])
 trl = gather(tr, sid, fpm, -gid)
 trl2 = merge(trl, tm[,c(1,3:5)], by.x = 'sid', by.y = 'SampleID')
-grp = dplyr::group_by(trl2, gid, Tissue, Genotype)
-trl3 = dplyr::summarise(grp, fpm = mean(fpm))
-trl4 = cbind(trl3, sid = sprintf("%s-%s", trl3$Tissue, trl3$Genotype))
-trl4$sid = factor(trl4$sid, levels = unique(sprintf("%s-%s", tm$Tissue, tm$Genotype)))
-trl4 = trl4[order(trl4$gid, trl4$sid), c(1,5,4)]
+grp = group_by(trl2, gid, Tissue, Genotype)
+trl3 = summarise(grp, fpm = mean(fpm))
+#trl3$Genotype[trl3$Genotype == 'B73xMo17'] = 'BxM'
+gts = c("B73", "Mo17")
+trl3 = trl3[trl3$Genotype %in% gts,]
+#trl4 = cbind(trl3, sid = sprintf("%s-%s", trl3$Tissue, trl3$Genotype))
+#trl4$sid = factor(trl4$sid, levels = unique(sprintf("%s-%s", tm$Tissue, tm$Genotype)))
+#trl4 = trl4[order(trl4$gid, trl4$sid), c(1,5,4)]
 
+# density distribution
+to1 = trl3
+to1$fpm = asinh(to1$fpm)
+describe(to1$fpm)
+to1$fpm[to1$fpm > 10] = 10
+
+to2 = within(to1, {
+    fpm_bin = cut(fpm, breaks=seq(0,10,0.1), include.lowest = T, labels = seq(0.05, 9.95, by = 0.1))
+})
+sum(is.na(to2$fpm_bin))
+to2$fpm_bin = as.numeric(as.character(to2$fpm_bin))
+grp = group_by(to2, Tissue, Genotype, fpm_bin)
+to2 = summarise(grp, ngene_fpm_bin = n())
+
+p1 = ggplot(to2, aes(x = fpm_bin, y = ngene_fpm_bin, group = Genotype)) +
+  geom_bar(aes(fill = Genotype), stat = 'identity', position = 'dodge') +
+  #geom_line(aes(color = Genotype, linetype = Genotype)) +
+  #geom_point(aes(color = Genotype, shape = Genotype), size = 0.5) +
+  scale_x_continuous(name = 'asinh(FPM)') +
+  scale_y_continuous(name = 'num. genes', limits = c(0,1000)) +
+  scale_fill_brewer(palette = "Set1") +
+  facet_wrap(~Tissue, ncol = 1) +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, color = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, color = "black", angle = 0, hjust = 1))
+fp = sprintf("%s/10.fpm.pdf", diro)
+ggsave(p1, filename = fp, width = 6, height = 18)
+
+
+# look at top 50 gene proportion
 summary(trl$fpm)
 p1 = ggplot(trl) +
   geom_boxplot(aes(x = sid, y = fpm), outlier.shape = NA) + #, draw_quantiles = c(0.25, 0.5, 0.75)) + 

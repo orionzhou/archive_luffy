@@ -1,0 +1,37 @@
+---
+title: "RNA-Seq Manuscript Figures"
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: rmd-latex-ms.tex
+# author:
+# - name: Peng Zhou
+#  affiliation: University of Minnesota
+# - name: Nathan Springer
+#  affiliation: University of Minnesota
+# abstract: "This document provides an introduction to R Markdown, argues for its..."
+# keywords: "pandoc, r markdown, knitr"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+# bibliography: ~/Dropbox/master.bib
+# biblio-style: apsr
+header-includes:
+- \usepackage{caption}
+- \captionsetup[figure]{labelformat=empty}
+---
+\pagenumbering{gobble}
+
+\pagebreak
+![Figure 1. Principle component plot of the maize RNA-Seq expression matrix. The original 39,005 genes were filtered to 17,135 genes that have FPKM > 0.5 in at least 50 out of 153 samples.]($data/misc2/briggs/41.qc/01.sample.pca.pdf){width=100%}
+
+<!--
+require(rmarkdown) 
+rmarkdown::render("/home/springer/zhoux379/git/luffy/rmd/rnaseq.figure.Rmd")
+file.copy("/home/springer/zhoux379/git/luffy/rmd/rnaseq.figure.pdf", "/home/springer/zhoux379/git/orionzhou.github.io/docs", overwrite = T)
+-->

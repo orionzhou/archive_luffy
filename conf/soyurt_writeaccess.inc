@@ -1,6 +1,6 @@
 <?php
-  $db_config = array('db_name' => 'soyurt',
-  'db_user' => 'curator',
-  'db_pass' => 'curator-mysql-pw',
-  'db_host' => 'mtres1.cfans.umn.edu');
+  $db_config = array('db_name' => 'cfans_soybean_data',
+  'db_user' => 'cfanscurator',
+  'db_pass' => 'njj7w$ue5x',
+  'db_host' => 'mysql-prod3.oit.umn.edu');
 ?>

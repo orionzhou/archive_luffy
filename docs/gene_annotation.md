@@ -11,8 +11,8 @@ file there:
 
 Split the fasta file into 50 pieces (so that jobs can be executed in parallel 
 in servers):
-> pyfasta split -n 50 pro.fas
-> cd ..
+> pyfasta split -n 50 pro.fas  
+> cd ..  
 > mkdir 05.out
 
 Create a job script with the following content,  

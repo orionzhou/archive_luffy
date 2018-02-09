@@ -4,10 +4,10 @@ This pipeline assumes you already have a multi-fasta file containing the
 representative (longest?) peptide sequences you are interested in.
 
 In the current working directory create a sub-directiry and move the fasta
-file there:
-> mkdir 01.seqs  
-> cd 01.seqs  
-> ln -sf ../../52.rep.fas pro.fas
+file there:  
+`mkdir 01.seqs`  
+`cd 01.seqs`   
+`ln -sf ../../52.rep.fas pro.fas`
 
 Split the fasta file into 50 pieces (so that jobs can be executed in parallel 
 in servers):

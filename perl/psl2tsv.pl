@@ -109,6 +109,26 @@ while(<$fhi>) {
     push @qLoc, [$rqb+1, $rqb+$len];
   }
   my ($tLocS, $qLocS) = (locAry2Str(\@tLoc), locAry2Str(\@qLoc));
+  
+  my (@tIns, @qIns);
+  for my $i (1..$blockNum-1) {
+    my ($qb, $qe) = @{$qLoc[$i]};
+    my ($pqb, $pqe) = @{$qLoc[$i-1]};
+    my ($tb, $te) = @{$tLoc[$i]};
+    my ($ptb, $pte) = @{$tLoc[$i-1]};
+    if ($qb != $pqe + 1) {
+      push @qIns, $qb - $pqe - 1;
+    }
+    if ($tb != $pte + 1) {
+      push @tIns, $tb - $pte - 1;
+    }
+  }
+  if (@qIns > 0) {
+    sum(@qIns) == $qBaseIns || die "qBaseIns $qBaseIns $qId $tId error\n";
+  }
+  if (@tIns > 0) {
+    sum(@tIns) == $tBaseIns || die "tBaseIns $tBaseIns error\n";
+  }
  
   my $score_match = $match * $sMatch;
   my $score_misMatch = $misMatch * $sMisMatch;

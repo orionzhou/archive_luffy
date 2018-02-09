@@ -2,13 +2,15 @@ require(plyr)
 require(ape)
 require(tidyr)
 require(dplyr)
+require(grid)
+require(gtable)
 require(ggplot2)
 require(RColorBrewer)
+require(viridis)
 require(GenomicRanges)
 require(Hmisc)
 
 dirg = file.path(Sys.getenv("genome"), "Zmays_v4")
-dirw = '/home/springer/zhoux379/scratch/briggs'
 dirw = file.path(Sys.getenv("misc2"), "briggs")
 diro = file.path(dirw, "41.qc")
 
@@ -53,7 +55,7 @@ for (i in 1:nrow(tm2)) {
             pccs = c(pccs, pcc)
         }
 	    tc2 = cbind(tissue = tiss, genotype = geno, tc, cor.opt = cor.opt, pcc = pccs)
-        if(cor.opt == 'spearman') {
+        if(cor.opt == 'pearson') {
             tmp = tc2$repx; tc2$repx = tc2$repy; tc2$repy = tmp
         }
 	    to = rbind(to, tc2)
@@ -63,23 +65,28 @@ for (i in 1:nrow(tm2)) {
 #tp$x = factor(tp$x, levels = unique(tp$x))
 
 p1 = ggplot(to) +
-  geom_tile(aes(x = repx, y = repy, fill = pcc)) +
-  #scale_y_continuous(name = sprintf("%s Correlation of FPKM btw. Replicates", cor.opt), limits = c(0.8,1), expand = c(0.01,0.01)) +
-  #scale_x_discrete(expand = c(0,0)) +
-  scale_fill_gradient(name = "Correlation Coefficient") +
-  facet_wrap(~tissue, nrow = 3) +
+  geom_tile(mapping = aes(x = repx, y = repy, fill = pcc), width=0.8, height=0.8) +
+  geom_text(aes(x = repx, y = repy, label = sprintf("%.02f", pcc)), size = 3) +
+  geom_point(data = data.frame(x=1:3,y=1:3), aes(x=x,y=y), shape=7, size=6) +
+  scale_x_continuous(position = "top") +
+  scale_y_reverse() +
+  scale_fill_viridis(name = "Pearson (upper right) and Spearman (lower left) Correlation Coefficient") +
+  #scale_fill_gradientn(name = "Pearson Correlation Coefficient", colors = brewer.pal(9, "Greens")) +
+  #scale_color_gradientn(name = "Spearman Correlation Coefficient", colors = brewer.pal(9, "Blues")) +
+  facet_wrap(tissue~genotype, ncol = 5) +
   theme_bw() +
+  theme(strip.placement = 'outside') +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0), legend.title = element_text(size=9), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
   theme(axis.ticks.length = unit(0, 'lines')) +
   theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "lines")) +
   theme(panel.border = element_rect(fill=NA, linetype = 0)) +
-  theme(panel.grid.minor.y = element_blank(), panel.border = element_rect(fill=NA, linetype=0)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.title.x = element_blank()) +
   theme(axis.title.y = element_blank()) +
   theme(axis.text.x = element_text(size = 8, colour = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, colour = "black", angle = 0))
 fp = sprintf("%s/06.fpkm.cor.pdf", diro)
-ggsave(p1, filename = fp, width = 9, height = 6)
+ggsave(p1, filename = fp, width = 8, height = 15)
 
 ### hclust
 fi = file.path(dirw, '33.fpm.tsv')
@@ -232,36 +239,69 @@ trl3 = trl3[trl3$Genotype %in% gts,]
 
 # density distribution
 to1 = trl3
-to1$fpm = asinh(to1$fpm)
-describe(to1$fpm)
-to1$fpm[to1$fpm > 10] = 10
+to1 = cbind(to1, asinh_fpm = asinh(to1$fpm))
+#describe(to1$asinh_fpm)
+to1 = to1[to1$fpm > 0, ]
+to1$asinh_fpm[to1$asinh_fpm > 10] = 10
 
 to2 = within(to1, {
-    fpm_bin = cut(fpm, breaks=seq(0,10,0.1), include.lowest = T, labels = seq(0.05, 9.95, by = 0.1))
+    fpm_bin = cut(asinh_fpm, breaks=seq(0,10,0.1), include.lowest = T, labels = seq(0.05, 9.95, by = 0.1))
 })
 sum(is.na(to2$fpm_bin))
 to2$fpm_bin = as.numeric(as.character(to2$fpm_bin))
 grp = group_by(to2, Tissue, Genotype, fpm_bin)
-to2 = summarise(grp, ngene_fpm_bin = n())
+to3 = summarise(grp, num_genes = n(), total_fpm = sum(fpm))
+to4 = gather(to3, type, value, -Tissue, -Genotype, -fpm_bin)
 
-p1 = ggplot(to2, aes(x = fpm_bin, y = ngene_fpm_bin, group = Genotype)) +
-  geom_bar(aes(fill = Genotype), stat = 'identity', position = 'dodge') +
+labs = c(0, 1, 10, 100, 1000, 10000)
+brks = asinh(labs)
+
+p1 = ggplot(to3) +
+  geom_bar(aes(x = fpm_bin, y = num_genes, fill = Genotype), stat = 'identity', position = 'dodge') +
   #geom_line(aes(color = Genotype, linetype = Genotype)) +
   #geom_point(aes(color = Genotype, shape = Genotype), size = 0.5) +
-  scale_x_continuous(name = 'asinh(FPM)') +
-  scale_y_continuous(name = 'num. genes', limits = c(0,1000)) +
+  scale_x_continuous(name = 'FPM', limits = c(0, 10), breaks = brks, labels = labs) +
+  #scale_y_continuous(name = '#') +
   scale_fill_brewer(palette = "Set1") +
-  facet_wrap(~Tissue, ncol = 1) +
+  facet_wrap( ~Tissue, ncol = 1, scale = 'free') +
   theme_bw() +
   theme(axis.ticks.length = unit(0, 'lines')) +
-  theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "lines")) +
+  theme(plot.margin = unit(c(0.3,0.3,0.3,0.3), "lines")) +
   theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
   theme(axis.title.x = element_text(size = 9)) +
   theme(axis.title.y = element_text(size = 9)) +
   theme(axis.text.x = element_text(size = 8, color = "black", angle = 0)) +
   theme(axis.text.y = element_text(size = 8, color = "black", angle = 0, hjust = 1))
+
+p2 = ggplot(to3) +
+  geom_bar(aes(x = fpm_bin, y = total_fpm, fill = Genotype), stat = 'identity', position = 'dodge') +
+  #geom_line(aes(color = Genotype, linetype = Genotype)) +
+  #geom_point(aes(color = Genotype, shape = Genotype), size = 0.5) +
+  scale_x_continuous(name = 'FPM', limits = c(0, 10), breaks = brks, labels = labs) +
+  #scale_y_continuous(name = '#') +
+  scale_fill_brewer(palette = "Set1") +
+  facet_wrap( ~Tissue, ncol = 1, scale = 'free') +
+  theme_bw() +
+  theme(axis.ticks.length = unit(0, 'lines')) +
+  theme(plot.margin = unit(c(0.3,0.3,0.3,0.3), "lines")) +
+  theme(legend.position = 'top', legend.direction = "horizontal", legend.justification = c(0.5,0), legend.title = element_blank(), legend.key.size = unit(1, 'lines'), legend.key.width = unit(1, 'lines'), legend.text = element_text(size = 8), legend.background = element_rect(fill=NA, size=0)) +
+  theme(axis.title.x = element_text(size = 9)) +
+  theme(axis.title.y = element_text(size = 9)) +
+  theme(axis.text.x = element_text(size = 8, color = "black", angle = 0)) +
+  theme(axis.text.y = element_text(size = 8, color = "black", angle = 0, hjust = 1))
+
+
+g1 <- ggplotGrob(p1)
+g2 <- ggplotGrob(p2)
+gs = list(g1, g2)
+wids = c(4,4)
+g <- gtable_matrix(name = 'demo', grobs = matrix(gs, ncol = length(gs)), widths = wids, heights = 1)
+
 fp = sprintf("%s/10.fpm.pdf", diro)
-ggsave(p1, filename = fp, width = 6, height = 18)
+pdf(file = fp, width = 10, height = 25, bg = 'transparent')
+grid.newpage()
+grid.draw(g)
+dev.off()
 
 
 # look at top 50 gene proportion

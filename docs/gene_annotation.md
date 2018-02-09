@@ -19,8 +19,7 @@ cd ..
 mkdir 05.out
 ```
 
-Create a job script with the following content,  
-job:
+Create a job script (e.g., job) with the following content: 
 ```bash
 #PBS -l nodes=1:ppn=8,walltime=10:00:00
 #PBS -m ae

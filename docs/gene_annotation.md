@@ -13,13 +13,15 @@ ln -sf ../../52.rep.fas pro.fas
 
 Split the fasta file into 50 pieces (so that jobs can be executed in parallel 
 in servers):
-> pyfasta split -n 50 pro.fas  
-> cd ..  
-> mkdir 05.out
+```bash
+pyfasta split -n 50 pro.fas
+cd ..
+mkdir 05.out
+```
 
 Create a job script with the following content,  
 job:
-```
+```bash
 #PBS -l nodes=1:ppn=8,walltime=10:00:00
 #PBS -m ae
 #PBS -M zhoux379@umn.edu

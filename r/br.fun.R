@@ -1,11 +1,12 @@
-require(plyr)
-require(dplyr)
+require(grid)
+require(tidyverse)
+require(gtable)
+require(ggtree)
 require(ape)
-require(ggplot2)
-require(ggsignif)
-require(WGCNA)
-require(tidyr)
 require(RColorBrewer)
+require(viridis)
+require(Hmisc)
+require(ggsignif)
 require(igraph)
 require(pheatmap)
 source("circlePlot.R")
@@ -15,12 +16,7 @@ options(stringsAsFactors = FALSE)
 
 dirw = file.path(Sys.getenv("misc2"), "briggs")
 
-fl = file.path(dirw, '00.1.read.correct.tsv')
-tl = read.table(fl, header = T, sep = "\t", as.is = T)[,1:5]
-tissues = unique(tl$Tissue)
-
-gts = c("B73", "Mo17", "B73xMo17")
-
+#require(WGCNA)
 ##allowWGCNAThreads()
 #enableWGCNAThreads()
 

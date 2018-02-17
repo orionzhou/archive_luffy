@@ -70,7 +70,6 @@ while(<$fhi>) {
   die "no CDS-loc for $id\n" unless $locCS;
   my $len = $end - $beg + 1;
   my $hl = {
-    'mrna' => "1-$len",
     'cds'  => $locCS,
     'utr5' => $loc5S,
     'utr3' => $loc3S,
@@ -88,8 +87,8 @@ while(<$fhi>) {
 }
 close $fhi;
 close $fho;
-runCmd("sort -k1,1 -k2,2n -k3,3n $fo -o $fo");
-runCmd("bgzip -c $fo > $fo.gz");
-runCmd("tabix -s 1 -b 2 -e 3 -f $fo.gz");
+#runCmd("sort -k1,1 -k2,2n -k3,3n $fo -o $fo");
+#runCmd("bgzip -c $fo > $fo.gz");
+#runCmd("tabix -s 1 -b 2 -e 3 -f $fo.gz");
 
 __END__

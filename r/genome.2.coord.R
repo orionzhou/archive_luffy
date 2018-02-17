@@ -1,8 +1,11 @@
 require(dplyr)
+require(tidyr)
+require(GenomicRanges)
 
-dirw = '/home/springer/zhoux379/data/genome/Zmays_v4/v37'
+dirw = '/home/springer/zhoux379/data/genome/B73'
 
-fi = file.path(dirw, "t2.gtb")
+## gene longest boundary
+fi = file.path(dirw, "v37/t2.gtb")
 ti = read.table(fi, sep = "\t", as.is = T, header = T)
 colnames(ti)[2] = 'gid'
 
@@ -13,8 +16,22 @@ to = tg[,c(2:4,1)]
 to$beg = to$beg - 1
 to = to[order(to$chr, to$beg),]
 
-fo = file.path(dirw, "gene.bed")
+fo = file.path(dirw, "v37/gene.bed")
 write.table(to, fo, sep = "\t", row.names = F, col.names = F, quote = F)
+
+## gene length for HT-Seq
+fi = file.path('/home/springer/zhoux379/data/genome/B73', "51.tsv")
+ti = read.table(fi, sep = "\t", header = T, as.is = T)
+ti = ti[ti$etype == 'exon',]
+
+#gr = with(ti, GRanges(seqnames = seqid, ranges = IRanges(beg, end = end), gid = gid))
+#x = unlist(reduce(split(gr, elementMetadata(gr)$gid)))
+#tg = data.frame(gid = names(x), chr = seqnames(x), beg = start(x), end = end(x),  stringsAsFactors = F) %>% 
+tg = ti %>% 
+	group_by(gid, tid) %>% 
+	summarise(size = sum(end - beg + 1)) %>%
+	group_by(gid) %>%
+	summarise(size = max(size))
 
 ## gap stats
 orgs = c("B73", "W22", "PH207")

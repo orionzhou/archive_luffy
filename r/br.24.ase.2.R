@@ -1,15 +1,10 @@
-require(plyr)
-require(dplyr)
-require(tidyr)
-require(ggplot2)
+require(tidyverse)
 require(RColorBrewer)
 
-dirw = file.path(Sys.getenv("misc2"), "briggs")
 dirw = file.path(Sys.getenv("misc2"), "briggs", "46.ase")
 
-fl = file.path(dirw, '../00.1.read.correct.tsv')
-tl = read.table(fl, header = T, sep = "\t", as.is = T)[,1:5]
-tl = within(tl, {label = sprintf("%s: %s %s rep%d", SampleID, Tissue, Genotype, Treatment)})
+fm = file.path(dirw, '../00.1.read.tsv')
+tm = read.table(fm, header = T, sep = "\t", as.is = T)[,1:5]
 
 
 ## Indel mapping bias
@@ -20,7 +15,7 @@ for (sid in sids) {
 for (opt in opts) {
 
 
-fi = sprintf("%s/../25.ase/%s.5.%s.bed", dirw, sid, opt)
+fi = sprintf("%s/%s.5.%s.bed", diri, sid, opt)
 ti = read.table(fi, header = F, sep = "\t", as.is = T)
 colnames(ti) = c("chr", "beg", "end", "rid", "nref", "nalt", "nunk", "nerr")
 ti = ti[ti$nref+ti$nalt>0, ]
@@ -57,21 +52,47 @@ cat(paste(outputs, collapse = "\n"))
 }
 }
 
-## calc gene stats
-for (i in 101:nrow(tl)) {
-for (i in 61:76) {
-	sid = tl$SampleID[i]
-	f1 = sprintf("%s/25.ase/%s.tsv", dirw, sid)
-	f2 = sprintf("%s/25.ase/%s.bed", dirw, sid)
+## calc gene stats (should be in rnaseq.ase.py)
+diri = "/home/springer/zhoux379/scratch/briggs/28.ase"
+for (i in 166:219) {
+	sid = tm$SampleID[i]
+	f1 = sprintf("%s/%s.tsv", diri, sid)
+	f2 = sprintf("%s/%s.bed", diri, sid)
 	if(! file.exists(f1) | !file.exists(f2)) {
 		cat(sid, 'skipped\n')
 		next
 	}
-	fo = sprintf("%s/01.all/%s.tsv", diro, sid)
+	fo = sprintf("%s/01.all/%s.tsv", dirw, sid)
 	cmd = sprintf("bed.ase.sum.py %s %s %s", f1, f2, fo)
 	system(cmd)
 	cat(sid, "\n")
 }
+
+## genotyping
+tm2 = cbind(tm, propb = NA)
+for (i in 1:nrow(tm)) {
+	sid = tm$SampleID[i]
+	fi = sprintf("%s/01.all/%s.tsv", dirw, sid)
+	ti = read_tsv(fi, col_names = T)
+	ti = ti %>%
+		filter(nref + nalt >= 30) %>%
+		mutate(propb = nref/(nref+nalt))
+	tm2$propb[i] = median(ti$propb)
+	cat(sid, "\n")
+}
+tm3 = tm2 %>%
+	mutate(gt = ifelse(propb <= 0.05, "Mo17", 
+		ifelse(propb >= 0.95, "B73",
+		ifelse(propb >= 0.45 & propb <= 0.55, "B73xMo17",
+		ifelse(propb >= 0.30 & propb <= 0.40, "Mo17xB73",
+		ifelse(propb >= 0.65 & propb <= 0.75, "B73xMo17", 'unknown'))))))
+tm3$gt[is.na(tm3$gt)] = 'unknown'
+tm3 = mutate(tm3, gt_ok = ifelse(gt == Genotype, '1', '3'))
+table(tm3$gt, useNA='ifany')
+
+fo = file.path(dirw, "13.gt.tsv")
+write.table(tm3[,c('SampleID','propb','gt','gt_ok')], fo, sep = "\t", row.names = F, col.names = T, quote = F)
+
 
 ## concatenate results
 tl1 = tl[tl$Genotype %in% c("B73xMo17", "Mo17xB73"),]

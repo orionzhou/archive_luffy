@@ -33,7 +33,7 @@ elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
   export git=$home/git
 elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^ln|^cn ]]; then
   export soft_msi=/soft
-  for subpath in blat/34 muscle/3.8.31 \
+  for subpath in bowtie2/2.3.2 blat/34 muscle/3.8.31 \
     exonerate/2.2.0 structure/2.3.3
   do
     if [[ -d $soft_msi/$subpath/bin ]]; then
@@ -45,9 +45,6 @@ else
 fi
 
 # Add software paths
-#prefix=$HOME/$arch
-#export PATH=$PATH:$prefix/bin
-#export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
 export soft=$HOME/software
 if [[ -d $soft ]]; then
   for subpath in zlib bzip2 xz pcre curl npm \
@@ -93,10 +90,6 @@ if [[ -d $soft ]]; then
     export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
   done
 fi
-for msisoft in bowtie2/2.3.2
-do
-	module load $msisoft
-done
 
 # generic locations
 export home=$HOME
@@ -112,16 +105,15 @@ export git=$home/git
 export PATH=$HOME/bin:$PATH
 
 # repositories
+export maize=$git/maize
 export luffy=$git/luffy
-export code=$luffy
+export code=$maize
 export conf=$luffy/sysconf
-export robin=$git/robin
-export spada=$git/spada
 export rosar=$git/rgeneclust
 export urt=$git/soyurt
 export ped=$git/pedtools
 export site=$git/maizeumn.github.io
-export PATH=$rosar:$spada:$ped:$PATH
+export PATH=$code:$rosar:$spada:$ped:$PATH
 
 # camoco
 export LD_LIBRARY_PATH=/home/springer/zhoux379/.camoco/lib:$LD_LIBRARY_PATH
@@ -133,16 +125,14 @@ export PERL_HOME=$soft/perl
 #export PERL_MB_OPT="--install_base $PERL_HOME"
 export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
 export PERL5LIB=$soft/vcftools/share/perl5:$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
-export SCRIPT_HOME_PERL=$code/perl
-export PATH=$SCRIPT_HOME_PERL:$PERL_HOME/bin:$PATH
+export PATH=$luffy/perl:$PERL_HOME/bin:$PATH
 
 # Python
-export SCRIPT_HOME_PYTHON=$robin
 export PYTHON_HOME=$soft/python
 export PYTHONUSERBASE=$soft/python
-#export PYTHONPATH=${PYTHON_HOME}/lib/python3.5/site-packages:${SCRIPT_HOME_PYTHON}
+export PYTHONPATH=$git:$PYTHONPATH
 #export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
-export PATH=$SCRIPT_HOME_PYTHON:$PYTHON_HOME/bin:$PATH
+export PATH=$PYTHON_HOME/bin:$PATH
 
 # C++
 export PATH=$code/c++/bin:$PATH

@@ -2,75 +2,58 @@ require(plyr)
 require(tidyr)
 require(dplyr)
 
-fgo = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/15.tsv'
-tgo = read.table(fgo, sep = "\t", as.is = T, header = F, quote = '')
-colnames(tgo) = c("gid", "goid", "goname")
+fg = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/15.tsv'
+tg = read.table(fg, sep = "\t", as.is = T, header = F, quote = '')
+colnames(tg) = c("gid", "goid")
 
-fg = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/gids.txt'
-tg = read.table(fg)
-gids.all = tg$V1
+fd = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/16.go.tsv'
+td = read.table(fd, sep = "\t", header = T, as.is = T, quote = '')
+
+fi = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro/gids.txt'
+ti = read.table(fi, as.is = T)
+gids.all = ti$V1
 
 
-go_enrich <- function(gids) {
-	grp = dplyr::group_by(tgo, goid)
-	tgos = dplyr::summarise(grp, size_go = n(), goname=goname[1])
+go_enrich <- function(gids, gids.all. = gids.all, tg. = tg, td. = td) {
+	tgs = tg %>% 
+		group_by(goid) %>% 
+		summarise(hitInPop = n())
 
-	size_gene = sum(gids %in% tgo$gid)
+	sampleSize = length(gids)
 
-	tz1 = tgo[tgo$gid %in% gids,]
-	grp = dplyr::group_by(tz1, goid)
-	tz2 = dplyr::summarise(grp, sizeo = n())
-	tz3 = data.frame(goid = tgos$goid[!tgos$goid %in% tz2$goid], sizeo = 0, stringsAsFactors = F)
-	tz4 = rbind(data.frame(tz2), tz3)
+	tz = tg[tg$gid %in% gids,] %>%
+		group_by(goid) %>% 
+		summarise(hitInSample = n())
 
-	tz4 = merge(tz4, tgos, by = 'goid')
-	tz4 = cbind(tz4, size_gene = size_gene, total_gene = length(unique(tgo$gid)))
+	tw = merge(tz, tgs, by = 'goid')
+	tw = tw %>% 
+		mutate(sampleSize = length(gids), popSize = length(gids.all), 
+			pval.raw = phyper(hitInSample-1, hitInPop, popSize-hitInPop, sampleSize, lower.tail = F),
+			pval.adj = p.adjust(pval.raw, method = "BH")) %>%
+		filter(pval.raw < 0.05) %>%
+		arrange(pval.adj) %>%
+		transmute(goid = goid, ratioInSample = sprintf("%d/%d", hitInSample, sampleSize),
+			ratioInPop = sprintf("%d/%d", hitInPop, popSize),
+			pval.raw = pval.raw, pval.adj = pval.adj)
 
-	tz5 = within(tz4, {
-		pval.raw = phyper(sizeo-1, size_go, total_gene-size_go, size_gene, lower.tail=F)
-	})
-	tz6 = cbind(tz5, pval.adj = p.adjust(tz5$pval.raw, method = "BH"))
-	tz = tz6[tz6$pval.adj <= 0.05,c('goid','sizeo','size_go','pval.raw','pval.adj','goname')]
-	tz = tz[order(tz$pval.adj, decreasing = F),]
-	tz
+	to = merge(tw, td, by = 'goid')
+	to %>% arrange(pval.adj, pval.raw)
 }
+
+#fisher.test(matrix(c(hitInSample, hitInPop-hitInSample, sampleSize-hitInSample, failInPop-sampleSize +hitInSample), 2, 2), alternative='two.sided')
+
+
 
 dirw = '/home/springer/zhoux379/data/misc2/peter_chg_go'
 
 fi = file.path(dirw, '01.gid.txt')
-ti = read.table(fi)
+ti = read.table(fi, as.is = T)
 gids = unique(ti$V1)
 
 fi = file.path(dirw, '02.gids.bg.txt')
-ti = read.table(fi)
-gids.bg = unique(ti$V1)
+ti = read.table(fi, as.is = T)
+gids = unique(ti$V1)
+
+to = go_enrich(gids)
 
 
-goid = "GO:0000723"
-
-#study_size = length(gids)
-#study_hit = sum(gids %in% tgo$gid[tgo$goid == goid])
-
-study_size = length(gids.bg)
-study_hit = sum(gids.bg %in% tgo$gid[tgo$goid == goid])
-
-#pop_size = length(gids.bg)
-#pop_hit = sum(gids.bg %in% tgo$gid[tgo$goid == goid])
-
-pop_size = length(gids.all)
-pop_hit = sum(tgo$goid == goid)
-
-
-hitInSample = 8
-hitInPop = 30 
-failInPop = 39005 - hitInPop 
-sampleSize = 4053
-
-
-phyper(hitInSample-1, hitInPop, failInPop, sampleSize, lower.tail= F)
-
-fisher.test(matrix(c(hitInSample, hitInPop-hitInSample, sampleSize-hitInSample, failInPop-sampleSize +hitInSample), 2, 2), alternative='greater')
-
-pval.raw = phyper(study_hit-1, pop_hit, pop_size-pop_hit, study_size, lower.tail=F)
-
-sprintf("study: %d/%d; population: %d/%d; fisher %g", study_hit, study_size, pop_hit, pop_size, pval.raw)

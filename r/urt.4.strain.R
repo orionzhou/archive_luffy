@@ -115,7 +115,7 @@ genmap = 1:9
 names(genmap) = sprintf("F%d", 1:9)
 tx$generation[!tx$generation %in% names(genmap)] = 'F1'
 tx$generation = genmap[tx$generation]
-tx$aliases = dica[tx$name]
+#tx$aliases = dica[tx$name]
 
 tx3 = data.frame(LINE_NAME=ti$Strain, 
 	PARENT_1=ti$Parent1, PARENT_2=ti$Parent2,

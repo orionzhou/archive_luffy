@@ -144,7 +144,7 @@ export PATH=$code/bash:$PATH
 export PATH=$soft/ruby/bin:$PATH
 
 # R 
-export SCRIPT_HOME_R=$code/r
+export SCRIPT_HOME_R=$luffy/r
 
 # transition
 export old=/home/youngn/zhoux379/data

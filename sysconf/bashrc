@@ -106,6 +106,7 @@ export PATH=$HOME/bin:$PATH
 
 # repositories
 export maize=$git/maize
+export briggs=$git/briggs
 export luffy=$git/luffy
 export code=$maize
 export conf=$luffy/sysconf

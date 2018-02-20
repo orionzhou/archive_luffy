@@ -48,7 +48,7 @@ fi
 export soft=$HOME/software
 if [[ -d $soft ]]; then
   for subpath in zlib bzip2 xz pcre curl npm \
-    gcc boost libsequence \
+    vim gcc boost libsequence \
     samtools htslib bamtools bedtools2 vcftools bcftools bedops bwa \
     hdf bowtie2 ncbi blast bwtool \
     clustalw clustalo paml4.8 \

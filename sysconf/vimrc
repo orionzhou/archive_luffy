@@ -1,9 +1,14 @@
+call plug#begin('~/.vim/plugged')
+Plug 'tpope/vim-sensible'
+Plug 'jalvesaq/Nvim-R'
+call plug#end()
+
 syntax on
 filetype indent plugin on
 au BufWinEnter * silent loadview
 colorscheme desert 
 set number
-set numberwidth=4
+set numberwidth=1
 set foldmethod=indent
 set foldnestmax=2
 nnoremap <space> za

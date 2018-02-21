@@ -3,14 +3,15 @@ Plug 'tpope/vim-sensible'
 Plug 'jalvesaq/Nvim-R'
 call plug#end()
 
+au BufWinEnter *.* silent loadview
 syntax on
 filetype indent plugin on
-au BufWinEnter * silent loadview
 colorscheme desert 
 set number
 set numberwidth=1
-set foldmethod=indent
-set foldnestmax=2
+"set foldmethod=indent
+"set foldmethod=syntax
+"set foldnestmax=2
 nnoremap <space> za
 vnoremap <space> zf
 set cinkeys=0{,0},:,0#,!^F
@@ -18,6 +19,6 @@ set bs=2
 if has("autocmd")
   autocmd BufEnter * :lcd %:p:h
 endif " has("autocmd")
-au BufWinLeave * mkview
+au BufWinLeave *.* mkview
 
 

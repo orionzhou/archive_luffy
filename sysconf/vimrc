@@ -1,24 +1,30 @@
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'jalvesaq/Nvim-R'
+Plug 'gaalcaras/ncm-R'
+Plug 'tmhedberg/SimpylFold'
+Plug 'gabrielelana/vim-markdown'
 call plug#end()
 
-au BufWinEnter *.* silent loadview
 syntax on
-filetype indent plugin on
 colorscheme desert 
 set number
 set numberwidth=1
-set foldmethod=indent
-"set foldmethod=syntax
-set foldnestmax=2
-nnoremap <space> za
-vnoremap <space> zf
 set cinkeys=0{,0},:,0#,!^F
 set bs=2
-if has("autocmd")
-  autocmd BufEnter * :lcd %:p:h
-endif " has("autocmd")
-au BufWinLeave *.* mkview
 
+filetype indent plugin on
 
+nnoremap <space> za
+vnoremap <space> zf
+augroup vimrc
+  if has("autocmd")
+    autocmd BufEnter * :lcd %:p:h
+  endif " has("autocmd")
+  "au BufReadPre *.* setlocal foldmethod=indent
+  "au BufReadPre *.* setlocal foldnestmax=2
+  au BufReadPre *.* setlocal foldmethod=manual
+  "au BufWinEnter *.* if &fdm == 'indent' | setlocal foldmethod=manual | endif
+  au BufWinEnter *.* silent loadview
+  au BufWinLeave *.* mkview
+augroup END

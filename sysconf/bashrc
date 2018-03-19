@@ -39,6 +39,8 @@ elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^ln|^cn ]]; then
     if [[ -d $soft_msi/$subpath/bin ]]; then
       export PATH=$soft_msi/$subpath/bin:$PATH
     fi
+    module load gcc
+    module load java
   done
 else
   echo 'unknown host -> check your bash_profile'

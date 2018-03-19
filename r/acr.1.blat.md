@@ -23,7 +23,11 @@
   ```
 
 5. Build genome index for BLAT, this step is optional since BLAT can also take a fasta file dire
+  ```bash
+  faToTwoBit Zmays_v4.fasta Zmays_v4.2bit
+  ```
   * [link to faToTwoBit](https://genome.ucsc.edu/goldenpath/help/blatSpec.html#faToTwoBitUsage)
+    * gogogo
 
 6. Blat against the (already indexed) PH207 genome
   ```bash

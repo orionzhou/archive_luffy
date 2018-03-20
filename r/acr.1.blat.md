@@ -2,8 +2,8 @@
 
 1. Create a working directory and switch to it
 ```bash
-mkdir -p /home/springer/zhoux379/data/misc1/maize.acr/data
-cd /home/springer/zhoux379/data/misc1/maize.acr/data
+mkdir -p /home/springer/zhoux379/data/misc1/maize.acr
+cd /home/springer/zhoux379/data/misc1/maize.acr
 ```
 
 2. Remove header and take only first 3 rows to create a BED file
@@ -51,7 +51,7 @@ psl2tsv.pl -i 04.psl -o 05.tsv
 #PBS -M zhoux379@umn.edu
 #PBS -q small
 
-cd $misc1/maize.acr
+cd /home/springer/zhoux379/data/misc1/maize.acr
 blat /home/springer/zhoux379/data/genome/PH207/21.blat/db.2bit -ooc=/home/springer/zhoux379/data/genome/PH207/21.blat/db.2bit.tile11.ooc 02.fas 04.psl
 psl2tsv.pl -i 04.psl -o 05.tsv
 ```

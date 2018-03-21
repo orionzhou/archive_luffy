@@ -6,7 +6,7 @@ mkdir -p /home/springer/zhoux379/data/misc1/maize.acr
 cd /home/springer/zhoux379/data/misc1/maize.acr
 ```
 
-2. Remove header and take only first 3 rows to create a BED file
+2. Remove header and take only first 3 columns to create a BED file
 ```bash
 cut -f1-3 /home/springer/nosha003/wgbs_schmitz/ACR/B73_peaks/B73L_final_ACR.bed > 01.bed
 sed -i '1d' 01.bed
@@ -18,12 +18,12 @@ seqret.pl -d /home/springer/zhoux379/data/genome/Zmays_v4/11_genome.fas -b 01.be
 ```
   * [link to seqret.pl](https://github.com/orionzhou/luffy/blob/master/perl/seqret.pl)
 
-4. Load the BLAT toolkit (in MSI)
+4. Load the BLAT toolkit (on MSI)
 ```bash
 module load blat/34
 ```
 
-5. Build genome index for BLAT, this step is optional since BLAT can also take a fasta file dire
+5. Build genome index for BLAT, this step is optional since BLAT can also take a fasta file directly
 ```bash
 faToTwoBit Zmays_v4.fasta Zmays_v4.2bit
 blat Zmays_v4.2bit tmp.fas tmp.out -makeOoc=Zmays_v4.2bit.tile11.ooc

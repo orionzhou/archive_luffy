@@ -79,7 +79,7 @@ while(<$fhi>) {
   $blockNum == @blockSizes || die "unequal pieces\n";
   my $alnLen = $match + $misMatch + $repMatch + $baseN;
   $alnLen == sum(@blockSizes) || die "block size error:$alnLen/".sum(@blockSizes)."\n";
-  $alnLen + $qBaseIns == $qEnd-$qBeg || die "qLen error\n";
+  $alnLen + $qBaseIns == $qEnd-$qBeg || die "qLen error\n$qId $tId\n";
   $alnLen + $tBaseIns == $tEnd-$tBeg || die "hLen error\n";
   
   my (@qLoc, @tLoc);

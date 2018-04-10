@@ -1,34 +1,37 @@
-require(dplyr)
-require(plyr)
+require(tidyverse)
 require(GenomicRanges)
-require(tidyr)
 
 dirw = file.path(Sys.getenv("genome"), "Zmays_v4/TF")
 
 ### 
 fg = file.path(dirw, "../51.gtb")
-tg = read.table(fg, header = T, sep = "\t", as.is = T)[,1:3]
+tg = read_tsv(fg, col_types = "ccciiccccccccccccc") %>%
+    transmute(tid = id, gid = par, chrom = chr)
 
 fm = file.path(dirw, "../gene_mapping/maize.v3TOv4.geneIDhistory.txt")
-tm = read.table(fm, header = F, sep = "\t", as.is = T)
-colnames(tm) = c("ogid", 'ngid', "change", "method", "type")
+tm = read_tsv(fm, col_names = F) %>%
+    transmute(ogid = X1, gid = X2, change = X3, method = X4, type = X5)
+
+Mode <- function(x) {
+    ux <- unique(x)
+    ux[which.max(tabulate(match(x, ux)))]
+}
 
 fi = file.path(dirw, '01.tsv')
-ti = read.table(fi, header = T, sep = "\t", as.is = T)
-colnames(ti) = c("gid", "tid", 'fam')
-ti = ti[ti$gid != '',]
-ti = ddply(ti, .(gid), summarise, fam = names(sort(table(fam), decreasing = T))[1])
+ti = read_tsv(fi, col_names = T) %>%
+    transmute(ogid = `Gene model`, otid = Transcript, fam = `TF Family`) %>%
+    filter(ogid != '') %>%
+    group_by(ogid) %>%
+    summarise(fam = Mode(fam))
 
-tm2 = tm[tm$ogid %in% ti$gid,]
-table(tm2$type)
-tm3 = tm2[tm2$type == '1-to-1',]
-table(tm3$change)
-tm4 = tm3[tm3$ngid %in% tg$par,]
-tm5 = merge(tm4, ti, by.x = 'ogid', by.y = 'gid')
-stopifnot(nrow(tm4) == nrow(tm5))
+tf = ti %>%
+    inner_join(tm, by = 'ogid') %>%
+    filter(gid %in% tg$gid) %>%
+    #filter(type == '1-to-1') %>%
+    select(gid, fam)
 
-fo = file.path(dirw, "11.TF.txt")
-write(tm4$ngid, fo)
+ff = file.path(dirw, "11.tsv")
+write_tsv(tf, fo)
 
 
 ### find house keeping genes

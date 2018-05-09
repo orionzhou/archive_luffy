@@ -7,6 +7,7 @@ alias la='ls -al'
 alias du='du -BM --max-depth=1'
 alias qu='watch qstat -u zhoux379'
 alias gm='git commit -a -m "normal commit"; git push origin master'
+alias snk='snakemake -j 10 --cluster-config cluster.yaml --cluster "qsub -q {cluster.q} -l {cluster.l} -N {cluster.N} -M {cluster.M} -m {cluster.m} -r {cluster.r}"'
 #alias ssh='ssh -Y'
 umask 022
 
@@ -15,142 +16,112 @@ export arch=$(uname -m | tr ' ' '-')
 
 #color scheme for "ls" command
 if [ "$system" = "Linux" ]; then
-  [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
-  [ -e "$DIR_COLORS" ] || DIR_COLORS=""
-  eval "`dircolors -b $DIR_COLORS`"
-  export nproc=`nproc`
+    [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
+    [ -e "$DIR_COLORS" ] || DIR_COLORS=""
+    eval "`dircolors -b $DIR_COLORS`"
+    export nproc=`nproc`
 elif [ "$system" = "Darwin" ]; then
-  export CLICOLOR=1
-  export LSCOLORS=dxfxcxdxbxegedabagacad
-  alias ls="ls -G"
-  export nproc=`sysctl -n hw.ncpu`
+    export CLICOLOR=1
+    export LSCOLORS=dxfxcxdxbxegedabagacad
+    alias ls="ls -G"
+    export nproc=`sysctl -n hw.ncpu`
 fi
 
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
-  export git=$home/git
+    export git=$home/git
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
-  export git=$home/git
+    export git=$home/git
 elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^ln|^cn ]]; then
-  export soft_msi=/soft
-  for subpath in bowtie2/2.3.2 blat/34 muscle/3.8.31 \
-    exonerate/2.2.0 structure/2.3.3
-  do
-    if [[ -d $soft_msi/$subpath/bin ]]; then
-      export PATH=$soft_msi/$subpath/bin:$PATH
-    fi
-    module load gcc
+    export soft_msi=/soft
     module load java
-  done
 else
-  echo 'unknown host -> check your bash_profile'
+    echo 'unknown host -> check your bash_profile'
 fi
 
 # Add software paths
 export soft=$HOME/software
 if [[ -d $soft ]]; then
-  for subpath in zlib bzip2 xz pcre curl npm \
-    vim gcc boost libsequence \
-    samtools htslib bamtools bedtools2 vcftools bcftools bedops bwa \
-    hdf bowtie2 ncbi blast bwtool \
-    clustalw clustalo paml4.8 \
-    parallel CAP3 cmake cufflinks mcl \
-    augustus maker ocaml opam graphviz \
-    glpk scip emboss gd geco genometools gmap hmmer mysql orthomcl \
-    R root tophat rsem trimAl wise2 GEM kent unafold imagemagick
-  do
-    if [[ -d $soft/$subpath/bin ]]; then
-      export PATH=$soft/$subpath/bin:$PATH
-    fi
-    if [[ -d $soft/$subpath/bin64 ]]; then
-      export PATH=$soft/$subpath/bin64:$PATH
-    fi
-    if [[ -d $soft/$subpath/lib ]]; then
-      export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
-    fi
-    if [[ -d $soft/$subpath/lib64 ]]; then
-      export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
-    fi
-  done
-  for subpath in RepeatMasker interproscan mummer sra-tools \
-    bwa hisat2 snap trimal phyml paramugsy blasr pal2nal pigz trinity \
-    blast lastz stack
-  do
-    if [ -d $soft/$subpath ] || [ -h $soft/$subpath ]; then
-      export PATH=$soft/$subpath:$PATH
-    fi
-  done
-  for subpath in augustus
-  do
-    if [[ -d $soft/$subpath/scripts ]]; then
-      export PATH=$soft/$subpath/scripts:$PATH
-    fi
-  done
-  for subpath in zlib bzip2 xz pcre curl
-  do
-    export CFLAGS="-I$soft/$subpath/include $CFLAGS"
-    export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
-  done
+    for subpath in miniconda3 vim kent \
+#    npm root GEM unafold 
+    do
+        if [[ -d $soft/$subpath/bin ]]; then
+            export PATH=$soft/$subpath/bin:$PATH
+        fi
+        if [[ -d $soft/$subpath/bin64 ]]; then
+            export PATH=$soft/$subpath/bin64:$PATH
+        fi
+        if [[ -d $soft/$subpath/lib ]]; then
+            export LD_LIBRARY_PATH=$soft/$subpath/lib:$LD_LIBRARY_PATH
+        fi
+        if [[ -d $soft/$subpath/lib64 ]]; then
+            export LD_LIBRARY_PATH=$soft/$subpath/lib64:$LD_LIBRARY_PATH
+        fi
+    done
+    for subpath in RepeatMasker interproscan \
+        paramugsy gatk subread
+    do
+        if [ -d $soft/$subpath ] || [ -h $soft/$subpath ]; then
+            export PATH=$soft/$subpath:$PATH
+        fi
+    done
+    for subpath in miniconda3
+    do
+        export CFLAGS="-I$soft/$subpath/include $CFLAGS"
+        export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
+    done
 fi
 
 # generic locations
 export home=$HOME
 export src=$home/source
+export git=$home/git
+export proj=$home/projects
 export data=$home/data
 export genome=$home/data/genome
 export misc1=$data/misc1
 export misc2=$data/misc2
 export misc3=$data/misc3
 export misc4=$data/misc4
-export dbox=$home/Dropbox
-export git=$home/git
 export PATH=$HOME/bin:$PATH
 
 # repositories
 export maize=$git/maize
-export briggs=$git/briggs
 export luffy=$git/luffy
 export code=$maize
 export conf=$luffy/sysconf
-export rosar=$git/rgeneclust
 export urt=$git/soyurt
 export ped=$git/pedtools
 export site=$git/maizeumn.github.io
 export PATH=$code:$rosar:$spada:$ped:$PATH
 
-# camoco
-export LD_LIBRARY_PATH=/home/springer/zhoux379/.camoco/lib:$LD_LIBRARY_PATH
-export PATH=/home/springer/zhoux379/.camoco/bin:/home/springer/zhoux379/.camoco/conda/bin:$PATH
-
-# Perl
-export PERL_HOME=$soft/perl
-#export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
-#export PERL_MB_OPT="--install_base $PERL_HOME"
-export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
-export PERL5LIB=$soft/vcftools/share/perl5:$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
-export PATH=$luffy/perl:$PERL_HOME/bin:$PATH
-
-# Python
-export PYTHON_HOME=$soft/python
-export PYTHONUSERBASE=$soft/python
-export PYTHONPATH=$git:$PYTHONPATH
-#export LD_LIBRARY_PATH=${PYTHON_HOME}/lib:$LD_LIBRARY_PATH
-export PATH=$PYTHON_HOME/bin:$PATH
-
-# C++
-export PATH=$code/c++/bin:$PATH
-
-# bash
-export PATH=$code/bash:$PATH
-
-# ruby
+export PATH=$luffy/c++/bin:$luffy/bash:$PATH
 export PATH=$soft/ruby/bin:$PATH
-
-# R 
 export SCRIPT_HOME_R=$luffy/r
 
-# transition
-export old=/home/youngn/zhoux379/data
+# Python
+export PYTHONPATH=$git:$PYTHONPATH
+
+# projects
+export briggs=$proj/briggs
+export biomap=$proj/biomap
+export poly=$proj/polyTE
+export dys=$proj/dysgenic
+export set=$proj/settles
+for pname in briggs biomap polyTE dysgenic settles
+do
+    if [ -d $proj/$pname/src ] || [ -h $proj/$pname/src ]; then
+        export PATH=$proj/$pname/src:$PATH
+	fi
+done
+ 
+# Perl
+#export PERL_HOME=$soft/perl
+#export PERL_MM_OPT="INSTALL_BASE=$PERL_HOME"
+#export PERL_MB_OPT="--install_base $PERL_HOME"
+#export CPANLIB=$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
+#export PERL5LIB=$soft/vcftools/share/perl5:$PERL_HOME/lib/perl5:$PERL_HOME/lib64/perl5
+#export PATH=$luffy/perl:$PERL_HOME/bin:$PATH
 
 # SVN
 export SVN_EDITOR=vi
@@ -158,33 +129,8 @@ export SVN_EDITOR=vi
 # LATEX
 export PATH=$soft/tex/2016/bin/x86_64-linux:$PATH
 
-# ROOT
-export ROOTSYS=$soft/root
-
 # Augustus
 export AUGUSTUS_CONFIG_PATH=$soft/augustus/config
 
-# Kent Source and Bio::BigFile
-export KENT_SRC=$git/kent/src
-
-# Maker
-export ZOE=$soft/snap
-
-# Mugsy
-export MUGSY_INSTALL=$soft/mugsy
-
-# Cairo
-export CAIRO_LIBS="-L$soft/cairo/lib -lcairo"
-export CAIRO_CFLAGS=-I$soft/cairo/include/cairo
-
 # Trinity
 export TRINITY_HOME=$soft/trinity
-
-# pandoc
-export PATH=~/.local/bin:$PATH
-
-# misc
-#unset prefix
-
-export JAVA_TOOL_OPTIONS=-Xss1280k
-export PATH="$HOME/.cargo/bin:$PATH"

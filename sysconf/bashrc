@@ -7,7 +7,8 @@ alias la='ls -al'
 alias du='du -BM --max-depth=1'
 alias qu='watch qstat -u zhoux379'
 alias gm='git commit -a -m "normal commit"; git push origin master'
-alias snk='snakemake -j 10 --cluster-config cluster.yaml --cluster "qsub -q {cluster.q} -l {cluster.l} -N {cluster.N} -M {cluster.M} -m {cluster.m} -r {cluster.r}"'
+alias sm='ssh -t login ssh ms'
+alias snk='snakemake -j 8 --cluster-config cluster.yaml --cluster "qsub -q {cluster.q} -l {cluster.l} -N {cluster.N} -M {cluster.M} -m {cluster.m} -r {cluster.r}"'
 #alias ssh='ssh -Y'
 umask 022
 
@@ -59,7 +60,7 @@ if [[ -d $soft ]]; then
         fi
     done
     for subpath in RepeatMasker interproscan \
-        paramugsy gatk subread
+        paramugsy gatk
     do
         if [ -d $soft/$subpath ] || [ -h $soft/$subpath ]; then
             export PATH=$soft/$subpath:$PATH
@@ -67,7 +68,7 @@ if [[ -d $soft ]]; then
     done
     for subpath in miniconda3
     do
-        export CFLAGS="-I$soft/$subpath/include $CFLAGS"
+        #export CFLAGS="-I$soft/$subpath/include $CFLAGS"
         export LDFLAGS="-L$soft/$subpath/lib $LDFLAGS"
     done
 fi
@@ -108,6 +109,7 @@ export biomap=$proj/biomap
 export poly=$proj/polyTE
 export dys=$proj/dysgenic
 export set=$proj/settles
+export rs=$proj/3rnaseq
 for pname in briggs biomap polyTE dysgenic settles
 do
     if [ -d $proj/$pname/src ] || [ -h $proj/$pname/src ]; then

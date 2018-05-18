@@ -1,6 +1,11 @@
+require(tidyverse)
 require(GenomicRanges)
-require(dplyr)
 
+fg = file.path(dirw, "../51.gtb")
+tg = read_tsv(fg, col_types = 'ccciiccccccccccccc')
+gids = unique(tg$par)
+
+# use interpro
 dirg = '/home/springer/zhoux379/data/genome/Zmays_v4/61.interpro'
 
 fg = file.path(dirg, "../51.gtb")
@@ -27,3 +32,34 @@ stopifnot(nrow(tm2) == nrow(tm))
 tm2 = tm2[order(tm2$gid, tm2$tid),]
 fo2 = file.path(dirg, "11_gene.tsv")
 write.table(tm2[,c(2,3)], fo2, sep = "\t", row.names = F, col.names = F, quote = F, na = '')
+
+
+# use v4 GO
+dirw = '/home/springer/zhoux379/data/genome/Zmays_v4/GO'
+
+to = tibble()
+ctags = c("Interproscan5", "arabidopsis", "argot2.5", "fanngo", 
+          "pannzer", "uniprot.plants", "aggregate")
+for (ctag in ctags) {
+    fi = sprintf("%s/maize.B73.AGPv4.%s.gaf", dirw, ctag)
+    ti = read_tsv(fi, skip = 1)[,c(2,5,7,9)]
+    colnames(ti) = c("gid", "goid", "evidence", "gotype")
+    ti = ti %>% mutate(ctag = ctag) %>%
+        select(ctag, gid, goid, evidence, gotype)
+    to = to %>% bind_rows(ti)
+}
+to %>% distinct(ctag, gid) %>%
+    count(ctag)
+
+fgo = '/home/springer/zhoux379/data/db/go/go-basic.tsv'
+tgo = read_tsv(fgo) %>%
+    transmute(goid = goid, level = level, goname = name)
+
+goids = unique(to$goid)
+length(goids)
+sum(goids %in% tgo$goid)
+
+to2 = to %>% inner_join(tgo, by = 'goid')
+fo = file.path(dirw, "10.tsv")
+write_tsv(to2, fo)
+

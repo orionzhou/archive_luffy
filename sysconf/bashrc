@@ -10,6 +10,7 @@ alias gm='git commit -a -m "normal commit"; git push origin master'
 alias sm='ssh -t login ssh ms'
 alias snk='snakemake --cluster-config cluster.yaml --cluster "qsub -q {cluster.q} -l {cluster.l} -N {cluster.N} -M {cluster.M} -m {cluster.m} -r {cluster.r} -o {cluster.o} -e {cluster.e}"'
 #alias ssh='ssh -Y'
+alias ca='conda activate'
 umask 022
 
 export system=$(uname -s)
@@ -30,23 +31,27 @@ elif [ "$system" = "Darwin" ]; then
 fi
 
 #echo "hostname [$HOSTNAME] platform[$MACHTYPE]"
+HOST=unknown
 if [[ $HOSTNAME =~ ^plpa|cfans|^MacBook ]]; then
-    export git=$home/git
+    HOST=client
 elif [[ $HOSTNAME =~ ^login|^tern|^noddy|^kh ]]; then
-    export git=$home/git
+    HOST=login
 elif [[ $HOSTNAME =~ ^^mirror|^lab.*[0-9]+|^node|^ln|^cn ]]; then
     export soft_msi=/soft
     module load java
+    HOST=server
 else
-    echo 'unknown host -> check your bash_profile'
+    echo 'unknown host: check your .bashrc'
 fi
 
 # Add software paths
 export soft=$HOME/software
 if [[ -d $soft ]]; then
     . $soft/miniconda3/etc/profile.d/conda.sh
-    conda activate
-    #export LD_LIBRARY_PATH=$soft/miniconda3/lib:$soft/miniconda3/lib64:$LD_LIBRARY_PATH
+    if [[ $HOST == server ]]; then
+        conda activate
+        #export LD_LIBRARY_PATH=$soft/miniconda3/lib:$soft/miniconda3/lib64:$LD_LIBRARY_PATH
+    fi
 
     for subpath in vim kent \
 #    npm root GEM unafold 

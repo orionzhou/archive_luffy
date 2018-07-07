@@ -12,3 +12,4 @@ let g:rout_follow_colorscheme = 1
 let g:Rout_more_colors = 1
 
 "let r_syntax_folding = 1
+setlocal foldmethod=marker

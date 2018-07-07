@@ -11,6 +11,7 @@ alias sm='ssh -t login ssh ms'
 alias snk='snakemake --cluster-config cluster.yaml --cluster "qsub -q {cluster.q} -l {cluster.l} -N {cluster.N} -M {cluster.M} -m {cluster.m} -r {cluster.r} -o {cluster.o} -e {cluster.e}"'
 #alias ssh='ssh -Y'
 alias ca='conda activate'
+alias cr='conda activate R'
 umask 022
 
 export system=$(uname -s)
@@ -53,7 +54,7 @@ if [[ -d $soft ]]; then
         #export LD_LIBRARY_PATH=$soft/miniconda3/lib:$soft/miniconda3/lib64:$LD_LIBRARY_PATH
     fi
 
-    for subpath in vim kent \
+    for subpath in vim kent imagemagick \
 #    npm root GEM unafold 
     do
         if [[ -d $soft/$subpath/bin ]]; then
@@ -155,3 +156,5 @@ export PATH=$soft/tex/2016/bin/x86_64-linux:$PATH
 # Augustus
 export AUGUSTUS_CONFIG_PATH=$soft/augustus/config
 
+# autojump
+[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh

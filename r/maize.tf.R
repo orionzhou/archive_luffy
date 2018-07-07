@@ -17,9 +17,9 @@ Mode <- function(x) {
     ux[which.max(tabulate(match(x, ux)))]
 }
 
-fi = file.path(dirw, '01.tsv')
+fi = file.path(dirw, 'Zma_TF_list')
 ti = read_tsv(fi, col_names = T) %>%
-    transmute(ogid = `Gene model`, otid = Transcript, fam = `TF Family`) %>%
+    transmute(ogid = Gene_ID, otid = TF_ID, fam = Family) %>%
     filter(ogid != '') %>%
     group_by(ogid) %>%
     summarise(fam = Mode(fam))
@@ -29,8 +29,14 @@ tf = ti %>%
     filter(gid %in% tg$gid) %>%
     #filter(type == '1-to-1') %>%
     select(gid, fam)
+tfs = tf %>% distinct(fam) %>% arrange(fam) %>%
+    mutate(fid = sprintf("tf%04d", 1:length(fam)))
+tf = tf %>% inner_join(tfs, by = 'fam') %>%
+    select(fid, gid, fam) %>%
+    arrange(fid, gid)
 
-ff = file.path(dirw, "11.tsv")
+tf %>% count(fid)
+fo = file.path(dirw, "10.tsv")
 write_tsv(tf, fo)
 
 

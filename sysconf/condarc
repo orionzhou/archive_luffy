@@ -1,7 +1,0 @@
-channels:
-  - conda-forge
-  - r
-  - bioconda
-  - defaults
-
-show_channel_urls: True
